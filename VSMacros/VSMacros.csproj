@@ -125,11 +125,12 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engines\Manager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
-    <Compile Include="Management\BrowserListControl.xaml.cs">
+    <Compile Include="Tool Window Components\BrowserListControl.xaml.cs">
       <DependentUpon>BrowserListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Management\ExplorerToolWindow.cs" />
+    <Compile Include="Tool Window Components\ExplorerToolWindow.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -177,7 +178,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Management\BrowserListControl.xaml">
+    <Page Include="Tool Window Components\BrowserListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

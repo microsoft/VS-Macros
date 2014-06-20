@@ -20,7 +20,7 @@ namespace VSMacros.Engines
 
         public void StopRecording() { }
 
-        public void Playback(string path, ushort times) { }
+        public void Playback(string path, int times) { }
 
         public void StopPlayback() { }
 

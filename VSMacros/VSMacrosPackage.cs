@@ -9,6 +9,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
+using VSMacros.Engines;
 
 using EnvDTE;
 
@@ -101,7 +102,7 @@ namespace VSMacros
 
                  // Create the command for start recording
                 mcs.AddCommand(new MenuCommand(
-                    StartRecording,
+                    Record,
                     new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidRecord)));
 
                 // Create the command for playbback
@@ -109,6 +110,15 @@ namespace VSMacros
                     Playback,
                     new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidPlayback)));
 
+                // Create the command for playback multiple times
+                mcs.AddCommand(new MenuCommand(
+                    PlaybackMultipleTimes,
+                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidPlaybackMultipleTimes)));
+
+                // Create the command for save current macro
+                mcs.AddCommand(new MenuCommand(
+                    SaveCurrent,
+                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidSaveTemporaryMacro)));
                 // Create the command for refresh
                 mcs.AddCommand(new MenuCommand(
                     Refresh,
@@ -126,39 +136,24 @@ namespace VSMacros
         // Command Handlers
         #region Command Handlers
 
-        public void StartRecording(object sender, EventArgs arguments)
+        public void Record(object sender, EventArgs arguments)
         {
-            // Write to the feedback region of the Visual Studio status bar
-            // Obtain an instance of the IVsStatusbar interface
-            IVsStatusbar statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
-
-            // Determine wheter the status bar is frozen
-            int frozen = statusBar.IsFrozen(out frozen);
-
-            // Set the text
-            if (frozen == 0)
-            {
-                // Set the status bar text and make its display static
-                statusBar.SetText("Recording...");
-                statusBar.FreezeOutput(2);
-
-                // Clear the status bar text
-                statusBar.FreezeOutput(0);
-                statusBar.Clear();
-            }
-
-            // Display te animated Visual Studio icon in the animation region
-            // TODO change this icon
-            object icon = (short)Microsoft.VisualStudio.Shell.Interop.Constants.SBAI_Synch;
-            statusBar.Animation(1, ref icon);
-
-            // Show tool window
-            ShowToolWindow();
+            Manager.Instance.StartRecording();
         }
 
         private void Playback(object sender, EventArgs arguments)
         {
+            Manager.Instance.Playback("", 1);
+        }
 
+        private void PlaybackMultipleTimes(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Playback("", 0);
+        }
+
+        private void SaveCurrent(object sender, EventArgs arguments)
+        {
+            Manager.Instance.SaveCurrent();
         }
 
         private void Refresh(object sender, EventArgs arguments)

@@ -85,7 +85,7 @@ namespace VSMacros
             if (!Directory.Exists(MacroDirectory))
                 Directory.CreateDirectory(MacroDirectory);
 
-C            if (!File.Exists(Path.Combine(MacroDirectory, "Current.js")))
+            if (!File.Exists(Path.Combine(MacroDirectory, "Current.js")))
                 File.Create(Path.Combine(MacroDirectory, "Current.js");
 
             // TODO load macro file here as well

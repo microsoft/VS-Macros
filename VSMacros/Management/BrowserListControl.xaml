@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="VSMacros.MacroBrowserList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             Background="{DynamicResource VsBrush.Window}"
+             Foreground="{DynamicResource VsBrush.WindowText}"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="MyToolWindow">
+    <UserControl.Resources>
+        <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Mode=OneWay, Path=Children}">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Stretch="Fill" Source="{Binding Mode=OneTime, Path=Icon}"/>
+                <TextBox Text="{Binding Mode=TwoWay, Path=Name}" 
+                         Background="Transparent" 
+                         BorderThickness="0" 
+                         IsReadOnly="{Binding Mode=TwoWay, Path=IsEditing}" 
+                         TextWrapping="Wrap"
+                         Cursor="Arrow"
+                         Margin="5,2,0,0"
+                         LostKeyboardFocus="OnTextBoxLostFocus"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate x:Key="MacroFSViewTemplate"
+                                  ItemsSource="{Binding Mode=OneWay, Path=Children}"
+                                  ItemTemplate="{StaticResource ChildTemplate}">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="20" Height="20" Stretch="Fill" Source="C:\Users\t-jusdom\Downloads\macro.png"/>
+                <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <!--<ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Assets/TreeView.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>-->
+    </UserControl.Resources>
+    <TreeView x:Name="macroTreeView"
+              ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
+              SelectedItemChanged="macroTreeView_SelectedItemChanged"
+              Width="Auto"
+              Background="{DynamicResource VsBrush.EnvironmentToolWindowBackground}"
+              BorderBrush="{DynamicResource VsBrush.EnvironmentToolWindowBorder}"
+              >
+        <!-- Add right click handler (http://stackoverflow.com/a/592483/1146764) -->
+        <TreeView.ItemContainerStyle>
+            <Style TargetType="{x:Type TreeViewItem}">
+                <!-- We have to select the item which is right-clicked on -->
+                <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="OnTreeItemMouseRightButtonDown"/>
+                <EventSetter Event="KeyDown" Handler="OnTreeKeyDown"/>
+            </Style>
+        </TreeView.ItemContainerStyle>
+        <TreeView.Resources>
+            <ContextMenu x:Key="BrowserContext" StaysOpen="True">
+                <MenuItem Header="Refresh" Click="Refresh"/>
+                <MenuItem Header="Open in File Explorer" Click="Open"/>
+            </ContextMenu>
+            <ContextMenu x:Key="CurrentContext" StaysOpen="true">
+                <MenuItem Header="Playback" Click="Playback"/>
+                <Separator/>
+                <MenuItem Header="Edit" Click="Edit"/>
+                <MenuItem Header="Save Current Macro" Click="SaveCurrentMacro"/>
+            </ContextMenu>
+            <ContextMenu x:Key="MacroContext" StaysOpen="true">
+                <MenuItem Header="Playback" Click="Playback"/>
+                <Separator/>
+                <MenuItem Header="Edit" Click="Edit"/>
+                <MenuItem Header="Rename" Click="EnableEdit"/>
+                <MenuItem Header="Assign Shortcut" Click="AssignShortcut"/>
+                <Separator/>
+                <MenuItem Header="Delete" Click="Delete"/>
+            </ContextMenu>
+            <ContextMenu x:Key="FolderContext" StaysOpen="true">
+                <!--<MenuItem Header="New Folder" Click="Playback"/>
+                    <MenuItem Header="New Macro" Click="Playback"/>
+                    <Separator/>-->
+                <MenuItem Header="Rename" Click="Rename"/>
+                <Separator/>
+                <MenuItem Header="Delete" Click="Delete"/>
+            </ContextMenu>
+        </TreeView.Resources>
+    </TreeView>
+</UserControl>

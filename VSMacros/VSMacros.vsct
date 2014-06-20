@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+
+  <Commands package="guidVSMacrosPkg">
+
+    <!-- MENUS -->
+    <Menus>
+      
+      <!-- Macros Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="SubMenu" priority="0x0100" type="Menu">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_TOOLS_OTHER2"/>
+        <Strings>
+          <ButtonText>Macros</ButtonText>
+          <CommandName>Macros</CommandName>
+        </Strings>
+      </Menu>
+      
+      <!-- Toolbar Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="TWToolbar" priority="0x0200" type="ToolWindowToolbar">
+        <CommandFlag>DefaultDocked</CommandFlag>
+        <Strings>
+          <ButtonText>Toolbar</ButtonText>
+          <CommandName>Toolbar</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <!-- GROUPS -->
+    <Groups>
+      
+      <!-- Group 1 : commands on current macro -->
+      <Group guid="guidVSMacrosCmdSet" id="Group1" priority="0x0600">
+        <Parent guid="guidVSMacrosCmdSet" id="SubMenu"/>
+      </Group>
+
+      <!-- Group 2 : other commands -->
+      <Group guid="guidVSMacrosCmdSet" id="Group2" priority="0x0700">
+        <Parent guid="guidVSMacrosCmdSet" id="SubMenu"/>
+      </Group>
+
+      <!-- Management group -->
+      <Group guid="guidVSMacrosCmdSet" id="ManagementGroup" priority="0x0900">
+        <Parent guid="guidVSMacrosCmdSet" id="TWToolbar"/>
+      </Group>
+    </Groups>
+    
+    <!-- BUTTONS -->
+    <Buttons>
+      
+      <!-- Group 1-->
+      <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+        <Icon guid="guidIcons" id="iconRecord" />
+        <CommandFlag>TextChanges</CommandFlag>
+        <Strings>
+          <ButtonText>Start/Stop Recording</ButtonText>
+          <CommandName>Record</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidVSMacrosCmdSet" id="cmdidPlayback" priority="001" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+        <Icon guid="guidIcons" id="iconPlayback" />
+        <Strings>
+          <ButtonText>Playback</ButtonText>
+          <CommandName>Playback</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" priority="002" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+        <Icon guid="guidIcons" id="iconPlaybackMultipleTimes" />
+        <Strings>
+          <ButtonText>Playback Multiple Times</ButtonText>
+          <CommandName>PlaybackMultipleTimes</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" priority="003" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+        <Icon guid="guidIcons" id="iconSaveCurrentMacro" />
+        <Strings>
+          <ButtonText>Save Current Macro</ButtonText>
+          <CommandName>SaveCurrentMacro</CommandName>
+        </Strings>
+      </Button>
+
+      <!-- Group 2 -->
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="010" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="Group2" />
+        <Strings>
+          <ButtonText>Macro Explorer</ButtonText>
+          <CommandName>MacroExplorer</CommandName>
+        </Strings>
+      </Button>
+      
+      <!-- Management Group -->
+      <Button guid="guidVSMacrosCmdSet" id="cmdidRefresh" priority="020" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
+        <Icon guid="guidIcons" id="iconRefresh" />
+        <Strings>
+          <ButtonText>Refresh</ButtonText>
+          <CommandName>Refresh</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="021" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
+        <Icon guid="guidIcons" id="iconOpenDirectory" />
+        <Strings>
+          <ButtonText>Open Folder</ButtonText>
+          <CommandName>OpenFolder</CommandName>
+        </Strings>
+      </Button>
+
+      <!-- Tool Window-->
+      <!--
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="0x0100" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+        <Strings>
+          <ButtonText>Macro Explorer</ButtonText>
+          <CommandName>MacroExplorer</CommandName>
+        </Strings>
+      </Button>
+      -->
+    </Buttons>
+
+    <!-- BITMAPS -->
+    <Bitmaps>
+      <Bitmap guid="guidIcons" href="Resources\ToolbarIcons.png" usedList="iconRecord, iconStop, iconPlayback, iconPlaybackMultipleTimes, iconSaveCurrentMacro, iconRefresh, iconOpenDirectory"/>
+    </Bitmaps>
+ 
+  </Commands>
+
+  <!-- COMMAND PLACEMENTS -->
+  <CommandPlacements>
+    
+    <!-- Placement for Group1 into the Tool Window Toolbar-->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="Group1" priority="0x605">
+      <Parent guid="guidVSMacrosCmdSet" id="TWToolbar"/>
+    </CommandPlacement>
+
+    <!-- Tool Window menu command in View -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="0x0100" type="Button">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+    </CommandPlacement>
+    
+  </CommandPlacements>
+
+  <KeyBindings>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" key1="R" mod1="Control Shift"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="P" mod1="Control Shift"/>
+  </KeyBindings>
+  
+  <Symbols>
+    <!-- Package guid. -->
+    <GuidSymbol name="guidVSMacrosPkg" value="{17f25bfa-a812-4b6a-a07e-7f73aa975f8b}" />
+    
+    <!-- This is the guid used to group the menu commands together -->
+    <GuidSymbol name="guidVSMacrosCmdSet" value="{ad5b992c-e71a-4619-8d95-502b3b8de2c1}">
+
+      <!-- Macros Sub Menu-->
+      <IDSymbol name="SubMenu" value="0x1000"/>
+      
+      <!-- Toolbar in Tool Window -->
+      <IDSymbol name="TWToolbar" value="0x1010"/>
+      
+      <!-- Groups -->
+      <IDSymbol name="Group1" value="0x1100"/>
+      <IDSymbol name="Group2" value="0x1200"/>
+      <IDSymbol name="ManagementGroup" value="0x1300"/>
+      
+      <!-- Commands -->
+      <IDSymbol name="cmdidRecord" value="0x2000"/>
+      <IDSymbol name="cmdidPlayback" value="0x2001"/>
+      <IDSymbol name="cmdidPlaybackMultipleTimes" value="0x2002"/>
+      <IDSymbol name="cmdidSaveCurrentMacro" value="0x2003"/>
+      <IDSymbol name="cmdidRefresh" value="0x2010"/>
+      <IDSymbol name="cmdidOpenDirectory" value="0x2011"/>
+      
+      <!-- Tool Window -->
+      <IDSymbol name="cmdidMacroExplorer" value="0x0101" />
+    </GuidSymbol>
+    
+    <!-- Icons -->
+    <GuidSymbol name="guidIcons" value="{1b720ac9-7e85-41b3-a9fe-5ab1cfd366d7}" >
+      <IDSymbol name="iconRecord" value="1" />
+      <IDSymbol name="iconStop" value="2" />
+      <IDSymbol name="iconPlayback" value="3" />
+      <IDSymbol name="iconPlaybackMultipleTimes" value="4" />
+      <IDSymbol name="iconSaveCurrentMacro" value="5" />
+      <IDSymbol name="iconRefresh" value="6" />
+      <IDSymbol name="iconOpenDirectory" value="7" />
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>

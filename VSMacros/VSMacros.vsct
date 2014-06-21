@@ -53,7 +53,7 @@
       <!-- Group 1-->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="Group1" />
-        <Icon guid="guidIcons" id="iconRecord" />
+        <Icon guid="guidVsShellIcons" id="Record" />
         <CommandFlag>TextChanges</CommandFlag>
         <Strings>
           <ButtonText>Start/Stop Recording</ButtonText>
@@ -63,7 +63,7 @@
 
       <Button guid="guidVSMacrosCmdSet" id="cmdidPlayback" priority="001" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="Group1" />
-        <Icon guid="guidIcons" id="iconPlayback" />
+        <Icon guid="guidVsShellIcons" id="Play" />
         <Strings>
           <ButtonText>Playback</ButtonText>
           <CommandName>Playback</CommandName>
@@ -81,7 +81,7 @@
 
       <Button guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" priority="003" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="Group1" />
-        <Icon guid="guidIcons" id="iconSaveCurrentMacro" />
+        <Icon guid="guidVsShellIcons" id="Save" />
         <Strings>
           <ButtonText>Save Current Macro</ButtonText>
           <CommandName>SaveCurrentMacro</CommandName>
@@ -100,7 +100,7 @@
       <!-- Management Group -->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRefresh" priority="020" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
-        <Icon guid="guidIcons" id="iconRefresh" />
+        <Icon guid="guidSHLMainMenu" id="Refresh" />
         <Strings>
           <ButtonText>Refresh</ButtonText>
           <CommandName>Refresh</CommandName>
@@ -109,7 +109,7 @@
 
       <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="021" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
-        <Icon guid="guidIcons" id="iconOpenDirectory" />
+        <Icon guid="guidSHLMainMenu" id="OpenFolder" />
         <Strings>
           <ButtonText>Open Folder</ButtonText>
           <CommandName>OpenFolder</CommandName>
@@ -195,6 +195,19 @@
       <IDSymbol name="iconRefresh" value="6" />
       <IDSymbol name="iconOpenDirectory" value="7" />
     </GuidSymbol>
+
+    <GuidSymbol name="guidVsShellIcons" value="{9cd93c42-ceef-45ab-b1b5-6040880c9543}">
+      <IDSymbol name="Play" value="76"/>
+      <IDSymbol name="Record" value="84"/>
+      <IDSymbol name="Save" value="95"/>
+      <IDSymbol name="Stop" value="116"/>
+    </GuidSymbol>
+
+    <GuidSymbol name="guidSHLMainMenu" value="{d309f791-903f-11d0-9efc-00a0c911004f}">
+      <IDSymbol name="OpenFolder" value="5"/>
+      <IDSymbol name="Refresh" value="6"/>
+    </GuidSymbol>
+
   </Symbols>
 
 </CommandTable>

@@ -15,16 +15,6 @@ using EnvDTE;
 
 namespace VSMacros
 {
-    /// <summary>
-    /// This is the class that implements the package exposed by this assembly.
-    ///
-    /// The minimum requirement for a class to be considered a valid package for Visual Studio
-    /// is to implement the IVsPackage interface and register itself with the shell.
-    /// This package uses the helper classes defined inside the Managed Package Framework (MPF)
-    /// to do it: it derives from the Package class that provides the implementation of the 
-    /// IVsPackage interface and uses the registration attributes defined in the framework to 
-    /// register itself and its components with the shell.
-    /// </summary>
     
     [ProvideToolWindow(typeof(ExplorerToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
@@ -35,23 +25,11 @@ namespace VSMacros
     {
         public static VSMacrosPackage Current { get; private set; }
 
-        /// <summary>
-        /// Default constructor of the package.
-        /// Inside this method you can place any initialization code that does not require 
-        /// any Visual Studio service because at this point the package object is created but 
-        /// not sited yet inside Visual Studio environment. The place to do all the other 
-        /// initialization is the Initialize method.
-        /// </summary>
         public VSMacrosPackage()
         {
             Current = this;
         }
 
-        /// <summary>
-        /// This function is called when the user clicks the menu item that shows the 
-        /// tool window. See the Initialize method to see how the menu item is associated to 
-        /// this function using the OleMenuCommandService service and the MenuCommand class.
-        /// </summary>
         private void ShowToolWindow(object sender = null, EventArgs e = null)
         {
             // Get the (only) instance of this tool window
@@ -70,14 +48,22 @@ namespace VSMacros
             get { return Path.Combine(this.UserLocalDataPath, "Macros");  }
         }
 
+        private void ToggleStartStopRecording(object sender, EventArgs e)
+        {
+            var myCommand = sender as OleMenuCommand;
+            if (null != myCommand)
+            {
+                if (myCommand.Text == "" || myCommand.Text == "Stop Recording" || myCommand.Text == "Start/Stop Recording")
+                    myCommand.Text = "Start Recording";
+                else if (myCommand.Text == "Start Recording")
+                    myCommand.Text = "Stop Recording";
+            }
+        }
+
         /////////////////////////////////////////////////////////////////////////////
         // Overridden Package Implementation
         #region Package Members
 
-        /// <summary>
-        /// Initialization of the package; this method is called right after the package is sited, so this is the place
-        /// where you can put all the initialization code that rely on services provided by VisualStudio.
-        /// </summary>
         protected override void Initialize()
         {
             base.Initialize();
@@ -102,9 +88,10 @@ namespace VSMacros
                    new CommandID(GuidList.guidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidMacroExplorer)));
 
                  // Create the command for start recording
-                mcs.AddCommand(new MenuCommand(
-                    Record,
-                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidRecord)));
+                CommandID recordCommandID = new CommandID(GuidList.guidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidRecord);
+                OleMenuCommand recordMenuItem = new OleMenuCommand(Record, recordCommandID);
+                recordMenuItem.BeforeQueryStatus += new EventHandler(ToggleStartStopRecording);
+                mcs.AddCommand(recordMenuItem);
 
                 // Create the command for playbback
                 mcs.AddCommand(new MenuCommand(

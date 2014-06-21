@@ -25,6 +25,7 @@ namespace VSMacros.Engines
         public void StopPlayback() { }
 
         public void SaveCurrent() { }
+        public void LoadCurrent() { }
 
         private FileStream LoadFile(string path) { return null; }
         private void SaveToFile(Stream str) { }

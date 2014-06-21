@@ -193,7 +193,6 @@ namespace VSMacros
         {
             TextBox textBox = sender as TextBox;
             textBox.IsReadOnly = false;
-            Console.WriteLine("Focus");
         }
 
         #endregion

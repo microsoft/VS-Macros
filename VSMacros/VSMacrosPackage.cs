@@ -126,7 +126,7 @@ namespace VSMacros
 
         public void Record(object sender, EventArgs arguments)
         {
-            Manager.Instance.StartRecording();
+            Manager.Instance.ToggleRecording();
         }
 
         private void Playback(object sender, EventArgs arguments)

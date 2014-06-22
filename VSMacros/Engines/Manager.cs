@@ -16,10 +16,9 @@ namespace VSMacros.Engines
 
         #region Command Handling
 
-        public void StartRecording() { }
+        public void ToggleRecording() { }
 
-        public void StopRecording() { }
-
+        // TODO adjust function call when the executer interface is written
         public void Playback(string path, int times) { }
 
         public void StopPlayback() { }

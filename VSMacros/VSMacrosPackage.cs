@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.ComponentModel.Design;
+using System.Reflection;
 using Microsoft.Win32;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -16,11 +17,11 @@ using EnvDTE;
 namespace VSMacros
 {
     
-    [ProvideToolWindow(typeof(ExplorerToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
+    [ProvideToolWindow(typeof(MacrosToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
-    [Guid(GuidList.guidVSMacrosPkgString)]
+    [Guid(GuidList.GuidVSMacrosPkgString)]
     public sealed class VSMacrosPackage : Package
     {
         public static VSMacrosPackage Current { get; private set; }
@@ -34,29 +35,23 @@ namespace VSMacros
         {
             // Get the (only) instance of this tool window
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            ToolWindowPane window = this.FindToolWindow(typeof(ExplorerToolWindow), 0, true);
+            ToolWindowPane window = this.FindToolWindow(typeof(MacrosToolWindow), 0, true);
             if ((null == window) || (null == window.Frame))
             {
-                throw new NotSupportedException(Resources.CanNotCreateWindow);
+                throw new NotSupportedException(Resources.CannotCreateWindow);
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
 
+        private string macroDirectory;
         public string MacroDirectory
         {
-            get { return Path.Combine(this.UserLocalDataPath, "Macros");  }
-        }
-
-        private void ToggleStartStopRecording(object sender, EventArgs e)
-        {
-            var myCommand = sender as OleMenuCommand;
-            if (null != myCommand)
-            {
-                if (myCommand.Text == "" || myCommand.Text == "Stop Recording" || myCommand.Text == "Start/Stop Recording")
-                    myCommand.Text = "Start Recording";
-                else if (myCommand.Text == "Start Recording")
-                    myCommand.Text = "Stop Recording";
+            get 
+            { 
+                if (this.macroDirectory == default(string))
+                    this.macroDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
+                return this.macroDirectory;
             }
         }
 
@@ -68,16 +63,6 @@ namespace VSMacros
         {
             base.Initialize();
 
-            // Initialize file system
-            if (!Directory.Exists(MacroDirectory))
-                Directory.CreateDirectory(MacroDirectory);
-
-            if (!File.Exists(Path.Combine(MacroDirectory, "Current.js")))
-                File.Create(Path.Combine(MacroDirectory, "Current.js"));
-
-            // Load Current macro
-            Manager.Instance.LoadCurrent();
-
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -85,37 +70,37 @@ namespace VSMacros
                 // Create the command for the tool window
                 mcs.AddCommand(new MenuCommand(
                    ShowToolWindow,
-                   new CommandID(GuidList.guidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidMacroExplorer)));
+                   new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidMacroExplorer)));
 
                  // Create the command for start recording
-                CommandID recordCommandID = new CommandID(GuidList.guidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidRecord);
-                OleMenuCommand recordMenuItem = new OleMenuCommand(Record, recordCommandID);
-                recordMenuItem.BeforeQueryStatus += new EventHandler(ToggleStartStopRecording);
-                mcs.AddCommand(recordMenuItem);
+                mcs.AddCommand(new MenuCommand(
+                  Record,
+                  new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidRecord)));
 
-                // Create the command for playbback
+                // Create the command for playback
                 mcs.AddCommand(new MenuCommand(
                     Playback,
-                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidPlayback)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidPlayback)));
 
                 // Create the command for playback multiple times
                 mcs.AddCommand(new MenuCommand(
                     PlaybackMultipleTimes,
-                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidPlaybackMultipleTimes)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidPlaybackMultipleTimes)));
 
                 // Create the command for save current macro
                 mcs.AddCommand(new MenuCommand(
                     SaveCurrent,
-                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidSaveTemporaryMacro)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidSaveTemporaryMacro)));
+
                 // Create the command for refresh
                 mcs.AddCommand(new MenuCommand(
                     Refresh,
-                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidRefresh)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidRefresh)));
 
                 // Create the command to open the macro directory
                 mcs.AddCommand(new MenuCommand(
                     OpenDirectory,
-                    new CommandID(GuidList.guidVSMacrosCmdSet, PkgCmdIDList.cmdidOpenDirectory)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidOpenDirectory)));
             }
         }
         #endregion
@@ -152,7 +137,7 @@ namespace VSMacros
         public void OpenDirectory(object sender, EventArgs arguments)
         {
             // Open the macro directory and let the user manage the macros
-            System.Diagnostics.Process.Start(MacroDirectory);
+            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(MacroDirectory); });
         }
 
         #endregion

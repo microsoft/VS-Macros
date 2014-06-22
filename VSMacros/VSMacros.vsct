@@ -10,20 +10,17 @@
     <Menus>
       
       <!-- Macros Menu -->
-      <Menu guid="guidVSMacrosCmdSet" id="SubMenu" priority="0x0100" type="Menu">
+      <Menu guid="guidVSMacrosCmdSet" id="MacrosMenu" priority="0x0100" type="Menu">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_TOOLS_OTHER2"/>
         <Strings>
           <ButtonText>Macros</ButtonText>
-          <CommandName>Macros</CommandName>
         </Strings>
       </Menu>
       
       <!-- Toolbar Menu -->
-      <Menu guid="guidVSMacrosCmdSet" id="TWToolbar" priority="0x0200" type="ToolWindowToolbar">
-        <CommandFlag>DefaultDocked</CommandFlag>
+      <Menu guid="guidVSMacrosCmdSet" id="MacrosToolWindowToolbar" priority="0x0200" type="ToolWindowToolbar">
         <Strings>
           <ButtonText>Toolbar</ButtonText>
-          <CommandName>Toolbar</CommandName>
         </Strings>
       </Menu>
     </Menus>
@@ -32,18 +29,18 @@
     <Groups>
       
       <!-- Group 1 : commands on current macro -->
-      <Group guid="guidVSMacrosCmdSet" id="Group1" priority="0x0600">
-        <Parent guid="guidVSMacrosCmdSet" id="SubMenu"/>
+      <Group guid="guidVSMacrosCmdSet" id="MacrosControlGroup" priority="0x0600">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosMenu"/>
       </Group>
 
       <!-- Group 2 : other commands -->
-      <Group guid="guidVSMacrosCmdSet" id="Group2" priority="0x0700">
-        <Parent guid="guidVSMacrosCmdSet" id="SubMenu"/>
+      <Group guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" priority="0x0700">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosMenu"/>
       </Group>
 
       <!-- Management group -->
       <Group guid="guidVSMacrosCmdSet" id="ManagementGroup" priority="0x0900">
-        <Parent guid="guidVSMacrosCmdSet" id="TWToolbar"/>
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosToolWindowToolbar"/>
       </Group>
     </Groups>
     
@@ -52,67 +49,60 @@
       
       <!-- Group 1-->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Record" />
         <CommandFlag>TextChanges</CommandFlag>
         <Strings>
           <ButtonText>Start/Stop Recording</ButtonText>
-          <CommandName>Record</CommandName>
         </Strings>
       </Button>
 
-      <Button guid="guidVSMacrosCmdSet" id="cmdidPlayback" priority="001" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+      <Button guid="guidVSMacrosCmdSet" id="cmdidPlayback" priority="005" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Play" />
         <Strings>
           <ButtonText>Playback</ButtonText>
-          <CommandName>Playback</CommandName>
         </Strings>
       </Button>
 
-      <Button guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" priority="002" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+      <Button guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" priority="010" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidIcons" id="iconPlaybackMultipleTimes" />
         <Strings>
           <ButtonText>Playback Multiple Times</ButtonText>
-          <CommandName>PlaybackMultipleTimes</CommandName>
         </Strings>
       </Button>
 
-      <Button guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" priority="003" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="Group1" />
+      <Button guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" priority="015" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Save" />
         <Strings>
           <ButtonText>Save Current Macro</ButtonText>
-          <CommandName>SaveCurrentMacro</CommandName>
         </Strings>
       </Button>
 
       <!-- Group 2 -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="010" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="Group2" />
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="030" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
         <Strings>
           <ButtonText>Macro Explorer</ButtonText>
-          <CommandName>MacroExplorer</CommandName>
         </Strings>
       </Button>
       
       <!-- Management Group -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidRefresh" priority="020" type="Button">
+      <Button guid="guidVSMacrosCmdSet" id="cmdidRefresh" priority="050" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
         <Icon guid="guidSHLMainMenu" id="Refresh" />
         <Strings>
           <ButtonText>Refresh</ButtonText>
-          <CommandName>Refresh</CommandName>
         </Strings>
       </Button>
 
-      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="021" type="Button">
+      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="055" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
         <Icon guid="guidSHLMainMenu" id="OpenFolder" />
         <Strings>
           <ButtonText>Open Folder</ButtonText>
-          <CommandName>OpenFolder</CommandName>
         </Strings>
       </Button>
 
@@ -122,7 +112,6 @@
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Strings>
           <ButtonText>Macro Explorer</ButtonText>
-          <CommandName>MacroExplorer</CommandName>
         </Strings>
       </Button>
       -->
@@ -130,7 +119,7 @@
 
     <!-- BITMAPS -->
     <Bitmaps>
-      <Bitmap guid="guidIcons" href="Resources\ToolbarIcons.png" usedList="iconRecord, iconStop, iconPlayback, iconPlaybackMultipleTimes, iconSaveCurrentMacro, iconRefresh, iconOpenDirectory"/>
+      <Bitmap guid="guidIcons" href="Resources\ToolbarIcons.png" usedList="1,2,3,4,5,6,7"/>
     </Bitmaps>
  
   </Commands>
@@ -138,9 +127,9 @@
   <!-- COMMAND PLACEMENTS -->
   <CommandPlacements>
     
-    <!-- Placement for Group1 into the Tool Window Toolbar-->
-    <CommandPlacement guid="guidVSMacrosCmdSet" id="Group1" priority="0x605">
-      <Parent guid="guidVSMacrosCmdSet" id="TWToolbar"/>
+    <!-- Placement for MacrosControlGroup into the Tool Window Toolbar-->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="MacrosControlGroup" priority="0x605">
+      <Parent guid="guidVSMacrosCmdSet" id="MacrosToolWindowToolbar"/>
     </CommandPlacement>
 
     <!-- Tool Window menu command in View -->
@@ -151,8 +140,9 @@
   </CommandPlacements>
 
   <KeyBindings>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" key1="R" mod1="Control Shift"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="P" mod1="Control Shift"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord"    editor="guidVSStd97" key1="M" mod1="Control" key2="R"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control" key2="P"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" key2="O"/>
   </KeyBindings>
   
   <Symbols>
@@ -163,14 +153,14 @@
     <GuidSymbol name="guidVSMacrosCmdSet" value="{ad5b992c-e71a-4619-8d95-502b3b8de2c1}">
 
       <!-- Macros Sub Menu-->
-      <IDSymbol name="SubMenu" value="0x1000"/>
+      <IDSymbol name="MacrosMenu" value="0x1000"/>
       
       <!-- Toolbar in Tool Window -->
-      <IDSymbol name="TWToolbar" value="0x1010"/>
+      <IDSymbol name="MacrosToolWindowToolbar" value="0x1010"/>
       
       <!-- Groups -->
-      <IDSymbol name="Group1" value="0x1100"/>
-      <IDSymbol name="Group2" value="0x1200"/>
+      <IDSymbol name="MacrosControlGroup" value="0x1100"/>
+      <IDSymbol name="MacrosManagementGroup" value="0x1200"/>
       <IDSymbol name="ManagementGroup" value="0x1300"/>
       
       <!-- Commands -->

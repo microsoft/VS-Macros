@@ -10,10 +10,10 @@ namespace VSMacros.Model
 {
     public sealed class MacroFSNode : INotifyPropertyChanged
     {
-        public bool IsDirectory;
+        public bool IsDirectory { get; private set; }
         
         private string full_path;
-        private bool isEditing;
+        private bool isReadOnly;
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
@@ -24,7 +24,7 @@ namespace VSMacros.Model
         {
             FullPath = path;
             this.IsDirectory = ((File.GetAttributes(this.FullPath) & FileAttributes.Directory) == FileAttributes.Directory);
-            this.isEditing = false;
+            this.isReadOnly = true;
             this.parent = parent;
         }
 
@@ -76,13 +76,13 @@ namespace VSMacros.Model
             }
         }
 
-        public bool IsEditing
+        public bool IsReadOnly
         {
-            get { return !this.isEditing; }
+            get { return this.isReadOnly; }
             set
             {
-                this.isEditing = value;
-                NotifyPropertyChanged("IsEditing");
+                this.isReadOnly = value;
+                NotifyPropertyChanged("IsReadOnly");
             }
         }
 
@@ -139,7 +139,7 @@ namespace VSMacros.Model
 
         public void EnableEdit()
         {
-            IsEditing = true;
+            IsReadOnly = false;
         }
 
         public void Refresh()

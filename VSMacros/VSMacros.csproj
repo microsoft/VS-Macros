@@ -127,11 +127,11 @@
   <ItemGroup>
     <Compile Include="Engines\Manager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
-    <Compile Include="Tool Window Components\BrowserListControl.xaml.cs">
-      <DependentUpon>BrowserListControl.xaml</DependentUpon>
+    <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
+      <DependentUpon>MacrosControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tool Window Components\ExplorerToolWindow.cs" />
-    <Compile Include="Guids.cs" />
+    <Compile Include="Tool Window Components\MacrosToolWindow.cs" />
+    <Compile Include="GuidList.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -140,7 +140,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="VSMacrosPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PkgCmdID.cs" />
+    <Compile Include="PkgCmdIDList.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -178,7 +178,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tool Window Components\BrowserListControl.xaml">
+    <Page Include="Tool Window Components\MacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

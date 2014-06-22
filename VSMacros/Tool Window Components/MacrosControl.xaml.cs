@@ -15,14 +15,11 @@ using VSMacros.Model;
 
 namespace VSMacros
 {
-    /// <summary>
-    /// Interaction logic for MyControl.xaml
-    /// </summary>
-    public partial class MacroBrowserList : UserControl
+    public partial class MacrosControl : UserControl
     {
         private MacroFSNode RootNode;
 
-        public MacroBrowserList(MacroFSNode rootNode)
+        public MacrosControl(MacroFSNode rootNode)
         {
             this.RootNode = rootNode;
 
@@ -48,62 +45,49 @@ namespace VSMacros
             dte.ItemOperations.OpenFile(path);
         }
 
+        // TODO Refactor some more
         private void Delete(object sender, RoutedEventArgs e)
         {
             MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
             string path = item.FullPath;
 
-            if (!item.IsDirectory)
+            FileSystemInfo file;
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string message;
+
+            if (item.IsDirectory)
             {
-                FileInfo file = new FileInfo(path);
-                if (file.Exists)
-                {
-                    string fileName = Path.GetFileNameWithoutExtension(path);
-                    string messageBoxText = "Are you sure you want to delete '" + fileName + "'? '" + fileName + "' will be sent to the recycle bin.";
-                    string caption = "Delete";
-                    MessageBoxButton button = MessageBoxButton.YesNo;
-                    MessageBoxImage icon = MessageBoxImage.Warning;
-
-                    MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
-
-                    if (MessageBoxResult.Yes == result)
-                    {
-                        file.Delete();
-                        item.Delete();
-                    }
-                }
-                else
-                    item.Delete();
+                file = new DirectoryInfo(path);
+                message = "'" + fileName + "' will be sent to the recycle bin.";
             }
             else
             {
-                DirectoryInfo dir = new DirectoryInfo(path);
-                if (dir.Exists)
+                file = new FileInfo(path);
+                message = "'" + fileName + "' and all its contents will be sent to the recycle bin.";
+            }
+
+            if (file.Exists)
+            {
+                if (MessageBoxResult.OK == MessageBox.Show(message, "Delete", MessageBoxButton.OKCancel, MessageBoxImage.Warning))
                 {
-                    string messageBoxText = "'" + dir.Name + "' and all its contents will be sent to the recycle bin.";
-                    string caption = "Delete";
-                    MessageBoxButton button = MessageBoxButton.OKCancel;
-                    MessageBoxImage icon = MessageBoxImage.Warning;
-
-                    MessageBoxResult result = MessageBox.Show(messageBoxText, caption, button, icon);
-
-                    if (MessageBoxResult.OK == result)
-                    {
-                        dir.Delete();
-                        item.Delete();
-                    }
-                }
-                else
+                    file.Delete();  // TODO non-empty dir will raise an exception here -> User Directory.Delete(path, true)
                     item.Delete();
+                }
+            }
+            else
+            {
+                item.Delete();
             }
         }
 
         private void SaveCurrentMacro(object sender, RoutedEventArgs e) { }
-        private void Rename(object sender, RoutedEventArgs e) {
+        private void Rename(object sender, RoutedEventArgs e)
+        {
             MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
             item.EnableEdit();
         }
-        private void AssignShortcut(object sender, RoutedEventArgs e) {
+        private void AssignShortcut(object sender, RoutedEventArgs e)
+        {
         }
 
         private void Open(object sender, RoutedEventArgs e)
@@ -114,7 +98,7 @@ namespace VSMacros
         private void Refresh(object sender, RoutedEventArgs e)
         {
             MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
-           item.Refresh();
+            item.Refresh();
         }
         #endregion
 
@@ -192,7 +176,7 @@ namespace VSMacros
         private void OnTextBoxLostFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = sender as TextBox;
-            textBox.IsReadOnly = false;
+            textBox.IsReadOnly = true;
         }
 
         #endregion

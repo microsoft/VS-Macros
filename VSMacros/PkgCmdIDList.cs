@@ -1,16 +1,14 @@
-﻿// PkgCmdID.cs
-// MUST match PkgCmdID.h
-using System;
+﻿using System;
 
 namespace VSMacros
 {
-    static class PkgCmdIDList
+    internal static class PkgCmdIDList
     {
 
         public const uint cmdidMacroExplorer =    0x101;
 
         // Tool Window Toolbar
-        public const int TWToolbar = 0x1010;
+        public const int MacrosToolWindowToolbar = 0x1010;
 
         // Commands
         public const int cmdidRecord = 0x2000;

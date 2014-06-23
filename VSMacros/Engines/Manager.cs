@@ -12,11 +12,9 @@ namespace VSMacros.Engines
         void StopPlayback();
 
         void SaveCurrent();
-
-        void LoadCurrent();
     }
 
-    public sealed class Manager : IManager
+    private sealed class Manager : IManager
     {
         static readonly Manager _instance = new Manager();
 
@@ -42,10 +40,6 @@ namespace VSMacros.Engines
         }
 
         public void SaveCurrent() 
-        {
-        }
-
-        public void LoadCurrent() 
         {
         }
 

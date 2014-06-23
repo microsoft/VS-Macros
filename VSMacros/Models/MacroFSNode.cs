@@ -92,9 +92,9 @@ namespace VSMacros.Model
             get
             {
                 if (this.IsDirectory)
-                    return @"C:\Users\t-jusdom\Downloads\folder.png";
+                    return @"..\Resources\folder.png";
                 else
-                    return @"C:\Users\t-jusdom\Downloads\js.png";
+                    return @"..\Resources\js.png";
             }
         }
 

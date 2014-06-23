@@ -26,7 +26,7 @@
                                   ItemsSource="{Binding Mode=OneWay, Path=Children}"
                                   ItemTemplate="{StaticResource ChildTemplate}">
             <StackPanel Orientation="Horizontal">
-                <Image Width="20" Height="20" Stretch="Fill" Source="C:\Users\t-jusdom\Downloads\macro.png"/>
+                <Image Width="20" Height="20" Stretch="Fill" Source="..\Resources\macro.png"/>
                 <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>

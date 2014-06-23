@@ -36,7 +36,7 @@ namespace VSMacros
             // Get the (only) instance of this tool window
             // The last flag is set to true so that if the tool window does not exists it will be created.
             ToolWindowPane window = this.FindToolWindow(typeof(MacrosToolWindow), 0, true);
-            if ((null == window) || (null == window.Frame))
+            if ((window == null) || (window.Frame == null))
             {
                 throw new NotSupportedException(Resources.CannotCreateWindow);
             }

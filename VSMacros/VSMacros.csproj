@@ -171,6 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images.png" />
+    <Resource Include="Resources\folder.png" />
+    <Resource Include="Resources\js.png" />
+    <Resource Include="Resources\macro.png" />
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>

@@ -14,8 +14,6 @@ namespace VSMacros.Engines
             get { return _instance; }
         }
 
-        #region Command Handling
-
         public void ToggleRecording() { }
 
         // TODO adjust function call when the executer interface is written
@@ -28,6 +26,6 @@ namespace VSMacros.Engines
 
         private FileStream LoadFile(string path) { return null; }
         private void SaveToFile(Stream str) { }
-        #endregion
+
     }
 }

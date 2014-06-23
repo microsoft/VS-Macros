@@ -37,6 +37,7 @@ namespace VSMacros.Model
             set 
             { 
                 this.fullPath = value;
+                this.NotifyPropertyChanged("FullPath");
                 this.NotifyPropertyChanged("Name");
             }
         }
@@ -74,10 +75,6 @@ namespace VSMacros.Model
 
                     // Update object
                     this.FullPath = newFullPath;
-
-                    // Notify the property change
-                    // TODO is this necessary since "FullPath = newFullPath" will raise NotifyPropertyChanged("Name") anway?
-                    this.NotifyPropertyChanged("Name");
                 }
                 catch(Exception e)
                 {

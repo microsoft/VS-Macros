@@ -17,6 +17,8 @@ namespace VSMacros
     [Guid("56fbfa32-c049-4fd5-9b54-39fcdf33629d")]
     public class MacrosToolWindow : ToolWindowPane
     {
+        private const string currentMacroLocation = "Current.js";
+
         public MacrosToolWindow() :
             base(null)
         {
@@ -33,13 +35,10 @@ namespace VSMacros
                 Directory.CreateDirectory(VSMacrosPackage.Current.MacroDirectory);
             }
 
-            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js")))
+            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, currentMacroLocation)))
             {
-                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"));
+                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, currentMacroLocation));
             }
-                
-            // Load Current macro
-            Manager.Instance.LoadCurrent();
 
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
             MacroFSNode root = new MacroFSNode(MacroDirectory);

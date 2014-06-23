@@ -14,9 +14,9 @@ namespace VSMacros.Engines
         void SaveCurrent();
     }
 
-    private sealed class Manager : IManager
+    public sealed class Manager : IManager
     {
-        static readonly Manager _instance = new Manager();
+        private static readonly Manager instance = new Manager();
 
         private Manager() 
         { 
@@ -24,7 +24,7 @@ namespace VSMacros.Engines
 
         public static Manager Instance
         {
-            get { return _instance; }
+            get { return instance; }
         }
 
         public void ToggleRecording()

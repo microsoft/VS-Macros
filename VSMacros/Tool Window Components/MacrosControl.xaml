@@ -7,7 +7,7 @@
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Name="MyToolWindow">
+             Name="MyControl">
     <UserControl.Resources>
         <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Mode=OneWay, Path=Children}">
             <StackPanel Orientation="Horizontal">
@@ -30,18 +30,18 @@
                 <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>
-        <!--<ResourceDictionary>
+        <ResourceDictionary x:Key="MyDictionary">
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Assets/TreeView.xaml" />
+                <ResourceDictionary Source="..\Assets\TreeView.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>-->
+        </ResourceDictionary>
     </UserControl.Resources>
     <TreeView x:Name="macroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
               SelectedItemChanged="macroTreeView_SelectedItemChanged"
               Width="Auto"
-              Background="{DynamicResource VsBrush.EnvironmentToolWindowBackground}"
-              BorderBrush="{DynamicResource VsBrush.EnvironmentToolWindowBorder}"
+              Background="{DynamicResource VsBrush.Environment.ToolWindowBackground}"
+              BorderBrush="{DynamicResource VsBrush.Environment.ToolWindowBorder}"
               >
         <!-- Add right click handler (http://stackoverflow.com/a/592483/1146764) -->
         <TreeView.ItemContainerStyle>

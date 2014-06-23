@@ -1,18 +1,16 @@
 ﻿using System;
-using System.IO;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows;
-using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
 using System.ComponentModel.Design; // for CommandID
-
-using VSMacros.Model;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
-
+using VSMacros.Model;
 
 namespace VSMacros
 {
@@ -31,16 +29,21 @@ namespace VSMacros
 
             // Initialize file system
             if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
+            {
                 Directory.CreateDirectory(VSMacrosPackage.Current.MacroDirectory);
+            }
 
             if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js")))
+            {
                 File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"));
-
+            }
+                
             // Load Current macro
             Manager.Instance.LoadCurrent();
 
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
-            base.Content = new MacrosControl(new MacroFSNode(MacroDirectory));
+            MacroFSNode root = new MacroFSNode(MacroDirectory);
+            base.Content = new MacrosControl(root);
         }
     }
 }

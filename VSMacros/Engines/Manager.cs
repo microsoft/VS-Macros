@@ -7,25 +7,43 @@ namespace VSMacros.Engines
     {
         static readonly Manager _instance = new Manager();
 
-        private Manager() { }
+        private Manager() 
+        { 
+        }
 
         public static Manager Instance
         {
             get { return _instance; }
         }
 
-        public void ToggleRecording() { }
+        public void ToggleRecording()
+        {
+        }
 
         // TODO adjust function call when the executer interface is written
-        public void Playback(string path, int times) { }
+        public void Playback(string path, int times) 
+        {
+        }
 
-        public void StopPlayback() { }
+        public void StopPlayback() 
+        {
+        }
 
-        public void SaveCurrent() { }
-        public void LoadCurrent() { }
+        public void SaveCurrent() 
+        {
+        }
 
-        private FileStream LoadFile(string path) { return null; }
-        private void SaveToFile(Stream str) { }
+        public void LoadCurrent() 
+        {
+        }
 
+        private FileStream LoadFile(string path) 
+        { 
+            return null; 
+        }
+
+        private void SaveToFile(Stream str)
+        { 
+        }
     }
 }

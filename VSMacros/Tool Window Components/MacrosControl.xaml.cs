@@ -17,14 +17,10 @@ namespace VSMacros
 {
     public partial class MacrosControl : UserControl
     {
-        private MacroFSNode RootNode;
-
         public MacrosControl(MacroFSNode rootNode)
         {
-            this.RootNode = rootNode;
-
             // Let the UI bind to the view-model
-            this.DataContext = new MacroFSNode[] { this.RootNode };
+            this.DataContext = new MacroFSNode[] { rootNode };
             InitializeComponent();
         }
 
@@ -33,7 +29,6 @@ namespace VSMacros
         #region Context Menu Handlers
         private void Playback(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void Edit(object sender, RoutedEventArgs e)
@@ -58,12 +53,12 @@ namespace VSMacros
             if (item.IsDirectory)
             {
                 file = new DirectoryInfo(path);
-                message = String.Format(VSMacros.Resources.DeleteFolder, fileName); 
+                message = string.Format(VSMacros.Resources.DeleteFolder, fileName); 
             }
             else
             {
                 file = new FileInfo(path);
-                message = String.Format(VSMacros.Resources.DeleteMacro, fileName);
+                message = string.Format(VSMacros.Resources.DeleteMacro, fileName);
             }
 
             if (file.Exists)
@@ -80,12 +75,16 @@ namespace VSMacros
             }
         }
 
-        private void SaveCurrentMacro(object sender, RoutedEventArgs e) { }
+        private void SaveCurrentMacro(object sender, RoutedEventArgs e) 
+        { 
+        }
+
         private void Rename(object sender, RoutedEventArgs e)
         {
             MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
             item.EnableEdit();
         }
+
         private void AssignShortcut(object sender, RoutedEventArgs e)
         {
         }
@@ -106,16 +105,19 @@ namespace VSMacros
 
         private void macroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            MacroFSNode SelectedNode = macroTreeView.SelectedItem as MacroFSNode;
+            MacroFSNode selectedNode = macroTreeView.SelectedItem as MacroFSNode;
 
-            if (SelectedNode == null) return;
+            if (selectedNode == null) 
+            { 
+                return; 
+            }
 
-            SelectedPath = SelectedNode.FullPath;
+            this.SelectedPath = selectedNode.FullPath;
 
-            string name = Path.GetFileNameWithoutExtension(SelectedPath);
-            string extension = Path.GetExtension(SelectedPath);
+            string name = Path.GetFileNameWithoutExtension(this.SelectedPath);
+            string extension = Path.GetExtension(this.SelectedPath);
 
-            if (extension != "")
+            if (extension != string.Empty)
             {
                 if (name == "Current")
                 {
@@ -127,10 +129,13 @@ namespace VSMacros
                 }
             }
             else if (name == "Macros")  // TODO change checking for something more robust
+            {
                 macroTreeView.ContextMenu = macroTreeView.Resources["BrowserContext"] as System.Windows.Controls.ContextMenu;
+            }
             else
+            {
                 macroTreeView.ContextMenu = macroTreeView.Resources["FolderContext"] as System.Windows.Controls.ContextMenu;
-
+            }
         }
 
         // Taken from http://stackoverflow.com/questions/592373/select-treeview-node-on-right-click-before-displaying-contextmenu/592483#592483
@@ -145,10 +150,12 @@ namespace VSMacros
             }
         }
 
-        static TreeViewItem VisualUpwardSearch(DependencyObject source)
+        private static TreeViewItem VisualUpwardSearch(DependencyObject source)
         {
             while (source != null && !(source is TreeViewItem))
+            {
                 source = VisualTreeHelper.GetParent(source);
+            }
 
             return source as TreeViewItem;
         }
@@ -159,14 +166,15 @@ namespace VSMacros
             {
                 case Key.Delete:
                     {
-                        Delete(null, null);
+                        this.Delete(null, null);
                         e.Handled = true;
                         break;
                     }
+
                 case Key.Space:
                 case Key.F2:
                     {
-                        Rename(null, null);
+                        this.Rename(null, null);
                         e.Handled = true;
                         break;
                     }

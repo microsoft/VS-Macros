@@ -1,7 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.IO;
 using System.Windows;
@@ -10,31 +10,34 @@ namespace VSMacros.Model
 {
     public sealed class MacroFSNode : INotifyPropertyChanged
     {
-        public bool IsDirectory { get; private set; }
-        
-        private string full_path;
+        private string fullPath;
         private bool isReadOnly;
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public bool IsDirectory { get; private set; }
 
         public MacroFSNode(string path, MacroFSNode parent = null)
         {
-            FullPath = path;
-            this.IsDirectory = ((File.GetAttributes(this.FullPath) & FileAttributes.Directory) == FileAttributes.Directory);
+            this.FullPath = path;
+            this.IsDirectory = (File.GetAttributes(this.FullPath) & FileAttributes.Directory) == FileAttributes.Directory;
             this.isReadOnly = true;
             this.parent = parent;
         }
 
         public string FullPath
         {
-            get { return this.full_path; }
+            get
+            { 
+                return this.fullPath;
+            }
+
             set 
             { 
-                this.full_path = value;
-                NotifyPropertyChanged("Name");
+                this.fullPath = value;
+                this.NotifyPropertyChanged("Name");
             }
         }
 
@@ -45,45 +48,58 @@ namespace VSMacros.Model
                 string path = Path.GetFileNameWithoutExtension(this.FullPath);
 
                 if (string.IsNullOrWhiteSpace(path))
+                {
                     return this.FullPath;
+                }
 
                 return path;
             }
+
             set
             {
-                string oldFullPath = FullPath;
-                string newFullPath = Path.Combine(Path.GetDirectoryName(FullPath), value + Path.GetExtension(FullPath));
+                string oldFullPath = this.FullPath;
+                string newFullPath = Path.Combine(Path.GetDirectoryName(this.FullPath), value + Path.GetExtension(this.FullPath));
 
                 try
                 {
                      // Update file system
                     if (this.IsDirectory)
+                    {
                         Directory.Move(oldFullPath, newFullPath);
+                    }
                     else
+                    {
                         File.Move(oldFullPath, newFullPath);
+                    }
 
                     // Update object
-                    FullPath = newFullPath;
+                    this.FullPath = newFullPath;
 
                     // Notify the property change
                     // TODO is this necessary since "FullPath = newFullPath" will raise NotifyPropertyChanged("Name") anway?
-                    NotifyPropertyChanged("Name");
+                    this.NotifyPropertyChanged("Name");
                 }
                 catch(Exception e)
                 {
                     if (e.Message != null)
+                    {
                         MessageBox.Show(e.Message);
+                    }
                 }
             }
         }
 
         public bool IsReadOnly
         {
-            get { return this.isReadOnly; }
+            get 
+            { 
+                return this.isReadOnly; 
+            }
+
             set
             {
                 this.isReadOnly = value;
-                NotifyPropertyChanged("IsReadOnly");
+                this.NotifyPropertyChanged("IsReadOnly");
             }
         }
 
@@ -92,9 +108,13 @@ namespace VSMacros.Model
             get
             {
                 if (this.IsDirectory)
+                {
                     return @"..\Resources\folder.png";
+                }
                 else
+                {
                     return @"..\Resources\js.png";
+                }
             }
         }
 
@@ -109,7 +129,7 @@ namespace VSMacros.Model
 
                 if (this.children == null)
                 {
-                    this.children = GetChildNodes();
+                    this.children = this.GetChildNodes();
                 }
 
                 return this.children;
@@ -140,12 +160,11 @@ namespace VSMacros.Model
 
         public void EnableEdit()
         {
-            IsReadOnly = false;
+            this.IsReadOnly = false;
         }
 
         public void Refresh()
         {
-            
         }
 
         #endregion
@@ -153,7 +172,7 @@ namespace VSMacros.Model
         // Create the OnPropertyChanged method to raise the event 
         private void NotifyPropertyChanged(string name)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(name));

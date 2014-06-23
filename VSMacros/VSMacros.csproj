@@ -179,8 +179,8 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Assets\TreeView.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tool Window Components\MacrosControl.xaml">
       <SubType>Designer</SubType>

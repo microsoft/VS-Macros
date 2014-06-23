@@ -3,7 +3,20 @@ using System.IO;
 
 namespace VSMacros.Engines
 {
-    public sealed class Manager
+    interface IManager
+    {
+        void ToggleRecording();
+
+        void Playback(string path, int times);
+
+        void StopPlayback();
+
+        void SaveCurrent();
+
+        void LoadCurrent();
+    }
+
+    public sealed class Manager : IManager
     {
         static readonly Manager _instance = new Manager();
 
@@ -20,7 +33,6 @@ namespace VSMacros.Engines
         {
         }
 
-        // TODO adjust function call when the executer interface is written
         public void Playback(string path, int times) 
         {
         }

@@ -66,6 +66,7 @@ namespace VSMacros.Model
                     FullPath = newFullPath;
 
                     // Notify the property change
+                    // TODO is this necessary since "FullPath = newFullPath" will raise NotifyPropertyChanged("Name") anway?
                     NotifyPropertyChanged("Name");
                 }
                 catch(Exception e)

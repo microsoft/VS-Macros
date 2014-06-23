@@ -58,12 +58,12 @@ namespace VSMacros
             if (item.IsDirectory)
             {
                 file = new DirectoryInfo(path);
-                message = "'" + fileName + "' will be sent to the recycle bin.";
+                message = String.Format(VSMacros.Resources.DeleteFolder, fileName); 
             }
             else
             {
                 file = new FileInfo(path);
-                message = "'" + fileName + "' and all its contents will be sent to the recycle bin.";
+                message = String.Format(VSMacros.Resources.DeleteMacro, fileName);
             }
 
             if (file.Exists)

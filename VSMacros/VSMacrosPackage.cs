@@ -70,37 +70,37 @@ namespace VSMacros
                 // Create the command for the tool window
                 mcs.AddCommand(new MenuCommand(
                    ShowToolWindow,
-                   new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidMacroExplorer)));
+                   new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.CmdIdMacroExplorer)));
 
                  // Create the command for start recording
                 mcs.AddCommand(new MenuCommand(
                   Record,
-                  new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.cmdidRecord)));
+                  new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.CmdIdRecord)));
 
                 // Create the command for playback
                 mcs.AddCommand(new MenuCommand(
                     Playback,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidPlayback)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdPlayback)));
 
                 // Create the command for playback multiple times
                 mcs.AddCommand(new MenuCommand(
                     PlaybackMultipleTimes,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidPlaybackMultipleTimes)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdPlaybackMultipleTimes)));
 
                 // Create the command for save current macro
                 mcs.AddCommand(new MenuCommand(
                     SaveCurrent,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidSaveTemporaryMacro)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdSaveTemporaryMacro)));
 
                 // Create the command for refresh
                 mcs.AddCommand(new MenuCommand(
                     Refresh,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidRefresh)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRefresh)));
 
                 // Create the command to open the macro directory
                 mcs.AddCommand(new MenuCommand(
                     OpenDirectory,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.cmdidOpenDirectory)));
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenDirectory)));
             }
         }
         #endregion

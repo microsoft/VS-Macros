@@ -70,6 +70,24 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; and all its contents will be sent to the recycle bin..
+        /// </summary>
+        internal static string DeleteFolder {
+            get {
+                return ResourceManager.GetString("DeleteFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; will be sent to the recycle bin..
+        /// </summary>
+        internal static string DeleteMacro {
+            get {
+                return ResourceManager.GetString("DeleteMacro", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Macro Explorer.
         /// </summary>
         internal static string ToolWindowTitle {

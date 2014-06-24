@@ -6,7 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Windows;
 
-namespace VSMacros.Model
+namespace VSMacros.Models
 {
     public sealed class MacroFSNode : INotifyPropertyChanged
     {
@@ -17,12 +17,15 @@ namespace VSMacros.Model
         private ObservableCollection<MacroFSNode> children;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public static MacroFSNode RootNode;
+
         public bool IsDirectory { get; private set; }
 
         public MacroFSNode(string path, MacroFSNode parent = null)
         {
+            this.IsDirectory = (File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory;
             this.FullPath = path;
-            this.IsDirectory = (File.GetAttributes(this.FullPath) & FileAttributes.Directory) == FileAttributes.Directory;
             this.isEditable = false;
             this.parent = parent;
         }
@@ -136,7 +139,7 @@ namespace VSMacros.Model
         // Returns a list of children of the current node
         private ObservableCollection<MacroFSNode> GetChildNodes()
         {
-            var file = from childFile in Directory.GetFiles(this.FullPath)
+            var files = from childFile in Directory.GetFiles(this.FullPath)
                        where Path.GetExtension(childFile) == ".js"
                        orderby childFile
                        select childFile;
@@ -145,7 +148,7 @@ namespace VSMacros.Model
                               orderby childDirectory
                               select childDirectory;
 
-            return new ObservableCollection<MacroFSNode>(directories.Union(file)
+            return new ObservableCollection<MacroFSNode>(files.Union(directories)
                     .Select((item) => new MacroFSNode(item, this)));
         }
 

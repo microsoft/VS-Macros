@@ -23,31 +23,88 @@
           <ButtonText>Toolbar</ButtonText>
         </Strings>
       </Menu>
+      
+      <!-- Context Menus -->
+      
+      <!-- Browser Context Menu-->
+      <Menu guid="guidVSMacrosCmdSet" id="BrowserContextMenu" type="Context">
+        <Strings>
+          <ButtonText>Macro Browser</ButtonText>
+        </Strings>
+      </Menu>
+      
+      <!-- Current Context Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="CurrentContextMenu" type="Context">
+        <Strings>
+          <ButtonText>Current Macro</ButtonText>
+        </Strings>
+      </Menu>
+      
+      <!-- Macro Context Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="MacroContextMenu" type="Context">
+        <Strings>
+          <ButtonText>Macro</ButtonText>
+        </Strings>
+      </Menu>
+      
+      <!-- Folder Context Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="FolderContextMenu" type="Context">
+        <Strings>
+          <ButtonText>Folder</ButtonText>
+        </Strings>
+      </Menu>
+      
     </Menus>
 
     <!-- GROUPS -->
     <Groups>
       
-      <!-- Group 1 : commands on current macro -->
+      <!-- Control Group : commands on current macro -->
       <Group guid="guidVSMacrosCmdSet" id="MacrosControlGroup" priority="0x0600">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosMenu"/>
       </Group>
 
-      <!-- Group 2 : other commands -->
-      <Group guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" priority="0x0700">
+      <!-- Action Group : action on the extension components (e.g. open tool window) -->
+      <Group guid="guidVSMacrosCmdSet" id="MacrosActionGroup" priority="0x0700">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosMenu"/>
       </Group>
 
       <!-- Management group -->
-      <Group guid="guidVSMacrosCmdSet" id="ManagementGroup" priority="0x0900">
+      <Group guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" priority="0x0900">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosToolWindowToolbar"/>
       </Group>
+
+      <!-- Current Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="CurrentContextGroup" priority="0x0050">
+        <Parent guid="guidVSMacrosCmdSet" id="CurrentContextMenu"/>
+      </Group>
+
+      <!-- Macro Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="MacroContextGroup" priority="0x0050">
+        <Parent guid="guidVSMacrosCmdSet" id="MacroContextMenu"/>
+      </Group>
+
+      <!-- Folder Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="FolderContextGroup" priority="0x0050">
+        <Parent guid="guidVSMacrosCmdSet" id="FolderContextMenu"/>
+      </Group>
+      
+      <!-- Playback Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="PlaybackGroup" priority="0x0005">
+        <Parent guid="guidVSMacrosCmdSet" id="MacroContextMenu"/>
+      </Group>
+      
+      <!-- Delete Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="DeleteGroup" priority="0x1000">
+        <Parent guid="guidVSMacrosCmdSet" id="FolderContextMenu"/>
+      </Group>
+    
     </Groups>
     
     <!-- BUTTONS -->
     <Buttons>
       
-      <!-- Group 1-->
+      <!-- Control Group Buttons -->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Record" />
@@ -81,17 +138,17 @@
         </Strings>
       </Button>
 
-      <!-- Group 2 -->
+      <!-- Action Group Buttons -->
       <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="030" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosActionGroup" />
         <Strings>
           <ButtonText>Macro Explorer</ButtonText>
         </Strings>
       </Button>
       
-      <!-- Management Group -->
+      <!-- Management Group Buttons -->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRefresh" priority="050" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
         <Icon guid="guidSHLMainMenu" id="Refresh" />
         <Strings>
           <ButtonText>Refresh</ButtonText>
@@ -99,22 +156,49 @@
       </Button>
 
       <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="055" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="ManagementGroup" />
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
         <Icon guid="guidSHLMainMenu" id="OpenFolder" />
         <Strings>
           <ButtonText>Open Folder</ButtonText>
         </Strings>
       </Button>
+      
+      <!-- Current Context Group Buttons -->
+      <!-- Buttons added through command placements -->
 
-      <!-- Tool Window-->
-      <!--
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="0x0100" type="Button">
-        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+      <!-- Macro Context Group Buttons -->
+      <Button guid="guidVSMacrosCmdSet" id="cmdidEdit" priority="10" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
         <Strings>
-          <ButtonText>Macro Explorer</ButtonText>
+          <ButtonText>Edit</ButtonText>
         </Strings>
       </Button>
-      -->
+
+      <Button guid="guidVSMacrosCmdSet" id="cmdidRename" priority="15" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
+        <Strings>
+          <ButtonText>Rename</ButtonText>
+        </Strings>
+      </Button>
+      
+      <Button guid="guidVSMacrosCmdSet" id="cmdidAssignShortcut" priority="20" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
+        <Strings>
+          <ButtonText>Assign Shortcut</ButtonText>
+        </Strings>
+      </Button>
+      
+      <!-- Folder Context Group Buttons -->
+      <!-- Buttons added through command placements -->
+      
+      <!-- Delete Group Buttons -->
+      <Button guid="guidVSMacrosCmdSet" id="cmdidDelete" priority="05" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="DeleteGroup" />
+        <Strings>
+          <ButtonText>Delete</ButtonText>
+        </Strings>
+      </Button>
+      
     </Buttons>
 
     <!-- BITMAPS -->
@@ -137,12 +221,51 @@
       <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
     </CommandPlacement>
     
+    <!-- Management Group in Browser Context Menu-->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" priority="100">
+      <Parent guid="guidVSMacrosCmdSet" id="BrowserContextMenu" />
+    </CommandPlacement>
+
+    <!-- Playback command in Playback Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidPlayback" priority="100">
+      <Parent guid="guidVSMacrosCmdSet" id="PlaybackGroup" />
+    </CommandPlacement>
+
+    <!-- Playback Group in Current Context Menu -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="PlaybackGroup" priority="50">
+      <Parent guid="guidVSMacrosCmdSet" id="CurrentContextMenu" />
+    </CommandPlacement>
+
+    <!-- Edit command in Current Context Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidEdit" priority="75">
+      <Parent guid="guidVSMacrosCmdSet" id="CurrentContextGroup" />
+    </CommandPlacement>
+
+    <!-- Save Current command in Current Context Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" priority="100">
+      <Parent guid="guidVSMacrosCmdSet" id="CurrentContextGroup" />
+    </CommandPlacement>
+    
+    <!-- Delete Group in Macro Context Menu -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="DeleteGroup" priority="100">
+      <Parent guid="guidVSMacrosCmdSet" id="MacroContextMenu" />
+    </CommandPlacement>
+    
+    <!-- Rename command in Folder Context Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidRename" priority="001">
+      <Parent guid="guidVSMacrosCmdSet" id="FolderContextGroup" />
+    </CommandPlacement>
+    
   </CommandPlacements>
 
   <KeyBindings>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord"    editor="guidVSStd97" key1="M" mod1="Control" key2="R"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control" key2="P"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" key2="O"/>
+
+    <!-- TODO change editor to tool window -->
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRename" editor="guidVSStd97" key1="VK_F2" mod1=""/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidDelete" editor="guidVSStd97" key1="VK_DELETE" mod1=""/>
   </KeyBindings>
   
   <Symbols>
@@ -152,16 +275,27 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidVSMacrosCmdSet" value="{ad5b992c-e71a-4619-8d95-502b3b8de2c1}">
 
-      <!-- Macros Sub Menu-->
+      <!-- Menus -->
       <IDSymbol name="MacrosMenu" value="0x1000"/>
+
+      <IDSymbol name="BrowserContextMenu" value="0x1005"/>
+      <IDSymbol name="CurrentContextMenu" value="0x1006"/>
+      <IDSymbol name="MacroContextMenu" value="0x1007"/>
+      <IDSymbol name="FolderContextMenu" value="0x1008"/>
       
       <!-- Toolbar in Tool Window -->
-      <IDSymbol name="MacrosToolWindowToolbar" value="0x1010"/>
+      <IDSymbol name="MacrosToolWindowToolbar" value="0x1050"/>
       
       <!-- Groups -->
       <IDSymbol name="MacrosControlGroup" value="0x1100"/>
-      <IDSymbol name="MacrosManagementGroup" value="0x1200"/>
-      <IDSymbol name="ManagementGroup" value="0x1300"/>
+      <IDSymbol name="MacrosActionGroup" value="0x1200"/>
+      <IDSymbol name="MacrosManagementGroup" value="0x1300"/>
+
+      <IDSymbol name="CurrentContextGroup" value="0x1405"/>
+      <IDSymbol name="MacroContextGroup" value="0x1410"/>
+      <IDSymbol name="FolderContextGroup" value="0x1415"/>
+      <IDSymbol name="PlaybackGroup" value="0x1420"/>
+      <IDSymbol name="DeleteGroup" value="0x1425"/>
       
       <!-- Commands -->
       <IDSymbol name="cmdidRecord" value="0x2000"/>
@@ -170,9 +304,15 @@
       <IDSymbol name="cmdidSaveCurrentMacro" value="0x2003"/>
       <IDSymbol name="cmdidRefresh" value="0x2010"/>
       <IDSymbol name="cmdidOpenDirectory" value="0x2011"/>
+
+      <IDSymbol name="cmdidEdit" value="0x2020"/>
+      <IDSymbol name="cmdidRename" value="0x2021"/>
+      <IDSymbol name="cmdidAssignShortcut" value="0x2022"/>
+      <IDSymbol name="cmdidDelete" value="0x2023"/>
       
       <!-- Tool Window -->
       <IDSymbol name="cmdidMacroExplorer" value="0x0101" />
+      
     </GuidSymbol>
     
     <!-- Icons -->

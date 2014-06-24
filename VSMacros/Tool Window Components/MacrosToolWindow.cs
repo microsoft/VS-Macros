@@ -10,7 +10,7 @@ using System.Windows;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
-using VSMacros.Model;
+using VSMacros.Models;
 
 namespace VSMacros
 {
@@ -41,7 +41,10 @@ namespace VSMacros
             }
 
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
+
             MacroFSNode root = new MacroFSNode(MacroDirectory);
+
+            // Initialize Macros Control
             base.Content = new MacrosControl(root);
         }
     }

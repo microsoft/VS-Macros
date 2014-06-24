@@ -12,119 +12,38 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
-using VSMacros.Model;
+using VSMacros.Models;
 
 namespace VSMacros
 {
     public partial class MacrosControl : UserControl
     {
+        public static MacrosControl Current { get; private set; }
+
         public MacrosControl(MacroFSNode rootNode)
         {
+            Current = this;
+
+            MacroFSNode.RootNode = rootNode;
+
             // Let the UI bind to the view-model
             this.DataContext = new MacroFSNode[] { rootNode };
             InitializeComponent();
         }
 
-        public string SelectedPath { get; set; }
-
-        #region Context Menu Handlers
-        private void Playback(object sender, RoutedEventArgs e)
+        public MacroFSNode SelectedNode
         {
-        }
-
-        private void Edit(object sender, RoutedEventArgs e)
-        {
-            MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
-            string path = item.FullPath;
-
-            EnvDTE.DTE dte = (EnvDTE.DTE)System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.12.0");
-            dte.ItemOperations.OpenFile(path);
-        }
-
-        // TODO Refactor some more
-        private void Delete(object sender, RoutedEventArgs e)
-        {
-            MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
-            string path = item.FullPath;
-
-            FileSystemInfo file;
-            string fileName = Path.GetFileNameWithoutExtension(path);
-            string message;
-
-            if (item.IsDirectory)
+            get
             {
-                file = new DirectoryInfo(path);
-                message = string.Format(VSMacros.Resources.DeleteFolder, fileName); 
-            }
-            else
-            {
-                file = new FileInfo(path);
-                message = string.Format(VSMacros.Resources.DeleteMacro, fileName);
-            }
-
-            if (file.Exists)
-            {
-                IVsUIShell uiShell = (IVsUIShell)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsUIShell));
-                Guid clsid = Guid.Empty;
-                int result;
-                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
-                  uiShell.ShowMessageBox(
-                    0,
-                    ref clsid,
-                    "Delete",
-                    message,
-                    string.Empty,
-                    0,
-                    OLEMSGBUTTON.OLEMSGBUTTON_OKCANCEL,
-                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
-                    OLEMSGICON.OLEMSGICON_WARNING,
-                    0,        // false
-                    out result));
-
-                // TODO replace 1 by IDOK
-                if (result == 1)
-                {
-                    file.Delete();  // TODO non-empty dir will raise an exception here -> User Directory.Delete(path, true)
-                    item.Delete();
-                }
-            }
-            else
-            {
-                item.Delete();
+                return this.MacroTreeView.SelectedItem as MacroFSNode;
             }
         }
-
-        private void SaveCurrentMacro(object sender, RoutedEventArgs e) 
-        { 
-        }
-
-        private void Rename(object sender, RoutedEventArgs e)
-        {
-            MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
-            item.EnableEdit();
-        }
-
-        private void AssignShortcut(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void Open(object sender, RoutedEventArgs e)
-        {
-            VSMacrosPackage.Current.OpenDirectory(null, null);
-        }
-
-        private void Refresh(object sender, RoutedEventArgs e)
-        {
-            MacroFSNode item = macroTreeView.SelectedItem as MacroFSNode;
-            item.Refresh();
-        }
-        #endregion
 
         #region Events
 
-        private void macroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void MacroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            MacroFSNode selectedNode = macroTreeView.SelectedItem as MacroFSNode;
+            MacroFSNode selectedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
             if (selectedNode == null) 
             { 
@@ -139,36 +58,11 @@ namespace VSMacros
             {
                 oldNode.IsEditable = false;
             }
-
-            this.SelectedPath = selectedNode.FullPath;
-
-            string name = Path.GetFileNameWithoutExtension(this.SelectedPath);
-            string extension = Path.GetExtension(this.SelectedPath);
-
-            if (extension != string.Empty)
-            {
-                if (name == "Current")
-                {
-                    macroTreeView.ContextMenu = macroTreeView.Resources["CurrentContext"] as System.Windows.Controls.ContextMenu;
-                }
-                else
-                {
-                    macroTreeView.ContextMenu = macroTreeView.Resources["MacroContext"] as System.Windows.Controls.ContextMenu;
-                }
-            }
-            else if (name == "Macros")  // TODO change checking for something more robust
-            {
-                macroTreeView.ContextMenu = macroTreeView.Resources["BrowserContext"] as System.Windows.Controls.ContextMenu;
-            }
-            else
-            {
-                macroTreeView.ContextMenu = macroTreeView.Resources["FolderContext"] as System.Windows.Controls.ContextMenu;
-            }
         }
 
-        // Taken from http://stackoverflow.com/questions/592373/select-treeview-node-on-right-click-before-displaying-contextmenu/592483#592483
-        private void OnTreeItemMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void TreeViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Make sure that the clicks has selected the item
             TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
 
             if (treeViewItem != null)
@@ -176,6 +70,47 @@ namespace VSMacros
                 treeViewItem.Focus();
                 e.Handled = true;
             }
+
+            /* Show Context Menu */
+            IVsUIShell uiShell = (IVsUIShell)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsUIShell));
+
+            if (uiShell != null)
+            {
+                // Get CmdID
+                MacroFSNode selectedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
+                int menuID;
+
+                if (selectedNode.IsDirectory)
+                {
+                    if (selectedNode == MacroFSNode.RootNode)
+                    {
+                        menuID = PkgCmdIDList.BrowserContextMenu;
+                    }
+                    else
+                    {
+                        menuID = PkgCmdIDList.FolderContextMenu;
+                    }
+                }
+                else
+                {
+                    if (selectedNode.Name == "Current")
+                    {
+                        menuID = PkgCmdIDList.CurrentContextMenu;
+                    }
+                    else
+                    {
+                        menuID = PkgCmdIDList.MacroContextMenu;
+                    }
+                }
+
+                System.Drawing.Point pt = System.Windows.Forms.Cursor.Position;
+                POINTS[] pnts = new POINTS[1];
+                pnts[0].x = (short)pt.X;
+                pnts[0].y = (short)pt.Y;
+
+                uiShell.ShowContextMenu(0, GuidList.GuidVSMacrosCmdSet, menuID, pnts, null);
+            }
+            
         }
 
         private static TreeViewItem VisualUpwardSearch(DependencyObject source)
@@ -187,29 +122,6 @@ namespace VSMacros
 
             return source as TreeViewItem;
         }
-
-        // TODO Convert to VS command system
-        private void OnTreeKeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Delete:
-                    {
-                        this.Delete(null, null);
-                        e.Handled = true;
-                        break;
-                    }
-
-                case Key.Space:
-                case Key.F2:
-                    {
-                        this.Rename(null, null);
-                        e.Handled = true;
-                        break;
-                    }
-            }
-        }
-
         #endregion
     }
 }

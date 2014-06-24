@@ -31,19 +31,6 @@ namespace VSMacros
             Current = this;
         }
 
-        private void ShowToolWindow(object sender = null, EventArgs e = null)
-        {
-            // Get the (only) instance of this tool window
-            // The last flag is set to true so that if the tool window does not exists it will be created.
-            ToolWindowPane window = this.FindToolWindow(typeof(MacrosToolWindow), 0, true);
-            if ((window == null) || (window.Frame == null))
-            {
-                throw new NotSupportedException(Resources.CannotCreateWindow);
-            }
-            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
-            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
-        }
-
         private string macroDirectory;
         public string MacroDirectory
         {
@@ -63,6 +50,7 @@ namespace VSMacros
         {
             base.Initialize();
 
+            // QUESTION Should some of the commands, namely those only appearing in the tool window, be added later, maybe when the tool window is created?
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -101,6 +89,26 @@ namespace VSMacros
                 mcs.AddCommand(new MenuCommand(
                     OpenDirectory,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenDirectory)));
+
+                // Create the command to edit a macro
+                mcs.AddCommand(new MenuCommand(
+                    Edit,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdEdit)));
+
+                // Create the command to rename a macro
+                mcs.AddCommand(new MenuCommand(
+                    Rename,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRename)));
+
+                // Create the command to assign a shortcut to a macro
+                mcs.AddCommand(new MenuCommand(
+                    AssignShortcut,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdAssignShortcut)));
+
+                // Create the command to delete a macro
+                mcs.AddCommand(new MenuCommand(
+                    Delete,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdDelete)));
             }
         }
         #endregion
@@ -108,6 +116,19 @@ namespace VSMacros
         /////////////////////////////////////////////////////////////////////////////
         // Command Handlers
         #region Command Handlers
+
+        private void ShowToolWindow(object sender = null, EventArgs e = null)
+        {
+            // Get the (only) instance of this tool window
+            // The last flag is set to true so that if the tool window does not exists it will be created.
+            ToolWindowPane window = this.FindToolWindow(typeof(MacrosToolWindow), 0, true);
+            if ((window == null) || (window.Frame == null))
+            {
+                throw new NotSupportedException(Resources.CannotCreateWindow);
+            }
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+        }
 
         public void Record(object sender, EventArgs arguments)
         {
@@ -140,7 +161,26 @@ namespace VSMacros
             System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(MacroDirectory); });
         }
 
-        #endregion
+        public void Edit(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Edit();
+        }
 
+        public void Rename(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Rename();
+        }
+
+        public void AssignShortcut(object sender, EventArgs arguments)
+        {
+            Manager.Instance.AssignShortcut();
+        }
+
+        public void Delete(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Delete();
+        }
+        
+        #endregion
     }
 }

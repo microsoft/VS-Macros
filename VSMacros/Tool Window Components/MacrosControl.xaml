@@ -63,49 +63,15 @@
     </UserControl.Resources>
     
     <!-- Macro Tree View -->
-    <TreeView x:Name="macroTreeView"
+    <TreeView x:Name="MacroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
-              SelectedItemChanged="macroTreeView_SelectedItemChanged"
-              Width="Auto"
-              Background="{DynamicResource VsBrush.Environment.ToolWindowBackground}"
-              BorderBrush="{DynamicResource VsBrush.Environment.ToolWindowBorder}"
-              >
-        <!-- Add right click handler (http://stackoverflow.com/a/592483/1146764) -->
+              SelectedItemChanged="MacroTreeView_SelectedItemChanged"
+              Background="Transparent"
+              BorderBrush="Transparent">
         <TreeView.ItemContainerStyle>
             <Style TargetType="{x:Type TreeViewItem}">
-                <!-- We have to select the item which is right-clicked on -->
-                <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="OnTreeItemMouseRightButtonDown"/>
-                <EventSetter Event="KeyDown" Handler="OnTreeKeyDown"/>
+                <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
             </Style>
         </TreeView.ItemContainerStyle>
-        <TreeView.Resources>
-            <ContextMenu x:Key="BrowserContext" StaysOpen="True">
-                <MenuItem Header="Refresh" Click="Refresh"/>
-                <MenuItem Header="Open in File Explorer" Click="Open"/>
-            </ContextMenu>
-            <ContextMenu x:Key="CurrentContext" StaysOpen="true">
-                <MenuItem Header="Playback" Click="Playback"/>
-                <Separator/>
-                <MenuItem Header="Edit" Click="Edit"/>
-                <MenuItem Header="Save Current Macro" Click="SaveCurrentMacro"/>
-            </ContextMenu>
-            <ContextMenu x:Key="MacroContext" StaysOpen="true">
-                <MenuItem Header="Playback" Click="Playback"/>
-                <Separator/>
-                <MenuItem Header="Edit" Click="Edit"/>
-                <MenuItem Header="Rename" Click="Rename"/>
-                <MenuItem Header="Assign Shortcut" Click="AssignShortcut"/>
-                <Separator/>
-                <MenuItem Header="Delete" Click="Delete"/>
-            </ContextMenu>
-            <ContextMenu x:Key="FolderContext" StaysOpen="true">
-                <!--<MenuItem Header="New Folder" Click="Playback"/>
-                    <MenuItem Header="New Macro" Click="Playback"/>
-                    <Separator/>-->
-                <MenuItem Header="Rename" Click="Rename"/>
-                <Separator/>
-                <MenuItem Header="Delete" Click="Delete"/>
-            </ContextMenu>
-        </TreeView.Resources>
     </TreeView>
 </UserControl>

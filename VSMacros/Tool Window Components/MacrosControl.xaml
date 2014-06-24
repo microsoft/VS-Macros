@@ -9,19 +9,42 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyControl">
     <UserControl.Resources>
-        <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Mode=OneWay, Path=Children}">
+        <!-- Normal Data Template-->
+        <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Stretch="Fill" Source="{Binding Mode=OneTime, Path=Icon}"/>
-                <TextBox Text="{Binding Mode=TwoWay, Path=Name}" 
-                         Background="Transparent" 
-                         BorderThickness="0" 
-                         IsReadOnly="{Binding Mode=TwoWay, Path=IsReadOnly}" 
-                         TextWrapping="Wrap"
-                         Cursor="Arrow"
-                         Margin="5,2,0,0"
-                         LostKeyboardFocus="OnTextBoxLostFocus"/>
+                <TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
             </StackPanel>
+        </DataTemplate>
+        
+        <!-- Edit Data Template -->
+        <DataTemplate x:Key="EditTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Stretch="Fill" Source="{Binding Mode=OneTime, Path=Icon}"/>
+                <TextBox Text="{Binding Name}" Margin="5,0,0,0" />
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Child Hierarchical Data Template -->
+        <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Path=Children, Mode=OneWay}">
+            <ContentPresenter Content="{Binding}">
+                <ContentPresenter.Style>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="ContentTemplate"
+                                    Value="{StaticResource NormalTemplate}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditable}"
+                                         Value="True">
+                                <Setter Property="ContentTemplate"
+                                        Value="{StaticResource EditTemplate}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentPresenter.Style>
+            </ContentPresenter>
         </HierarchicalDataTemplate>
+        
+        <!-- Root Hierarchical Data Template -->
         <HierarchicalDataTemplate x:Key="MacroFSViewTemplate"
                                   ItemsSource="{Binding Mode=OneWay, Path=Children}"
                                   ItemTemplate="{StaticResource ChildTemplate}">
@@ -30,12 +53,16 @@
                 <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>
+        
+        <!-- Resource Dictionary for TreeViewItem-->
         <ResourceDictionary x:Key="MyDictionary">
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="..\Assets\TreeView.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    
+    <!-- Macro Tree View -->
     <TreeView x:Name="macroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
               SelectedItemChanged="macroTreeView_SelectedItemChanged"

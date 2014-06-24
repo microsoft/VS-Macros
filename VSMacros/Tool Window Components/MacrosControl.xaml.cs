@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,7 +64,25 @@ namespace VSMacros
 
             if (file.Exists)
             {
-                if (MessageBoxResult.OK == MessageBox.Show(message, "Delete", MessageBoxButton.OKCancel, MessageBoxImage.Warning))
+                IVsUIShell uiShell = (IVsUIShell)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsUIShell));
+                Guid clsid = Guid.Empty;
+                int result;
+                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
+                  uiShell.ShowMessageBox(
+                    0,
+                    ref clsid,
+                    "Delete",
+                    message,
+                    string.Empty,
+                    0,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OKCANCEL,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                    OLEMSGICON.OLEMSGICON_WARNING,
+                    0,        // false
+                    out result));
+
+                // TODO replace 1 by IDOK
+                if (result == 1)
                 {
                     file.Delete();  // TODO non-empty dir will raise an exception here -> User Directory.Delete(path, true)
                     item.Delete();
@@ -110,6 +129,15 @@ namespace VSMacros
             if (selectedNode == null) 
             { 
                 return; 
+            }
+
+            // TODO this is the way I have found to make the textBox disappear when it is shown
+            // It might be a little costly
+            // Instead, I should give the textBox focus when the template changers and monitor the LostFocus event
+            MacroFSNode oldNode = e.OldValue as MacroFSNode;
+            if (oldNode != null)
+            {
+                oldNode.IsEditable = false;
             }
 
             this.SelectedPath = selectedNode.FullPath;
@@ -160,6 +188,7 @@ namespace VSMacros
             return source as TreeViewItem;
         }
 
+        // TODO Convert to VS command system
         private void OnTreeKeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -179,12 +208,6 @@ namespace VSMacros
                         break;
                     }
             }
-        }
-
-        private void OnTextBoxLostFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            textBox.IsReadOnly = true;
         }
 
         #endregion

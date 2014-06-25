@@ -152,7 +152,7 @@ namespace VSMacros
 
         private void Refresh(object sender, EventArgs arguments)
         {
-
+            Manager.Instance.Refresh();
         }
 
         public void OpenDirectory(object sender, EventArgs arguments)

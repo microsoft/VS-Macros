@@ -137,13 +137,13 @@ namespace VSMacros.Models
             }
         }
 
-        public IEnumerable<MacroFSNode> Children
+        public ObservableCollection<MacroFSNode> Children
         {
             get
             {
                 if (!this.IsDirectory)
                 {
-                    return Enumerable.Empty<MacroFSNode>();
+                    return null;
                 }
 
                 if (this.children == null)
@@ -189,6 +189,11 @@ namespace VSMacros.Models
 
         public void Refresh()
         {
+            // Refetch the children of the root node
+            RootNode.children = this.GetChildNodes();
+
+            // Notify change
+            NotifyPropertyChanged("Children");
         }
 
         #endregion

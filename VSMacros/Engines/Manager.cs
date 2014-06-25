@@ -16,6 +16,8 @@ namespace VSMacros.Engines
 
         void SaveCurrent();
 
+        void Refresh();
+
         void Edit();
 
         void Rename();
@@ -25,7 +27,7 @@ namespace VSMacros.Engines
         void Delete();
     }
 
-    public sealed class Manager : IManager
+    internal sealed class Manager : IManager
     {
         private static readonly Manager instance = new Manager();
 
@@ -52,6 +54,11 @@ namespace VSMacros.Engines
 
         public void SaveCurrent() 
         {
+        }
+
+        public void Refresh()
+        {
+            MacroFSNode.RootNode.Refresh();
         }
 
         public void Edit()

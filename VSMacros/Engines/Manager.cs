@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell.Interop;
+﻿using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.IO;
 using VSMacros.Models;
@@ -58,8 +59,8 @@ namespace VSMacros.Engines
             MacroFSNode macro = SelectedMacro;
             string path = macro.FullPath;
 
-            EnvDTE.DTE dte = (EnvDTE.DTE)System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.12.0");
-            dte.ItemOperations.OpenFile(path);
+            // QUESTION Do I need to use the method 'OpenDocument(IServiceProvider, String, Guid, IVsUIHierarchy, UInt32, IVsWindowFrame)' instead? 
+            VsShellUtilities.OpenDocument(VSMacrosPackage.Current, path);
         }
 
         public void Rename()

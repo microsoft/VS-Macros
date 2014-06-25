@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell.Interop;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.IO;
 using System.Windows;
+using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
+using System.Windows.Media.Imaging;
 
 namespace VSMacros.Models
 {
@@ -107,6 +110,22 @@ namespace VSMacros.Models
         {
             get
             {
+                //IVsImageService imageService = (IVsImageService)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsImageService));
+
+                //if (imageService != null)
+                //{
+                //    IVsUIObject uiObject = imageService.GetIconForFile(Path.GetFileName(this.FullPath), __VSUIDATAFORMAT.VSDF_WPF);
+
+                //    if (uiObject != null)
+                //    {
+                //        BitmapSource bitmapSource = GelUtilities.GetObjectData(uiObject) as BitmapSource;
+
+                //        return bitmapSource.ToString();
+                //    }
+                //}
+
+                //return string.Empty;
+
                 if (this.IsDirectory)
                 {
                     return @"..\Resources\folder.png";

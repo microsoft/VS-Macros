@@ -51,8 +51,8 @@ namespace VSMacros
             }
 
             // TODO this is the way I have found to make the textBox disappear when it is shown
-            // It might be a little costly
-            // Instead, I should give the textBox focus when the template changers and monitor the LostFocus event
+            // It might be a little expensive
+            // Instead, I should give the textBox focus when the template changes and monitor the LostFocus event
             MacroFSNode oldNode = e.OldValue as MacroFSNode;
             if (oldNode != null)
             {

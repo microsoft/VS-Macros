@@ -15,6 +15,7 @@ namespace VSMacros.Models
     {
         private string fullPath;
         private bool isEditable;
+        private bool isExpanded;
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
@@ -31,6 +32,15 @@ namespace VSMacros.Models
             this.FullPath = path;
             this.isEditable = false;
             this.parent = parent;
+
+            if (this.parent != null)
+            {
+                this.isExpanded = false;
+            }
+            else
+            {
+                this.isExpanded = true;
+            }
         }
 
         public string FullPath
@@ -137,6 +147,19 @@ namespace VSMacros.Models
             }
         }
 
+        public bool IsExpanded
+        {
+            get
+            {
+                return this.isExpanded;
+            }
+
+            set
+            {
+                this.isExpanded = value;
+            }
+        }
+
         public ObservableCollection<MacroFSNode> Children
         {
             get
@@ -187,7 +210,7 @@ namespace VSMacros.Models
             this.isEditable = false;
         }
 
-        public void Refresh()
+        public void RefreshTree()
         {
             // Refetch the children of the root node
             RootNode.children = this.GetChildNodes();

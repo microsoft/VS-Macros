@@ -58,7 +58,7 @@ namespace VSMacros.Engines
 
         public void Refresh()
         {
-            MacroFSNode.RootNode.Refresh();
+            MacroFSNode.RootNode.RefreshTree();
         }
 
         public void Edit()

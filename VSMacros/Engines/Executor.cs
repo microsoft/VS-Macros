@@ -32,7 +32,8 @@ namespace VSMacros.Engines
         event EventHandler OnSuccess;
 
         /// <summary>
-        /// blah blah blah
+        /// Initializes the engine and then runs the macro script.
+        /// This method will be removed after IPC is implemented.
         /// </summary>
         void InitializeAndRunEngine();
 
@@ -44,13 +45,14 @@ namespace VSMacros.Engines
         void StartExecution(StreamReader macro, int times);
 
         /// <summary>
-        /// blah blah blah
+        /// Will stop the currently executing macro file.
+        /// We are considering removing this.
         /// </summary>
         void StopExecution();
     }
 
     /// <summary>
-    /// blah blah blah
+    /// Implements the execution engine.
     /// </summary>   
     internal class Executor : IExecutor
     {

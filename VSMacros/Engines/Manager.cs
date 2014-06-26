@@ -6,27 +6,6 @@ using VSMacros.Models;
 
 namespace VSMacros.Engines
 {
-    interface IManager
-    {
-        void ToggleRecording();
-
-        void Playback(string path, int times);
-
-        void StopPlayback();
-
-        void SaveCurrent();
-
-        void Refresh();
-
-        void Edit();
-
-        void Rename();
-
-        void AssignShortcut();
-
-        void Delete();
-    }
-
     internal sealed class Manager : IManager
     {
         private static readonly Manager instance = new Manager();

@@ -16,8 +16,6 @@ namespace ExecutionEngine
     internal class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
-        
-        internal static object DteObject;
 
         public void GetLCID(out int lcid)
         {
@@ -29,10 +27,10 @@ namespace ExecutionEngine
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
                 throw new NotImplementedException();
 
-            if (Site.DteObject == null)
+            if (Engine.DteObject == null)
                 throw new COMException(null, TypeEElementNotFound);
 
-            item = Marshal.GetIUnknownForObject(Site.DteObject);
+            item = Marshal.GetIUnknownForObject(Engine.DteObject);
         }
 
         public void GetDocVersionString(out string version)

@@ -20,6 +20,13 @@ namespace ExecutionEngine
         private Parser parser;
         private Site scriptSite;
 
+        private static object dteObject;
+        public static object DteObject
+        {
+            get { return dteObject; }
+            set { dteObject = value; }
+        }
+
         private void InitializeDteObject(int pid)
         {
             IMoniker moniker;
@@ -28,7 +35,7 @@ namespace ExecutionEngine
             IRunningObjectTable rot;
             NativeMethods.GetRunningObjectTable(0, out rot);
 
-            rot.GetObject(moniker, out Site.DteObject);
+            rot.GetObject(moniker, out Engine.dteObject);
         }
 
         internal IActiveScript CreateEngine()
@@ -45,7 +52,7 @@ namespace ExecutionEngine
             this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
 
-            if (Site.DteObject == null)
+            if (Engine.dteObject == null)
             {
                 this.InitializeDteObject(pid);
                 this.engine.SetScriptSite(this.scriptSite);

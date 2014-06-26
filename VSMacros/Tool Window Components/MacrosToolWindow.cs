@@ -42,7 +42,11 @@ namespace VSMacros
 
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
 
+            // Create tree view root
             MacroFSNode root = new MacroFSNode(MacroDirectory);
+
+            // Make sure it is opened by default
+            root.IsExpanded = true;
 
             // Initialize Macros Control
             base.Content = new MacrosControl(root);

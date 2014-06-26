@@ -19,6 +19,7 @@ namespace VSMacros.Models
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
+        static private HashSet<string> enabledDirectories = new HashSet<string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -32,15 +33,6 @@ namespace VSMacros.Models
             this.FullPath = path;
             this.isEditable = false;
             this.parent = parent;
-
-            if (this.parent != null)
-            {
-                this.isExpanded = false;
-            }
-            else
-            {
-                this.isExpanded = true;
-            }
         }
 
         public string FullPath
@@ -138,7 +130,14 @@ namespace VSMacros.Models
 
                 if (this.IsDirectory)
                 {
-                    return @"..\Resources\folder.png";
+                    if (this.isExpanded)
+                    {
+                        return @"..\Resources\folderopened.png";
+                    }
+                    else
+                    {
+                        return @"..\Resources\folderclosed.png";
+                    }
                 }
                 else
                 {
@@ -157,6 +156,18 @@ namespace VSMacros.Models
             set
             {
                 this.isExpanded = value;
+
+                if (this.IsExpanded)
+                {
+                    enabledDirectories.Add(this.FullPath);
+                }
+                else
+                {
+                    enabledDirectories.Remove(this.FullPath);
+                }
+
+                NotifyPropertyChanged("IsExpanded");
+                NotifyPropertyChanged("Icon");
             }
         }
 
@@ -212,14 +223,44 @@ namespace VSMacros.Models
 
         public void RefreshTree()
         {
+            // Make a copy of the hashset
+            HashSet<string> dirs = new HashSet<string>(enabledDirectories);
+
+            // Clear enableDirectories
+            enabledDirectories.Clear();
+
             // Refetch the children of the root node
             RootNode.children = this.GetChildNodes();
+
+            // Recursively set IsEnabled for each folders
+            SetIsExpanded(RootNode, dirs);
 
             // Notify change
             NotifyPropertyChanged("Children");
         }
-
         #endregion
+        
+        // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
+        private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
+        {
+            if (node.Children.Count > 0 && enabledDirs.Count > 0)
+            {
+                foreach (var item in node.children)
+                {
+                    if (item.IsDirectory && enabledDirs.Contains(item.FullPath))
+                    {
+                        // Set IsExpanded
+                        item.IsExpanded = true;
+
+                        // Remove path from dirs
+                        enabledDirs.Remove(item.FullPath);
+
+                        // Recursion on children
+                        SetIsExpanded(item, enabledDirs);
+                    }
+                }
+            }
+        }
 
         // Create the OnPropertyChanged method to raise the event 
         private void NotifyPropertyChanged(string name)

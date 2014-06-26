@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engines\Manager.cs" />
+    <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>
@@ -171,9 +172,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images.png" />
-    <Resource Include="Resources\folder.png" />
+    <Resource Include="Resources\folderclosed.png" />
     <Resource Include="Resources\js.png" />
     <Resource Include="Resources\macro.png" />
+    <Resource Include="Resources\folderopened.png" />
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>

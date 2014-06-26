@@ -1,18 +1,16 @@
 ﻿using System;
-using System.IO;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.InteropServices;
-using System.ComponentModel.Design;
+using System.IO;
 using System.Reflection;
-using Microsoft.Win32;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.Win32;
 using VSMacros.Engines;
-
-using EnvDTE;
 
 namespace VSMacros
 {
@@ -53,61 +51,61 @@ namespace VSMacros
             // QUESTION Should some of the commands, namely those only appearing in the tool window, be added later, maybe when the tool window is created?
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if ( null != mcs )
+            if (null != mcs)
             {
                 // Create the command for the tool window
                 mcs.AddCommand(new MenuCommand(
-                   ShowToolWindow,
+                   this.ShowToolWindow,
                    new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.CmdIdMacroExplorer)));
 
                  // Create the command for start recording
                 mcs.AddCommand(new MenuCommand(
-                  Record,
+                  this.Record,
                   new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.CmdIdRecord)));
 
                 // Create the command for playback
                 mcs.AddCommand(new MenuCommand(
-                    Playback,
+                    this.Playback,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdPlayback)));
 
                 // Create the command for playback multiple times
                 mcs.AddCommand(new MenuCommand(
-                    PlaybackMultipleTimes,
+                    this.PlaybackMultipleTimes,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdPlaybackMultipleTimes)));
 
                 // Create the command for save current macro
                 mcs.AddCommand(new MenuCommand(
-                    SaveCurrent,
+                    this.SaveCurrent,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdSaveTemporaryMacro)));
 
                 // Create the command for refresh
                 mcs.AddCommand(new MenuCommand(
-                    Refresh,
+                    this.Refresh,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRefresh)));
 
                 // Create the command to open the macro directory
                 mcs.AddCommand(new MenuCommand(
-                    OpenDirectory,
+                    this.OpenDirectory,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenDirectory)));
 
                 // Create the command to edit a macro
                 mcs.AddCommand(new MenuCommand(
-                    Edit,
+                    this.Edit,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdEdit)));
 
                 // Create the command to rename a macro
                 mcs.AddCommand(new MenuCommand(
-                    Rename,
+                    this.Rename,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRename)));
 
                 // Create the command to assign a shortcut to a macro
                 mcs.AddCommand(new MenuCommand(
-                    AssignShortcut,
+                    this.AssignShortcut,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdAssignShortcut)));
 
                 // Create the command to delete a macro
                 mcs.AddCommand(new MenuCommand(
-                    Delete,
+                    this.Delete,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdDelete)));
             }
         }
@@ -137,12 +135,12 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback("", 1);
+            Manager.Instance.Playback(string.Empty, 1);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback("", 0);
+            Manager.Instance.Playback(string.Empty, 0);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)

@@ -60,8 +60,6 @@ namespace ExecutionEngine
                 Marshal.ReleaseComObject(this.engine);
                 this.engine = null;
             }
-
-            //TODO: Figure out if we need GC.SuppressFinalize(true) after all
         }
 
         ParsedScript GenerateParsedScript()

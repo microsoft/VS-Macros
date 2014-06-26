@@ -77,7 +77,6 @@ namespace ExecutionEngine
             var input = Console.ReadLine();
             if (!String.IsNullOrEmpty(input))
             {
-                Console.WriteLine(">> You typed in: " + input);
                 if (input.Equals("r"))
                 {
                     Console.WriteLine(">> Running your macro");
@@ -95,15 +94,7 @@ namespace ExecutionEngine
                 willKeepListening = false;
             }
 
-            input = null;
             return willKeepListening;
-        }
-
-        static void RunAsStartupProject(string macroName, short temp_pid)
-        {
-            pid = temp_pid;
-            engine = new Engine(pid);
-            RunMacro(macroName, pid);
         }
 
         static void RunFromExtension(string macroName, string[] args)
@@ -121,6 +112,13 @@ namespace ExecutionEngine
             }
         }
 
+        static void RunAsStartupProject(string macroName, short temp_pid)
+        {
+            pid = temp_pid;
+            engine = new Engine(pid);
+            RunMacro(macroName, pid);
+        }
+
         static string AppendExtension(string name) 
         {
             return name + ".txt";
@@ -130,7 +128,7 @@ namespace ExecutionEngine
         {
             var macroName = "dteTest";
 
-            Console.WriteLine("hello there!");
+            Console.WriteLine("Hello there!  Welcome to our macro extension!");
 
             if (args.Length > 0)
             {
@@ -138,15 +136,17 @@ namespace ExecutionEngine
             }
             else
             {
-                RunAsStartupProject(macroName, 96);
+                short pidOfCurrentDevenv = 9344;
+                RunAsStartupProject(macroName, pidOfCurrentDevenv);
             }
 
             // TODO: this while loop is a temp fix for now until I figure out named pipes
-            while (true)
-            {
-                if (!ListenForInput(macroName)) 
-                    break;
-            }
+            // My hacky way of IPC for now
+            //while (true)
+            //{
+            //    if (!ListenForInput(macroName)) 
+            //        break;
+            //}
         }
     }
 }

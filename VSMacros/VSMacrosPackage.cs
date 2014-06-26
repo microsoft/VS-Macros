@@ -25,6 +25,7 @@ namespace VSMacros
     public sealed class VSMacrosPackage : Package
     {
         public static VSMacrosPackage Current { get; private set; }
+        Executor execution;
 
         public VSMacrosPackage()
         {
@@ -62,6 +63,7 @@ namespace VSMacros
         protected override void Initialize()
         {
             base.Initialize();
+            execution = new Executor();
 
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
@@ -116,6 +118,7 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
+            execution.InitializeAndRunEngine();
             Manager.Instance.Playback("", 1);
         }
 

@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engines\Manager.cs" />
+    <Compile Include="Engines\Executor.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>
@@ -186,6 +187,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExecutionEngine\ExecutionEngine.csproj">
+      <Project>{f73f9e75-10e3-44fc-9a13-7e69a689ad0b}</Project>
+      <Name>ExecutionEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

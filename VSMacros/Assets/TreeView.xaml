@@ -93,14 +93,12 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Background" Value="{DynamicResource {x:Static vsui:TreeViewColors.BackgroundBrushKey}}" />
         <!--<Setter Property="imaging:ImageThemingUtilities.ImageBackgroundColor" Value="{Binding Path=Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}" />-->
-        <Setter Property="ItemContainerStyle">
-            <Setter.Value>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarTextActiveBrushKey}}" />
-                    <Setter Property="Template" Value="{StaticResource TreeViewItemTemplate}" />
-                    <Setter Property="Padding" Value="1" />
-                </Style>
-            </Setter.Value>
-        </Setter>
+    </Style>
+    
+    <!-- TreeViewItem -->
+    <Style TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarTextActiveBrushKey}}"/>
+        <Setter Property="Template" Value="{StaticResource TreeViewItemTemplate}" />
+        <Setter Property="Padding" Value="1"/>
     </Style>
 </ResourceDictionary>

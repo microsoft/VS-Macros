@@ -1,4 +1,6 @@
-﻿using System;
+﻿// IManager.cs
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VSMacros.Interfaces
 {
-    interface IManager
+    public interface IManager
     {
         void ToggleRecording();
 

@@ -1,25 +1,28 @@
-﻿using Microsoft.VisualStudio.Shell.Interop;
+﻿// MacroFsNode
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.IO;
 using System.Windows;
-using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
+using System.Linq;
 using System.Windows.Media.Imaging;
+using Microsoft.VisualStudio.Shell.Interop;
+using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 
 namespace VSMacros.Models
 {
     public sealed class MacroFSNode : INotifyPropertyChanged
     {
+        private static HashSet<string> enabledDirectories = new HashSet<string>();
+
         private string fullPath;
         private bool isEditable;
         private bool isExpanded;
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
-        static private HashSet<string> enabledDirectories = new HashSet<string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -112,21 +115,17 @@ namespace VSMacros.Models
         {
             get
             {
-                //IVsImageService imageService = (IVsImageService)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsImageService));
-
-                //if (imageService != null)
-                //{
+                // IVsImageService imageService = (IVsImageService)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsImageService));
+                // if (imageService != null)
+                // {
                 //    IVsUIObject uiObject = imageService.GetIconForFile(Path.GetFileName(this.FullPath), __VSUIDATAFORMAT.VSDF_WPF);
-
                 //    if (uiObject != null)
                 //    {
                 //        BitmapSource bitmapSource = GelUtilities.GetObjectData(uiObject) as BitmapSource;
-
                 //        return bitmapSource.ToString();
                 //    }
-                //}
-
-                //return string.Empty;
+                // }
+                // return string.Empty;
 
                 if (this.IsDirectory)
                 {
@@ -166,8 +165,8 @@ namespace VSMacros.Models
                     enabledDirectories.Remove(this.FullPath);
                 }
 
-                NotifyPropertyChanged("IsExpanded");
-                NotifyPropertyChanged("Icon");
+                this.NotifyPropertyChanged("IsExpanded");
+                this.NotifyPropertyChanged("Icon");
             }
         }
 
@@ -233,10 +232,10 @@ namespace VSMacros.Models
             RootNode.children = this.GetChildNodes();
 
             // Recursively set IsEnabled for each folders
-            SetIsExpanded(RootNode, dirs);
+            this.SetIsExpanded(RootNode, dirs);
 
             // Notify change
-            NotifyPropertyChanged("Children");
+            this.NotifyPropertyChanged("Children");
         }
         #endregion
         
@@ -256,7 +255,7 @@ namespace VSMacros.Models
                         enabledDirs.Remove(item.FullPath);
 
                         // Recursion on children
-                        SetIsExpanded(item, enabledDirs);
+                        this.SetIsExpanded(item, enabledDirs);
                     }
                 }
             }

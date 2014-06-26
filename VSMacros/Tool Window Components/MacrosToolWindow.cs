@@ -17,7 +17,7 @@ namespace VSMacros
     [Guid("56fbfa32-c049-4fd5-9b54-39fcdf33629d")]
     public class MacrosToolWindow : ToolWindowPane
     {
-        private const string currentMacroLocation = "Current.js";
+        private const string CurrentMacroLocation = "Current.js";
 
         public MacrosToolWindow() :
             base(null)
@@ -35,15 +35,15 @@ namespace VSMacros
                 Directory.CreateDirectory(VSMacrosPackage.Current.MacroDirectory);
             }
 
-            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, currentMacroLocation)))
+            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation)))
             {
-                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, currentMacroLocation));
+                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation));
             }
 
-            string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
+            string macroDirectory = VSMacrosPackage.Current.MacroDirectory;
 
             // Create tree view root
-            MacroFSNode root = new MacroFSNode(MacroDirectory);
+            MacroFSNode root = new MacroFSNode(macroDirectory);
 
             // Make sure it is opened by default
             root.IsExpanded = true;

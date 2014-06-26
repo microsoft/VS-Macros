@@ -1,6 +1,8 @@
-﻿using Microsoft.VisualStudio.Shell.Interop;
+﻿// MacrosControl.xaml.cs
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -11,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.IO;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Models;
 
 namespace VSMacros
@@ -28,7 +30,7 @@ namespace VSMacros
 
             // Let the UI bind to the view-model
             this.DataContext = new MacroFSNode[] { rootNode };
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public MacroFSNode SelectedNode
@@ -37,6 +39,11 @@ namespace VSMacros
             {
                 return this.MacroTreeView.SelectedItem as MacroFSNode;
             }
+        }
+
+        private TreeViewItem GetSelectedTreeViewItem()
+        {
+            return (TreeViewItem)(this.MacroTreeView.ItemContainerGenerator.ContainerFromIndex(this.MacroTreeView.Items.CurrentPosition));
         }
 
         #region Events
@@ -103,7 +110,6 @@ namespace VSMacros
 
                 uiShell.ShowContextMenu(0, GuidList.GuidVSMacrosCmdSet, menuID, pnts, null);
             }
-            
         }
 
         private static TreeViewItem VisualUpwardSearch(DependencyObject source)
@@ -115,7 +121,6 @@ namespace VSMacros
 
             return source as TreeViewItem;
         }
-        #endregion
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -128,6 +133,87 @@ namespace VSMacros
         private void TextBox_LostKeyboardFocus(object sender, RoutedEventArgs e)
         {
             this.SelectedNode.DisableEdit();
+        }
+
+        #endregion
+
+        #region Drag & Drop
+        private Point startPos;
+
+        private void TreeViewItem_PreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            // Save current position so we have a reference to compare against in TreeViewItem_MouseMove
+            this.startPos = e.GetPosition(null);
+        }
+        private void TreeViewItem_MouseMove(object sender, MouseEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("In mouve move");
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                // Has the mouse move enough?
+                var mousePos = e.GetPosition(null);
+                var diff = mousePos - this.startPos;
+
+                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    // Get the dragged TreeViewItem
+                    TreeView tv = sender as TreeView;
+                    TreeViewItem tvi = FindAnchestor<TreeViewItem>((DependencyObject)e.OriginalSource);
+
+                    // Find the data behind the TreeViewItem
+                    MacroFSNode node = tvi.Header as MacroFSNode;
+
+                    // Initialize the drag & drop operation
+                    MacroFSNode data = this.MacroTreeView.SelectedItem as MacroFSNode;
+                    DragDrop.DoDragDrop(this.MacroTreeView, data, DragDropEffects.Move);
+                }
+            }
+        }
+
+        // Helper to search up the VisualTree
+        private static T FindAnchestor<T>(DependencyObject current)
+            where T : DependencyObject
+        {
+            do
+            {
+                if (current is T)
+                {
+                    return (T)current;
+                }
+                current = VisualTreeHelper.GetParent(current);
+            }
+            while (current != null);
+            return null;
+        }
+
+        private void TreeViewItem_Drop(object sender, DragEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("In TVI Drop");
+            if (e.Data.GetDataPresent(typeof(MacroFSNode)))
+            {
+                MacroFSNode node = e.Data.GetData(typeof(MacroFSNode)) as MacroFSNode;
+            }
+        }
+
+        private void TreeViewItem_DragEnter(object sender, DragEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("In TVI Drag enter");
+            if (!e.Data.GetDataPresent(typeof(MacroFSNode)))
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        #endregion
+
+        private void MacroTreeView_DragOver(object sender, DragEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("In TVI over");
+            if ((e.AllowedEffects & DragDropEffects.Move) == DragDropEffects.Move)
+            {
+                e.Effects = DragDropEffects.Move;
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace ExecutionEngine
 {
@@ -12,23 +13,9 @@ namespace ExecutionEngine
         static ParsedScript parsedScript;
         private static short pid;
 
-        static void LaunchVS()
+        static void CreateMacroFile(string path)
         {
-            var processName = @"devenv.exe";
-            var process = new Process();
-
-            process.StartInfo.FileName = processName;
-            process.Start();
-        }
-
-        static void CreateHardcodedStream(string fileName)
-        {
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            using (StreamWriter sw = new StreamWriter(fileName))
+            using (StreamWriter sw = new StreamWriter(path))
             {
                 sw.WriteLine("function dteTest()");
                 sw.WriteLine("{");
@@ -37,10 +24,16 @@ namespace ExecutionEngine
             }
         }
 
-        static string ReadFromStream(string fileName)
+        static string ReadFromMacroFile(string path)
         {
             string script = "";
-            using (StreamReader sr = new StreamReader(fileName))
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException(path);
+            }
+            
+            using (StreamReader sr = new StreamReader(path))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
@@ -49,34 +42,26 @@ namespace ExecutionEngine
                 }
             }
 
-            Console.WriteLine(script);
             return script;
         }
 
-        static void CreateEngine(int pid)
+        static void RunMacro(string macroName, int pid)
         {
-            engine = new Engine(pid);
-        }
+            var macroPath = AppendExtension(macroName);
 
-        static void RunMacro(string nameWithoutExtension, int pid)
-        {
-            var fileName = AppendExtension(nameWithoutExtension);
+            CreateMacroFile(macroPath);
+            var script = ReadFromMacroFile(macroPath);
 
-            CreateHardcodedStream(fileName);
-            var script = ReadFromStream(fileName);
-
-            parsedScript = engine.Parse(script);
-            var output = parsedScript.CallMethod(nameWithoutExtension);
-        }
-
-        static bool IsRunRequested(string s)
-        {
-            return (s == "r");
-        }
-
-        static bool IsInitializeRequested(string s)
-        {
-            return (s == "i");
+            if (!String.IsNullOrEmpty(script))
+            {
+                parsedScript = engine.Parse(script);
+            }
+            else
+            {
+                throw new NullReferenceException(script);
+            }
+            
+            var output = parsedScript.CallMethod(macroName);
         }
 
         static bool IsVSShuttingDown()
@@ -85,7 +70,7 @@ namespace ExecutionEngine
             // Is there an event I can subscribe to here?
             return false;
         }
-        static bool ListenForInput(string nameWithoutExtension)
+        static bool ListenForInput(string macroName)
         {
             var willKeepListening = true;
 
@@ -96,7 +81,7 @@ namespace ExecutionEngine
                 if (input.Equals("r"))
                 {
                     Console.WriteLine(">> Running your macro");
-                    RunMacro(nameWithoutExtension, pid);
+                    RunMacro(macroName, pid);
                 }
                 else if (input.Equals("q"))
                 {
@@ -114,28 +99,25 @@ namespace ExecutionEngine
             return willKeepListening;
         }
 
-        static void RunningAsStartupProject(string nameWithoutExtension, short temp_pid)
+        static void RunAsStartupProject(string macroName, short temp_pid)
         {
             pid = temp_pid;
-            CreateEngine(pid);
-            RunMacro(nameWithoutExtension, pid);
+            engine = new Engine(pid);
+            RunMacro(macroName, pid);
         }
 
-        static void RunningFromExtension(string nameWithoutExtension, string[] args)
+        static void RunFromExtension(string macroName, string[] args)
         {
-            var command = args[0].Split(',');
-
-            if (IsInitializeRequested(command[0]))
+            if (Int16.TryParse(args[0], out pid))
             {
-                if (Int16.TryParse(command[1], out pid))
-                {
-                    CreateEngine(pid);
-                    RunMacro(nameWithoutExtension, pid);
-                }
+                engine = new Engine(pid);
+                RunMacro(macroName, pid);
             }
-            if (IsRunRequested(command[0]))
+            else
             {
-                RunMacro(nameWithoutExtension, pid);
+                // TODO: Is throwing an exception the right thing to do here?
+                // And if it is, is this the right exception to throw?
+                throw new ArgumentException(args[0]);
             }
         }
 
@@ -146,28 +128,23 @@ namespace ExecutionEngine
 
         static void Main(string[] args)
         {
-            var nameWithoutExtension = "dteTest";
-            var nameWithExtension = AppendExtension(nameWithoutExtension);
+            var macroName = "dteTest";
 
             Console.WriteLine("hello there!");
 
             if (args.Length > 0)
             {
-                RunningFromExtension(nameWithoutExtension, args);
+                RunFromExtension(macroName, args);
             }
             else
             {
-                RunningAsStartupProject(nameWithoutExtension, 96);
+                RunAsStartupProject(macroName, 96);
             }
 
-            //LaunchVS();
-            //Debug.WriteLine("Current directory: " + Directory.GetCurrentDirectory());
-            //Debug.WriteLine("Using the assembly thing: " + Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)));
-
-            // TODO: this while loop is a temp fix for now until I can figure out how to specify Initialize versus Run from VSMacros
+            // TODO: this while loop is a temp fix for now until I figure out named pipes
             while (true)
             {
-                if (!ListenForInput(nameWithoutExtension)) 
+                if (!ListenForInput(macroName)) 
                     break;
             }
         }

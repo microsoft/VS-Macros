@@ -218,7 +218,7 @@ namespace VSMacros.Models
 
         public void DisableEdit()
         {
-            this.isEditable = false;
+            this.IsEditable = false;
         }
 
         public void RefreshTree()

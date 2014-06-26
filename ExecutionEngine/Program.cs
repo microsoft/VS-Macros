@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -7,13 +13,13 @@ using System.Windows.Forms;
 
 namespace ExecutionEngine
 {
-    class Program
+    internal class Program
     {
-        static Engine engine;
-        static ParsedScript parsedScript;
+        private static Engine engine;
+        private static ParsedScript parsedScript;
         private static short pid;
 
-        static void CreateMacroFile(string path)
+        internal static void CreateMacroFile(string path)
         {
             using (StreamWriter sw = new StreamWriter(path))
             {
@@ -24,9 +30,9 @@ namespace ExecutionEngine
             }
         }
 
-        static string ReadFromMacroFile(string path)
+        internal static string ReadFromMacroFile(string path)
         {
-            string script = "";
+            string script = string.Empty;
 
             if (!File.Exists(path))
             {
@@ -45,14 +51,14 @@ namespace ExecutionEngine
             return script;
         }
 
-        static void RunMacro(string macroName, int pid)
+        internal static void RunMacro(string macroName, int pid)
         {
             var macroPath = AppendExtension(macroName);
 
             CreateMacroFile(macroPath);
             var script = ReadFromMacroFile(macroPath);
 
-            if (!String.IsNullOrEmpty(script))
+            if (!string.IsNullOrEmpty(script))
             {
                 parsedScript = engine.Parse(script);
             }
@@ -64,18 +70,18 @@ namespace ExecutionEngine
             var output = parsedScript.CallMethod(macroName);
         }
 
-        static bool IsVSShuttingDown()
+        internal static bool IsVSShuttingDown()
         {
             // TODO: Don't know how to implement this
             // Is there an event I can subscribe to here?
             return false;
         }
-        static bool ListenForInput(string macroName)
+        internal static bool ListenForInput(string macroName)
         {
             var willKeepListening = true;
 
             var input = Console.ReadLine();
-            if (!String.IsNullOrEmpty(input))
+            if (!string.IsNullOrEmpty(input))
             {
                 if (input.Equals("r"))
                 {
@@ -97,9 +103,9 @@ namespace ExecutionEngine
             return willKeepListening;
         }
 
-        static void RunFromExtension(string macroName, string[] args)
+        internal static void RunFromExtension(string macroName, string[] args)
         {
-            if (Int16.TryParse(args[0], out pid))
+            if (short.TryParse(args[0], out pid))
             {
                 engine = new Engine(pid);
                 RunMacro(macroName, pid);
@@ -112,19 +118,19 @@ namespace ExecutionEngine
             }
         }
 
-        static void RunAsStartupProject(string macroName, short temp_pid)
+        internal static void RunAsStartupProject(string macroName, short temp_pid)
         {
             pid = temp_pid;
             engine = new Engine(pid);
             RunMacro(macroName, pid);
         }
 
-        static string AppendExtension(string name) 
+        internal static string AppendExtension(string name) 
         {
             return name + ".txt";
         }
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             var macroName = "dteTest";
 
@@ -142,11 +148,11 @@ namespace ExecutionEngine
 
             // TODO: this while loop is a temp fix for now until I figure out named pipes
             // My hacky way of IPC for now
-            //while (true)
-            //{
+            // while (true)
+            // {
             //    if (!ListenForInput(macroName)) 
             //        break;
-            //}
+            // }
         }
     }
 }

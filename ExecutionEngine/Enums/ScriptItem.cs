@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ScriptItem.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 
 namespace ExecutionEngine.Enums
 {

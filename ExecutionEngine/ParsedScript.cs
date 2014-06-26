@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ParsedScript.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,15 +17,14 @@ namespace ExecutionEngine
 {
     internal class ParsedScript : IDisposable
     {
-        private object dispatch;
         private readonly Engine engine;
+        private object dispatch;
 
         internal ParsedScript(Engine engine, IntPtr dispatch)
         {
             this.engine = engine;
             this.dispatch = Marshal.GetObjectForIUnknown(dispatch);
         }
-
 
         public object CallMethod(string methodName, params object[] arguments)
         {

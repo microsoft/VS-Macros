@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="IActiveScriptError.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Runtime.InteropServices;
 
 namespace ExecutionEngine.Interfaces

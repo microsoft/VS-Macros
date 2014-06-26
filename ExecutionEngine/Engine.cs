@@ -1,11 +1,16 @@
-﻿using ExecutionEngine.Enums;
-using ExecutionEngine.Helpers;
-using ExecutionEngine.Interfaces;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Engine.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-
+using ExecutionEngine.Enums;
+using ExecutionEngine.Helpers;
+using ExecutionEngine.Interfaces;
 
 namespace ExecutionEngine
 {
@@ -13,9 +18,9 @@ namespace ExecutionEngine
     {
         private IActiveScript engine;
         private Parser parser;
-        internal Site site;
+        private Site scriptSite;
 
-        void InitializeDteObject(int pid)
+        private void InitializeDteObject(int pid)
         {
             IMoniker moniker;
             NativeMethods.CreateItemMoniker("!", string.Format("VisualStudio.DTE.12.0:{0}", pid), out moniker);
@@ -26,7 +31,7 @@ namespace ExecutionEngine
             rot.GetObject(moniker, out Site.DteObject);
         }
 
-        IActiveScript CreateEngine()
+        internal IActiveScript CreateEngine()
         {
             string language = "jscript";
 
@@ -36,14 +41,14 @@ namespace ExecutionEngine
 
         public Engine(int pid)
         {
-            this.engine = CreateEngine();
-            this.site = new Site();
+            this.engine = this.CreateEngine();
+            this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
 
             if (Site.DteObject == null)
             {
-                InitializeDteObject(pid);
-                this.engine.SetScriptSite(this.site);
+                this.InitializeDteObject(pid);
+                this.engine.SetScriptSite(this.scriptSite);
                 this.engine.AddNamedItem("dte", ScriptItem.CodeOnly | ScriptItem.IsVisible);
             }
         }
@@ -62,7 +67,7 @@ namespace ExecutionEngine
             }
         }
 
-        ParsedScript GenerateParsedScript()
+        internal ParsedScript GenerateParsedScript()
         {
             IntPtr dispatch;
             this.engine.GetScriptDispatch(null, out dispatch);
@@ -71,14 +76,14 @@ namespace ExecutionEngine
 
         internal ParsedScript Parse(string unparsed)
         {
-            if (String.IsNullOrEmpty(unparsed))
+            if (string.IsNullOrEmpty(unparsed))
             {
                 throw new ArgumentNullException("unparsed");
             }
 
             this.engine.SetScriptState(ScriptState.Connected);
             this.parser.Parse(unparsed);
-            var parsedScript = GenerateParsedScript();
+            var parsedScript = this.GenerateParsedScript();
 
             return parsedScript;
         }

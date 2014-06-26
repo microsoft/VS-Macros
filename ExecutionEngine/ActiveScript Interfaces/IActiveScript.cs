@@ -1,11 +1,17 @@
-﻿using ExecutionEngine.Enums;
+﻿//-----------------------------------------------------------------------
+// <copyright file="IActiveScript.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
 using System.Runtime.InteropServices;
+using ExecutionEngine.Enums;
 
 namespace ExecutionEngine.Interfaces
 {
     [Guid("BB1A2AE1-A4F9-11cf-8F20-00805F2CD064"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    interface IActiveScript
+    internal interface IActiveScript
     {
         void SetScriptSite(IActiveScriptSite pass);
         void GetScriptSite(Guid riid, out IntPtr site);

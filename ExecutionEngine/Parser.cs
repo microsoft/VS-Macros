@@ -1,5 +1,9 @@
-﻿using ExecutionEngine.Enums;
-using ExecutionEngine.Interfaces;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Parser.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,10 +11,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using ExecutionEngine.Enums;
+using ExecutionEngine.Interfaces;
 
 namespace ExecutionEngine
 {
-    class Parser
+    internal class Parser
     {
         private IActiveScriptParse32 parse32;
         private IActiveScriptParse64 parse64;
@@ -18,11 +24,11 @@ namespace ExecutionEngine
 
         public Parser(IActiveScript engine)
         {
-            this.isParse32 = DeterminePointerSize();
-            InitializeParsers(engine);
+            this.isParse32 = this.DeterminePointerSize();
+            this.InitializeParsers(engine);
         }
 
-        void InitializeParsers(IActiveScript engine)
+        internal void InitializeParsers(IActiveScript engine)
         {
             if (this.isParse32)
             {
@@ -36,7 +42,7 @@ namespace ExecutionEngine
             }
         }
 
-        bool DeterminePointerSize()
+        internal bool DeterminePointerSize()
         {
             if (IntPtr.Size == 4)
                 return true;
@@ -62,7 +68,7 @@ namespace ExecutionEngine
 
         public void Dispose()
         {
-            if (isParse32)
+            if (this.isParse32)
             {
                 Marshal.ReleaseComObject(this.parse32);
                 this.parse32 = null;

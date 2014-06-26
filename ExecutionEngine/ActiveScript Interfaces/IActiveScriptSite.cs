@@ -1,6 +1,12 @@
-﻿using ExecutionEngine.Enums;
+﻿//-----------------------------------------------------------------------
+// <copyright file="IActiveScriptSite.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
 using System.Runtime.InteropServices;
+using ExecutionEngine.Enums;
 
 namespace ExecutionEngine.Interfaces
 {

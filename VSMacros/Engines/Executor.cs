@@ -38,7 +38,7 @@ namespace VSMacros.Engines
         void InitializeAndRunEngine();
 
         /// <summary>
-        /// blah blah blah
+        /// Will run the macro file.
         /// <param name="macro">Name of macro.</param>
         /// <param name="times">Times to be executed.</param>
         /// </summary>

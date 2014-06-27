@@ -36,7 +36,7 @@ namespace VSMacros.Engines
         /// Initializes the engine and then runs the macro script.
         /// This method will be removed after IPC is implemented.
         /// </summary>
-        void InitializeAndRunEngine();
+        void InitializeEngine();
 
         /// <summary>
         /// Will run the macro file.
@@ -84,14 +84,8 @@ namespace VSMacros.Engines
         /// Initializes the engine and then runs the macro script.
         /// This method will be removed after IPC is implemented.
         /// </summary>
-        public void InitializeAndRunEngine()
+        public void InitializeEngine()
         {
-            //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
-            //this.executionEngine = new Process();
-
-            //this.executionEngine.StartInfo.FileName = processName;
-            //this.executionEngine.StartInfo.Arguments = ProvideArguments();
-            //this.executionEngine.Start();
         }
 
         private static string CreateScriptFromReader(StreamReader reader)

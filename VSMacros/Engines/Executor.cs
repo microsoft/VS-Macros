@@ -71,18 +71,24 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler OnSuccess;
 
+        private string ProvideArguments()
+        {
+            var pid = Process.GetCurrentProcess().Id.ToString();
+            var times = "2";
+            return pid + "," + times;
+        }
+
         /// <summary>
         /// Initializes the engine and then runs the macro script.
         /// This method will be removed after IPC is implemented.
         /// </summary>
         public void InitializeAndRunEngine()
         {
-            var currentProcess = Process.GetCurrentProcess();
             var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
             this.executionEngine = new Process();
 
             this.executionEngine.StartInfo.FileName = processName;
-            this.executionEngine.StartInfo.Arguments = Process.GetCurrentProcess().Id.ToString();
+            this.executionEngine.StartInfo.Arguments = ProvideArguments();
             this.executionEngine.Start();
         }
 

@@ -125,6 +125,12 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\AssignShortcutDialog.xaml.cs">
+      <DependentUpon>AssignShortcutDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
+      <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Engines\Manager.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
@@ -185,11 +191,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\AssignShortcutDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\SaveCurrentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tool Window Components\MacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Interfaces;
 using VSMacros.Models;
+using VSMacros.Dialogs;
 
 namespace VSMacros.Engines
 {
@@ -57,7 +58,7 @@ namespace VSMacros.Engines
         {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.InitialDirectory = VSMacrosPackage.Current.MacroDirectory;
-            dlg.FileName = "MyMacro";
+            dlg.FileName = "My Macro";
             dlg.DefaultExt = ".js";
             dlg.Filter = "Macro| *.js";
 
@@ -91,8 +92,6 @@ namespace VSMacros.Engines
                     this.ShowMessageBox(e.Message);
                 }
             }
-
-        
         }
 
         public void Refresh()
@@ -117,6 +116,8 @@ namespace VSMacros.Engines
 
         public void AssignShortcut()
         {
+            AssignShortcutDialog dlg = new AssignShortcutDialog();
+            dlg.ShowDialog();
         }
 
         public void Delete()

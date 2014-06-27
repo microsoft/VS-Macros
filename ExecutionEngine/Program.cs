@@ -18,17 +18,19 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         private static short pid;
+        private static string macroName = "currentScript";
 
         // Helper methods
-
-        internal static string AppendExtension(string name)
-        {
-            return name + ".txt";
-        }
-
         private static string[] SeparateArgs(string[] args)
         {
-            return args[0].Split(',');
+            string[] stringSeparator = new string[] {"[delimiter]"};
+            var separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < args.Length; i++)
+            {
+                Console.WriteLine(args[i]);
+            }
+
+            return separatedArgs;
         }
         private static short DetermineNumberOfTimes(string[] args)
         {
@@ -41,62 +43,30 @@ namespace ExecutionEngine
 
             return times;
         }
-        internal static bool IsVSShuttingDown()
+
+        private static string ExtractScript(string[] args)
         {
-            // TODO: Don't know how to implement this
-            // Is there an event I can subscribe to here?
-            return false;
+            if (args.Length > 2)
+            {
+                return args[2];
+            }
+            else
+            {
+                Debug.WriteLine("You didn't provide the script");
+                return string.Empty;
+            }
         }
 
-        internal static StreamReader CreateMacroStreamReader(string path)
+        private static string WrapScriptInFunction(string unwrapped)
         {
-            using (StreamWriter sw = new StreamWriter(path))
-            {
-                sw.WriteLine("function dteTest()");
-                sw.WriteLine("{");
-                sw.WriteLine("dte.ExecuteCommand('File.NewFile');");
-                sw.Write("}");
-            }
+            var wrapped = "function currentScript() {";
+            wrapped += unwrapped;
+            wrapped += "}";
 
-            return new StreamReader(path);
+            return wrapped;
         }
 
-        internal static string ReadFromMacroFile(string path)
-        {
-            string script = string.Empty;
-
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException(path);
-            }
-
-            using (StreamReader sr = new StreamReader(path))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    script += line;
-                }
-            }
-
-            return script;
-        }
-
-        private static string CreateScriptFromReader(StreamReader reader)
-        {
-            var script = string.Empty;
-            using (reader)
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    script += line;
-                }
-            }
-            return script;
-        }
-
-        internal static void RunMacro(string name, string script, int times = 1)
+        internal static void RunMacro(string script, int times = 1)
         {
             if (!string.IsNullOrEmpty(script))
             {
@@ -109,49 +79,20 @@ namespace ExecutionEngine
 
             for (int i = 0; i < times; i++)
             {
-                parsedScript.CallMethod(name);
+                parsedScript.CallMethod(Program.macroName);
             }
         }
 
-        internal static bool ListenForInput(string name)
-        {
-            var willKeepListening = true;
-
-            var input = Console.ReadLine();
-            if (!string.IsNullOrEmpty(input))
-            {
-                if (input.Equals("r"))
-                {
-                    Console.WriteLine(">> Running your macro");
-                    var path = AppendExtension(name);
-                    var reader = CreateMacroStreamReader(path);
-                    var script = CreateScriptFromReader(reader);
-                    RunMacro(name, script);
-                }
-                else if (input.Equals("q"))
-                {
-                    Console.WriteLine(">> Quitting");
-                    willKeepListening = false;
-                }
-            }
-
-            if (IsVSShuttingDown())
-            {
-                willKeepListening = false;
-            }
-
-            return willKeepListening;
-        }
-
-        internal static void RunFromExtension(string name, StreamReader reader, string[] args)
+        internal static void RunFromExtension(string[] args)
         {
             if (short.TryParse(args[0], out pid))
             {
                 engine = new Engine(pid);
 
                 var times = DetermineNumberOfTimes(args);
-                var macroScript = CreateScriptFromReader(reader);
-                RunMacro(name, macroScript, times);
+                var unwrappedScript = ExtractScript(args);
+                var wrappedScript = WrapScriptInFunction(unwrappedScript);
+                RunMacro(wrappedScript, times);
             }
             else
             {
@@ -159,40 +100,46 @@ namespace ExecutionEngine
             }
         }
 
-        internal static void RunAsStartupProject(string name, StreamReader reader, short tempPid)
+        internal static void RunAsStartupProject(short tempPid)
         {
             pid = tempPid;
             engine = new Engine(pid);
-            var script = CreateScriptFromReader(reader);
-            RunMacro(name, script);
+            var script = CreateScriptStub();
+            RunMacro(script, 2);
+        }
+
+        private static string CreateScriptStub()
+        {
+            return "function currentScript() { dte.ExecuteCommand('File.NewFile'); } ";
         }
 
         internal static void Main(string[] args)
         {
-            var name = "dteTest";
-            var path = AppendExtension(name);
-            var reader = CreateMacroStreamReader(path);
-
             Console.WriteLine("Hello there!  Welcome to our macro extension!");
 
             if (args.Length > 0)
             {
                 var separatedArgs = SeparateArgs(args);
-                RunFromExtension(name, reader, separatedArgs);
+                RunFromExtension(separatedArgs);
             }
             else
             {
+                var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.txt";
+                var reader = new StreamReader(path);
                 short pidOfCurrentDevenv = 1860;
-                RunAsStartupProject(name, reader, pidOfCurrentDevenv);
+                RunAsStartupProject(pidOfCurrentDevenv);
+            }
+        }
+
+        private static string GetPathFromArgs(string[] args)
+        {
+            if (args[2] == null)
+            {
+                Debug.WriteLine("A path was not provided");
+                return string.Empty;
             }
 
-            // TODO: this while loop is a temp fix for now until I figure out named pipes
-            // My hacky way of IPC for now
-            // while (true)
-            // {
-            //    if (!ListenForInput(macroName)) 
-            //        break;
-            // }
+            return args[2];
         }
     }
 }

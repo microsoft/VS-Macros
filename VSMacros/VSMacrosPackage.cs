@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.Shell;
 using VSMacros.Engines;
 
 using EnvDTE;
+using MicrosoftCorporation.VSMacros.Stubs;
 
 namespace VSMacros
 {
@@ -118,7 +119,10 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            execution.InitializeAndRunEngine();
+            var times = 5;
+            var reader = new MacroReader();
+            execution.StartExecution(reader.CreateMacroStreamReader(), times);
+
             Manager.Instance.Playback("", 1);
         }
 

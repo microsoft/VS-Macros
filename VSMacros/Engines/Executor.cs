@@ -6,6 +6,7 @@
 
 namespace VSMacros.Engines
 {
+    using MicrosoftCorporation.VSMacros.Stubs;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -42,7 +43,7 @@ namespace VSMacros.Engines
         /// <param name="macro">Name of macro.</param>
         /// <param name="times">Times to be executed.</param>
         /// </summary>
-        void StartExecution(StreamReader macro, int times);
+        void StartExecution(StreamReader reader, int times);
 
         /// <summary>
         /// Will stop the currently executing macro file.
@@ -71,11 +72,12 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler OnSuccess;
 
-        private string ProvideArguments()
+        private string ProvideArguments(string script)
         {
             var pid = Process.GetCurrentProcess().Id.ToString();
-            var times = "2";
-            return pid + "," + times;
+            var times = "4";
+            var delimiter = "[delimiter]";
+            return pid + delimiter + times + delimiter + script;
         }
 
         /// <summary>
@@ -84,20 +86,40 @@ namespace VSMacros.Engines
         /// </summary>
         public void InitializeAndRunEngine()
         {
-            var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
-            this.executionEngine = new Process();
+            //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
+            //this.executionEngine = new Process();
 
-            this.executionEngine.StartInfo.FileName = processName;
-            this.executionEngine.StartInfo.Arguments = ProvideArguments();
-            this.executionEngine.Start();
+            //this.executionEngine.StartInfo.FileName = processName;
+            //this.executionEngine.StartInfo.Arguments = ProvideArguments();
+            //this.executionEngine.Start();
+        }
+
+        private static string CreateScriptFromReader(StreamReader reader)
+        {
+            var script = string.Empty;
+            using (reader)
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    script += line;
+                }
+            }
+            return script;
         }
 
         /// <summary>
         /// Will run the macro file.
         /// </summary>
-        public void StartExecution(StreamReader macro, int times)
+        public void StartExecution(StreamReader reader, int times)
         {
-            // throw new NotImplementedException();
+            var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
+            var script = CreateScriptFromReader(reader);
+            this.executionEngine = new Process();
+
+            this.executionEngine.StartInfo.FileName = processName;
+            this.executionEngine.StartInfo.Arguments = ProvideArguments(script);
+            this.executionEngine.Start();
         }
 
         /// <summary>

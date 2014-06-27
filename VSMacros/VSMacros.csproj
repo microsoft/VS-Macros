@@ -128,6 +128,7 @@
     <Compile Include="Engines\Manager.cs" />
     <Compile Include="Engines\Executor.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
+    <Compile Include="Stubs\MacroReader.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>
     </Compile>

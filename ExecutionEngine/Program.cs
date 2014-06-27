@@ -25,9 +25,22 @@ namespace ExecutionEngine
             {
                 sw.WriteLine("function dteTest()");
                 sw.WriteLine("{");
-                sw.WriteLine("dte.ExecuteCommand('File.NewFile')");
+                sw.WriteLine("dte.ExecuteCommand('File.NewFile');");
                 sw.Write("}");
             }
+        }
+
+        internal static StreamReader CreateMacroStreamReader(string path)
+        {
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                sw.WriteLine("function dteTest()");
+                sw.WriteLine("{");
+                sw.WriteLine("dte.ExecuteCommand('File.NewFile');");
+                sw.Write("}");
+            }
+            var macroReader = new StreamReader(path);
+            return macroReader;
         }
 
         internal static string ReadFromMacroFile(string path)
@@ -51,12 +64,17 @@ namespace ExecutionEngine
             return script;
         }
 
-        internal static void RunMacro(string macroName, int pid)
+        internal static void RunMacro(string macroName, StreamReader macroReader, int pid)
         {
-            var macroPath = AppendExtension(macroName);
-
-            CreateMacroFile(macroPath);
-            var script = ReadFromMacroFile(macroPath);
+            var script = string.Empty;
+            using (macroReader)
+            {
+                string line;
+                while ((line = macroReader.ReadLine()) != null)
+                {
+                    script += line;
+                }
+            }
 
             if (!string.IsNullOrEmpty(script))
             {
@@ -66,7 +84,7 @@ namespace ExecutionEngine
             {
                 throw new NullReferenceException(script);
             }
-            
+
             var output = parsedScript.CallMethod(macroName);
         }
 
@@ -76,6 +94,7 @@ namespace ExecutionEngine
             // Is there an event I can subscribe to here?
             return false;
         }
+
         internal static bool ListenForInput(string macroName)
         {
             var willKeepListening = true;
@@ -86,7 +105,9 @@ namespace ExecutionEngine
                 if (input.Equals("r"))
                 {
                     Console.WriteLine(">> Running your macro");
-                    RunMacro(macroName, pid);
+                    var path = AppendExtension(macroName);
+                    var macroReader = CreateMacroStreamReader(path);
+                    RunMacro(macroName, macroReader, pid);
                 }
                 else if (input.Equals("q"))
                 {
@@ -103,26 +124,26 @@ namespace ExecutionEngine
             return willKeepListening;
         }
 
-        internal static void RunFromExtension(string macroName, string[] args)
+        // TODO: Implement
+        internal static void RunFromExtension(string macroName, StreamReader macroReader, string[] args)
         {
             if (short.TryParse(args[0], out pid))
             {
                 engine = new Engine(pid);
-                RunMacro(macroName, pid);
+                RunMacro(macroName, macroReader, pid);
             }
             else
             {
-                // TODO: Is throwing an exception the right thing to do here?
-                // And if it is, is this the right exception to throw?
                 throw new ArgumentException(args[0]);
             }
         }
 
-        internal static void RunAsStartupProject(string macroName, short temp_pid)
+        internal static void RunAsStartupProject(string macroName, StreamReader macroReader, short temp_pid)
         {
             pid = temp_pid;
             engine = new Engine(pid);
-            RunMacro(macroName, pid);
+
+            RunMacro(macroName, macroReader, pid);
         }
 
         internal static string AppendExtension(string name) 
@@ -138,12 +159,16 @@ namespace ExecutionEngine
 
             if (args.Length > 0)
             {
-                RunFromExtension(macroName, args);
+                var path = AppendExtension(macroName);
+                var macroReader = CreateMacroStreamReader(path);
+                RunFromExtension(macroName, macroReader, args);
             }
             else
             {
-                short pidOfCurrentDevenv = 9344;
-                RunAsStartupProject(macroName, pidOfCurrentDevenv);
+                short pidOfCurrentDevenv = 1860;
+                var path = AppendExtension(macroName);
+                var macroReader = CreateMacroStreamReader(path);
+                RunAsStartupProject(macroName, macroReader, pidOfCurrentDevenv);
             }
 
             // TODO: this while loop is a temp fix for now until I figure out named pipes

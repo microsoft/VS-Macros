@@ -52,7 +52,7 @@ namespace ExecutionEngine
             }
             else
             {
-                Debug.WriteLine("You didn't provide the script");
+                MessageBox.Show("You did not provide a script");
                 return string.Empty;
             }
         }
@@ -74,6 +74,7 @@ namespace ExecutionEngine
             }
             else
             {
+                MessageBox.Show("The script is empty");
                 throw new NullReferenceException(script);
             }
 
@@ -96,6 +97,7 @@ namespace ExecutionEngine
             }
             else
             {
+                MessageBox.Show("You did not provide any arguments to the Execution Engine");
                 throw new ArgumentException(args[0]);
             }
         }
@@ -135,7 +137,7 @@ namespace ExecutionEngine
         {
             if (args[2] == null)
             {
-                Debug.WriteLine("A path was not provided");
+                MessageBox.Show("A path to the macro file was not provided");
                 return string.Empty;
             }
 

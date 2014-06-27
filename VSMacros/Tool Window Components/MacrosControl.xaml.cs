@@ -147,6 +147,7 @@ namespace VSMacros
         }
         private void TreeViewItem_MouseMove(object sender, MouseEventArgs e)
         {
+            return;
             System.Diagnostics.Debug.WriteLine("In mouve move");
             if (e.LeftButton == MouseButtonState.Pressed)
             {

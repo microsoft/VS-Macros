@@ -1,6 +1,9 @@
 ﻿// Manager.cs
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Interfaces;
@@ -12,6 +15,9 @@ namespace VSMacros.Engines
     internal sealed class Manager : IManager
     {
         private static readonly Manager instance = new Manager();
+
+        public Dictionary<string, string> Shortcuts { get; private set; }
+        private bool shortcutsLoaded;
 
         private IVsUIShell uiShell;
         private bool uiShellLoaded;
@@ -32,6 +38,9 @@ namespace VSMacros.Engines
             {
                 uiShellLoaded = false;
             }
+
+            this.LoadShortcuts();
+            shortcutsLoaded = true;
         }
 
         public static Manager Instance
@@ -45,9 +54,17 @@ namespace VSMacros.Engines
 
         public void Playback(string path, int times) 
         {
-            StreamReader str = this.LoadFile(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"));
+            if (path == string.Empty)
+            {
+                path = this.SelectedMacro.FullPath;
+            }
 
-            this.ShowMessageBox(str.ReadLine());
+            StreamReader str = this.LoadFile(path);
+
+            if (str != null)
+            {
+                this.ShowMessageBox(str.ReadLine());
+            }
         }
 
         public void StopPlayback() 
@@ -165,6 +182,23 @@ namespace VSMacros.Engines
             }
         }
       
+        public void PlaybackCommand(string cmd)
+        {
+            // Load shortcuts if not already loaded
+            if (!this.shortcutsLoaded)
+            {
+                this.LoadShortcuts();
+            }
+            
+            // Get path to macro bound to the shortcut
+            string path = this.Shortcuts[cmd];
+
+            if (path != string.Empty)
+            {
+                this.Playback(path, 1);
+            }
+        }
+
         private StreamReader LoadFile(string path) 
         { 
             try
@@ -195,6 +229,26 @@ namespace VSMacros.Engines
                     str.Seek(0, SeekOrigin.Begin);
                     str.CopyTo(fileStream);
                 }
+            }
+            catch (Exception e)
+            {
+                this.ShowMessageBox(e.Message);
+            }
+        }
+
+        private void LoadShortcuts()
+        {
+            shortcutsLoaded = true;
+
+            try
+            {
+                // Load XML file
+            var root = XDocument.Load(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Shortcuts.xml"));
+
+            // Parse to dictionary
+           this.Shortcuts = root.Descendants("command")
+                .ToDictionary(d => (string)d.Attribute("name"),
+                              d => (string)d);
             }
             catch (Exception e)
             {

@@ -64,6 +64,15 @@ namespace VSMacros.Models
                     return this.FullPath;
                 }
 
+                // TODO First draft (crappy!)
+                foreach (var item in VSMacros.Engines.Manager.Instance.Shortcuts)
+                {
+                    if (String.Compare(item.Value, this.FullPath, StringComparison.OrdinalIgnoreCase) ==0)
+                    {
+                        return path + " (CTRL+M, " + item.Key[item.Key.Length-1] + ")";
+                    }
+                }
+
                 return path;
             }
 

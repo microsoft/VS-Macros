@@ -27,5 +27,15 @@ namespace VSMacros
         public const int CmdIdRename = 0x2021;
         public const int CmdIdAssignShortcut = 0x2022;
         public const int CmdIdDelete = 0x2023;
+
+        public const int CmdIdCommand1 = 0x3000;
+        public const int CmdIdCommand2 = 0x3005;
+        public const int CmdIdCommand3 = 0x3010;
+        public const int CmdIdCommand4 = 0x3015;
+        public const int CmdIdCommand5 = 0x3020;
+        public const int CmdIdCommand6 = 0x3025;
+        public const int CmdIdCommand7 = 0x3030;
+        public const int CmdIdCommand8 = 0x3040;
+        public const int CmdIdCommand9 = 0x3035;
     }
 }

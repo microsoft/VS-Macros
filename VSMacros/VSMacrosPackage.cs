@@ -119,7 +119,7 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            var times = 5;
+            var times = 1;
             var reader = new MacroReader();
             execution.StartExecution(reader.CreateMacroStreamReader(), times);
 
@@ -128,6 +128,10 @@ namespace VSMacros
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
+            var times = 5;
+            var reader = new MacroReader();
+            execution.StartExecution(reader.CreateMacroStreamReader(), times);
+
             Manager.Instance.Playback("", 0);
         }
 

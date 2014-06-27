@@ -72,12 +72,11 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler OnSuccess;
 
-        private string ProvideArguments(string script)
+        private string ProvideArguments(int times, string script)
         {
             var pid = Process.GetCurrentProcess().Id.ToString();
-            var times = "4";
             var delimiter = "[delimiter]";
-            return pid + delimiter + times + delimiter + script;
+            return pid + delimiter + times.ToString() + delimiter + script;
         }
 
         /// <summary>
@@ -112,7 +111,7 @@ namespace VSMacros.Engines
             this.executionEngine = new Process();
 
             this.executionEngine.StartInfo.FileName = processName;
-            this.executionEngine.StartInfo.Arguments = ProvideArguments(script);
+            this.executionEngine.StartInfo.Arguments = ProvideArguments(times, script);
             this.executionEngine.Start();
         }
 

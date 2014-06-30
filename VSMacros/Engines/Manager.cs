@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MicrosoftCorporation.VSMacros.Stubs;
+using System;
 using System.IO;
 
 namespace VSMacros.Engines
@@ -19,7 +20,7 @@ namespace VSMacros.Engines
         private static readonly Manager instance = new Manager();
 
         private Manager() 
-        { 
+        {
         }
 
         public static Manager Instance

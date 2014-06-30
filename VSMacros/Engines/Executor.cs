@@ -4,58 +4,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using MicrosoftCorporation.VSMacros.Stubs;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using MicrosoftCorporation.VSMacros.Interfaces;
+using MicrosoftCorporation.VSMacros.Engines;
 
 namespace VSMacros.Engines
 {
     /// <summary>
-    /// Exposes the execution engine.
-    /// </summary>
-    internal interface IExecutor
-    {
-        /// <summary>
-        /// Informs subscribers of an error during execution.
-        /// </summary>
-        event EventHandler OnError;
-
-        /// <summary>
-        /// Informs subscribers of success after execution.
-        /// </summary>
-        event EventHandler OnSuccess;
-
-        /// <summary>
-        /// Initializes the engine and then runs the macro script.
-        /// This method will be removed after IPC is implemented.
-        /// </summary>
-        void InitializeEngine();
-
-        /// <summary>
-        /// Will run the macro file.
-        /// <param name="macro">Name of macro.</param>
-        /// <param name="iterations">Times to be executed.</param>
-        /// </summary>
-        void StartExecution(StreamReader reader, int iterations);
-
-        /// <summary>
-        /// Will stop the currently executing macro file.
-        /// We are considering removing this.
-        /// </summary>
-        void StopExecution();
-    }
-
-    /// <summary>
     /// Implements the execution engine.
     /// </summary>   
-    internal class Executor : IExecutor
+    internal sealed class Executor : IExecutor
     {
         /// <summary>
         /// The execution engine.
@@ -65,12 +26,7 @@ namespace VSMacros.Engines
         /// <summary>
         /// Informs subscribers of an error during execution.
         /// </summary>
-        public event EventHandler OnError;
-
-        /// <summary>
-        /// Informs subscribers of success after execution.
-        /// </summary>
-        public event EventHandler OnSuccess;
+        public event EventHandler<CompletionReachedEventArgs> Complete;
 
         private string ProvideArguments(int iterations, string script)
         {
@@ -92,11 +48,7 @@ namespace VSMacros.Engines
             var script = string.Empty;
             using (reader)
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    script += line;
-                }
+                script = reader.ReadToEnd();
             }
             return script;
         }
@@ -111,6 +63,7 @@ namespace VSMacros.Engines
             this.executionEngine = new Process();
 
             this.executionEngine.StartInfo.FileName = processName;
+            this.executionEngine.StartInfo.UseShellExecute = false;
             this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, script);
             this.executionEngine.Start();
         }

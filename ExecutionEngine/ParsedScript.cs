@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ExecutionEngine
 {
-    internal class ParsedScript
+    internal sealed class ParsedScript
     {
         private readonly Engine engine;
         private object dispatch;
@@ -29,10 +29,14 @@ namespace ExecutionEngine
         public object CallMethod(string methodName, params object[] arguments)
         {
             if (this.dispatch == null)
+            {
                 throw new InvalidOperationException();
+            }
 
             if (methodName == null)
+            {
                 throw new ArgumentNullException("methodName");
+            }
 
             try
             {

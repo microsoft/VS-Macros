@@ -125,7 +125,7 @@ namespace ExecutionEngine
             }
             else
             {
-                var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.txt";
+                var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.js";
                 var reader = new StreamReader(path);
                 short pidOfCurrentDevenv = 4300;
                 RunAsStartupProject(pidOfCurrentDevenv);

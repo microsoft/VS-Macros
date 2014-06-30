@@ -15,18 +15,14 @@ using System.Globalization;
 
 namespace ExecutionEngine
 {
-    internal class Engine : IDisposable
+    internal sealed class Engine : IDisposable
     {
         private IActiveScript engine;
         private Parser parser;
         private Site scriptSite;
 
         private static object dteObject;
-        public static object DteObject
-        {
-            get { return dteObject; }
-            set { dteObject = value; }
-        }
+        public static object DteObject { get; private set; }
 
         private void InitializeDteObject(int pid)
         {

@@ -13,7 +13,7 @@ using ExecutionEngine.Interfaces;
 
 namespace ExecutionEngine
 {
-    internal class Site : IActiveScriptSite
+    internal sealed class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
 

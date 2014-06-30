@@ -11,7 +11,7 @@ using ExecutionEngine.Interfaces;
 
 namespace ExecutionEngine
 {
-    internal class Parser
+    internal sealed class Parser
     {
         private IActiveScriptParse32 parse32;
         private IActiveScriptParse64 parse64;
@@ -19,7 +19,7 @@ namespace ExecutionEngine
 
         public Parser(IActiveScript engine)
         {
-            this.isParse32 = this.IsPointerSize32();
+            this.isParse32 = this.is32BitEnvironment();
             this.InitializeParsers(engine);
         }
 
@@ -37,7 +37,7 @@ namespace ExecutionEngine
             }
         }
 
-        internal bool IsPointerSize32()
+        internal bool is32BitEnvironment()
         {
             if (IntPtr.Size == 4)
                 return true;

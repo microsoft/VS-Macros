@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace MicrosoftCorporation.VSMacros.Stubs
 
         public StreamReader CreateMacroStreamReader()
         {
-            string path = Path.ChangeExtension(this.name, "txt");
+            string path = Path.ChangeExtension(this.name, "js");
             using (StreamWriter sw = new StreamWriter(path))
             {
                 sw.WriteLine("dte.ExecuteCommand('File.NewFile');");

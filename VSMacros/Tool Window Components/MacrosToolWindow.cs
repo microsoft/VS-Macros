@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.ComponentModel;
+﻿using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using System;
 using System.ComponentModel.Design; // for CommandID
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Windows;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Models;
 
 namespace VSMacros
 {
-    [Guid("56fbfa32-c049-4fd5-9b54-39fcdf33629d")]
+    [Guid(GuidList.GuidToolWindowPersistanceString)]
     public class MacrosToolWindow : ToolWindowPane
     {
         private const string CurrentMacroLocation = "Current.js";
@@ -45,11 +40,96 @@ namespace VSMacros
             // Create tree view root
             MacroFSNode root = new MacroFSNode(macroDirectory);
 
-            // Make sure it is opened by default
+            // Make sure it is opened and selected by default
             root.IsExpanded = true;
+            root.IsSelected = true;
 
             // Initialize Macros Control
             base.Content = new MacrosControl(root);
         }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            if (null != mcs)
+            {
+                // Create the command for refresh
+                mcs.AddCommand(new MenuCommand(
+                    this.Refresh,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRefresh)));
+
+                // Create the command to open the macro directory
+                mcs.AddCommand(new MenuCommand(
+                    this.OpenDirectory,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenDirectory)));
+
+                // Create the command to edit a macro
+                mcs.AddCommand(new MenuCommand(
+                    this.Edit,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdEdit)));
+
+                // Create the command to assign a shortcut to a macro
+                mcs.AddCommand(new MenuCommand(
+                    this.AssignShortcut,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdAssignShortcut)));
+
+                // Create the command to delete a macro
+                mcs.AddCommand(new MenuCommand(
+                    this.Delete,
+                    new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.Delete)));
+
+                // Create the command to rename a macro
+                mcs.AddCommand(new MenuCommand(
+                    this.Rename,
+                    new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.Rename)));
+            }
+        }
+
+        public string MacroDirectory
+        {
+            get
+            {
+                return VSMacrosPackage.Current.MacroDirectory;
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////
+        // Command Handlers
+        #region Command Handlers
+
+        private void Refresh(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Refresh();
+        }
+
+        public void OpenDirectory(object sender, EventArgs arguments)
+        {
+            // Open the macro directory and let the user manage the macros
+            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(this.MacroDirectory); });
+        }
+
+        public void Edit(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Edit();
+        }
+
+        public void AssignShortcut(object sender, EventArgs arguments)
+        {
+            Manager.Instance.AssignShortcut();
+        }
+
+        public void Delete(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Delete();
+        }
+
+        public void Rename(object sender, EventArgs arguments)
+        {
+            Manager.Instance.Rename();
+        }
+
+        #endregion
     }
 }

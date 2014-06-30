@@ -1,19 +1,11 @@
 ﻿// MacrosControl.xaml.cs
 
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Models;
 
 namespace VSMacros
@@ -50,13 +42,11 @@ namespace VSMacros
 
         private void MacroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            // TODO this is the way I have found to make the textBox disappear when it is shown
-            // It might be a little expensive
-            // Instead, I should give the textBox focus when the template changes and monitor the LostFocus event
+            // Disable edit for previously selected node
             MacroFSNode oldNode = e.OldValue as MacroFSNode;
             if (oldNode != null)
             {
-                oldNode.IsEditable = false;
+                oldNode.DisableEdit();
             }
         }
 
@@ -132,7 +122,16 @@ namespace VSMacros
 
         private void TextBox_LostKeyboardFocus(object sender, RoutedEventArgs e)
         {
+            Keyboard.ClearFocus();
             this.SelectedNode.DisableEdit();
+        }
+
+        private void TreeViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            if (!this.SelectedNode.IsDirectory)
+            {
+                VSMacros.Engines.Manager.Instance.Playback(this.SelectedNode.FullPath, 1);
+            }
         }
 
         #endregion

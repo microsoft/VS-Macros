@@ -13,7 +13,8 @@
         <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
-                <TextBlock Text="{Binding Name}" Margin="5,0,0,0" Padding="1"/>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,0,0,0" Padding="1"/>
+                <TextBlock Text="{Binding Shortcut, Mode=OneWay}" Padding="1"/>
             </StackPanel>
         </DataTemplate>
         
@@ -21,7 +22,7 @@
         <DataTemplate x:Key="EditTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
-                <TextBox Text="{Binding Name}" Margin="5,0,0,0" KeyDown="TextBox_KeyDown" LostKeyboardFocus="TextBox_LostKeyboardFocus"/>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,0,0,0" KeyDown="TextBox_KeyDown"/>
             </StackPanel>
         </DataTemplate>
         
@@ -30,8 +31,7 @@
             <ContentPresenter Content="{Binding}">
                 <ContentPresenter.Style>
                     <Style TargetType="{x:Type ContentPresenter}">
-                        <Setter Property="ContentTemplate"
-                                    Value="{StaticResource NormalTemplate}"/>
+                        <Setter Property="ContentTemplate" Value="{StaticResource NormalTemplate}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsEditable}" Value="True">
                                 <Setter Property="ContentTemplate" Value="{StaticResource EditTemplate}" />
@@ -50,9 +50,9 @@
                 <Image Width="20" Height="20" Stretch="Fill" Source="..\Resources\macro.png"/>
                 <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
             </StackPanel>
-        </HierarchicalDataTemplate>
+        </HierarchicalDataTemplate>        
     </UserControl.Resources>
-    
+   
     <!-- Macro Tree View -->
     <TreeView x:Name="MacroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
@@ -64,12 +64,18 @@
               DragOver="MacroTreeView_DragOver"
               AllowDrop="True"
               Background="Transparent" BorderBrush="Transparent">
+
+        <TreeView.Resources>
+            <ResourceDictionary Source="..\Assets\TreeView.xaml"/>
+        </TreeView.Resources>
         
         <TreeView.ItemContainerStyle>
-            <Style TargetType="{x:Type TreeViewItem}">
+            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource baseTreeViewItemStyle}">
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                 <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
-
+                <!--<EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>-->
+                
                 <!-- Drag & Drop -->
                 <EventSetter Event="TreeViewItem.MouseMove" Handler="TreeViewItem_MouseMove"/>
                 <EventSetter Event="TreeViewItem.PreviewMouseLeftButtonDown" Handler="TreeViewItem_PreviewMouseLeftButtonDown"/>
@@ -78,20 +84,5 @@
                 <EventSetter Event="TreeViewItem.DragOver" Handler="MacroTreeView_DragOver"/>
             </Style>
         </TreeView.ItemContainerStyle>
-    
-    <!--<TreeView x:Name="MacroTreeView">
-        <TreeViewItem Header="Macros">
-            <TreeViewItem Header="Text">
-                <TreeViewItem Header="Braces"></TreeViewItem>
-            </TreeViewItem>
-            <TreeViewItem Header="Debugging">
-                <TreeViewItem Header="Bp"></TreeViewItem>
-            </TreeViewItem>
-        </TreeViewItem>-->
-        
-        <TreeView.Resources>
-            <!-- Resource Dictionary for TreeViewItem-->
-            <ResourceDictionary Source="..\Assets\TreeView.xaml" />
-        </TreeView.Resources>
     </TreeView>
 </UserControl>

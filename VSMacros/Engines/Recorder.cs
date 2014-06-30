@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace VSMacros
 {
-    class MacroRecorder:IMacroRecorder, IMacroRecorderPrivate, IDisposable
+    class MacroRecorder:IRecorder, IRecorderPrivate, IDisposable
     {
         private WindowActivationWatcher activationWatcher;
         private CommandExecutionWatcher commandWatcher;

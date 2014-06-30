@@ -10,7 +10,7 @@ namespace VSMacros
     {
         private IServiceProvider serviceProvider;
         private uint monSelCookie;
-        private IMacroRecorderPrivate macroRecorder;
+        private IRecorderPrivate macroRecorder;
 
         // NOTE: Values obtained from http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.__vsfpropid.aspx, specifically the part for VSFPROPID_Type.
         enum FrameType
@@ -32,7 +32,7 @@ namespace VSMacros
                 // and it is essentially a no-fail method.
                 monSel.AdviseSelectionEvents(pSink: this, pdwCookie: out this.monSelCookie);
             }
-            macroRecorder = (IMacroRecorderPrivate)serviceProvider.GetService(typeof(IMacroRecorder));
+            macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
         }
 
         public int OnElementValueChanged(uint elementid, object varValueOld, object varValueNew)

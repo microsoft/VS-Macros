@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VSMacros
 {
-    interface IMacroRecorderPrivate
+    interface IRecorderPrivate
     {
         bool Recording { get; }
         void AddCommandData(Guid commandSet, uint identifier, string commandName, char input);

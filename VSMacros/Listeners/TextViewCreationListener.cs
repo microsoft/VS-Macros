@@ -21,14 +21,14 @@ namespace VSMacros
     internal class EditorCommandFilter : IOleCommandTarget
     {
         private SVsServiceProvider serviceProvider;
-        private IMacroRecorderPrivate macroRecorder;
+        private IRecorderPrivate macroRecorder;
 
         internal IOleCommandTarget NextCommandTarget { get; set; }
 
         internal EditorCommandFilter(SVsServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-            macroRecorder = (IMacroRecorderPrivate)serviceProvider.GetService(typeof(IMacroRecorder));
+            macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
         }
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)

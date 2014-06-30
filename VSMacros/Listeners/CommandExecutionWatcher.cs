@@ -15,7 +15,7 @@ namespace VSMacros
 
         private IServiceProvider serviceProvider;
         private uint priorityCommandTargetCookie;
-        private IMacroRecorderPrivate macroRecorder;
+        private IRecorderPrivate macroRecorder;
 
         internal CommandExecutionWatcher(IServiceProvider serviceProvider)
         {
@@ -29,7 +29,7 @@ namespace VSMacros
                 // and it is essentially a no-fail method.
                 rpct.RegisterPriorityCommandTarget(dwReserved: 0U, pCmdTrgt: this, pdwCookie: out this.priorityCommandTargetCookie);
             }
-            macroRecorder = (IMacroRecorderPrivate)serviceProvider.GetService(typeof(IMacroRecorder));
+            macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
         }
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)

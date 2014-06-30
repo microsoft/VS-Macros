@@ -21,7 +21,7 @@ namespace VSMacros
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(GuidList.GuidVSMacrosPkgString)]
-    [ProvideService(typeof(IMacroRecorder))]
+    [ProvideService(typeof(IRecorder))]
     public sealed class VSMacrosPackage : Package
     {
         public static VSMacrosPackage Current { get; private set; }
@@ -84,7 +84,7 @@ namespace VSMacros
         {
             base.Initialize();
 
-            ((IServiceContainer)this).AddService(typeof(IMacroRecorder), (serviceContainer, type) => { return new MacroRecorder(this); }, true);
+            ((IServiceContainer)this).AddService(typeof(IRecorder), (serviceContainer, type) => { return new MacroRecorder(this); }, true);
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -133,7 +133,7 @@ namespace VSMacros
 
         public void Record(object sender, EventArgs arguments)
         {
-            //Manager.Instance.ToggleRecording();
+            //StreamWriter stream;
             if (isShowingStartImage)
             {
                 statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
@@ -145,7 +145,7 @@ namespace VSMacros
                     button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StopIcon);
                 }
 
-                IMacroRecorder macroRecorder = (IMacroRecorder)this.GetService(typeof(IMacroRecorder));
+                IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StartRecording();
 
 
@@ -160,9 +160,8 @@ namespace VSMacros
                     button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StartIcon);
                 }
 
-                IMacroRecorder macroRecorder = (IMacroRecorder)this.GetService(typeof(IMacroRecorder));
+                IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StopRecording();
-
             }
             isShowingStartImage = !isShowingStartImage;
 

@@ -1,14 +1,15 @@
 ﻿// MacroFsNode
 
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media.Imaging;
-using Microsoft.VisualStudio.Shell.Interop;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 
 namespace VSMacros.Models
@@ -20,6 +21,7 @@ namespace VSMacros.Models
         private string fullPath;
         private bool isEditable;
         private bool isExpanded;
+        private bool isSelected;
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
@@ -64,15 +66,6 @@ namespace VSMacros.Models
                     return this.FullPath;
                 }
 
-                // TODO First draft (crappy!)
-                foreach (var item in VSMacros.Engines.Manager.Instance.Shortcuts)
-                {
-                    if (String.Compare(item.Value, this.FullPath, StringComparison.OrdinalIgnoreCase) ==0)
-                    {
-                        return path + " (CTRL+M, " + item.Key[item.Key.Length-1] + ")";
-                    }
-                }
-
                 return path;
             }
 
@@ -100,9 +93,32 @@ namespace VSMacros.Models
                 {
                     if (e.Message != null)
                     {
-                        MessageBox.Show(e.Message);
+                        // TODO export VSMacros.Engines.Manager.Instance.ShowMessageBox to a helper class?
+                        VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
                     }
                 }
+            }
+        }
+
+        public string Shortcut
+        {
+            get
+            {
+                // TODO First draft (crappy!)
+                foreach (var item in VSMacros.Engines.Manager.Instance.Shortcuts)
+                {
+                    if (String.Compare(item.Value, this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return "(CTRL+M, " + item.Key[item.Key.Length - 1] + ")";
+                    }
+                }
+
+                return string.Empty;
+            }
+            set
+            {
+                // Just notify the binding
+                this.NotifyPropertyChanged("Shortcut");
             }
         }
 
@@ -120,37 +136,63 @@ namespace VSMacros.Models
             }
         }
 
-        public string Icon
+        public bool IsSelected
         {
             get
             {
-                // IVsImageService imageService = (IVsImageService)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsImageService));
-                // if (imageService != null)
-                // {
-                //    IVsUIObject uiObject = imageService.GetIconForFile(Path.GetFileName(this.FullPath), __VSUIDATAFORMAT.VSDF_WPF);
-                //    if (uiObject != null)
-                //    {
-                //        BitmapSource bitmapSource = GelUtilities.GetObjectData(uiObject) as BitmapSource;
-                //        return bitmapSource.ToString();
-                //    }
-                // }
-                // return string.Empty;
+                return this.isSelected;
+            }
 
+            set
+            {
+                this.isSelected = value;
+                this.NotifyPropertyChanged("IsSelected");
+            }
+        }
+
+        public BitmapSource Icon
+        {
+            get
+            {
                 if (this.IsDirectory)
                 {
+                    Bitmap bmp;
+
+
                     if (this.isExpanded)
                     {
-                        return @"..\Resources\folderopened.png";
+                        // TODO FromFile uses the working directory -> figure out how to make that work
+                        Image icon = Image.FromFile(@"C:\Users\t-jusdom\Source\Repos\Macro Extension\VSMacros\Resources\folderopened.png");
+                        bmp = new Bitmap(icon);
                     }
                     else
                     {
-                        return @"..\Resources\folderclosed.png";
+                        Image icon = Image.FromFile(@"C:\Users\t-jusdom\Source\Repos\Macro Extension\VSMacros\Resources\folderclosed.png");
+                        bmp = new Bitmap(icon);
                     }
+
+                    return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                            bmp.GetHbitmap(),
+                            IntPtr.Zero,
+                            Int32Rect.Empty,
+                            BitmapSizeOptions.FromEmptyOptions());
                 }
                 else
                 {
-                    return @"..\Resources\js.png";
+                    IVsImageService imageService = (IVsImageService)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsImageService));
+                    if (imageService != null)
+                    {
+                        IVsUIObject uiObject = imageService.GetIconForFile(Path.GetFileName(this.FullPath), __VSUIDATAFORMAT.VSDF_WPF);
+                        if (uiObject != null)
+                        {
+                            BitmapSource bitmapSource = GelUtilities.GetObjectData(uiObject) as BitmapSource;
+                            return bitmapSource;
+                        }
+                    }
                 }
+
+                // Would it be better to have a sane default image?
+                return null;
             }
         }
 

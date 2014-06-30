@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VSMacros
+﻿namespace VSMacros
 {
     internal static class PkgCmdIDList
     {

@@ -1,14 +1,13 @@
-﻿// Manager.cs
+﻿using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
-using VSMacros.Dialogs;
 
 namespace VSMacros.Engines
 {
@@ -18,6 +17,7 @@ namespace VSMacros.Engines
 
         public Dictionary<string, string> Shortcuts { get; private set; }
         private bool shortcutsLoaded;
+        private const string shortcutsFileName = "Shortcuts.xml";
 
         private IVsUIShell uiShell;
         private bool uiShellLoaded;
@@ -103,6 +103,8 @@ namespace VSMacros.Engines
                     string pathToCurrent = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js");
 
                     File.Copy(pathToCurrent, pathToNew);
+
+                    this.Refresh();
                 }
                 catch (Exception e)
                 {
@@ -114,6 +116,7 @@ namespace VSMacros.Engines
         public void Refresh()
         {
             MacroFSNode.RootNode.RefreshTree();
+            this.LoadShortcuts();
         }
 
         public void Edit()
@@ -135,6 +138,36 @@ namespace VSMacros.Engines
         {
             AssignShortcutDialog dlg = new AssignShortcutDialog();
             dlg.ShowDialog();
+
+            if (dlg.DialogResult == true)
+            {
+                MacroFSNode macro = this.SelectedMacro;
+
+                // Remove old shortcut if it exists
+                string oldKey;
+                if (macro.Shortcut != string.Empty)
+                {
+                    string oldShortcut = macro.Shortcut;
+                    oldKey = "command" + oldShortcut[oldShortcut.Length - 2];
+                    this.Shortcuts[oldKey] = string.Empty;
+                }
+
+                string newShortcut = dlg.SelectedShortcut;
+
+                // At this point, the shortcut has been removed
+                // Assign a new one only if the user selected a key binding
+                if (newShortcut != "None")
+                {
+                    // Get dictionary key for selected command
+                    string key = "command" + newShortcut[newShortcut.Length - 1];
+
+                    // Update dictionary
+                    this.Shortcuts[key] = macro.FullPath;
+                }
+
+                // Notify the change
+                macro.Shortcut = string.Empty;
+            }
         }
 
         public void Delete()
@@ -205,7 +238,7 @@ namespace VSMacros.Engines
             {
                 if (!File.Exists(path))
                 {
-                    throw new Exception("Macro not found. Try refreshing the list.");
+                    throw new Exception(Resources.MacroNotFound);
                 }
 
                 StreamReader str = new StreamReader(path);
@@ -243,7 +276,7 @@ namespace VSMacros.Engines
             try
             {
                 // Load XML file
-            var root = XDocument.Load(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Shortcuts.xml"));
+            var root = XDocument.Load(Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFileName));
 
             // Parse to dictionary
            this.Shortcuts = root.Descendants("command")
@@ -257,7 +290,7 @@ namespace VSMacros.Engines
         }
 
         #region Helper Methods
-        private int ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
+        public int ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
             if (!uiShellLoaded)
             {

@@ -88,6 +88,33 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Macro not found on disk..
+        /// </summary>
+        internal static string MacroNotFound {
+            get {
+                return ResourceManager.GetString("MacroNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
+        /// </summary>
+        internal static string ShortcutAlreadyUsed {
+            get {
+                return ResourceManager.GetString("ShortcutAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected shortcut is invalid..
+        /// </summary>
+        internal static string ShortcutIsInvalid {
+            get {
+                return ResourceManager.GetString("ShortcutIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Macro Explorer.
         /// </summary>
         internal static string ToolWindowTitle {

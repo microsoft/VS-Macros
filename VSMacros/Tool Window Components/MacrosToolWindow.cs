@@ -7,10 +7,14 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using EnvDTE80;
+using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Model;
+using System.Reflection;
+
 
 namespace VSMacros
 {
@@ -18,10 +22,13 @@ namespace VSMacros
     public class MacrosToolWindow : ToolWindowPane
     {
         private const string currentMacroLocation = "Current.js";
+        private VSMacrosPackage owningPackage;
+        private bool addedToolbarButton;
 
         public MacrosToolWindow() :
             base(null)
         {
+            this.owningPackage = VSMacrosPackage.Current;
             this.Caption = Resources.ToolWindowTitle;
             this.BitmapResourceID = 301;
             this.BitmapIndex = 1;
@@ -42,7 +49,22 @@ namespace VSMacros
 
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
             MacroFSNode root = new MacroFSNode(MacroDirectory);
-            base.Content = new MacrosControl(root);
+            var root2 = new MacrosControl(root);
+            root2.Loaded += OnLoaded;
+            base.Content = root2;
+        }
+        void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!this.addedToolbarButton)
+            {
+                IVsWindowFrame windowFrame = (IVsWindowFrame)GetService(typeof(SVsWindowFrame));
+
+                object dteWindow;
+                windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_ExtWindowObject, out dteWindow);
+                Window2 window = (Window2)dteWindow;
+                this.owningPackage.ImageButtons.Add((CommandBarButton)((CommandBars)window.CommandBars)[1].Controls[1]);
+                this.addedToolbarButton = true;
+            }
         }
     }
 }

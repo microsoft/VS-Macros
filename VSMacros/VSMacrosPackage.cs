@@ -6,6 +6,13 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using VSMacros.Engines;
+using System.Windows.Media.Imaging;
+using System.Windows.Forms;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.CommandBars;
+using System.Collections.Generic;
+using EnvDTE;
+using Microsoft.Internal.VisualStudio.PlatformUI;
 
 namespace VSMacros
 {
@@ -14,6 +21,7 @@ namespace VSMacros
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(GuidList.GuidVSMacrosPkgString)]
+    [ProvideService(typeof(IMacroRecorder))]
     public sealed class VSMacrosPackage : Package
     {
         public static VSMacrosPackage Current { get; private set; }
@@ -50,11 +58,33 @@ namespace VSMacros
         /////////////////////////////////////////////////////////////////////////////
         // Overridden Package Implementation
         #region Package Members
+        private BitmapImage startIcon;
+        private BitmapImage stopIcon;
+        private string commonPath;
+        private bool isShowingStartImage = true;
+        private List<CommandBarButton> imageButtons;
+        private IVsStatusbar statusBar;
+        private object iconRecord = (short)Microsoft.VisualStudio.Shell.Interop.Constants.SBAI_Synch;
+        private static DataModel dataModel;
+
+        internal static DataModel DataModel
+        {
+            get
+            {
+                if (VSMacrosPackage.dataModel == null)
+                {
+                    VSMacrosPackage.dataModel = new DataModel();
+                }
+
+                return VSMacrosPackage.dataModel;
+            }
+        }
 
         protected override void Initialize()
         {
             base.Initialize();
 
+            ((IServiceContainer)this).AddService(typeof(IMacroRecorder), (serviceContainer, type) => { return new MacroRecorder(this); }, true);
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -103,7 +133,40 @@ namespace VSMacros
 
         public void Record(object sender, EventArgs arguments)
         {
-            Manager.Instance.ToggleRecording();
+            //Manager.Instance.ToggleRecording();
+            if (isShowingStartImage)
+            {
+                statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
+                statusBar.Clear();
+                statusBar.SetText("Recording...");
+                statusBar.Animation(1, ref iconRecord);
+                foreach (var button in ImageButtons)
+                {
+                    button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StopIcon);
+                }
+
+                IMacroRecorder macroRecorder = (IMacroRecorder)this.GetService(typeof(IMacroRecorder));
+                macroRecorder.StartRecording();
+
+
+            }
+            else
+            {
+                statusBar.Clear();
+                statusBar.SetText("Ready");
+                statusBar.Animation(0, ref iconRecord);
+                foreach (var button in ImageButtons)
+                {
+                    button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StartIcon);
+                }
+
+                IMacroRecorder macroRecorder = (IMacroRecorder)this.GetService(typeof(IMacroRecorder));
+                macroRecorder.StopRecording();
+
+            }
+            isShowingStartImage = !isShowingStartImage;
+
+            return;
         }
 
         private void Playback(object sender, EventArgs arguments)
@@ -130,6 +193,100 @@ namespace VSMacros
         {
             // Open the macro directory and let the user manage the macros
             System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(MacroDirectory); });
+        }
+
+        internal List<CommandBarButton> ImageButtons
+        {
+            get
+            {
+                if (this.imageButtons == null)
+                {
+                    this.imageButtons = GetImageButtons();
+                }
+
+                return this.imageButtons;
+            }
+        }
+
+        private List<CommandBarButton> GetImageButtons()
+        {
+            List<CommandBarButton> buttons = new List<CommandBarButton>();
+
+            DTE dte = (DTE)this.GetService(typeof(SDTE));
+            CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
+            CommandBarPopup viewMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
+            CommandBarPopup toolMenu = (CommandBarPopup)viewMenu.Controls["Macros"];
+            CommandBarButton startButton = (CommandBarButton)toolMenu.Controls["Start/Stop Recording"];
+            buttons.Add(startButton);
+
+            return buttons;
+        }
+
+        private BitmapSource StartIcon
+        {
+            get
+            {
+                if (this.startIcon == null)
+                {
+                    this.startIcon = new BitmapImage(new Uri(Path.Combine(CommonPath, "RecordRound.png")));
+                }
+
+                return this.startIcon;
+            }
+        }
+
+        private BitmapSource StopIcon
+        {
+            get
+            {
+                if (this.stopIcon == null)
+                {
+                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(CommonPath, "stopIcon.png")));
+                }
+
+                return this.stopIcon;
+            }
+        }
+
+        private string CommonPath
+        {
+            get
+            {
+                if (this.commonPath == null)
+                {
+                    this.commonPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
+                }
+
+                return this.commonPath;
+            }
+        }
+
+        protected override int QueryClose(out bool canClose)
+        {
+            if (!isShowingStartImage)
+            {
+                string message = "Recording in process, are you sure to close the window?";
+                string caption = "Attention";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                System.Windows.Forms.DialogResult result;
+
+                // Displays the MessageBox.
+                result = MessageBox.Show(message, caption, buttons);
+
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    canClose = true;
+                }
+                else
+                {
+                    canClose = false;
+                }
+            }
+            else
+            {
+                canClose = true;
+            }
+            return (int)VSConstants.S_OK;
         }
 
         #endregion

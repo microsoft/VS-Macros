@@ -40,6 +40,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualStudio.CoreUtility, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Editor, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
@@ -51,14 +53,20 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0">
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.Data, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Text.Logic, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Text.UI, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.12.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.12.0" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -125,11 +133,21 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\DataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
+    <Compile Include="Engines\MacroRecorder.cs" />
     <Compile Include="Engines\Manager.cs" />
     <Compile Include="Engines\Executor.cs" />
     <Compile Include="Interfaces\IExecutor.cs" />
+    <Compile Include="Interfaces\IMacroRecorder.cs" />
+    <Compile Include="Interfaces\IMacroRecorderPrivate.cs" />
+    <Compile Include="Listeners\CommandExecutionWatcher.cs" />
+    <Compile Include="Listeners\TextViewCreationListener.cs" />
+    <Compile Include="Listeners\TextViewCreationListenerFormat.cs" />
+    <Compile Include="Listeners\TextViewCreationListenerType.cs" />
+    <Compile Include="Listeners\WindowActivationWatcher.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
+    <Compile Include="Models\RecordedActionBase.cs" />
     <Compile Include="Stubs\MacroReader.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>
@@ -174,6 +192,8 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\RecordRound.png" />
+    <Resource Include="Resources\stopIcon.png" />
     <Resource Include="Resources\Images.png" />
     <Resource Include="Resources\folder.png" />
     <Resource Include="Resources\js.png" />

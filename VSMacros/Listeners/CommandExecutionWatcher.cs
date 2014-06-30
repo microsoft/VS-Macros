@@ -38,7 +38,7 @@ namespace VSMacros
             {
                 // NOTE: An Exec call with a non-null pvaOut implies it is actually the shell trying to get the combo box child items for a 
                 // combo, not a real command execution, so we can ignore these for purposes of command recording.
-                if (pvaOut == IntPtr.Zero && (pguidCmdGroup != GuidList.guidVSMacrosCmdSet || nCmdID != PkgCmdIDList.cmdidRecord))
+                if (pvaOut == IntPtr.Zero && (pguidCmdGroup != GuidList.GuidVSMacrosCmdSet || nCmdID != PkgCmdIDList.CmdIdRecord))
                 {
                     string commandName = ConvertGuidDWordToName(pguidCmdGroup, nCmdID);
                     macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, commandName, (char)0);

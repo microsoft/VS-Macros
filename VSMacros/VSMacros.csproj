@@ -132,6 +132,7 @@
     <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
     <Compile Include="Engines\Manager.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
@@ -164,7 +165,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

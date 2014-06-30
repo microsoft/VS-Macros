@@ -1,27 +1,24 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using System;
 using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 using VSMacros.Engines;
 
 namespace VSMacros
 {
     
     [ProvideToolWindow(typeof(MacrosToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
+    [ProvideKeyBindingTable(GuidList.GuidToolWindowPersistanceString, 115)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(GuidList.GuidVSMacrosPkgString)]
     public sealed class VSMacrosPackage : Package
     {
+        
         public static VSMacrosPackage Current { get; private set; }
 
         public VSMacrosPackage()
@@ -47,9 +44,7 @@ namespace VSMacros
         protected override void Initialize()
         {
             base.Initialize();
-
-            // QUESTION Should some of the commands, namely those only appearing in the tool window, be added later, maybe when the tool window is created?
-            // Add our command handlers for the menu
+            
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs)
             {
@@ -77,36 +72,6 @@ namespace VSMacros
                 mcs.AddCommand(new MenuCommand(
                     this.SaveCurrent,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdSaveTemporaryMacro)));
-
-                // Create the command for refresh
-                mcs.AddCommand(new MenuCommand(
-                    this.Refresh,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRefresh)));
-
-                // Create the command to open the macro directory
-                mcs.AddCommand(new MenuCommand(
-                    this.OpenDirectory,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenDirectory)));
-
-                // Create the command to edit a macro
-                mcs.AddCommand(new MenuCommand(
-                    this.Edit,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdEdit)));
-
-                // Create the command to rename a macro
-                mcs.AddCommand(new MenuCommand(
-                    this.Rename,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRename)));
-
-                // Create the command to assign a shortcut to a macro
-                mcs.AddCommand(new MenuCommand(
-                    this.AssignShortcut,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdAssignShortcut)));
-
-                // Create the command to delete a macro
-                mcs.AddCommand(new MenuCommand(
-                    this.Delete,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdDelete)));
 
                 // Create the command to playback bounded macros
                 mcs.AddCommand(new MenuCommand(this.PlaybackCommand1, new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdCommand1)));
@@ -157,37 +122,6 @@ namespace VSMacros
         private void SaveCurrent(object sender, EventArgs arguments)
         {
             Manager.Instance.SaveCurrent();
-        }
-
-        private void Refresh(object sender, EventArgs arguments)
-        {
-            Manager.Instance.Refresh();
-        }
-
-        public void OpenDirectory(object sender, EventArgs arguments)
-        {
-            // Open the macro directory and let the user manage the macros
-            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(MacroDirectory); });
-        }
-
-        public void Edit(object sender, EventArgs arguments)
-        {
-            Manager.Instance.Edit();
-        }
-
-        public void Rename(object sender, EventArgs arguments)
-        {
-            Manager.Instance.Rename();
-        }
-
-        public void AssignShortcut(object sender, EventArgs arguments)
-        {
-            Manager.Instance.AssignShortcut();
-        }
-
-        public void Delete(object sender, EventArgs arguments)
-        {
-            Manager.Instance.Delete();
         }
 
         public void PlaybackCommand1(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command1");}

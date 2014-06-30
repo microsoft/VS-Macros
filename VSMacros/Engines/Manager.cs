@@ -1,4 +1,4 @@
-﻿using MicrosoftCorporation.VSMacros.Stubs;
+﻿using VSMacros.Stubs;
 using System;
 using System.IO;
 

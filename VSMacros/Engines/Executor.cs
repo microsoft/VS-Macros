@@ -8,8 +8,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using MicrosoftCorporation.VSMacros.Interfaces;
-using MicrosoftCorporation.VSMacros.Engines;
+using VSMacros.Interfaces;
+using VSMacros.Engines;
 
 namespace VSMacros.Engines
 {

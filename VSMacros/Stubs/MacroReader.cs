@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicrosoftCorporation.VSMacros.Stubs
+namespace VSMacros.Stubs
 {
     class MacroReader
     {

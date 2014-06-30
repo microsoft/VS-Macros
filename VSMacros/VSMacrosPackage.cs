@@ -1,23 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.ComponentModel.Design;
-using System.Reflection;
-using Microsoft.Win32;
-using Microsoft.VisualStudio;
+﻿using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
+using System;
+using System.ComponentModel.Design;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using VSMacros.Engines;
-
-using EnvDTE;
-using MicrosoftCorporation.VSMacros.Stubs;
 
 namespace VSMacros
 {
-    
     [ProvideToolWindow(typeof(MacrosToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [PackageRegistration(UseManagedResourcesOnly = true)]

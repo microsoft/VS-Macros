@@ -6,7 +6,7 @@ using System.Text;
 // TODO: I am not sure if this is the right place to define this class.
 // For now I will just keep it closer to the class that uses it.
 
-namespace MicrosoftCorporation.VSMacros.Engines
+namespace VSMacros.Engines
 {
     class CompletionReachedEventArgs : EventArgs
     {

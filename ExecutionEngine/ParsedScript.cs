@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ExecutionEngine
 {
-    internal class ParsedScript : IDisposable
+    internal class ParsedScript
     {
         private readonly Engine engine;
         private object dispatch;
@@ -42,11 +42,6 @@ namespace ExecutionEngine
             {
                 throw;
             }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

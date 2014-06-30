@@ -25,10 +25,14 @@ namespace ExecutionEngine
         public void GetItemInfo(string name, Enums.ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
+            {
                 throw new NotImplementedException();
+            }
 
             if (Engine.DteObject == null)
+            {
                 throw new COMException(null, TypeEElementNotFound);
+            }
 
             item = Marshal.GetIUnknownForObject(Engine.DteObject);
         }

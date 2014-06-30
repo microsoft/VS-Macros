@@ -17,14 +17,14 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        private static short pid;
+        private static int pid;
         private static string macroName = "currentScript";
 
         // Helper methods
         private static string[] SeparateArgs(string[] args)
         {
             string[] stringSeparator = new string[] {"[delimiter]"};
-            var separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
+            string[] separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < args.Length; i++)
             {
                 Console.WriteLine(args[i]);
@@ -32,16 +32,16 @@ namespace ExecutionEngine
 
             return separatedArgs;
         }
-        private static short DetermineNumberOfTimes(string[] args)
+        private static short DetermineNumberOfIterations(string[] args)
         {
-            short times;
+            short iterations;
 
-            if (args.Length < 2 || !short.TryParse(args[1], out times))
+            if (args.Length < 2 || !short.TryParse(args[1], out iterations))
             {
                 return 1;
             }
 
-            return times;
+            return iterations;
         }
 
         private static string ExtractScript(string[] args)
@@ -59,41 +59,40 @@ namespace ExecutionEngine
 
         private static string WrapScriptInFunction(string unwrapped)
         {
-            var wrapped = "function currentScript() {";
+            string wrapped = "function currentScript() {";
             wrapped += unwrapped;
             wrapped += "}";
 
             return wrapped;
         }
 
-        internal static void RunMacro(string script, int times = 1)
+        internal static void RunMacro(string script, int iterations = 1)
         {
             if (!string.IsNullOrEmpty(script))
             {
-                parsedScript = engine.Parse(script);
+                Program.parsedScript = Program.engine.Parse(script);
             }
             else
             {
-                MessageBox.Show("The script is empty");
-                throw new NullReferenceException(script);
+                throw new Exception(script);
             }
 
-            for (int i = 0; i < times; i++)
+            for (int i = 0; i < iterations; i++)
             {
-                parsedScript.CallMethod(Program.macroName);
+                Program.parsedScript.CallMethod(Program.macroName);
             }
         }
 
         internal static void RunFromExtension(string[] args)
         {
-            if (short.TryParse(args[0], out pid))
+            if (int.TryParse(args[0], out Program.pid))
             {
-                engine = new Engine(pid);
+                Program.engine = new Engine(Program.pid);
 
-                var times = DetermineNumberOfTimes(args);
-                var unwrappedScript = ExtractScript(args);
-                var wrappedScript = WrapScriptInFunction(unwrappedScript);
-                RunMacro(wrappedScript, times);
+                short iterations = DetermineNumberOfIterations(args);
+                string unwrappedScript = ExtractScript(args);
+                string wrappedScript = WrapScriptInFunction(unwrappedScript);
+                RunMacro(wrappedScript, iterations);
             }
             else
             {
@@ -102,11 +101,11 @@ namespace ExecutionEngine
             }
         }
 
-        internal static void RunAsStartupProject(short tempPid)
+        internal static void RunAsStartupProject(int tempPid)
         {
-            pid = tempPid;
-            engine = new Engine(pid);
-            var script = CreateScriptStub();
+            Program.pid = tempPid;
+            Program.engine = new Engine(Program.pid);
+            string script = CreateScriptStub();
             RunMacro(script, 2);
         }
 
@@ -121,14 +120,14 @@ namespace ExecutionEngine
 
             if (args.Length > 0)
             {
-                var separatedArgs = SeparateArgs(args);
+                string[] separatedArgs = SeparateArgs(args);
                 RunFromExtension(separatedArgs);
             }
             else
             {
                 var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.txt";
                 var reader = new StreamReader(path);
-                short pidOfCurrentDevenv = 1860;
+                short pidOfCurrentDevenv = 4300;
                 RunAsStartupProject(pidOfCurrentDevenv);
             }
         }

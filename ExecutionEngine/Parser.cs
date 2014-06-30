@@ -5,12 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 
@@ -24,7 +19,7 @@ namespace ExecutionEngine
 
         public Parser(IActiveScript engine)
         {
-            this.isParse32 = this.DeterminePointerSize();
+            this.isParse32 = this.IsPointerSize32();
             this.InitializeParsers(engine);
         }
 
@@ -42,7 +37,7 @@ namespace ExecutionEngine
             }
         }
 
-        internal bool DeterminePointerSize()
+        internal bool IsPointerSize32()
         {
             if (IntPtr.Size == 4)
                 return true;
@@ -68,12 +63,12 @@ namespace ExecutionEngine
 
         public void Dispose()
         {
-            if (this.isParse32)
+            if (this.isParse32 && this.parse32 != null)
             {
                 Marshal.ReleaseComObject(this.parse32);
                 this.parse32 = null;
             }
-            else
+            if (this.parse64 != null)
             {
                 Marshal.ReleaseComObject(this.parse64);
                 this.parse64 = null;

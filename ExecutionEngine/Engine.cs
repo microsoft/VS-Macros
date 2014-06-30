@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.ComTypes;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
+using System.Globalization;
 
 namespace ExecutionEngine
 {
@@ -30,7 +31,7 @@ namespace ExecutionEngine
         private void InitializeDteObject(int pid)
         {
             IMoniker moniker;
-            NativeMethods.CreateItemMoniker("!", string.Format("VisualStudio.DTE.12.0:{0}", pid), out moniker);
+            NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
 
             IRunningObjectTable rot;
             NativeMethods.GetRunningObjectTable(0, out rot);
@@ -40,7 +41,7 @@ namespace ExecutionEngine
 
         internal IActiveScript CreateEngine()
         {
-            string language = "jscript";
+            const string language = "jscript";
 
             Type engine = Type.GetTypeFromProgID(language, true);
             return Activator.CreateInstance(engine) as IActiveScript;
@@ -48,6 +49,7 @@ namespace ExecutionEngine
 
         public Engine(int pid)
         {
+            const string dte = "dte";
             this.engine = this.CreateEngine();
             this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
@@ -56,7 +58,7 @@ namespace ExecutionEngine
             {
                 this.InitializeDteObject(pid);
                 this.engine.SetScriptSite(this.scriptSite);
-                this.engine.AddNamedItem("dte", ScriptItem.CodeOnly | ScriptItem.IsVisible);
+                this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
             }
         }
 
@@ -65,6 +67,7 @@ namespace ExecutionEngine
             if (this.parser != null)
             {
                 this.parser.Dispose();
+                this.parser = null;
             }
 
             if (this.engine != null)

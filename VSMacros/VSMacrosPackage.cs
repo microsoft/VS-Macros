@@ -26,7 +26,7 @@ namespace VSMacros
     public sealed class VSMacrosPackage : Package
     {
         public static VSMacrosPackage Current { get; private set; }
-        Executor execution;
+        private Executor execution;
 
         public VSMacrosPackage()
         {
@@ -64,7 +64,7 @@ namespace VSMacros
         protected override void Initialize()
         {
             base.Initialize();
-            execution = new Executor();
+            this.execution = new Executor();
 
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
@@ -119,18 +119,18 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            var times = 1;
+            var iterations = 1;
             var reader = new MacroReader();
-            execution.StartExecution(reader.CreateMacroStreamReader(), times);
+            this.execution.StartExecution(reader.CreateMacroStreamReader(), iterations);
 
             Manager.Instance.Playback("", 1);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            var times = 5;
+            var iterations = 5;
             var reader = new MacroReader();
-            execution.StartExecution(reader.CreateMacroStreamReader(), times);
+            this.execution.StartExecution(reader.CreateMacroStreamReader(), iterations);
 
             Manager.Instance.Playback("", 0);
         }

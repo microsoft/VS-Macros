@@ -11,14 +11,9 @@ namespace MicrosoftCorporation.VSMacros.Stubs
     {
         string name = "currentScript";
 
-        internal string AppendExtension(string name)
-        {
-            return name + ".txt";
-        }
-
         public StreamReader CreateMacroStreamReader()
         {
-            var path = AppendExtension(this.name);
+            string path = Path.ChangeExtension(this.name, "txt");
             using (StreamWriter sw = new StreamWriter(path))
             {
                 sw.WriteLine("dte.ExecuteCommand('File.NewFile');");

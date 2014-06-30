@@ -4,19 +4,19 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using MicrosoftCorporation.VSMacros.Stubs;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+
 namespace VSMacros.Engines
 {
-    using MicrosoftCorporation.VSMacros.Stubs;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows;
-
     /// <summary>
     /// Exposes the execution engine.
     /// </summary>
@@ -41,9 +41,9 @@ namespace VSMacros.Engines
         /// <summary>
         /// Will run the macro file.
         /// <param name="macro">Name of macro.</param>
-        /// <param name="times">Times to be executed.</param>
+        /// <param name="iterations">Times to be executed.</param>
         /// </summary>
-        void StartExecution(StreamReader reader, int times);
+        void StartExecution(StreamReader reader, int iterations);
 
         /// <summary>
         /// Will stop the currently executing macro file.
@@ -72,11 +72,11 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler OnSuccess;
 
-        private string ProvideArguments(int times, string script)
+        private string ProvideArguments(int iterations, string script)
         {
-            var pid = Process.GetCurrentProcess().Id.ToString();
+            string pid = Process.GetCurrentProcess().Id.ToString();
             var delimiter = "[delimiter]";
-            return pid + delimiter + times.ToString() + delimiter + script;
+            return pid + delimiter + iterations.ToString() + delimiter + script;
         }
 
         /// <summary>
@@ -104,14 +104,14 @@ namespace VSMacros.Engines
         /// <summary>
         /// Will run the macro file.
         /// </summary>
-        public void StartExecution(StreamReader reader, int times)
+        public void StartExecution(StreamReader reader, int iterations)
         {
             var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
             var script = CreateScriptFromReader(reader);
             this.executionEngine = new Process();
 
             this.executionEngine.StartInfo.FileName = processName;
-            this.executionEngine.StartInfo.Arguments = ProvideArguments(times, script);
+            this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, script);
             this.executionEngine.Start();
         }
 

@@ -23,7 +23,7 @@ namespace VSMacros
 
         public VSMacrosPackage()
         {
-            Current = this;
+            VSMacrosPackage.Current = this;
         }
 
         private string macroDirectory;
@@ -85,6 +85,11 @@ namespace VSMacros
                 mcs.AddCommand(new MenuCommand(this.PlaybackCommand9, new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdCommand9)));
             }
         }
+
+        protected override int QueryClose(out bool canClose)
+        {
+            return base.QueryClose(out canClose);
+        }
         #endregion
 
         /////////////////////////////////////////////////////////////////////////////
@@ -124,15 +129,15 @@ namespace VSMacros
             Manager.Instance.SaveCurrent();
         }
 
-        public void PlaybackCommand1(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command1");}
-        public void PlaybackCommand2(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command2"); }
-        public void PlaybackCommand3(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command3"); }
-        public void PlaybackCommand4(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command4"); }
-        public void PlaybackCommand5(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command5"); }
-        public void PlaybackCommand6(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command6"); }
-        public void PlaybackCommand7(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command7"); }
-        public void PlaybackCommand8(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command8"); }
-        public void PlaybackCommand9(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand("command9"); }
+        public void PlaybackCommand1(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(1); }
+        public void PlaybackCommand2(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(2); }
+        public void PlaybackCommand3(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(3); }
+        public void PlaybackCommand4(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(4); }
+        public void PlaybackCommand5(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(5); }
+        public void PlaybackCommand6(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(6); }
+        public void PlaybackCommand7(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(7); }
+        public void PlaybackCommand8(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(8); }
+        public void PlaybackCommand9(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(9); }
 
         #endregion
     }

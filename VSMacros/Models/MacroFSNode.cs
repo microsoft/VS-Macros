@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using VSMacros.Engines;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 
 namespace VSMacros.Models
@@ -105,11 +106,11 @@ namespace VSMacros.Models
             get
             {
                 // TODO First draft (crappy!)
-                foreach (var item in VSMacros.Engines.Manager.Instance.Shortcuts)
+                for (int i = 1; i < 10; i++)
                 {
-                    if (String.Compare(item.Value, this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (String.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        return "(CTRL+M, " + item.Key[item.Key.Length - 1] + ")";
+                        return "(CTRL+M, " + i + ")";
                     }
                 }
 

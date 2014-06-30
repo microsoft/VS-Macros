@@ -15,9 +15,10 @@ namespace VSMacros.Engines
     {
         private static readonly Manager instance = new Manager();
 
-        public Dictionary<string, string> Shortcuts { get; private set; }
+        public string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
         private const string shortcutsFileName = "Shortcuts.xml";
+        private string shortcutsFilePath;
 
         private IVsUIShell uiShell;
         private bool uiShellLoaded;
@@ -39,6 +40,7 @@ namespace VSMacros.Engines
                 uiShellLoaded = false;
             }
 
+            this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFileName);
             this.LoadShortcuts();
             shortcutsLoaded = true;
         }
@@ -54,21 +56,34 @@ namespace VSMacros.Engines
 
         public void Playback(string path, int times) 
         {
-            if (path == string.Empty)
-            {
-                path = this.SelectedMacro.FullPath;
-            }
+            this.SaveShortcuts();
 
-            StreamReader str = this.LoadFile(path);
+            //if (path == string.Empty)
+            //{
+            //    path = this.SelectedMacro.FullPath;
+            //}
 
-            if (str != null)
-            {
-                this.ShowMessageBox(str.ReadLine());
-            }
+            //StreamReader str = this.LoadFile(path);
+
+            //if (str != null)
+            //{
+            //    this.ShowMessageBox(str.ReadLine());
+            //}
         }
 
         public void StopPlayback() 
         {
+        }
+
+        public void OpenFolder(string path = null)
+        {
+            if (path == null)
+            {
+                path = SelectedMacro.FullPath;
+            }
+
+            // Open the macro directory and let the user manage the macros
+            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(path); });
         }
 
         public void SaveCurrent() 
@@ -144,29 +159,36 @@ namespace VSMacros.Engines
                 MacroFSNode macro = this.SelectedMacro;
 
                 // Remove old shortcut if it exists
-                string oldKey;
+                int oldKey;
                 if (macro.Shortcut != string.Empty)
                 {
                     string oldShortcut = macro.Shortcut;
-                    oldKey = "command" + oldShortcut[oldShortcut.Length - 2];
+                    oldKey = (int) oldShortcut[oldShortcut.Length - 2] - '0';
                     this.Shortcuts[oldKey] = string.Empty;
                 }
 
-                string newShortcut = dlg.SelectedShortcut;
+                int newShortcutNumber = dlg.SelectedShortcutNumber;
 
                 // At this point, the shortcut has been removed
                 // Assign a new one only if the user selected a key binding
-                if (newShortcut != "None")
+                if (newShortcutNumber != 0)
                 {
-                    // Get dictionary key for selected command
-                    string key = "command" + newShortcut[newShortcut.Length - 1];
-
                     // Update dictionary
-                    this.Shortcuts[key] = macro.FullPath;
+                    this.Shortcuts[newShortcutNumber] = macro.FullPath;
                 }
 
                 // Notify the change
-                macro.Shortcut = string.Empty;
+                if (dlg.shouldRefreshFileSystem)
+                {
+                    // Refresh entire fs
+                    this.SaveShortcuts();
+                    this.Refresh();
+                }
+                else
+                {
+                    // Refresh selected macro
+                    macro.Shortcut = string.Empty;
+                }
             }
         }
 
@@ -215,7 +237,7 @@ namespace VSMacros.Engines
             }
         }
       
-        public void PlaybackCommand(string cmd)
+        public void PlaybackCommand(int cmd)
         {
             // Load shortcuts if not already loaded
             if (!this.shortcutsLoaded)
@@ -253,7 +275,7 @@ namespace VSMacros.Engines
             return null;
         }
 
-        private void SaveToFile(Stream str, string path)
+        private void SaveMacro(Stream str, string path)
         { 
             try
             {
@@ -276,17 +298,30 @@ namespace VSMacros.Engines
             try
             {
                 // Load XML file
-            var root = XDocument.Load(Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFileName));
+                var root = XDocument.Load(Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFilePath));
 
             // Parse to dictionary
-           this.Shortcuts = root.Descendants("command")
-                .ToDictionary(d => (string)d.Attribute("name"),
-                              d => (string)d);
+            this.Shortcuts = root.Descendants("command")
+                                            .Select(elmt => elmt.Value)
+                                            .ToArray();
             }
             catch (Exception e)
             {
                 this.ShowMessageBox(e.Message);
             }
+        }
+
+        private void SaveShortcuts()
+        {
+            XDocument xmlShortcuts = 
+                new XDocument(
+                    new XDeclaration("1.0", "utf-8", "yes"),
+                    new XElement("commands",
+                        from s in this.Shortcuts
+                            select new XElement("command",
+                                new XText(s))));
+
+            xmlShortcuts.Save(shortcutsFilePath);
         }
 
         #region Helper Methods

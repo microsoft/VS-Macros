@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using VSMacros.Engines;
@@ -11,13 +12,18 @@ namespace VSMacros.Dialogs
     public partial class AssignShortcutDialog : Window
     {
         public ComboBoxItem SelectedItem;
-        public string SelectedShortcut;
-        
+        public int SelectedShortcutNumber;
+        public bool shouldRefreshFileSystem;
+
         private string oldShortcut;
 
         public AssignShortcutDialog()
         {
             InitializeComponent();
+
+            // Set default values for public members
+            this.SelectedShortcutNumber = 0;
+            this.shouldRefreshFileSystem = false;
 
             this.oldShortcut = (MacrosControl.Current.SelectedNode).Shortcut;
 
@@ -25,6 +31,7 @@ namespace VSMacros.Dialogs
             if (!string.IsNullOrEmpty(oldShortcut))
             {
                 this.shortcutsComboBox.Text = oldShortcut.Substring(1, oldShortcut.Length - 2);
+                this.SelectedShortcutNumber = GetLastCharAsInt(this.shortcutsComboBox.Text);
             }
         }
 
@@ -74,25 +81,46 @@ namespace VSMacros.Dialogs
 
         private void shortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            // Update shortcut text
-            this.SelectedShortcut = this.shortcutsComboBox.Text;
+            string selectedShortcut = this.shortcutsComboBox.Text;
+            int index = 0;
+            
+            // Reset bool
+            this.shouldRefreshFileSystem = false;
 
-            if (this.SelectedShortcut != this.oldShortcut && this.SelectedShortcut != "None" && !string.IsNullOrEmpty(this.SelectedShortcut))
+            if (selectedShortcut != "None")
             {
-                // Get the command key
-                string commandId = "command" + this.SelectedShortcut[this.SelectedShortcut.Length - 1];
-                bool willOverwrite = Manager.Instance.Shortcuts[commandId] != string.Empty;
+                // Get the command number into index                
+                index = GetLastCharAsInt(selectedShortcut);
 
                 // Show overwrite message if needed
-                if (willOverwrite)
+                if (selectedShortcut != this.oldShortcut && !string.IsNullOrEmpty(selectedShortcut))
                 {
-                    this.warningTextBlock.Text = VSMacros.Resources.ShortcutAlreadyUsed;
-                }
-                else
-                {
-                    this.warningTextBlock.Text = string.Empty;
+                    bool willOverwrite = Manager.Instance.Shortcuts[index] != string.Empty;
+
+                    if (willOverwrite)
+                    {
+                        this.shouldRefreshFileSystem = true;
+                        this.warningTextBlock.Text = VSMacros.Resources.ShortcutAlreadyUsed;
+                    }
+                    else
+                    {
+                        this.warningTextBlock.Text = string.Empty;
+                    }
                 }
             }
+
+            this.SelectedShortcutNumber = index;
+        }
+
+        private int GetLastCharAsInt(string str)
+        {
+            int number;
+            if (!int.TryParse(str[str.Length - 1].ToString(), out number))
+            {
+                throw new Exception("Could not retrieve command index from selection.");
+            }
+
+            return number;
         }
     }
 }

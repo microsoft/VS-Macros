@@ -22,9 +22,8 @@
         public const int CmdIdOpenDirectory = 0x2011;
 
         public const int CmdIdEdit = 0x2020;
-        public const int CmdIdRename = 0x2021;
         public const int CmdIdAssignShortcut = 0x2022;
-        public const int CmdIdDelete = 0x2023;
+        public const int CmdIdOpenFolder = 0x2023;
 
         public const int CmdIdCommand1 = 0x3000;
         public const int CmdIdCommand2 = 0x3005;

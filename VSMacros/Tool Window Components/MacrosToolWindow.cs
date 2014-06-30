@@ -65,6 +65,11 @@ namespace VSMacros
                     this.OpenDirectory,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenDirectory)));
 
+                // Create the command to open the selected folder
+                mcs.AddCommand(new MenuCommand(
+                    this.OpenSelectedFolder,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdOpenFolder)));
+
                 // Create the command to edit a macro
                 mcs.AddCommand(new MenuCommand(
                     this.Edit,
@@ -106,8 +111,12 @@ namespace VSMacros
 
         public void OpenDirectory(object sender, EventArgs arguments)
         {
-            // Open the macro directory and let the user manage the macros
-            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(this.MacroDirectory); });
+            Manager.Instance.OpenFolder(this.MacroDirectory);
+        }
+
+        public void OpenSelectedFolder(object sender, EventArgs arguments)
+        {
+            Manager.Instance.OpenFolder();
         }
 
         public void Edit(object sender, EventArgs arguments)

@@ -48,6 +48,7 @@
     <Buttons>
       
       <!-- Group 1-->
+      <!--The Start/Stop button must be the first on the toolbar in order to function the image changing-->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Record" />

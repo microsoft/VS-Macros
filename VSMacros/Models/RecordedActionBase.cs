@@ -17,10 +17,10 @@ namespace VSMacros
     [DebuggerDisplay("{commandName}")]
     internal sealed class RecordedCommand : RecordedActionBase
     {
-        private Guid commandSetGuid;
-        private uint commandId;
-        private string commandName;
-        private char input; 
+        private readonly Guid commandSetGuid;
+        private readonly uint commandId;
+        private readonly string commandName;
+        private readonly char input; 
 
         internal RecordedCommand(Guid commandSetGuid, uint commandId, string commandName, char input)
         {

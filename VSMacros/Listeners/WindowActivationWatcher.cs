@@ -2,6 +2,7 @@
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.Interfaces;
 
 namespace VSMacros
 {
@@ -32,12 +33,12 @@ namespace VSMacros
                 // and it is essentially a no-fail method.
                 monSel.AdviseSelectionEvents(pSink: this, pdwCookie: out this.monSelCookie);
             }
-            macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
+            this.macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
         }
 
         public int OnElementValueChanged(uint elementid, object varValueOld, object varValueNew)
         {
-            if (!macroRecorder.Recording)
+            if (!this.macroRecorder.Recording)
             {
                 return VSConstants.S_OK;
             }

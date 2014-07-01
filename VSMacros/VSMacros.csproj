@@ -133,7 +133,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\DataModel.cs" />
+    <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
     <Compile Include="Engines\Recorder.cs" />
     <Compile Include="Engines\Manager.cs" />
@@ -143,8 +143,6 @@
     <Compile Include="Interfaces\IRecorderPrivate.cs" />
     <Compile Include="Listeners\CommandExecutionWatcher.cs" />
     <Compile Include="Listeners\TextViewCreationListener.cs" />
-    <Compile Include="Listeners\TextViewCreationListenerFormat.cs" />
-    <Compile Include="Listeners\TextViewCreationListenerType.cs" />
     <Compile Include="Listeners\WindowActivationWatcher.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
     <Compile Include="Models\RecordedActionBase.cs" />

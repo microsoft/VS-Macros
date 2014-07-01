@@ -1,20 +1,16 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
-using System.Windows.Forms;
-using Microsoft.VisualStudio.Shell.Interop;
-using IServiceProvider = System.IServiceProvider;
-using Microsoft.Internal.VisualStudio.Shell;
-
+using VSMacros.Interfaces;
 using OLEConstants = Microsoft.VisualStudio.OLE.Interop.Constants;
-using Microsoft.VisualStudio.Shell;
 
 namespace VSMacros
 {
@@ -27,25 +23,20 @@ namespace VSMacros
 
         internal EditorCommandFilter(SVsServiceProvider serviceProvider)
         {
+            Validate.IsNotNull(serviceProvider, "serviceProvider");
             this.serviceProvider = serviceProvider;
-            macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
+            this.macroRecorder = (IRecorderPrivate)serviceProvider.GetService(typeof(IRecorder));
         }
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            if (!macroRecorder.Recording)
-            {   
-                if (NextCommandTarget != null)
-                {
-                    return NextCommandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-                }
-                return (int)OLEConstants.OLECMDERR_E_NOTSUPPORTED;
-            }
-            if ((pguidCmdGroup == VSConstants.CMDSETID.StandardCommandSet2K_guid) && (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR))
+            if (macroRecorder.Recording)
             {
-                macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, "Keyboard", (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn));
+                if ((pguidCmdGroup == VSConstants.CMDSETID.StandardCommandSet2K_guid) && (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR))
+                {
+                    this.macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, "Keyboard", (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn));
+                }    
             }
-
             if (NextCommandTarget != null)
             {
                 return NextCommandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
@@ -80,8 +71,8 @@ namespace VSMacros
                 this.commandFilter = new EditorCommandFilter(serviceProvider: this.serviceProvider);
             }
             IOleCommandTarget nextTarget;
-            ErrorHandler.ThrowOnFailure(textViewAdapter.AddCommandFilter(commandFilter, out nextTarget));
-            commandFilter.NextCommandTarget = nextTarget;
+            ErrorHandler.ThrowOnFailure(textViewAdapter.AddCommandFilter(this.commandFilter, out nextTarget));
+            this.commandFilter.NextCommandTarget = nextTarget;
         }
     }
 }

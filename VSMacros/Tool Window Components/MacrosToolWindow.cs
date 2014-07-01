@@ -49,11 +49,12 @@ namespace VSMacros
 
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
             MacroFSNode root = new MacroFSNode(MacroDirectory);
-            var root2 = new MacrosControl(root);
-            root2.Loaded += OnLoaded;
-            base.Content = root2;
+            var macroControl = new MacrosControl(root);
+            macroControl.Loaded += OnLoaded;
+            base.Content = macroControl;
         }
-        void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+
+        public void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
         {
             if (!this.addedToolbarButton)
             {

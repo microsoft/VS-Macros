@@ -1,38 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell.Interop;
-using System.IO;
-using System.Reflection;
+using Microsoft.Internal.VisualStudio.Shell;
+using VSMacros.Interfaces;
 
-namespace VSMacros
+namespace VSMacros.Engines
 {
-    class MacroRecorder:IRecorder, IRecorderPrivate, IDisposable
+    class Recorder:IRecorder, IRecorderPrivate, IDisposable
     {
         private WindowActivationWatcher activationWatcher;
         private CommandExecutionWatcher commandWatcher;
-        private DataModel dataModel = new DataModel();
+        private RecorderDataModel dataModel;
         private IServiceProvider serviceProvider;
         private bool recording;
 
-        public MacroRecorder(IServiceProvider serviceProvider)
+        public Recorder(IServiceProvider serviceProvider)
         {
+            Validate.IsNotNull(serviceProvider, "serviceProvider");
             this.serviceProvider = serviceProvider;
+            dataModel = new RecorderDataModel();
         }
         public void StartRecording()
         {
             this.ClearData();
-
-            if (this.activationWatcher == null)
-            {
-                this.activationWatcher = new WindowActivationWatcher(serviceProvider: this.serviceProvider);
-            }
-            if (this.commandWatcher == null)
-            {
-                this.commandWatcher = new CommandExecutionWatcher(serviceProvider: this.serviceProvider);
-            }
+            this.activationWatcher = this.activationWatcher ?? new WindowActivationWatcher(this.serviceProvider);
+            this.commandWatcher = this.commandWatcher?? new CommandExecutionWatcher(this.serviceProvider);
             this.recording = true;         
         }
 
@@ -49,6 +39,11 @@ namespace VSMacros
             //        action.ConvertToJavascript(fs);
             //    }
             //}
+        }
+
+        public bool Recording
+        {
+            get { return this.recording; }
         }
 
         public void AddCommandData(Guid commandSet, uint identifier, string commandName, char input)
@@ -79,11 +74,6 @@ namespace VSMacros
                 this.commandWatcher = null;
                 this.activationWatcher = null;
             }
-        }
-
-        public bool Recording
-        {
-            get { return this.recording; }
         }
     }
 }

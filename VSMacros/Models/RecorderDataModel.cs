@@ -1,20 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 
 namespace VSMacros
 {
-    internal sealed class DataModel
+    internal sealed class RecorderDataModel
     {
         private string currWindow = "Macro Explorer";
-        private readonly ObservableCollection<RecordedActionBase> actions = new ObservableCollection<RecordedActionBase>();
+        private readonly List<RecordedActionBase> actions = new List<RecordedActionBase>();
         private bool recording = false;
-
-        public void CurrWindow(string window)
-        {
-             this.currWindow = window;
-        }
 
         public IEnumerable<RecordedActionBase> Actions
         {

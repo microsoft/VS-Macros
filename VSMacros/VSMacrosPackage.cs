@@ -1,18 +1,19 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using VSMacros.Engines;
-using System.Windows.Media.Imaging;
 using System.Windows.Forms;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.CommandBars;
-using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 using EnvDTE;
 using Microsoft.Internal.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.CommandBars;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.Engines;
+using VSMacros.Interfaces;
 
 namespace VSMacros
 {
@@ -65,15 +66,15 @@ namespace VSMacros
         private List<CommandBarButton> imageButtons;
         private IVsStatusbar statusBar;
         private object iconRecord = (short)Microsoft.VisualStudio.Shell.Interop.Constants.SBAI_Synch;
-        private static DataModel dataModel;
+        private static RecorderDataModel dataModel;
 
-        internal static DataModel DataModel
+        internal static RecorderDataModel DataModel
         {
             get
             {
                 if (VSMacrosPackage.dataModel == null)
                 {
-                    VSMacrosPackage.dataModel = new DataModel();
+                    VSMacrosPackage.dataModel = new RecorderDataModel();
                 }
 
                 return VSMacrosPackage.dataModel;
@@ -84,7 +85,7 @@ namespace VSMacros
         {
             base.Initialize();
 
-            ((IServiceContainer)this).AddService(typeof(IRecorder), (serviceContainer, type) => { return new MacroRecorder(this); }, true);
+            ((IServiceContainer)this).AddService(typeof(IRecorder), (serviceContainer, type) => { return new Recorder(this); }, promote: true);
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -136,10 +137,10 @@ namespace VSMacros
             //StreamWriter stream;
             if (isShowingStartImage)
             {
-                statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
-                statusBar.Clear();
-                statusBar.SetText("Recording...");
-                statusBar.Animation(1, ref iconRecord);
+                this.statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
+                this.statusBar.Clear();
+                this.statusBar.SetText("Recording...");
+                this.statusBar.Animation(1, ref iconRecord);
                 foreach (var button in ImageButtons)
                 {
                     button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StopIcon);
@@ -147,14 +148,12 @@ namespace VSMacros
 
                 IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StartRecording();
-
-
             }
             else
             {
-                statusBar.Clear();
-                statusBar.SetText("Ready");
-                statusBar.Animation(0, ref iconRecord);
+                this.statusBar.Clear();
+                this.statusBar.SetText("Ready");
+                this.statusBar.Animation(0, ref iconRecord);
                 foreach (var button in ImageButtons)
                 {
                     button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StartIcon);
@@ -213,9 +212,9 @@ namespace VSMacros
 
             DTE dte = (DTE)this.GetService(typeof(SDTE));
             CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
-            CommandBarPopup viewMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
-            CommandBarPopup toolMenu = (CommandBarPopup)viewMenu.Controls["Macros"];
-            CommandBarButton startButton = (CommandBarButton)toolMenu.Controls["Start/Stop Recording"];
+            CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
+            CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
+            CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
             buttons.Add(startButton);
 
             return buttons;
@@ -262,7 +261,8 @@ namespace VSMacros
 
         protected override int QueryClose(out bool canClose)
         {
-            if (!isShowingStartImage)
+            IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
+            if (macroRecorder.Recording)
             {
                 string message = "Recording in process, are you sure to close the window?";
                 string caption = "Attention";
@@ -272,14 +272,7 @@ namespace VSMacros
                 // Displays the MessageBox.
                 result = MessageBox.Show(message, caption, buttons);
 
-                if (result == System.Windows.Forms.DialogResult.Yes)
-                {
-                    canClose = true;
-                }
-                else
-                {
-                    canClose = false;
-                }
+                canClose = (result == System.Windows.Forms.DialogResult.Yes);
             }
             else
             {

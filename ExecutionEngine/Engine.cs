@@ -12,6 +12,7 @@ using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
 using System.Globalization;
+using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
@@ -23,18 +24,47 @@ namespace ExecutionEngine
 
         public static object DteObject { get; private set; }
 
-        private void InitializeDteObject(int pid)
+        IMoniker GetItemMoniker(int pid)
         {
             IMoniker moniker;
-            NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
+            int hr = NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
+            if (ErrorHandler.Failed(hr))
+            {
+                ErrorHandler.ThrowOnFailure(hr, null);
+            }
 
+            return moniker;
+        }
+
+        IRunningObjectTable GetRunningObjectTable()
+        {
             IRunningObjectTable rot;
-            NativeMethods.GetRunningObjectTable(0, out rot);
+            int hr = NativeMethods.GetRunningObjectTable(0, out rot);
+            if (ErrorHandler.Failed(hr))
+            {
+                ErrorHandler.ThrowOnFailure(hr, null);
+            }
 
+            return rot;
+        }
+
+        object GetDteObject(IRunningObjectTable rot, IMoniker moniker)
+        {
             object dteObject;
-            rot.GetObject(moniker, out dteObject);
+            int hr = rot.GetObject(moniker, out dteObject);
+            if (ErrorHandler.Failed(hr))
+            {
+                ErrorHandler.ThrowOnFailure(hr, null);
+            }
 
-            Engine.DteObject = dteObject;
+            return dteObject;
+        }
+
+        private void InitializeDteObject(int pid)
+        {
+            IMoniker moniker = GetItemMoniker(pid);
+            IRunningObjectTable rot = GetRunningObjectTable();
+            Engine.DteObject = GetDteObject(rot, moniker);
         }
 
         internal IActiveScript CreateEngine()

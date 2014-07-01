@@ -8,8 +8,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using MicrosoftCorporation.VSMacros.Interfaces;
 using MicrosoftCorporation.VSMacros.Engines;
+using VSMacros.Interfaces;
 
 namespace VSMacros.Engines
 {
@@ -28,11 +28,11 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
 
-        private string ProvideArguments(int iterations, string script)
+        private string ProvideArguments(int iterations, string path)
         {
             string pid = Process.GetCurrentProcess().Id.ToString();
             var delimiter = "[delimiter]";
-            return pid + delimiter + iterations.ToString() + delimiter + script;
+            return pid + delimiter + iterations.ToString() + delimiter + path;
         }
 
         /// <summary>
@@ -43,28 +43,18 @@ namespace VSMacros.Engines
         {
         }
 
-        private static string CreateScriptFromReader(StreamReader reader)
-        {
-            var script = string.Empty;
-            using (reader)
-            {
-                script = reader.ReadToEnd();
-            }
-            return script;
-        }
 
         /// <summary>
         /// Will run the macro file.
         /// </summary>
-        public void StartExecution(StreamReader reader, int iterations)
+        public void StartExecution(string path, int iterations)
         {
-            var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
-            var script = CreateScriptFromReader(reader);
+            var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
+            var path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js").Replace(" ", "%20");
             this.executionEngine = new Process();
-
             this.executionEngine.StartInfo.FileName = processName;
             this.executionEngine.StartInfo.UseShellExecute = false;
-            this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, script);
+            this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, path);
             this.executionEngine.Start();
         }
 

@@ -17,7 +17,7 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        private static int pid;
+        //private static int pid;
         private static string macroName = "currentScript";
 
         // Helper methods
@@ -25,39 +25,34 @@ namespace ExecutionEngine
         {
             string[] stringSeparator = new string[] {"[delimiter]"};
             string[] separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < args.Length; i++)
-            {
-                Console.WriteLine(args[i]);
-            }
-
             return separatedArgs;
         }
-        private static short DetermineNumberOfIterations(string[] args)
+
+        private static short DetermineNumberOfIterations(string iter)
         {
             short iterations;
 
-            if (args.Length < 2 || !short.TryParse(args[1], out iterations))
+            if (string.IsNullOrEmpty(iter) || !short.TryParse(iter, out iterations))
             {
-                return 1;
+                throw new ArgumentException(iter);
             }
 
             return iterations;
         }
 
-        private static string ExtractScript(string[] args)
+        private static string ExtractScript(string path)
         {
-            if (args.Length > 2)
+            if (!string.IsNullOrEmpty(path))
             {
-                return args[2];
+                return File.ReadAllText(path);
             }
             else
             {
-                MessageBox.Show("You did not provide a script");
-                return string.Empty;
+                throw new ArgumentException(path);
             }
         }
 
-        private static string WrapScriptInFunction(string unwrapped)
+        private static string WrapScript(string unwrapped)
         {
             string wrapped = "function currentScript() {";
             wrapped += unwrapped;
@@ -74,7 +69,7 @@ namespace ExecutionEngine
             }
             else
             {
-                throw new Exception(script);
+                throw new ArgumentException(script);
             }
 
             for (int i = 0; i < iterations; i++)
@@ -83,35 +78,45 @@ namespace ExecutionEngine
             }
         }
 
-        internal static void RunFromExtension(string[] args)
+        internal static void RunFromExtension(string[] separatedArgs)
         {
-            if (int.TryParse(args[0], out Program.pid))
-            {
-                Program.engine = new Engine(Program.pid);
+            string unparsedPid = separatedArgs[0];
+            string unparsedIter = separatedArgs[1];
+            string encodedPath = separatedArgs[2];
 
-                short iterations = DetermineNumberOfIterations(args);
-                string unwrappedScript = ExtractScript(args);
-                string wrappedScript = WrapScriptInFunction(unwrappedScript);
-                RunMacro(wrappedScript, iterations);
-            }
-            else
+            int pid = DeterminePid(unparsedPid);
+            short iterations = DetermineNumberOfIterations(unparsedIter);
+            string decodedPath = DecodePath(encodedPath);
+            string unwrappedScript = ExtractScript(decodedPath);
+            string wrappedScript = WrapScript(unwrappedScript);
+
+            Program.engine = new Engine(pid);
+            RunMacro(wrappedScript, iterations);
+        }
+
+        private static int DeterminePid(string unparsedPid)
+        {
+            int pid;
+            if (!int.TryParse(unparsedPid, out pid))
             {
-                MessageBox.Show("You did not provide any arguments to the Execution Engine");
-                throw new ArgumentException(args[0]);
+                throw new ArgumentException(unparsedPid);
             }
+            return pid;
+        }
+
+        private static string DecodePath(string encodedPath)
+        {
+            return encodedPath.Replace("%20", " ");
         }
 
         internal static void RunAsStartupProject(int tempPid)
         {
-            Program.pid = tempPid;
-            Program.engine = new Engine(Program.pid);
-            string script = CreateScriptStub();
-            RunMacro(script, 2);
-        }
+            Program.engine = new Engine(tempPid);
 
-        private static string CreateScriptStub()
-        {
-            return "function currentScript() { dte.ExecuteCommand('File.NewFile'); } ";
+            string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
+            string wrapped = WrapScript(unwrapped);
+
+            RunMacro(wrapped, 1);
         }
 
         internal static void Main(string[] args)
@@ -120,27 +125,15 @@ namespace ExecutionEngine
 
             if (args.Length > 0)
             {
+                //MessageBox.Show("Attach debugger here");
                 string[] separatedArgs = SeparateArgs(args);
                 RunFromExtension(separatedArgs);
             }
             else
             {
-                var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.js";
-                var reader = new StreamReader(path);
-                short pidOfCurrentDevenv = 4300;
-                RunAsStartupProject(pidOfCurrentDevenv);
+                short pidOfCurrentDevenv = 10588;
+                RunAsStartupProject(pidOfCurrentDevenv);   
             }
-        }
-
-        private static string GetPathFromArgs(string[] args)
-        {
-            if (args[2] == null)
-            {
-                MessageBox.Show("A path to the macro file was not provided");
-                return string.Empty;
-            }
-
-            return args[2];
         }
     }
 }

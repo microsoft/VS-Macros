@@ -59,6 +59,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.cs" />
+    <Compile Include="Stubs\Script.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

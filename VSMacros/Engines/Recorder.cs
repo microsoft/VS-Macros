@@ -41,7 +41,7 @@ namespace VSMacros.Engines
             //}
         }
 
-        public bool Recording
+        public bool IsRecording
         {
             get { return this.recording; }
         }

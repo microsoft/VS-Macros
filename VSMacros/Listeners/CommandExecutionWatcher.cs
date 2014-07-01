@@ -35,7 +35,7 @@ namespace VSMacros
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            if (this.macroRecorder.Recording)
+            if (this.macroRecorder.IsRecording)
             {
                 //An Exec call with a non-null pvaOut implies it is actually the shell trying to get the combo box child items for a 
                 // combo, not a real command execution, so we can ignore these for purposes of command recording.

@@ -30,7 +30,7 @@ namespace VSMacros
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            if (macroRecorder.Recording)
+            if (macroRecorder.IsRecording)
             {
                 if ((pguidCmdGroup == VSConstants.CMDSETID.StandardCommandSet2K_guid) && (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR))
                 {

@@ -38,7 +38,7 @@ namespace VSMacros
 
         public int OnElementValueChanged(uint elementid, object varValueOld, object varValueNew)
         {
-            if (!this.macroRecorder.Recording)
+            if (!this.macroRecorder.IsRecording)
             {
                 return VSConstants.S_OK;
             }

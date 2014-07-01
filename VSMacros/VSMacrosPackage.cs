@@ -86,6 +86,7 @@ namespace VSMacros
             base.Initialize();
 
             ((IServiceContainer)this).AddService(typeof(IRecorder), (serviceContainer, type) => { return new Recorder(this); }, promote: true);
+            this.statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
@@ -134,37 +135,32 @@ namespace VSMacros
 
         public void Record(object sender, EventArgs arguments)
         {
-            //StreamWriter stream;
             if (isShowingStartImage)
             {
-                this.statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
-                this.statusBar.Clear();
-                this.statusBar.SetText("Recording...");
-                this.statusBar.Animation(1, ref iconRecord);
-                foreach (var button in ImageButtons)
-                {
-                    button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StopIcon);
-                }
-
+                StatusBarChange("Recording...", 1, StopIcon);
                 IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StartRecording();
             }
             else
             {
-                this.statusBar.Clear();
-                this.statusBar.SetText("Ready");
-                this.statusBar.Animation(0, ref iconRecord);
-                foreach (var button in ImageButtons)
-                {
-                    button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(StartIcon);
-                }
-
+                StatusBarChange("Ready", 0, StartIcon);
                 IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StopRecording();
             }
             isShowingStartImage = !isShowingStartImage;
 
             return;
+        }
+
+        private void StatusBarChange(string status, int animation, BitmapSource icon)
+        {
+            this.statusBar.Clear();
+            this.statusBar.SetText(status);
+            this.statusBar.Animation(animation, ref iconRecord);
+            foreach (var button in ImageButtons)
+            {
+                button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+            }
         }
 
         private void Playback(object sender, EventArgs arguments)
@@ -262,7 +258,7 @@ namespace VSMacros
         protected override int QueryClose(out bool canClose)
         {
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
-            if (macroRecorder.Recording)
+            if (macroRecorder.IsRecording)
             {
                 string message = "Recording in process, are you sure to close the window?";
                 string caption = "Attention";

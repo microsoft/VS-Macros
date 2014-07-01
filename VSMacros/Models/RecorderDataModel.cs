@@ -6,9 +6,7 @@ namespace VSMacros
 {
     internal sealed class RecorderDataModel
     {
-        private string currWindow = "Macro Explorer";
         private readonly List<RecordedActionBase> actions = new List<RecordedActionBase>();
-        private bool recording = false;
 
         public IEnumerable<RecordedActionBase> Actions
         {

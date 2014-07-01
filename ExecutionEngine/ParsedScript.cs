@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ExecutionEngine
 {
@@ -42,8 +43,9 @@ namespace ExecutionEngine
             {
                 return this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
                 throw;
             }
         }

@@ -34,6 +34,8 @@ namespace VSMacros.Engines
 
         public void Playback(string path, int times) 
         {
+            var executor = new Executor();
+            executor.StartExecution(path, 1);
         }
 
         public void StopPlayback() 

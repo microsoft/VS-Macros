@@ -117,12 +117,14 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback("", 1);
+            var path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js");
+            Manager.Instance.Playback(path, 1);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback("", 0);
+            var path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js");
+            Manager.Instance.Playback(path, 0);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)

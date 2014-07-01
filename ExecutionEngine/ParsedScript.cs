@@ -19,21 +19,21 @@ namespace ExecutionEngine
     internal sealed class ParsedScript
     {
         private readonly Engine engine;
-        private object dispatch;
+        private readonly object dispatch;
 
         internal ParsedScript(Engine engine, IntPtr dispatch)
         {
             this.engine = engine;
             this.dispatch = Marshal.GetObjectForIUnknown(dispatch);
-        }
 
-        public object CallMethod(string methodName, params object[] arguments)
-        {
             if (this.dispatch == null)
             {
                 throw new InvalidOperationException();
             }
+        }
 
+        public object CallMethod(string methodName, params object[] arguments)
+        {
             if (methodName == null)
             {
                 throw new ArgumentNullException("methodName");

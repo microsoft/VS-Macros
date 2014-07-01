@@ -22,7 +22,7 @@ namespace ExecutionEngine
             lcid = Thread.CurrentThread.CurrentCulture.LCID;
         }
 
-        public void GetItemInfo(string name, Enums.ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
+        public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
             {

@@ -62,15 +62,10 @@ namespace ExecutionEngine
 
         public void Dispose()
         {
-            if (this.parser != null)
-            {
-                this.parser.Dispose();
-                this.parser = null;
-            }
+            this.parser.Dispose();
 
             if (this.engine != null)
             {
-                Marshal.ReleaseComObject(this.engine);
                 this.engine = null;
             }
         }

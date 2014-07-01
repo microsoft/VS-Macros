@@ -15,7 +15,25 @@ namespace ExecutionEngine.Interfaces
     internal interface IActiveScriptParse64
     {
         void InitNew();
-        void AddScriptlet([MarshalAs(UnmanagedType.LPWStr)]string defaultName, [MarshalAs(UnmanagedType.LPWStr)]string code, [MarshalAs(UnmanagedType.LPWStr)]string itemName, [MarshalAs(UnmanagedType.LPWStr)]string subItemName, [MarshalAs(UnmanagedType.LPWStr)]string eventName, [MarshalAs(UnmanagedType.LPWStr)]string delimiter, IntPtr sourceContextCookie, uint startingLineNumber, ScriptText flags, out string name, out System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo);
-        void ParseScriptText([MarshalAs(UnmanagedType.LPWStr)]string code, [MarshalAs(UnmanagedType.LPWStr)]string itemName, object context, [MarshalAs(UnmanagedType.LPWStr)]string delimiter, IntPtr sourceContextCookie, uint startingLineNumber, ScriptText flags, out object result, out System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo);
+        void AddScriptlet([MarshalAs(UnmanagedType.LPWStr)]string defaultName, 
+            [MarshalAs(UnmanagedType.LPWStr)]string code, 
+            [MarshalAs(UnmanagedType.LPWStr)]string itemName, 
+            [MarshalAs(UnmanagedType.LPWStr)]string subItemName, 
+            [MarshalAs(UnmanagedType.LPWStr)]string eventName, 
+            [MarshalAs(UnmanagedType.LPWStr)]string delimiter, 
+            IntPtr sourceContextCookie, 
+            uint startingLineNumber, 
+            ScriptText flags, 
+            out string name, 
+            out System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo);
+
+        void ParseScriptText([MarshalAs(UnmanagedType.LPWStr)]string code, 
+            [MarshalAs(UnmanagedType.LPWStr)]string itemName, 
+            object context, [MarshalAs(UnmanagedType.LPWStr)]string delimiter, 
+            IntPtr sourceContextCookie, 
+            uint startingLineNumber, 
+            ScriptText flags, 
+            out object result, 
+            out System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo);
     }
 }

@@ -56,19 +56,15 @@ namespace VSMacros.Engines
 
         public void Playback(string path, int times) 
         {
-            this.SaveShortcuts();
-
-            //if (path == string.Empty)
-            //{
-            //    path = this.SelectedMacro.FullPath;
-            //}
+            if (path == string.Empty)
+            {
+                path = this.SelectedMacro.FullPath;
+            }
 
             //StreamReader str = this.LoadFile(path);
 
-            //if (str != null)
-            //{
-            //    this.ShowMessageBox(str.ReadLine());
-            //}
+            var executor = new Executor();
+            executor.StartExecution(path, 1);
         }
 
         public void StopPlayback() 

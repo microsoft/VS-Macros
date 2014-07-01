@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using MicrosoftCorporation.VSMacros.Engines;
+using VSMacros.Engines;
 using VSMacros.Interfaces;
 
 namespace VSMacros.Engines
@@ -49,12 +49,14 @@ namespace VSMacros.Engines
         /// </summary>
         public void StartExecution(string path, int iterations)
         {
+            Debug.WriteLine("path is: " + path);
             var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             var encodedPath = path.Replace(" ", "%20");
             this.executionEngine = new Process();
             this.executionEngine.StartInfo.FileName = processName;
             this.executionEngine.StartInfo.UseShellExecute = false;
             this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, encodedPath);
+            Debug.WriteLine("arguments are: " + this.executionEngine.StartInfo.Arguments);
             this.executionEngine.Start();
         }
 

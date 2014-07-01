@@ -1,7 +1,7 @@
 ﻿using VSMacros.Engines;
 using System;
 using System.IO;
-using MicrosoftCorporation.VSMacros.Engines;
+using VSMacros.Engines;
 
 namespace VSMacros.Interfaces
 {

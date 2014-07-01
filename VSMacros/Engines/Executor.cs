@@ -50,11 +50,11 @@ namespace VSMacros.Engines
         public void StartExecution(string path, int iterations)
         {
             var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
-            var path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js").Replace(" ", "%20");
+            var encodedPath = path.Replace(" ", "%20");
             this.executionEngine = new Process();
             this.executionEngine.StartInfo.FileName = processName;
             this.executionEngine.StartInfo.UseShellExecute = false;
-            this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, path);
+            this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, encodedPath);
             this.executionEngine.Start();
         }
 

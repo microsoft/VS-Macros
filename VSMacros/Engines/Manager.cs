@@ -14,6 +14,9 @@ namespace VSMacros.Engines
     internal sealed class Manager : IManager
     {
         private static readonly Manager instance = new Manager();
+        
+        private const string CurrentMacroLocation = "Current.js";
+        private const string ShortcutsLocation = "Shortcuts.xml";
 
         public string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
@@ -254,6 +257,24 @@ namespace VSMacros.Engines
             }
         }
 
+        public void CreateFileSystem()
+        {
+            // Create macro directory
+            if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
+            {
+                Directory.CreateDirectory(VSMacrosPackage.Current.MacroDirectory);
+            }
+
+            // Create current macro file
+            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation)))
+            {
+                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation));
+            }
+
+            // Create shortcuts file
+            this.CreateShortcutFile();
+        }
+
         private StreamReader LoadFile(string path) 
         { 
             try
@@ -297,13 +318,26 @@ namespace VSMacros.Engines
 
             try
             {
-                // Load XML file
-                var root = XDocument.Load(Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFilePath));
+                // Get the path to the shortcut file
+                string path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFilePath);
 
-            // Parse to dictionary
-            this.Shortcuts = root.Descendants("command")
-                                            .Select(elmt => elmt.Value)
-                                            .ToArray();
+                // If the file doesn't exist, initialize the Shortcuts array with empty strings
+                if (!File.Exists(path))
+                {
+                    this.Shortcuts = Enumerable.Repeat(string.Empty, 10).ToArray();
+                }
+
+                // Otherwise, load it
+                else
+                {
+                    // Load XML file
+                    var root = XDocument.Load(path);
+
+                    // Parse to dictionary
+                    this.Shortcuts = root.Descendants("command")
+                                                .Select(elmt => elmt.Value)
+                                                .ToArray();
+                }                
             }
             catch (Exception e)
             {
@@ -322,6 +356,16 @@ namespace VSMacros.Engines
                                 new XText(s))));
 
             xmlShortcuts.Save(shortcutsFilePath);
+        }
+
+        private void CreateShortcutFile()
+        {
+            string ShortcutsPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, ShortcutsLocation);
+            if (!File.Exists(ShortcutsPath))
+            {
+                // Create file for writing UTF-8 encoded text
+                File.WriteAllText(ShortcutsPath, "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?><commands><command>Command not bound. Do not use.</command><command/><command/><command/><command/><command/><command/><command/><command/><command/></commands>");
+            }
         }
 
         #region Helper Methods

@@ -135,6 +135,9 @@
   <data name="ShortcutIsInvalid" xml:space="preserve">
     <value>Selected shortcut is invalid.</value>
   </data>
+  <data name="ShortcutsFileNotFound" xml:space="preserve">
+    <value>Shortcuts file was not found.</value>
+  </data>
   <data name="ToolWindowTitle" xml:space="preserve">
     <value>Macro Explorer</value>
   </data>

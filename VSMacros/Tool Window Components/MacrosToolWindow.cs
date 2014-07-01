@@ -12,8 +12,6 @@ namespace VSMacros
     [Guid(GuidList.GuidToolWindowPersistanceString)]
     public class MacrosToolWindow : ToolWindowPane
     {
-        private const string CurrentMacroLocation = "Current.js";
-
         public MacrosToolWindow() :
             base(null)
         {
@@ -24,16 +22,7 @@ namespace VSMacros
             // Instantiate Tool Window Toolbar
             this.ToolBar = new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.MacrosToolWindowToolbar);
 
-            // Initialize file system
-            if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
-            {
-                Directory.CreateDirectory(VSMacrosPackage.Current.MacroDirectory);
-            }
-
-            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation)))
-            {
-                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation));
-            }
+            Manager.Instance.CreateFileSystem();
 
             string macroDirectory = VSMacrosPackage.Current.MacroDirectory;
 

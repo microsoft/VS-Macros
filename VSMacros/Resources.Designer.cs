@@ -115,6 +115,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shortcuts file was not found..
+        /// </summary>
+        internal static string ShortcutsFileNotFound {
+            get {
+                return ResourceManager.GetString("ShortcutsFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Macro Explorer.
         /// </summary>
         internal static string ToolWindowTitle {

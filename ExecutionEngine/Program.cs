@@ -17,10 +17,8 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        //private static int pid;
         private static string macroName = "currentScript";
 
-        // Helper methods
         private static string[] SeparateArgs(string[] args)
         {
             string[] stringSeparator = new string[] {"[delimiter]"};
@@ -28,7 +26,7 @@ namespace ExecutionEngine
             return separatedArgs;
         }
 
-        private static short DetermineNumberOfIterations(string iter)
+        private static short GetNumberOfIterations(string iter)
         {
             short iterations;
 
@@ -84,8 +82,8 @@ namespace ExecutionEngine
             string unparsedIter = separatedArgs[1];
             string encodedPath = separatedArgs[2];
 
-            int pid = DeterminePid(unparsedPid);
-            short iterations = DetermineNumberOfIterations(unparsedIter);
+            int pid = GetPid(unparsedPid);
+            short iterations = GetNumberOfIterations(unparsedIter);
             string decodedPath = DecodePath(encodedPath);
             string unwrappedScript = ExtractScript(decodedPath);
             string wrappedScript = WrapScript(unwrappedScript);
@@ -94,7 +92,7 @@ namespace ExecutionEngine
             RunMacro(wrappedScript, iterations);
         }
 
-        private static int DeterminePid(string unparsedPid)
+        private static int GetPid(string unparsedPid)
         {
             int pid;
             if (!int.TryParse(unparsedPid, out pid))
@@ -113,6 +111,7 @@ namespace ExecutionEngine
         {
             Program.engine = new Engine(tempPid);
 
+            Debug.WriteLine("Warning: Hardcoded path");
             string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
             string wrapped = WrapScript(unwrapped);
 
@@ -131,6 +130,7 @@ namespace ExecutionEngine
             }
             else
             {
+                Debug.WriteLine("Warning: Hardcoded devenv pid");
                 short pidOfCurrentDevenv = 10588;
                 RunAsStartupProject(pidOfCurrentDevenv);   
             }

@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 
 namespace VSMacros

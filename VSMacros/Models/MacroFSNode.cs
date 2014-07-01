@@ -38,6 +38,7 @@ namespace VSMacros.Models
             this.IsDirectory = (File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory;
             this.FullPath = path;
             this.isEditable = false;
+            this.isSelected = false;
             this.parent = parent;
         }
 

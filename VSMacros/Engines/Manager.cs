@@ -11,9 +11,9 @@ using VSMacros.Models;
 
 namespace VSMacros.Engines
 {
-    internal sealed class Manager : IManager
+    public sealed class Manager : IManager
     {
-        private static readonly Manager instance = new Manager();
+        private static readonly Manager instance = new Manager(VSMacrosPackage.Current);
         
         private const string CurrentMacroLocation = "Current.js";
         private const string ShortcutsLocation = "Shortcuts.xml";
@@ -31,9 +31,9 @@ namespace VSMacros.Engines
             get { return MacrosControl.Current.SelectedNode; }
         }
 
-        private Manager() 
+        private Manager(IServiceProvider serviceProvider) 
         {
-            uiShell = (IVsUIShell)((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SVsUIShell));
+            uiShell = (IVsUIShell)serviceProvider.GetService(typeof(SVsUIShell));
             if (uiShell != null)
             {
                 uiShellLoaded = true;
@@ -50,7 +50,7 @@ namespace VSMacros.Engines
 
         public static Manager Instance
         {
-            get { return instance; }
+            get { return Manager.instance; }
         }
 
         public void ToggleRecording()
@@ -59,19 +59,17 @@ namespace VSMacros.Engines
 
         public void Playback(string path, int times) 
         {
-            this.SaveShortcuts();
+            if (path == string.Empty)
+            {
+                path = this.SelectedMacro.FullPath;
+            }
 
-            //if (path == string.Empty)
-            //{
-            //    path = this.SelectedMacro.FullPath;
-            //}
+            StreamReader str = this.LoadFile(path);
 
-            //StreamReader str = this.LoadFile(path);
-
-            //if (str != null)
-            //{
-            //    this.ShowMessageBox(str.ReadLine());
-            //}
+            if (str != null)
+            {
+                this.ShowMessageBox(str.ReadLine());
+            }
         }
 
         public void StopPlayback() 
@@ -276,7 +274,7 @@ namespace VSMacros.Engines
         }
 
         private StreamReader LoadFile(string path) 
-        { 
+        {
             try
             {
                 if (!File.Exists(path))

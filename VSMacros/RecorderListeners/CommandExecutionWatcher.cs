@@ -98,5 +98,4 @@ namespace VSMacros.RecorderListeners
             return name;
         }
     }
-
 }

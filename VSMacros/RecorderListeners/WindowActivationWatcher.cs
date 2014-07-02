@@ -79,11 +79,9 @@ namespace VSMacros.RecorderListeners
                                 {
                                     this.macroRecorder.AddWindowActivation(windowID, caption);
                                 }
-
                             }
                         }
                     }
-
                 }
             }
             return VSConstants.S_OK;
@@ -116,7 +114,6 @@ namespace VSMacros.RecorderListeners
             }
 
             this.serviceProvider = null;
-
         }
     }
 }

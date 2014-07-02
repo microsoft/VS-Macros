@@ -38,6 +38,16 @@ namespace VSMacros.Engines
         public void StopRecording()
         {
             this.recording = false;
+            string ParentPath = "c:\\users\\t-xindo\\documents\\vsmacros\\vsmacros\\vsmacros";
+            string fileName = Path.Combine(ParentPath, "test1.txt");
+
+            using (StreamWriter fs = new StreamWriter(fileName))
+            {
+                foreach (var action in this.dataModel.Actions)
+                {
+                    action.ConvertToJavascript(fs);
+                }
+            }
         }
 
         public bool IsRecording

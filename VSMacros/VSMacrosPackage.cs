@@ -68,6 +68,7 @@ namespace VSMacros
         #region Package Members
         private BitmapImage startIcon;
         private BitmapImage stopIcon;
+        private bool MenuButtonRemoved = false;
         private string commonPath;
         private bool isShowingStartImage = true;
         private List<CommandBarButton> imageButtons;
@@ -160,8 +161,6 @@ namespace VSMacros
             return;
         }
 
-        
-
         private void Playback(object sender, EventArgs arguments)
         {
             Manager.Instance.Playback("", 1);
@@ -195,7 +194,10 @@ namespace VSMacros
             this.statusBar.Animation(animation, ref this.iconRecord);
             foreach (CommandBarButton button in this.ImageButtons)
             {
-                button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                if (button != null)
+                {
+                    button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                }
             }
         }
 
@@ -205,25 +207,30 @@ namespace VSMacros
             {
                 if (this.imageButtons == null)
                 {
-                    this.imageButtons = this.GetImageButtons();
+                    List<CommandBarButton> buttons = new List<CommandBarButton>();
+                    this.imageButtons = this.AddMenuButton(buttons);
                 }
 
                 return this.imageButtons;
             }
         }
 
-        private List<CommandBarButton> GetImageButtons()
+        private List<CommandBarButton> AddMenuButton(List<CommandBarButton> buttons)
         {
-            List<CommandBarButton> buttons = new List<CommandBarButton>();
-
+            List<CommandBarButton> buttonsList = buttons;
             DTE dte = (DTE)this.GetService(typeof(SDTE));
             CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
             CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
             CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
-            CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
-            buttons.Add(startButton);
-
-            return buttons;
+            if(macroMenu != null)
+            { 
+                CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
+                if (startButton != null)
+                {
+                    buttons.Add(startButton);
+                }
+            }
+            return buttonsList;
         }
 
         private BitmapSource StartIcon
@@ -288,6 +295,5 @@ namespace VSMacros
         }
 
         #endregion
-
     }
 }

@@ -21,7 +21,6 @@ using VSMacros.Engines;
 using VSMacros.Model;
 using System.Reflection;
 
-
 namespace VSMacros
 {
     [Guid("56fbfa32-c049-4fd5-9b54-39fcdf33629d")]

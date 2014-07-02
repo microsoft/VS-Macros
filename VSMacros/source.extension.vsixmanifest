@@ -4,6 +4,8 @@
     <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.0" Language="en-US" Publisher="Microsoft Corporation" />
     <DisplayName>VSMacros</DisplayName>
     <Description xml:space="preserve">An extension for Visual Studio 2013 that enables the use of macros in the IDE.</Description>
+    <License>Documentation\License.txt</License>
+    <Tags>Productivity, Macros, Automation</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">
     <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />

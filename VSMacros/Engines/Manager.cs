@@ -131,7 +131,7 @@ namespace VSMacros.Engines
 
         public void Refresh()
         {
-            MacroFSNode.RootNode.RefreshTree();
+            MacroFSNode.RefreshTree();
             this.LoadShortcuts();
         }
 

@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using VSMacros.Models;
+using System.Windows.Data;
 
 namespace VSMacros
 {
@@ -116,6 +117,9 @@ namespace VSMacros
         {
             if (e.Key == Key.Enter)
             {
+                TextBox textBox = sender as TextBox;
+
+                BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty).UpdateSource();
                 this.SelectedNode.DisableEdit();
             }
         }
@@ -134,86 +138,216 @@ namespace VSMacros
             }
         }
 
+        private void TextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            textBox.SelectAll();
+            textBox.Focus();
+        }
+
         #endregion
 
         #region Drag & Drop
         private Point startPos;
+        private MacroFSNode targetNode;
+        private MacroFSNode draggedNode;
+        public static readonly DependencyProperty IsTreeViewItemDropOverProperty = DependencyProperty.RegisterAttached("IsTreeViewItemDropOver", typeof(bool), typeof(MacrosControl), new PropertyMetadata(false));
 
         private void TreeViewItem_PreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // Save current position so we have a reference to compare against in TreeViewItem_MouseMove
-            this.startPos = e.GetPosition(null);
+            this.startPos = e.GetPosition(this.MacroTreeView);
         }
+
         private void TreeViewItem_MouseMove(object sender, MouseEventArgs e)
         {
-            return;
-            System.Diagnostics.Debug.WriteLine("In mouve move");
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 // Has the mouse move enough?
-                var mousePos = e.GetPosition(null);
+                var mousePos = e.GetPosition(this.MacroTreeView);
                 var diff = mousePos - this.startPos;
 
                 if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                     Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
                     // Get the dragged TreeViewItem
-                    TreeView tv = sender as TreeView;
-                    TreeViewItem tvi = FindAnchestor<TreeViewItem>((DependencyObject)e.OriginalSource);
+                    this.draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
-                    // Find the data behind the TreeViewItem
-                    MacroFSNode node = tvi.Header as MacroFSNode;
+                    // The root node is not dragable
+                    if (this.draggedNode == MacroFSNode.RootNode)
+                    {
+                        this.draggedNode = null;
+                    }
 
-                    // Initialize the drag & drop operation
-                    MacroFSNode data = this.MacroTreeView.SelectedItem as MacroFSNode;
-                    DragDrop.DoDragDrop(this.MacroTreeView, data, DragDropEffects.Move);
+                    if (this.draggedNode != null)
+                    {
+                        // Initialize the drag & drop operation
+                        DragDropEffects finalDropEffect = DragDrop.DoDragDrop(this.MacroTreeView, this.draggedNode, DragDropEffects.Move);
+
+                        // Checking target is not null and item is dragging
+                        if ((finalDropEffect == DragDropEffects.Move) && (this.targetNode != null))
+                        {
+                            // A Move drop is accepted
+                            if (!this.draggedNode.Equals(targetNode))
+                            {
+                                MoveItem(this.draggedNode, targetNode);
+                                this.targetNode = null;
+                                this.draggedNode = null;
+                            }
+                        }
+                    }                   
                 }
             }
         }
 
-        // Helper to search up the VisualTree
-        private static T FindAnchestor<T>(DependencyObject current)
-            where T : DependencyObject
+        private void MacroTreeView_DragOver(object sender, DragEventArgs e)
         {
-            do
+            Point currentPosition = e.GetPosition(this.MacroTreeView);
+
+            if ((Math.Abs(currentPosition.X - this.startPos.X) > SystemParameters.MinimumHorizontalDragDistance) ||
+                (Math.Abs(currentPosition.Y - this.startPos.Y) > SystemParameters.MinimumVerticalDragDistance))
             {
-                if (current is T)
+                // Verify that this is a valid drop
+                TreeViewItem item = GetNearestContainer(e.OriginalSource as UIElement);
+                if (ValidDropTarget(this.draggedNode, item.Header as MacroFSNode))
                 {
-                    return (T)current;
+                    e.Effects = DragDropEffects.Move;
                 }
-                current = VisualTreeHelper.GetParent(current);
+                else
+                {
+                    e.Effects = DragDropEffects.None;
+                }
             }
-            while (current != null);
-            return null;
+            e.Handled = true;
         }
 
         private void TreeViewItem_Drop(object sender, DragEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("In TVI Drop");
-            if (e.Data.GetDataPresent(typeof(MacroFSNode)))
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+
+            // Verify that this is a valid drop and then store the drop target
+            TreeViewItem targetItem = GetNearestContainer(e.OriginalSource as UIElement);
+            if (targetItem != null && this.draggedNode != null)
             {
-                MacroFSNode node = e.Data.GetData(typeof(MacroFSNode)) as MacroFSNode;
+                MacroFSNode targetNode = targetItem.Header as MacroFSNode;
+
+                if (!targetNode.IsDirectory)
+                {
+                    this.targetNode = targetNode.Parent;
+                }
+                else
+                {
+                    this.targetNode = targetNode;
+                }
+
+                e.Effects = DragDropEffects.Move;
             }
         }
 
         private void TreeViewItem_DragEnter(object sender, DragEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("In TVI Drag enter");
-            if (!e.Data.GetDataPresent(typeof(MacroFSNode)))
+            // Highlight item on DragEnter
+            TreeViewItem item = sender as TreeViewItem;
+            SetIsTreeViewItemDropOver(item, true);
+            e.Handled = true;
+        }
+
+        private void TreeViewItem_DragLeave(object sender, DragEventArgs e)
+        {
+            // Remove highlight on DragLeave
+            TreeViewItem item = sender as TreeViewItem;
+            SetIsTreeViewItemDropOver(item, false);
+            e.Handled = true;
+        }
+
+        public static bool GetIsTreeViewItemDropOver(TreeViewItem item)
+        {
+            return (bool)item.GetValue(IsTreeViewItemDropOverProperty);
+        }
+
+        public static void SetIsTreeViewItemDropOver(TreeViewItem item, bool value)
+        {
+            item.SetValue(IsTreeViewItemDropOverProperty, value);
+        }
+
+        private void MoveItem(MacroFSNode sourceItem, MacroFSNode targetItem)
+        {
+            try
             {
-                e.Effects = DragDropEffects.None;
+                string sourcePath = sourceItem.FullPath;
+                string targetPath = System.IO.Path.Combine(targetItem.FullPath, sourceItem.Name);
+                string extension = ".js";
+
+                // Move on disk
+                if (sourceItem.IsDirectory)
+                {
+                    System.IO.Directory.Move(sourcePath, targetPath);
+                }
+                else
+                {
+                    System.IO.File.Move(sourcePath, targetPath + extension);
+                }
+
+                MacroFSNode.RefreshTree();
             }
+            catch(Exception e)
+            {
+                // TODO change to IVsUIShell.ShowMessageBox
+                MessageBox.Show(e.Message);
+            }
+            
+        }
+
+        private bool ValidDropTarget(MacroFSNode sourceItem, MacroFSNode targetItem)
+        {
+            //Check whether the target item is meeting your condition
+            if (!sourceItem.Equals(targetItem))
+            {
+                return true;
+            }
+            return false;
+
+        }
+
+        static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
+        {
+            if (child == null)
+            {
+                return null;
+            }
+
+            UIElement parent = VisualTreeHelper.GetParent(child) as UIElement;
+
+            while (parent != null)
+            {
+                TObject found = parent as TObject;
+                if (found != null)
+                {
+                    return found;
+                }
+                else
+                {
+                    parent = VisualTreeHelper.GetParent(parent) as UIElement;
+                }
+            }
+
+            return null;
+        }
+
+        private TreeViewItem GetNearestContainer(UIElement element)
+        {
+            // Walk up the element tree to the nearest tree view item.
+            TreeViewItem container = element as TreeViewItem;
+            while ((container == null) && (element != null))
+            {
+                element = VisualTreeHelper.GetParent(element) as UIElement;
+                container = element as TreeViewItem;
+            }
+            return container;
         }
 
         #endregion
-
-        private void MacroTreeView_DragOver(object sender, DragEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("In TVI over");
-            if ((e.AllowedEffects & DragDropEffects.Move) == DragDropEffects.Move)
-            {
-                e.Effects = DragDropEffects.Move;
-            }
-        }
     }
 }

@@ -13,8 +13,8 @@
         <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
-                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,0,0,0" Padding="1"/>
-                <TextBlock Text="{Binding Shortcut, Mode=OneWay}" Padding="1"/>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,0,5,0"/>
+                <TextBlock Text="{Binding Shortcut, Mode=OneWay}"/>
             </StackPanel>
         </DataTemplate>
         
@@ -22,7 +22,7 @@
         <DataTemplate x:Key="EditTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
-                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,0,0,0" KeyDown="TextBox_KeyDown"/>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,0,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
             </StackPanel>
         </DataTemplate>
         
@@ -57,11 +57,6 @@
     <TreeView x:Name="MacroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
               SelectedItemChanged="MacroTreeView_SelectedItemChanged"
-              MouseMove="TreeViewItem_MouseMove"
-              PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
-              Drop="TreeViewItem_Drop"
-              DragEnter="TreeViewItem_DragEnter"
-              DragOver="MacroTreeView_DragOver"
               AllowDrop="True"
               Background="Transparent" BorderBrush="Transparent">
 
@@ -77,10 +72,11 @@
                 <!--<EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>-->
                 
                 <!-- Drag & Drop -->
-                <EventSetter Event="TreeViewItem.MouseMove" Handler="TreeViewItem_MouseMove"/>
                 <EventSetter Event="TreeViewItem.PreviewMouseLeftButtonDown" Handler="TreeViewItem_PreviewMouseLeftButtonDown"/>
+                <EventSetter Event="TreeViewItem.MouseMove" Handler="TreeViewItem_MouseMove"/>
                 <EventSetter Event="TreeViewItem.Drop" Handler="TreeViewItem_Drop"/>
                 <EventSetter Event="TreeViewItem.DragEnter" Handler="TreeViewItem_DragEnter"/>
+                <EventSetter Event="TreeViewItem.DragLeave" Handler="TreeViewItem_DragLeave"/>
                 <EventSetter Event="TreeViewItem.DragOver" Handler="MacroTreeView_DragOver"/>
             </Style>
         </TreeView.ItemContainerStyle>

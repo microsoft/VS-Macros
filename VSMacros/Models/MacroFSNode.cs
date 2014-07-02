@@ -223,6 +223,34 @@ namespace VSMacros.Models
             }
         }
 
+        public int Depth
+        {
+            get
+            {
+                if (this.parent == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return this.parent.Depth + 1;
+                }
+            }
+        }
+
+        public MacroFSNode Parent
+        {
+            get
+            {
+                return this.parent;
+            }
+        }
+
+        public bool Equals(MacroFSNode node)
+        {
+            return this.FullPath == node.FullPath;
+        }
+
         public ObservableCollection<MacroFSNode> Children
         {
             get
@@ -273,8 +301,10 @@ namespace VSMacros.Models
             this.IsEditable = false;
         }
 
-        public void RefreshTree()
+        public static void RefreshTree()
         {
+            MacroFSNode root = MacroFSNode.RootNode;
+
             // Make a copy of the hashset
             HashSet<string> dirs = new HashSet<string>(enabledDirectories);
 
@@ -282,15 +312,20 @@ namespace VSMacros.Models
             enabledDirectories.Clear();
 
             // Refetch the children of the root node
-            RootNode.children = this.GetChildNodes();
+            root.children = root.GetChildNodes();
 
             // Recursively set IsEnabled for each folders
-            this.SetIsExpanded(RootNode, dirs);
+            root.SetIsExpanded(root, dirs);
 
             // Notify change
-            this.NotifyPropertyChanged("Children");
+            root.NotifyPropertyChanged("Children");
         }
         #endregion
+
+        public void Add(MacroFSNode node)
+        {
+            this.children.Add(node);
+        }
         
         // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
         private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)

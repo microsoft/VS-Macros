@@ -126,6 +126,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\DepthToMarginConverter.cs" />
     <Compile Include="Dialogs\AssignShortcutDialog.xaml.cs">
       <DependentUpon>AssignShortcutDialog.xaml</DependentUpon>
     </Compile>

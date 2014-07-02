@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacrosToolWindow.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design; // for CommandID
@@ -50,7 +56,7 @@ namespace VSMacros
             string MacroDirectory = VSMacrosPackage.Current.MacroDirectory;
             MacroFSNode root = new MacroFSNode(MacroDirectory);
             var macroControl = new MacrosControl(root);
-            macroControl.Loaded += OnLoaded;
+            macroControl.Loaded += this.OnLoaded;
             base.Content = macroControl;
         }
 

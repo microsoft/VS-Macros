@@ -88,6 +88,42 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attention.
+        /// </summary>
+        internal static string ExitCaption {
+            get {
+                return ResourceManager.GetString("ExitCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording in process, are you sure to close the window?.
+        /// </summary>
+        internal static string ExitMessage {
+            get {
+                return ResourceManager.GetString("ExitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ready.
+        /// </summary>
+        internal static string StatusBarReadyText {
+            get {
+                return ResourceManager.GetString("StatusBarReadyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording....
+        /// </summary>
+        internal static string StatusBarRecordingText {
+            get {
+                return ResourceManager.GetString("StatusBarRecordingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Macro Explorer.
         /// </summary>
         internal static string ToolWindowTitle {

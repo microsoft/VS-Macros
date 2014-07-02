@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacroFSNode.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -76,7 +82,7 @@ namespace VSMacros.Model
                     // Update object
                     this.FullPath = newFullPath;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     if (e.Message != null)
                     {

@@ -40,8 +40,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.CoreUtility, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Editor, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.CoreUtility" />
+    <Reference Include="Microsoft.VisualStudio.Editor" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
@@ -53,10 +53,10 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0">
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.Text.Data, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Text.Logic, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Text.UI, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+     <Reference Include="Microsoft.VisualStudio.Text.Data" />
+    <Reference Include="Microsoft.VisualStudio.Text.Logic" />
+    <Reference Include="Microsoft.VisualStudio.Text.UI" />
+    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.12.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
@@ -141,11 +141,15 @@
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IRecorder.cs" />
     <Compile Include="Interfaces\IRecorderPrivate.cs" />
-    <Compile Include="Listeners\CommandExecutionWatcher.cs" />
-    <Compile Include="Listeners\TextViewCreationListener.cs" />
-    <Compile Include="Listeners\WindowActivationWatcher.cs" />
+    <Compile Include="RecorderListeners\EditorCommandFilter.cs" />
+    <Compile Include="RecorderListeners\CommandExecutionWatcher.cs" />
+    <Compile Include="RecorderListeners\TextViewCreationListener.cs" />
+    <Compile Include="RecorderListeners\WindowActivationWatcher.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
-    <Compile Include="Models\RecordedActionBase.cs" />
+    <Compile Include="RecorderOutput\RecordedDocumentActivation.cs" />
+    <Compile Include="RecorderOutput\RecordedWindowActivatio.cs" />
+    <Compile Include="RecorderOutput\RecordedCommand.cs" />
+    <Compile Include="RecorderOutput\RecordedActionBase.cs" />
     <Compile Include="Stubs\MacroReader.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>

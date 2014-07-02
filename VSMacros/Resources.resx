@@ -126,6 +126,18 @@
   <data name="DeleteMacro" xml:space="preserve">
     <value>'{0}' will be sent to the recycle bin.</value>
   </data>
+  <data name="ExitCaption" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="ExitMessage" xml:space="preserve">
+    <value>Recording in process, are you sure to close the window?</value>
+  </data>
+  <data name="StatusBarReadyText" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="StatusBarRecordingText" xml:space="preserve">
+    <value>Recording...</value>
+  </data>
   <data name="ToolWindowTitle" xml:space="preserve">
     <value>Macro Explorer</value>
   </data>

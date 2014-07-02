@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="VSMacrosPackage.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
@@ -14,6 +20,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Interfaces;
+using VSMacros.Model;
 
 namespace VSMacros
 {
@@ -87,9 +94,10 @@ namespace VSMacros
 
             ((IServiceContainer)this).AddService(typeof(IRecorder), (serviceContainer, type) => { return new Recorder(this); }, promote: true);
             this.statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
+           
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if ( null != mcs )
+            if (null != mcs)
             {
                 // Create the command for the tool window
                 mcs.AddCommand(new MenuCommand(
@@ -135,33 +143,24 @@ namespace VSMacros
 
         public void Record(object sender, EventArgs arguments)
         {
-            if (isShowingStartImage)
+            if (this.isShowingStartImage)
             {
-                StatusBarChange("Recording...", 1, StopIcon);
+                this.StatusBarChange(Resources.StatusBarRecordingText, 1, this.StopIcon);
                 IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StartRecording();
             }
             else
             {
-                StatusBarChange("Ready", 0, StartIcon);
+                this.StatusBarChange(Resources.StatusBarReadyText, 0, this.StartIcon);
                 IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
                 macroRecorder.StopRecording();
             }
-            isShowingStartImage = !isShowingStartImage;
+            this.isShowingStartImage = !this.isShowingStartImage;
 
             return;
         }
 
-        private void StatusBarChange(string status, int animation, BitmapSource icon)
-        {
-            this.statusBar.Clear();
-            this.statusBar.SetText(status);
-            this.statusBar.Animation(animation, ref iconRecord);
-            foreach (var button in ImageButtons)
-            {
-                button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
-            }
-        }
+        
 
         private void Playback(object sender, EventArgs arguments)
         {
@@ -189,13 +188,24 @@ namespace VSMacros
             System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(MacroDirectory); });
         }
 
+        private void StatusBarChange(string status, int animation, BitmapSource icon)
+        {
+            this.statusBar.Clear();
+            this.statusBar.SetText(status);
+            this.statusBar.Animation(animation, ref this.iconRecord);
+            foreach (CommandBarButton button in this.ImageButtons)
+            {
+                button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+            }
+        }
+
         internal List<CommandBarButton> ImageButtons
         {
             get
             {
                 if (this.imageButtons == null)
                 {
-                    this.imageButtons = GetImageButtons();
+                    this.imageButtons = this.GetImageButtons();
                 }
 
                 return this.imageButtons;
@@ -222,7 +232,7 @@ namespace VSMacros
             {
                 if (this.startIcon == null)
                 {
-                    this.startIcon = new BitmapImage(new Uri(Path.Combine(CommonPath, "RecordRound.png")));
+                    this.startIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "RecordRound.png")));
                 }
 
                 return this.startIcon;
@@ -235,7 +245,7 @@ namespace VSMacros
             {
                 if (this.stopIcon == null)
                 {
-                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(CommonPath, "stopIcon.png")));
+                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "stopIcon.png")));
                 }
 
                 return this.stopIcon;
@@ -260,8 +270,8 @@ namespace VSMacros
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (macroRecorder.IsRecording)
             {
-                string message = "Recording in process, are you sure to close the window?";
-                string caption = "Attention";
+                string message = Resources.ExitMessage;
+                string caption = Resources.ExitCaption;
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                 System.Windows.Forms.DialogResult result;
 

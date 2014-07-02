@@ -1,18 +1,19 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿//-----------------------------------------------------------------------
+// <copyright file="EditorCommandFilter.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Runtime.InteropServices;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio.Utilities;
 using VSMacros.Interfaces;
 using OLEConstants = Microsoft.VisualStudio.OLE.Interop.Constants;
 
-namespace VSMacros
+namespace VSMacros.RecorderListeners
 {
     internal class EditorCommandFilter : IOleCommandTarget
     {
@@ -35,44 +36,23 @@ namespace VSMacros
                 if ((pguidCmdGroup == VSConstants.CMDSETID.StandardCommandSet2K_guid) && (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR))
                 {
                     this.macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, "Keyboard", (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn));
-                }    
+                }
             }
-            if (NextCommandTarget != null)
+            if (this.NextCommandTarget != null)
             {
-                return NextCommandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+                return this.NextCommandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
             }
             return (int)OLEConstants.OLECMDERR_E_NOTSUPPORTED;
         }
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
-            if (NextCommandTarget != null)
+            if (this.NextCommandTarget != null)
             {
-                return NextCommandTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
+                return this.NextCommandTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
             }
 
             return (int)OLEConstants.OLECMDERR_E_NOTSUPPORTED;
-        }
-    }
-
-    [Export(typeof(IVsTextViewCreationListener))]
-    [TextViewRole(PredefinedTextViewRoles.Editable)]
-    [ContentType("Text")]
-    internal class TextViewCreationListener : IVsTextViewCreationListener
-    {
-        [Import]
-        private SVsServiceProvider serviceProvider;
-        private EditorCommandFilter commandFilter;
-
-        public void VsTextViewCreated(IVsTextView textViewAdapter)
-        {
-            if (this.commandFilter == null)
-            {
-                this.commandFilter = new EditorCommandFilter(serviceProvider: this.serviceProvider);
-            }
-            IOleCommandTarget nextTarget;
-            ErrorHandler.ThrowOnFailure(textViewAdapter.AddCommandFilter(this.commandFilter, out nextTarget));
-            this.commandFilter.NextCommandTarget = nextTarget;
         }
     }
 }

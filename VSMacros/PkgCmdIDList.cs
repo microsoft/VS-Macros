@@ -1,11 +1,17 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="PkgCmdIDList.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 
 namespace VSMacros
 {
     internal static class PkgCmdIDList
     {
 
-        public const uint CmdIdMacroExplorer =    0x101;
+        public const uint CmdIdMacroExplorer = 0x101;
 
         // Tool Window Toolbar
         public const int MacrosToolWindowToolbar = 0x1010;

@@ -1,10 +1,19 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Recorder.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
+using System.IO;
 using Microsoft.Internal.VisualStudio.Shell;
 using VSMacros.Interfaces;
+using VSMacros.Model;
+using VSMacros.RecorderListeners;
 
 namespace VSMacros.Engines
 {
-    class Recorder:IRecorder, IRecorderPrivate, IDisposable
+    class Recorder : IRecorder, IRecorderPrivate, IDisposable
     {
         private WindowActivationWatcher activationWatcher;
         private CommandExecutionWatcher commandWatcher;
@@ -22,23 +31,13 @@ namespace VSMacros.Engines
         {
             this.ClearData();
             this.activationWatcher = this.activationWatcher ?? new WindowActivationWatcher(this.serviceProvider);
-            this.commandWatcher = this.commandWatcher?? new CommandExecutionWatcher(this.serviceProvider);
+            this.commandWatcher = this.commandWatcher ?? new CommandExecutionWatcher(this.serviceProvider);
             this.recording = true;         
         }
 
         public void StopRecording()
         {
             this.recording = false;
-            //string ParentPath = "c:\\users\\t-xindo\\documents\\vsmacros\\vsmacros\\vsmacros";
-            //string fileName = Path.Combine(ParentPath, "test1.txt");
-
-            //using (StreamWriter fs = new StreamWriter(fileName))
-            //{
-            //    foreach (var action in this.dataModel.Actions)
-            //    {
-            //        action.ConvertToJavascript(fs);
-            //    }
-            //}
         }
 
         public bool IsRecording
@@ -48,12 +47,12 @@ namespace VSMacros.Engines
 
         public void AddCommandData(Guid commandSet, uint identifier, string commandName, char input)
         {
-            this.dataModel.AddExecutedCommand(commandSet,identifier,commandName,input);
+            this.dataModel.AddExecutedCommand(commandSet, identifier, commandName, input);
         }
 
         public void AddWindowActivation(Guid toolWindowID, string name)
         {
-            this.dataModel.AddWindow(toolWindowID,name);
+            this.dataModel.AddWindow(toolWindowID, name);
         }
 
         public void AddWindowActivation(string path)
@@ -68,8 +67,8 @@ namespace VSMacros.Engines
 
         public void Dispose()
         {
-            using(this.commandWatcher)
-            using(this.activationWatcher)
+            using (this.commandWatcher)
+            using (this.activationWatcher)
             {
                 this.commandWatcher = null;
                 this.activationWatcher = null;

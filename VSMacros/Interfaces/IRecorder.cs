@@ -1,4 +1,10 @@
-﻿namespace VSMacros.Interfaces
+﻿//-----------------------------------------------------------------------
+// <copyright file="IRecorder.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+namespace VSMacros.Interfaces
 {
     interface IRecorder
     {

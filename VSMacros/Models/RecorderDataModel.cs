@@ -1,8 +1,15 @@
-﻿using System.Collections.Generic;
+﻿//-----------------------------------------------------------------------
+// <copyright file="RecorderDataModel.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System;
+using VSMacros.RecorderOutput;
 
-namespace VSMacros
+namespace VSMacros.Model
 {
     internal sealed class RecorderDataModel
     {
@@ -21,9 +28,9 @@ namespace VSMacros
             this.actions.Add(new RecordedCommand(commandSet, identifier, commandName, input));
         }
 
-        internal void AddWindow(Guid toolWindowID,string name)
+        internal void AddWindow(Guid toolWindowID, string name)
         {
-            this.actions.Add(new RecordedWindowActivation(toolWindowID,name));
+            this.actions.Add(new RecordedWindowActivation(toolWindowID, name));
         }
 
         internal void AddWindow(string path)

@@ -1,10 +1,16 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="WindowActivationWatcher.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Interfaces;
 
-namespace VSMacros
+namespace VSMacros.RecorderListeners
 {
     // NOTE: This class will hook into the selection events and be responsible for monitoring selection changes
     internal sealed class WindowActivationWatcher : IVsSelectionEvents, IDisposable
@@ -80,7 +86,7 @@ namespace VSMacros
 
                 }
             }
-            return VSConstants.S_OK; ;
+            return VSConstants.S_OK;
         }
 
         public int OnCmdUIContextChanged(uint dwCmdUICookie, int fActive)

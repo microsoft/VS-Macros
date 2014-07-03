@@ -66,17 +66,6 @@ namespace ManagementTest
             //Assert.AreEqual("(CTRL+M, 1)", node.Shortcut);
         }
 
-        
-        [TestMethod]
-        public void Icon_ShowTheRightIcon_ForDirectories()
-        {
-            MacroFSNode node = this.CreateDirectoryNode();
-
-            node.IsExpanded = false;
-
-            // TODO find a way to test for a BitmapSource without using the code
-        }
-
         [TestMethod]
         public void Children_ShouldNotBeEmpty()
         {

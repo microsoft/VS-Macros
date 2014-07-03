@@ -88,6 +88,24 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string ExitCaption {
+            get {
+                return ResourceManager.GetString("ExitCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot exit while recording a macro..
+        /// </summary>
+        internal static string ExitMessage {
+            get {
+                return ResourceManager.GetString("ExitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap FolderClosed {
@@ -117,6 +135,16 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RecordRound {
+            get {
+                object obj = ResourceManager.GetObject("RecordRound", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
         /// </summary>
         internal static string ShortcutAlreadyUsed {
@@ -140,6 +168,34 @@ namespace VSMacros {
         internal static string ShortcutsFileNotFound {
             get {
                 return ResourceManager.GetString("ShortcutsFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ready....
+        /// </summary>
+        internal static string StatusBarReadyText {
+            get {
+                return ResourceManager.GetString("StatusBarReadyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording....
+        /// </summary>
+        internal static string StatusBarRecordingText {
+            get {
+                return ResourceManager.GetString("StatusBarRecordingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StopIcon {
+            get {
+                object obj = ResourceManager.GetObject("StopIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

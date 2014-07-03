@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
   </ItemGroup>
@@ -133,7 +134,16 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RecorderDataModel\RecorderDataModel.cs" />
+    <Compile Include="Converters\DepthToMarginConverter.cs" />
+    <Compile Include="Dialogs\AssignShortcutDialog.xaml.cs">
+      <DependentUpon>AssignShortcutDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
+      <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
+    <Compile Include="Interfaces\IManager.cs" />
+    <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
     <Compile Include="Engines\Recorder.cs" />
     <Compile Include="Engines\Manager.cs" />
@@ -196,15 +206,20 @@
   <ItemGroup>
     <Resource Include="Resources\RecordRound.png" />
     <Resource Include="Resources\stopIcon.png" />
-    <Resource Include="Resources\Images.png" />
-    <Resource Include="Resources\folder.png" />
-    <Resource Include="Resources\js.png" />
     <Resource Include="Resources\macro.png" />
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Assets\TreeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\AssignShortcutDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SaveCurrentDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -218,6 +233,9 @@
       <Project>{f73f9e75-10e3-44fc-9a13-7e69a689ad0b}</Project>
       <Name>ExecutionEngine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Documentation\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

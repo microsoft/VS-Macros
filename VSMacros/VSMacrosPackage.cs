@@ -242,7 +242,7 @@ namespace VSMacros
             {
                 if (this.startIcon == null)
                 {
-                    this.startIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "RecordRound.png")));
+                    this.startIcon = new BitmapImage(new Uri(@"Resources\RecordRound.png"));
                 }
                 return this.startIcon;
             }
@@ -254,7 +254,7 @@ namespace VSMacros
             {
                 if (this.stopIcon == null)
                 {
-                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "stopIcon.png")));
+                    this.stopIcon = new BitmapImage(new Uri(@"Resources\stopIcon.png"));
                 }
                 return this.stopIcon;
             }

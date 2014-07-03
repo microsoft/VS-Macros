@@ -302,7 +302,6 @@ namespace VSMacros.Models
             }
         }
 
-        // Returns a list of children of the current node
         private ObservableCollection<MacroFSNode> GetChildNodes()
         {
             var files = from childFile in Directory.GetFiles(this.FullPath)
@@ -395,7 +394,6 @@ namespace VSMacros.Models
             }
         }
 
-        // Create the OnPropertyChanged method to raise the event 
         private void NotifyPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
@@ -405,6 +403,7 @@ namespace VSMacros.Models
             }
         }
 
+        // Notifies all the nodes from the tree rooted at 'node'
         private static void NotifyAllNode(MacroFSNode node, string property)
         {
             node.NotifyPropertyChanged(property);

@@ -89,16 +89,21 @@
         <Parent guid="guidVSMacrosCmdSet" id="FolderContextMenu"/>
       </Group>
       
-      <!-- Playback Context Group -->
+      <!-- Playback Group -->
       <Group guid="guidVSMacrosCmdSet" id="PlaybackGroup" priority="0x0005">
         <Parent guid="guidVSMacrosCmdSet" id="MacroContextMenu"/>
       </Group>
       
-      <!-- Delete Context Group -->
+      <!-- Delete Group -->
       <Group guid="guidVSMacrosCmdSet" id="DeleteGroup" priority="0x1000">
         <Parent guid="guidVSMacrosCmdSet" id="FolderContextMenu"/>
       </Group>
-    
+
+      <!-- Added Group -->
+      <Group guid="guidVSMacrosCmdSet" id="AddGroup" priority="0x0005">
+        <Parent guid="guidVSMacrosCmdSet" id="FolderContextMenu"/>
+      </Group>
+      
     </Groups>
     
     <!-- BUTTONS -->
@@ -159,7 +164,7 @@
         <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
         <Icon guid="guidSHLMainMenu" id="Open" />
         <Strings>
-          <ButtonText>Open Folder</ButtonText>
+          <ButtonText>Open Macro Directory in File Explorer</ButtonText>
         </Strings>
       </Button>
       
@@ -190,11 +195,18 @@
       </Button>
       
       <!-- Folder Context Group Buttons -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenFolder" priority="100" type="Button">
+      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenFolder" priority="10" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="FolderContextGroup" />
         <Icon guid="guidSHLMainMenu" id="Open" />
         <Strings>
           <ButtonText>Open Folder in File Explorer</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidVSMacrosCmdSet" id="cmdidNewMacro" priority="01" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="AddGroup" />
+        <Strings>
+          <ButtonText>New Macro</ButtonText>
         </Strings>
       </Button>
       
@@ -230,7 +242,7 @@
     </CommandPlacement>
 
     <!-- Tool Window menu command in View -->
-    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="0x0100" type="Button">
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="0x0100">
       <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
     </CommandPlacement>
     
@@ -264,14 +276,24 @@
       <Parent guid="guidVSMacrosCmdSet" id="MacroContextMenu" />
     </CommandPlacement>
 
-    <!-- Delete command (VS one) in DeleteGroup -->
-    <CommandPlacement guid="guidVSStd97" id="cmdidDelete" priority="05">
+    <!-- Delete command (VS built-in one) in DeleteGroup -->
+    <CommandPlacement guid="guidVSStd97" id="cmdidDelete" priority="01">
       <Parent guid="guidVSMacrosCmdSet" id="DeleteGroup" />
     </CommandPlacement>
     
     <!-- Rename command in Folder Context Group -->
-    <CommandPlacement guid="guidVSStd97" id="cmdidRename" priority="001">
+    <CommandPlacement guid="guidVSStd97" id="cmdidRename" priority="030">
       <Parent guid="guidVSMacrosCmdSet" id="FolderContextGroup" />
+    </CommandPlacement>
+
+    <!-- Add New Folder command in Add Group -->
+    <CommandPlacement guid="guidVSStd97" id="cmdidNewFolder" priority="002">
+      <Parent guid="guidVSMacrosCmdSet" id="AddGroup" />
+    </CommandPlacement>
+    
+    <!-- Add Group in Browser Context Menu -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="AddGroup" priority="50">
+      <Parent guid="guidVSMacrosCmdSet" id="BrowserContextMenu" />
     </CommandPlacement>
     
   </CommandPlacements>
@@ -323,6 +345,7 @@
       <IDSymbol name="FolderContextGroup"   value="0x1415"/>
       <IDSymbol name="PlaybackGroup"        value="0x1420"/>
       <IDSymbol name="DeleteGroup"          value="0x1425"/>
+      <IDSymbol name="AddGroup"             value="0x1430"/>
       
       <!-- Commands -->
       <IDSymbol name="cmdidRecord"                  value="0x2000"/>
@@ -335,6 +358,8 @@
       <IDSymbol name="cmdidEdit"            value="0x2020"/>
       <IDSymbol name="cmdidAssignShortcut"  value="0x2022"/>
       <IDSymbol name="cmdidOpenFolder"      value="0x2023"/>
+
+      <IDSymbol name="cmdidNewMacro"      value="0x2050"/>
       
       <!-- Macro Shortcut Commands -->
       <IDSymbol name="cmdidCommand1" value="0x3000"/>

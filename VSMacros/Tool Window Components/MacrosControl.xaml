@@ -13,7 +13,7 @@
         <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
-                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,0,5,0"/>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,1,5,0"/>
                 <TextBlock Text="{Binding Shortcut, Mode=OneWay}"/>
             </StackPanel>
         </DataTemplate>
@@ -22,7 +22,7 @@
         <DataTemplate x:Key="EditTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
-                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,0,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,1,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
             </StackPanel>
         </DataTemplate>
         
@@ -47,8 +47,8 @@
                                   ItemsSource="{Binding Mode=OneWay, Path=Children}"
                                   ItemTemplate="{StaticResource ChildTemplate}">
             <StackPanel Orientation="Horizontal">
-                <Image Width="20" Height="20" Stretch="Fill" Source="..\Resources\macro.png"/>
-                <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="..\Resources\macro.png"/>
+                <TextBlock Text="Macro Browser List" Margin="5,2,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>        
     </UserControl.Resources>

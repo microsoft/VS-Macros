@@ -255,6 +255,50 @@ namespace VSMacros.Engines
             }
         }
 
+        public void NewMacro()
+        {
+            MacroFSNode macro = this.SelectedMacro;
+            macro.IsExpanded = true;
+
+            string path = Path.Combine(macro.FullPath, "New Macro.js");
+            int count = 1;
+
+            if (File.Exists(path))
+            {
+                path = path.Substring(0, path.Length - 3) + " (1).js";
+            }
+
+            while (File.Exists(path))
+            {
+                path = path.Substring(0, path.Length - 7) + " (" + ++count + ").js";
+            }
+
+            File.Create(path);
+            this.Refresh();
+        }
+
+        public void NewFolder()
+        {
+            MacroFSNode macro = this.SelectedMacro;
+            macro.IsExpanded = true;
+
+            string path = Path.Combine(macro.FullPath, "New Folder");
+            int count = 1;
+
+            if (Directory.Exists(path))
+            {
+                path = path + " (1)";
+            }
+
+            while (Directory.Exists(path))
+            {
+                path = path.Substring(0, path.Length - 4) + " (" + ++count + ")";
+            }
+
+            Directory.CreateDirectory(path);
+            this.Refresh();
+        }
+
         public void CreateFileSystem()
         {
             // Create macro directory

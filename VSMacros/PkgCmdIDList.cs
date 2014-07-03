@@ -25,6 +25,8 @@
         public const int CmdIdAssignShortcut = 0x2022;
         public const int CmdIdOpenFolder = 0x2023;
 
+        public const int CmdIdNewMacro = 0x2050;
+
         public const int CmdIdCommand1 = 0x3000;
         public const int CmdIdCommand2 = 0x3005;
         public const int CmdIdCommand3 = 0x3010;

@@ -83,6 +83,16 @@ namespace VSMacros
                 mcs.AddCommand(new MenuCommand(
                     this.Rename,
                     new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.Rename)));
+
+                // Create the command to rename a macro
+                mcs.AddCommand(new MenuCommand(
+                    this.NewMacro,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdNewMacro)));
+
+                // Create the command to rename a macro
+                mcs.AddCommand(new MenuCommand(
+                    this.NewFolder,
+                    new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.NewFolder)));
             }
         }
 
@@ -131,6 +141,16 @@ namespace VSMacros
         public void Rename(object sender, EventArgs arguments)
         {
             Manager.Instance.Rename();
+        }
+
+        public void NewMacro(object sender, EventArgs arguments)
+        {
+            Manager.Instance.NewMacro();
+        }
+
+        public void NewFolder(object sender, EventArgs arguments)
+        {
+            Manager.Instance.NewFolder();
         }
 
         #endregion

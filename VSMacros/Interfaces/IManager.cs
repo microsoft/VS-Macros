@@ -1,5 +1,8 @@
-﻿// IManager.cs
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="IManager.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace VSMacros.Interfaces
 {

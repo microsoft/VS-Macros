@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="SaveCurrentDialog.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,41 +26,36 @@ namespace VSMacros.Dialogs
     /// </summary>
     public partial class SaveCurrentDialog : Window
     {
-        public ComboBoxItem SelectedItem;
-        public int SelectedShortcutNumber;
-        public bool shouldRefreshFileSystem;
+        public ComboBoxItem SelectedItem { get; set; }
+        public int SelectedShortcutNumber { get; set; }
+        public bool ShouldRefreshFileSystem { get; set; }
 
         public SaveCurrentDialog()
         {
             InitializeComponent();
         }
 
-        private void okButton_Click(object sender, RoutedEventArgs e)
+        private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void customAssignButton_Click(object sender, RoutedEventArgs e)
+        private void CustomAssignButton_Click(object sender, RoutedEventArgs e)
         {
         }
 
-        private void shortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
+        private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
             string selectedShortcut = this.shortcutsComboBox.Text;
             int index = 0;
 
             // Reset bool
-            this.shouldRefreshFileSystem = false;
+            this.ShouldRefreshFileSystem = false;
 
             if (selectedShortcut != "None")
             {
                 // Get the command number into index                
-                index = GetLastCharAsInt(selectedShortcut);
+                index = this.GetLastCharAsInt(selectedShortcut);
 
                 // Show overwrite message if needed
                 if (!string.IsNullOrEmpty(selectedShortcut))
@@ -63,7 +64,7 @@ namespace VSMacros.Dialogs
 
                     if (willOverwrite)
                     {
-                        this.shouldRefreshFileSystem = true;
+                        this.ShouldRefreshFileSystem = true;
                         this.warningTextBlock.Text = VSMacros.Resources.ShortcutAlreadyUsed;
                     }
                     else

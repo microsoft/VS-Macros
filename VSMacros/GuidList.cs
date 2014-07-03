@@ -1,4 +1,8 @@
-﻿// GuidList.cs
+﻿//-----------------------------------------------------------------------
+// <copyright file="GuidList.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 using System;
 

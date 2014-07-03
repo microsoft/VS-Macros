@@ -1,10 +1,15 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Manager.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
@@ -16,11 +21,11 @@ namespace VSMacros.Engines
         private static readonly Manager instance = new Manager(VSMacrosPackage.Current);
         
         private const string CurrentMacroLocation = "Current.js";
-        private const string ShortcutsLocation = "Shortcuts.xml";
+        private const string ShortcutsFileName = "Shortcuts.xml";
 
         public string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
-        private const string shortcutsFileName = "Shortcuts.xml";
+       
         private string shortcutsFilePath;
 
         private IServiceProvider serviceProvider;
@@ -45,7 +50,7 @@ namespace VSMacros.Engines
                 this.uiShellLoaded = false;
             }
 
-            this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFileName);
+            this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, ShortcutsFileName);
             this.LoadShortcuts();
             this.shortcutsLoaded = true;
         }
@@ -88,7 +93,7 @@ namespace VSMacros.Engines
         {
             if (path == null)
             {
-                path = SelectedMacro.FullPath;
+                path = this.SelectedMacro.FullPath;
             }
 
             // Open the macro directory and let the user manage the macros
@@ -109,7 +114,6 @@ namespace VSMacros.Engines
 
                     int newShortcutNumber = dlg.SelectedShortcutNumber;
 
-
                     File.Copy(pathToCurrent, pathToNew);
 
                     MacroFSNode macro = new MacroFSNode(pathToNew, MacroFSNode.RootNode);
@@ -121,7 +125,7 @@ namespace VSMacros.Engines
                     }
 
                     // Notify the change
-                    if (dlg.shouldRefreshFileSystem)
+                    if (dlg.ShouldRefreshFileSystem)
                     {
                         // Notify all node that their shortcut property might have changed
                         this.SaveShortcuts();
@@ -174,7 +178,7 @@ namespace VSMacros.Engines
                 if (macro.Shortcut != string.Empty)
                 {
                     string oldShortcut = macro.Shortcut;
-                    oldKey = (int) oldShortcut[oldShortcut.Length - 2] - '0';
+                    oldKey = (int)oldShortcut[oldShortcut.Length - 2] - '0';
                     this.Shortcuts[oldKey] = string.Empty;
                 }
 
@@ -189,7 +193,7 @@ namespace VSMacros.Engines
                 }
 
                 // Notify the change
-                if (dlg.shouldRefreshFileSystem)
+                if (dlg.ShouldRefreshFileSystem)
                 {
                     // Notify all node that their shortcut property might have changed
                     this.SaveShortcuts();
@@ -303,7 +307,6 @@ namespace VSMacros.Engines
 
             // Select new node
             MacroFSNode.FindNodeFromFullPath(path).IsSelected = true;
-
         }
 
         public void NewFolder()
@@ -392,22 +395,21 @@ namespace VSMacros.Engines
 
         private void LoadShortcuts()
         {
-            shortcutsLoaded = true;
+            this.shortcutsLoaded = true;
 
             try
             {
                 // Get the path to the shortcut file
-                string path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFilePath);
+                string path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, this.shortcutsFilePath);
 
                 // If the file doesn't exist, initialize the Shortcuts array with empty strings
                 if (!File.Exists(path))
                 {
                     this.Shortcuts = Enumerable.Repeat(string.Empty, 10).ToArray();
                 }
-
-                // Otherwise, load it
                 else
                 {
+                    // Otherwise, load it
                     // Load XML file
                     var root = XDocument.Load(path);
 
@@ -433,23 +435,23 @@ namespace VSMacros.Engines
                             select new XElement("command",
                                 new XText(s))));
 
-            xmlShortcuts.Save(shortcutsFilePath);
+            xmlShortcuts.Save(this.shortcutsFilePath);
         }
 
         private void CreateShortcutFile()
         {
-            string ShortcutsPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, ShortcutsLocation);
-            if (!File.Exists(ShortcutsPath))
+            string shortcutsPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, ShortcutsFileName);
+            if (!File.Exists(shortcutsPath))
             {
                 // Create file for writing UTF-8 encoded text
-                File.WriteAllText(ShortcutsPath, "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?><commands><command>Command not bound. Do not use.</command><command/><command/><command/><command/><command/><command/><command/><command/><command/></commands>");
+                File.WriteAllText(shortcutsPath, "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?><commands><command>Command not bound. Do not use.</command><command/><command/><command/><command/><command/><command/><command/><command/><command/></commands>");
             }
         }
 
         #region Helper Methods
         public int ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
-            if (!uiShellLoaded)
+            if (!this.uiShellLoaded)
             {
                 return -1;
             }
@@ -458,7 +460,7 @@ namespace VSMacros.Engines
             int result;
 
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
-              uiShell.ShowMessageBox(
+              this.uiShell.ShowMessageBox(
                 0,
                 ref clsid,
                 string.Empty,

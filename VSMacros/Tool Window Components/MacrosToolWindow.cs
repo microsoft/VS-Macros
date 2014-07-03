@@ -1,16 +1,21 @@
-﻿using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacrosToolWindow.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design; // for CommandID
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Internal.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Models;
-using Microsoft.VisualStudio.Shell.Interop;
-using System.Windows.Controls;
-using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using System.Collections.Generic;
 
 namespace VSMacros
 {
@@ -161,11 +166,11 @@ namespace VSMacros
             get { return true; }
         }
 
-        public override IVsSearchTask CreateSearch(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback)
+        public override IVsSearchTask CreateSearch(uint cookie, IVsSearchQuery searchQuery, IVsSearchCallback searchCallback)
         {
-            if (pSearchQuery == null || pSearchCallback == null)
+            if (searchQuery == null || searchCallback == null)
                 return null;
-            return new SearchTask(dwCookie, pSearchQuery, pSearchCallback, this);
+            return new SearchTask(cookie, searchQuery, searchCallback, this);
         }
 
         public override void ClearSearch()
@@ -173,10 +178,10 @@ namespace VSMacros
             MacroFSNode.DisableSearch();
         }
 
-        public override void ProvideSearchSettings(IVsUIDataSource pSearchSettings)
+        public override void ProvideSearchSettings(IVsUIDataSource searchSettings)
         {
-            Utilities.SetValue(pSearchSettings, SearchSettingsDataSource.SearchStartTypeProperty.Name, (uint)VSSEARCHSTARTTYPE.SST_INSTANT);
-            Utilities.SetValue(pSearchSettings, SearchSettingsDataSource.SearchProgressTypeProperty.Name, (uint)VSSEARCHPROGRESSTYPE.SPT_DETERMINATE);
+            Utilities.SetValue(searchSettings, SearchSettingsDataSource.SearchStartTypeProperty.Name, (uint)VSSEARCHSTARTTYPE.SST_INSTANT);
+            Utilities.SetValue(searchSettings, SearchSettingsDataSource.SearchProgressTypeProperty.Name, (uint)VSSEARCHPROGRESSTYPE.SPT_DETERMINATE);
         }
 
         private IVsEnumWindowSearchOptions searchOptionsEnum;
@@ -227,8 +232,8 @@ namespace VSMacros
         {
             private MacrosToolWindow toolWindow;
 
-            public SearchTask(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback, MacrosToolWindow toolwindow)
-                : base(dwCookie, pSearchQuery, pSearchCallback)
+            public SearchTask(uint cookie, IVsSearchQuery searchQuery, IVsSearchCallback searchCallback, MacrosToolWindow toolwindow)
+                : base(cookie, searchQuery, searchCallback)
             {
                 this.toolWindow = toolwindow;
             }
@@ -238,8 +243,8 @@ namespace VSMacros
                 MacroFSNode.EnableSearch();
 
                 // Get the search option. 
-                bool matchCase = toolWindow.MatchCaseOption.Value;
-                bool withinFileContents = toolWindow.WithinFileOption.Value;
+                bool matchCase = this.toolWindow.MatchCaseOption.Value;
+                bool withinFileContents = this.toolWindow.WithinFileOption.Value;
 
                 try
                 {
@@ -259,12 +264,10 @@ namespace VSMacros
                 base.OnStartSearch();
             }
 
-
             protected override void OnStopSearch()
             {
                 MacroFSNode.DisableSearch();
             }
-
 
             private void TraverseAndMark(MacroFSNode root, string searchString, StringComparison comp, bool withinFileContents)
             {

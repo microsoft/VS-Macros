@@ -1,4 +1,10 @@
-﻿namespace VSMacros
+﻿//-----------------------------------------------------------------------
+// <copyright file="PkgCmdIDList.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+namespace VSMacros
 {
     internal static class PkgCmdIDList
     {

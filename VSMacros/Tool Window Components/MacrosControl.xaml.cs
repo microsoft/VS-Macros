@@ -1,15 +1,19 @@
-﻿// MacrosControl.xaml.cs
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacroControl.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using VSMacros.Models;
-using System.Windows.Data;
-using System.IO;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
+using VSMacros.Models;
 
 namespace VSMacros
 {
@@ -197,9 +201,9 @@ namespace VSMacros
                         if ((finalDropEffect == DragDropEffects.Move) && (this.targetNode != null))
                         {
                             // A Move drop is accepted
-                            if (!this.draggedNode.Equals(targetNode))
+                            if (!this.draggedNode.Equals(this.targetNode))
                             {
-                                MoveItem(this.draggedNode, targetNode);
+                                this.MoveItem(this.draggedNode, this.targetNode);
                                 this.targetNode = null;
                                 this.draggedNode = null;
                             }
@@ -217,8 +221,8 @@ namespace VSMacros
                 (Math.Abs(currentPosition.Y - this.startPos.Y) > SystemParameters.MinimumVerticalDragDistance))
             {
                 // Verify that this is a valid drop
-                TreeViewItem item = GetNearestContainer(e.OriginalSource as UIElement);
-                if (ValidDropTarget(this.draggedNode, item.Header as MacroFSNode))
+                TreeViewItem item = this.GetNearestContainer(e.OriginalSource as UIElement);
+                if (this.ValidDropTarget(this.draggedNode, item.Header as MacroFSNode))
                 {
                     e.Effects = DragDropEffects.Move;
                 }
@@ -236,7 +240,7 @@ namespace VSMacros
             e.Handled = true;
 
             // Verify that this is a valid drop and then store the drop target
-            TreeViewItem targetItem = GetNearestContainer(e.OriginalSource as UIElement);
+            TreeViewItem targetItem = this.GetNearestContainer(e.OriginalSource as UIElement);
             if (targetItem != null && this.draggedNode != null)
             {
                 MacroFSNode targetNode = targetItem.Header as MacroFSNode;
@@ -315,27 +319,24 @@ namespace VSMacros
                 
                 // and notify change in shortcut
                 selected.Shortcut = null;
-
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Manager.Instance.ShowMessageBox(e.Message);
             }
-            
         }
 
         private bool ValidDropTarget(MacroFSNode sourceItem, MacroFSNode targetItem)
         {
-            //Check whether the target item is meeting your condition
+            // Check whether the target item is meeting your condition
             if (!sourceItem.Equals(targetItem))
             {
                 return true;
             }
             return false;
-
         }
 
-        static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
+        private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
         {
             if (child == null)
             {

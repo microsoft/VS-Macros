@@ -191,8 +191,6 @@ namespace VSMacros
             this.statusBar.SetText(status);
             this.statusBar.Animation(animation, ref this.iconRecord);
 
-            // TODO Remove
-
             foreach (CommandBarButton button in this.ImageButtons)
             {
                 try
@@ -330,8 +328,6 @@ namespace VSMacros
                     recordCommand.Text = Resources.MenuTextNormal;
                 }
             }
-           
-
         }
     }
 }

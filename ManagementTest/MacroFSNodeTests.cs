@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacroFSNodeTests.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -57,13 +63,13 @@ namespace ManagementTest
             MacroFSNode node = this.CreateFileNode();
 
             // node.Shortcut is initially empty
-            //Assert.AreEqual(string.Empty, node.Shortcut);
-
+            // Assert.AreEqual(string.Empty, node.Shortcut);
+            //
             // TODO Testing with static instances seems complicated - talk with Ryan about that
-            //Manager.Instance.Shortcuts[1] = node.FullPath;
-
+            // Manager.Instance.Shortcuts[1] = node.FullPath;
+            //
             // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut
-            //Assert.AreEqual("(CTRL+M, 1)", node.Shortcut);
+            // Assert.AreEqual("(CTRL+M, 1)", node.Shortcut);
         }
 
         [TestMethod]
@@ -78,8 +84,8 @@ namespace ManagementTest
 
         #region NotifyPropertyChanged
 
-        [TestMethod]
         // When the name is changed, both the Name and the FullPath properties should be updated
+        [TestMethod]
         public void Name_NotifiesOnChange()
         {
             MacroFSNode node = this.CreateFileNode();
@@ -167,8 +173,8 @@ namespace ManagementTest
             Assert.AreEqual("IsSelected", receivedEvents[0]);
         }
 
-        [TestMethod]
         // When IsEnabled is changed, the class notifies about the change of both the IsExpanded and Icon properties
+        [TestMethod]
         public void IsExpanded_NotifiesOnChange()
         {
             MacroFSNode node = this.CreateFileNode();

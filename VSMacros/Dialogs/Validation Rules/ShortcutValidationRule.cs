@@ -1,4 +1,10 @@
-﻿using System.Globalization;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ShortcutValidationRule.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 

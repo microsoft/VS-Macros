@@ -1,6 +1,9 @@
-﻿// MacroFsNode
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacroFSNode.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 
@@ -31,8 +35,8 @@ namespace VSMacros.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public static MacroFSNode RootNode;
-        private static bool Searching = false;
+        public static MacroFSNode RootNode { get; set; }
+        private static bool searching = false;
 
         public bool IsDirectory { get; private set; }
 
@@ -101,7 +105,7 @@ namespace VSMacros.Models
                         Manager.Instance.Shortcuts[this.Shortcut[this.Shortcut.Length - 1]] = newFullPath;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     if (e.Message != null)
                     {
@@ -123,7 +127,7 @@ namespace VSMacros.Models
                     // TODO can probably be optimized
                     for (int i = 1; i < 10; i++)
                     {
-                        if (String.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.shortcut = "(CTRL+M, " + i + ")";
                         }
@@ -148,7 +152,6 @@ namespace VSMacros.Models
                 if (this.IsDirectory)
                 {
                     Bitmap bmp;
-
 
                     if (this.isExpanded)
                     {
@@ -247,7 +250,7 @@ namespace VSMacros.Models
         {
             get
             {
-                if (MacroFSNode.Searching)
+                if (MacroFSNode.searching)
                 {
                     return this.isMatch;
                 }
@@ -381,7 +384,7 @@ namespace VSMacros.Models
         public static void EnableSearch()
         {
             // Set Searching to true
-            MacroFSNode.Searching = true;
+            MacroFSNode.searching = true;
 
             // And then notify all node that their IsMatch property might be changed
             MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
@@ -390,7 +393,7 @@ namespace VSMacros.Models
         public static void DisableSearch()
         {
             // Set Searching to true
-            MacroFSNode.Searching = false;
+            MacroFSNode.searching = false;
 
             // And then notify all node that their IsMatch property might be changed
             MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
@@ -427,7 +430,7 @@ namespace VSMacros.Models
         {
             string shortenPath = path.Substring(path.IndexOf(@"\Macros\"));
 
-            string[] substrings = shortenPath.Split(new Char[] { '\\' });
+            string[] substrings = shortenPath.Split(new char[] { '\\' });
 
             // Starting from the root,
             MacroFSNode node = MacroFSNode.RootNode;
@@ -440,7 +443,6 @@ namespace VSMacros.Models
                 {
                     node = node.Children.Single(x => x.Name == Path.GetFileNameWithoutExtension(substrings[i]));
                 }
-
             }
             catch (Exception e)
             {

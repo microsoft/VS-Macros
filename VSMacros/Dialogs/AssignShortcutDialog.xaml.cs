@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AssignShortcutDialog.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,9 +17,9 @@ namespace VSMacros.Dialogs
     /// </summary>
     public partial class AssignShortcutDialog : Window
     {
-        public ComboBoxItem SelectedItem;
-        public int SelectedShortcutNumber;
-        public bool shouldRefreshFileSystem;
+        public ComboBoxItem SelectedItem { get; set; }
+        public int SelectedShortcutNumber { get; set; }
+        public bool ShouldRefreshFileSystem { get; set; }
 
         private string oldShortcut;
 
@@ -23,22 +29,22 @@ namespace VSMacros.Dialogs
 
             // Set default values for public members
             this.SelectedShortcutNumber = 0;
-            this.shouldRefreshFileSystem = false;
+            this.ShouldRefreshFileSystem = false;
 
             this.oldShortcut = (MacrosControl.Current.SelectedNode).Shortcut;
 
             // Set the text to the previous shortcut, if it exists
-            if (!string.IsNullOrEmpty(oldShortcut))
+            if (!string.IsNullOrEmpty(this.oldShortcut))
             {
-                this.shortcutsComboBox.Text = oldShortcut.Substring(1, oldShortcut.Length - 2);
-                this.SelectedShortcutNumber = GetLastCharAsInt(this.shortcutsComboBox.Text);
+                this.shortcutsComboBox.Text = this.oldShortcut.Substring(1, this.oldShortcut.Length - 2);
+                this.SelectedShortcutNumber = this.GetLastCharAsInt(this.shortcutsComboBox.Text);
             }
         }
 
-        private void okButton_Click(object sender, RoutedEventArgs e)
+        private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             // Don't accept the dialog box if there is invalid data
-            if (!IsValid(this)) return;
+            if (!this.IsValid(this)) return;
 
             this.DialogResult = true;
         }
@@ -67,7 +73,7 @@ namespace VSMacros.Dialogs
                 {
                     // If a child dependency object is invalid, return false immediately, 
                     // otherwise keep checking 
-                    if (IsValid((DependencyObject)subnode) == false) return false;
+                    if (this.IsValid((DependencyObject)subnode) == false) return false;
                 }
             }
 
@@ -75,22 +81,22 @@ namespace VSMacros.Dialogs
             return true;
         }
 
-        private void customAssignButton_Click(object sender, RoutedEventArgs e)
+        private void CustomAssignButton_Click(object sender, RoutedEventArgs e)
         {
         }
 
-        private void shortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
+        private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
             string selectedShortcut = this.shortcutsComboBox.Text;
             int index = 0;
             
             // Reset bool
-            this.shouldRefreshFileSystem = false;
+            this.ShouldRefreshFileSystem = false;
 
             if (selectedShortcut != "None")
             {
                 // Get the command number into index                
-                index = GetLastCharAsInt(selectedShortcut);
+                index = this.GetLastCharAsInt(selectedShortcut);
 
                 // Show overwrite message if needed
                 if (selectedShortcut != this.oldShortcut && !string.IsNullOrEmpty(selectedShortcut))
@@ -99,7 +105,7 @@ namespace VSMacros.Dialogs
 
                     if (willOverwrite)
                     {
-                        this.shouldRefreshFileSystem = true;
+                        this.ShouldRefreshFileSystem = true;
                         this.warningTextBlock.Text = VSMacros.Resources.ShortcutAlreadyUsed;
                     }
                     else

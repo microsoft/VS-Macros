@@ -20,6 +20,7 @@ namespace VSMacros.Models
         private static HashSet<string> enabledDirectories = new HashSet<string>();
 
         private string fullPath;
+        private string shortcut;
         private bool isEditable;
         private bool isExpanded;
         private bool isSelected;
@@ -93,6 +94,12 @@ namespace VSMacros.Models
 
                     // Update object
                     this.FullPath = newFullPath;
+
+                    // Update shortcut
+                    if (!string.IsNullOrEmpty(this.Shortcut))
+                    {
+                        Manager.Instance.Shortcuts[this.Shortcut[this.Shortcut.Length - 1]] = newFullPath;
+                    }
                 }
                 catch(Exception e)
                 {
@@ -109,19 +116,26 @@ namespace VSMacros.Models
         {
             get
             {
-                // TODO First draft (crappy!)
-                for (int i = 1; i < 10; i++)
+                if (this.shortcut == null)
                 {
-                    if (String.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                    this.shortcut = string.Empty;
+
+                    // TODO can probably be optimized
+                    for (int i = 1; i < 10; i++)
                     {
-                        return "(CTRL+M, " + i + ")";
-                    }
+                        if (String.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            this.shortcut = "(CTRL+M, " + i + ")";
+                        }
+                    }                  
                 }
 
-                return string.Empty;
+                return this.shortcut;
             }
             set
             {
+                this.shortcut = null;
+
                 // Just notify the binding
                 this.NotifyPropertyChanged("Shortcut");
             }
@@ -320,6 +334,13 @@ namespace VSMacros.Models
         #region Context Menu
         public void Delete()
         {
+            if (!string.IsNullOrEmpty(this.shortcut))
+            {
+                // Remove shortcut from shortcut list
+                Manager.Instance.Shortcuts[this.shortcut[this.shortcut.Length - 2] - '0'] = string.Empty;
+            }
+
+            // Remove macro from collection
             this.parent.children.Remove(this);
         }
 
@@ -348,6 +369,9 @@ namespace VSMacros.Models
 
             // Recursively set IsEnabled for each folders
             root.SetIsExpanded(root, dirs);
+
+            // Select Current macro
+            MacroFSNode.FindNodeFromFullPath(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js")).IsSelected = true;
 
             // Notify change
             root.NotifyPropertyChanged("Children");
@@ -394,6 +418,39 @@ namespace VSMacros.Models
             }
         }
 
+        /// <summary>
+        /// Finds the node with FullPath path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>MacroFSNode  whose FullPath is path</returns>
+        public static MacroFSNode FindNodeFromFullPath(string path)
+        {
+            string shortenPath = path.Substring(path.IndexOf(@"\Macros\"));
+
+            string[] substrings = shortenPath.Split(new Char[] { '\\' });
+
+            // Starting from the root,
+            MacroFSNode node = MacroFSNode.RootNode;
+
+            try
+            {
+                // Go down the tree to find the right node
+                // 2 because substrings[0] == "" and substrings[1] is root
+                for (int i = 2; i < substrings.Length; i++)
+                {
+                    node = node.Children.Single(x => x.Name == Path.GetFileNameWithoutExtension(substrings[i]));
+                }
+
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                node = null;
+            }
+
+            return node;
+        }
+
         private void NotifyPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
@@ -404,7 +461,7 @@ namespace VSMacros.Models
         }
 
         // Notifies all the nodes from the tree rooted at 'node'
-        private static void NotifyAllNode(MacroFSNode node, string property)
+        public static void NotifyAllNode(MacroFSNode node, string property)
         {
             node.NotifyPropertyChanged(property);
 

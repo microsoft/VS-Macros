@@ -8,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using VSMacros.Models;
 using System.Windows.Data;
+using System.IO;
+using VSMacros.Engines;
 
 namespace VSMacros
 {
@@ -49,6 +51,12 @@ namespace VSMacros
             {
                 oldNode.DisableEdit();
             }
+        }
+
+        private void MacroTreeView_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Select Current macro
+            MacroFSNode.FindNodeFromFullPath(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js")).IsSelected = true;
         }
 
         private void TreeViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -287,15 +295,31 @@ namespace VSMacros
                 }
                 else
                 {
-                    System.IO.File.Move(sourcePath, targetPath + extension);
+                    targetPath = targetPath + extension;
+                    System.IO.File.Move(sourcePath, targetPath);
                 }
 
+                // Move shortcut as well
+                if (!string.IsNullOrEmpty(sourceItem.Shortcut))
+                {
+                    int shortcutNumber = sourceItem.Shortcut[sourceItem.Shortcut.Length - 2] - '0';
+                    Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
+                }
+
+                // Refresh tree
                 MacroFSNode.RefreshTree();
+
+                // Restore previously selected node
+                MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+                selected.IsSelected = true;
+                
+                // and notify change in shortcut
+                selected.Shortcut = null;
+
             }
             catch(Exception e)
             {
-                // TODO change to IVsUIShell.ShowMessageBox
-                MessageBox.Show(e.Message);
+                Manager.Instance.ShowMessageBox(e.Message);
             }
             
         }

@@ -6,6 +6,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using VSMacros.Engines;
 using VSMacros.Models;
+using Microsoft.VisualStudio.Shell.Interop;
+using System.Windows.Controls;
 
 namespace VSMacros
 {
@@ -126,6 +128,91 @@ namespace VSMacros
         public void Rename(object sender, EventArgs arguments)
         {
             Manager.Instance.Rename();
+        }
+
+        #endregion
+
+        #region Search
+
+        public override bool SearchEnabled
+        {
+            get { return true; }
+        }
+
+        public override IVsSearchTask CreateSearch(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback)
+        {
+            if (pSearchQuery == null || pSearchCallback == null)
+                return null;
+            return new TestSearchTask(dwCookie, pSearchQuery, pSearchCallback, this);
+        }
+
+        public override void ClearSearch()
+        {
+            MacroFSNode.DisableSearch();
+            Manager.Instance.Refresh();
+        }
+
+        internal class TestSearchTask : VsSearchTask
+        {
+            private MacrosToolWindow toolWindow;
+
+            public TestSearchTask(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback, MacrosToolWindow toolwindow)
+                : base(dwCookie, pSearchQuery, pSearchCallback)
+            {
+                this.toolWindow = toolwindow;
+            }
+
+            protected override void OnStartSearch()
+            {
+                MacroFSNode.EnableSearch();
+
+                // Get the search option. 
+                bool matchCase = false;
+                // matchCase = m_toolWindow.MatchCaseOption.Value; 
+
+                try
+                {
+                    string searchString = this.SearchQuery.SearchString;
+                    StringComparison comp = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+                    this.TraverseAndMark(MacroFSNode.RootNode, searchString, comp);
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                    this.ErrorCode = VSConstants.E_FAIL;
+                }
+
+                // Call the implementation of this method in the base class. 
+                // This sets the task status to complete and reports task completion. 
+                base.OnStartSearch();
+            }
+
+            protected override void OnStopSearch()
+            {
+                MacroFSNode.DisableSearch();
+            }
+
+            private void TraverseAndMark(MacroFSNode root, string searchString, StringComparison comp)
+            {
+                if (this.Contains(root.FullPath, searchString, comp))
+                {
+                    root.IsMatch = true;
+                }
+
+                if (root.Children != null)
+                {
+                    foreach (var child in root.Children)
+                    {
+                        this.TraverseAndMark(child, searchString, comp);
+                    }
+                }
+            }
+
+            private bool Contains(string source, string toCheck, StringComparison comp)
+            {
+                return source.IndexOf(toCheck, comp) >= 0;
+            }
         }
 
         #endregion

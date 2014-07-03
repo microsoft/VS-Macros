@@ -68,6 +68,7 @@
             <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource baseTreeViewItemStyle}">
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                <Setter Property="Visibility" Value="{Binding IsMatch, Mode=OneWay, Converter={StaticResource ResourceKey=BoolToVisibility}}"/>
                 <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
                 <!--<EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>-->
                 

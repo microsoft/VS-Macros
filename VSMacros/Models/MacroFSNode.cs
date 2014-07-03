@@ -23,6 +23,7 @@ namespace VSMacros.Models
         private bool isEditable;
         private bool isExpanded;
         private bool isSelected;
+        private bool isMatch;
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
@@ -30,6 +31,7 @@ namespace VSMacros.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static MacroFSNode RootNode;
+        private static bool Searching = false;
 
         public bool IsDirectory { get; private set; }
 
@@ -39,6 +41,7 @@ namespace VSMacros.Models
             this.FullPath = path;
             this.isEditable = false;
             this.isSelected = false;
+            this.isMatch = false;
             this.parent = parent;
         }
 
@@ -124,34 +127,6 @@ namespace VSMacros.Models
             }
         }
 
-        public bool IsEditable
-        {
-            get 
-            { 
-                return this.isEditable; 
-            }
-
-            set
-            {
-                this.isEditable = value;
-                this.NotifyPropertyChanged("IsEditable");
-            }
-        }
-
-        public bool IsSelected
-        {
-            get
-            {
-                return this.isSelected;
-            }
-
-            set
-            {
-                this.isSelected = value;
-                this.NotifyPropertyChanged("IsSelected");
-            }
-        }
-
         public BitmapSource Icon
         {
             get
@@ -198,6 +173,34 @@ namespace VSMacros.Models
             }
         }
 
+        public bool IsEditable
+        {
+            get 
+            { 
+                return this.isEditable; 
+            }
+
+            set
+            {
+                this.isEditable = value;
+                this.NotifyPropertyChanged("IsEditable");
+            }
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                return this.isSelected;
+            }
+
+            set
+            {
+                this.isSelected = value;
+                this.NotifyPropertyChanged("IsSelected");
+            }
+        }
+
         public bool IsExpanded
         {
             get
@@ -212,6 +215,12 @@ namespace VSMacros.Models
                 if (this.IsExpanded)
                 {
                     enabledDirectories.Add(this.FullPath);
+
+                    // Enable parent as well
+                    if (this.parent != null)
+                    {
+                        this.parent.IsExpanded = true;
+                    }
                 }
                 else
                 {
@@ -220,6 +229,33 @@ namespace VSMacros.Models
 
                 this.NotifyPropertyChanged("IsExpanded");
                 this.NotifyPropertyChanged("Icon");
+            }
+        }
+
+        public bool IsMatch
+        {
+            get
+            {
+                if (MacroFSNode.Searching)
+                {
+                    return this.isMatch;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            set
+            {
+                this.isMatch = value;
+
+                if (this.IsMatch == true && this.parent != null)
+                {
+                    this.IsExpanded = true;
+                    this.parent.IsMatch = true;
+                }
+
+                this.NotifyPropertyChanged("IsMatch");
             }
         }
 
@@ -322,11 +358,31 @@ namespace VSMacros.Models
         }
         #endregion
 
-        public void Add(MacroFSNode node)
+        public static void EnableSearch()
         {
-            this.children.Add(node);
+            MacroFSNode.Searching = true;
+            MacroFSNode.notifyAll(MacroFSNode.RootNode);
         }
-        
+
+        public static void DisableSearch()
+        {
+            MacroFSNode.Searching = false;
+            MacroFSNode.notifyAll(MacroFSNode.RootNode);
+        }
+
+        private static void notifyAll(MacroFSNode node)
+        {
+            node.NotifyPropertyChanged("IsMatch");
+
+            if (node.Children != null)
+            {
+                foreach (var child in node.Children)
+                {
+                    notifyAll(child);
+                }
+            }
+        }
+
         // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
         private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
         {

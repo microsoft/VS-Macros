@@ -8,6 +8,7 @@
     <!-- A converter used to set ImageThemingUtilities.ImageBackgroundColor -->
     <vsui:BrushToColorConverter x:Uid="BrushToColorConverter" x:Key="BrushToColorConverter" />
     <converters:DepthToMarginConverter x:Key="DepthConverter" />
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
     <!-- ///////////////////////////////////////////////////////////////////////// -->
     <!-- Tree View Styles -->

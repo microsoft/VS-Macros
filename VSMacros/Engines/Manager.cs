@@ -63,13 +63,15 @@ namespace VSMacros.Engines
             {
                 path = this.SelectedMacro.FullPath;
             }
+            MacroFSNode.FindNodeFromFullPath(path);
 
-            StreamReader str = this.LoadFile(path);
 
-            if (str != null)
-            {
-                this.ShowMessageBox(str.ReadLine());
-            }
+            //StreamReader str = this.LoadFile(path);
+
+            //if (str != null)
+            //{
+            //    this.ShowMessageBox(str.ReadLine());
+            //}
         }
 
         public void StopPlayback() 
@@ -89,38 +91,39 @@ namespace VSMacros.Engines
 
         public void SaveCurrent() 
         {
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.InitialDirectory = VSMacrosPackage.Current.MacroDirectory;
-            dlg.FileName = "My Macro";
-            dlg.DefaultExt = ".js";
-            dlg.Filter = "Macro| *.js";
+            SaveCurrentDialog dlg = new SaveCurrentDialog();
+            dlg.ShowDialog();
 
-            Nullable<bool> result = dlg.ShowDialog();
-
-            /* QUESTION should I use IVsUIShell.GetSaveFileNameViaDlg?
-            if (uiShellLoaded)
+            if (dlg.DialogResult == true)
             {
-                VSSAVEFILENAMEW[] saveFileNameInfo = new VSSAVEFILENAMEW[1];
-
-                saveFileNameInfo[0].pwzFileName = "My Macro";
-                saveFileNameInfo[0].nFileExtension = ".js";
-                saveFileNameInfo[0].pwzFilter = "Macro| *.js";
-
-                uiShell.GetSaveFileNameViaDlg(saveFileNameInfo);
-            }
-            */
-
-            if (result == true)
-            {
-                 string pathToNew = dlg.FileName;
-
                 try
                 {
+                    string pathToNew = Path.Combine(VSMacrosPackage.Current.MacroDirectory, dlg.MacroName.Text + ".js");
                     string pathToCurrent = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js");
+
+                    int newShortcutNumber = dlg.SelectedShortcutNumber;
+
 
                     File.Copy(pathToCurrent, pathToNew);
 
+                    MacroFSNode macro = new MacroFSNode(pathToNew, MacroFSNode.RootNode);
+
+                    if (newShortcutNumber != 0)
+                    {
+                        // Update dictionary
+                        this.Shortcuts[newShortcutNumber] = macro.FullPath;
+                    }
+
+                    // Notify the change
+                    if (dlg.shouldRefreshFileSystem)
+                    {
+                        // Notify all node that their shortcut property might have changed
+                        this.SaveShortcuts();
+                        MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "Shortcut");
+                    }
+
                     this.Refresh();
+                    MacroFSNode.FindNodeFromFullPath(pathToNew).IsSelected = true;
                 }
                 catch (Exception e)
                 {
@@ -131,6 +134,7 @@ namespace VSMacros.Engines
 
         public void Refresh()
         {
+            this.SaveShortcuts();
             MacroFSNode.RefreshTree();
             this.LoadShortcuts();
         }
@@ -181,7 +185,7 @@ namespace VSMacros.Engines
                 // Notify the change
                 if (dlg.shouldRefreshFileSystem)
                 {
-                    // Refresh entire fs
+                    // Notify all node that their shortcut property might have changed
                     this.SaveShortcuts();
                     this.Refresh();
                 }
@@ -218,12 +222,23 @@ namespace VSMacros.Engines
                 int result;
                 result = this.ShowMessageBox(message, OLEMSGBUTTON.OLEMSGBUTTON_OKCANCEL);
 
-                // TODO 1 is for OK (replace 1 by IDOK)
+                // TODO 1 is for OK
                 if (result == 1)
                 {
                     try
                     {
-                        file.Delete();  // TODO non-empty dir will raise an exception here -> User Directory.Delete(path, true)
+                        // Delete file from disk
+                        // Must use Directory.Delete to delete directory and content
+                        if (macro.IsDirectory)
+                        {
+                            Directory.Delete(path, true);
+                        }
+                        else
+                        {
+                            File.Delete(path);
+                        }
+
+                        // Delete file from collection
                         macro.Delete();
                     }
                     catch (Exception e)
@@ -261,8 +276,9 @@ namespace VSMacros.Engines
             macro.IsExpanded = true;
 
             string path = Path.Combine(macro.FullPath, "New Macro.js");
-            int count = 1;
 
+            // Increase count until filename is available (e.g. 'New Macro (2).js')
+            int count = 1;
             if (File.Exists(path))
             {
                 path = path.Substring(0, path.Length - 3) + " (1).js";
@@ -273,8 +289,15 @@ namespace VSMacros.Engines
                 path = path.Substring(0, path.Length - 7) + " (" + ++count + ").js";
             }
 
+            // Create the file
             File.Create(path);
+
+            // Refresh the tree
             this.Refresh();
+
+            // Select new node
+            MacroFSNode.FindNodeFromFullPath(path).IsSelected = true;
+
         }
 
         public void NewFolder()
@@ -297,6 +320,8 @@ namespace VSMacros.Engines
 
             Directory.CreateDirectory(path);
             this.Refresh();
+
+            MacroFSNode.FindNodeFromFullPath(path).IsSelected = true;
         }
 
         public void CreateFileSystem()

@@ -18,7 +18,7 @@
             <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
 
-        <Label Content="Assgin To" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,0"/>
+        <Label Content="Assign To" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,0"/>
 
         <ComboBox Text="Predefined Keyboard Shortcuts" Name="shortcutsComboBox"
                   IsReadOnly="True" IsEditable="True"

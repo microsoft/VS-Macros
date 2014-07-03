@@ -138,14 +138,11 @@ namespace VSMacros.Models
 
                     if (this.isExpanded)
                     {
-                        // TODO FromFile uses the working directory -> figure out how to make that work
-                        Image icon = Image.FromFile(@"C:\Users\t-jusdom\Source\Repos\Macro Extension\VSMacros\Resources\folderopened.png");
-                        bmp = new Bitmap(icon);
+                        bmp = Resources.FolderOpened;
                     }
                     else
                     {
-                        Image icon = Image.FromFile(@"C:\Users\t-jusdom\Source\Repos\Macro Extension\VSMacros\Resources\folderclosed.png");
-                        bmp = new Bitmap(icon);
+                        bmp = Resources.FolderClosed;
                     }
 
                     return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
@@ -360,27 +357,20 @@ namespace VSMacros.Models
 
         public static void EnableSearch()
         {
+            // Set Searching to true
             MacroFSNode.Searching = true;
-            MacroFSNode.notifyAll(MacroFSNode.RootNode);
+
+            // And then notify all node that their IsMatch property might be changed
+            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
         }
 
         public static void DisableSearch()
         {
+            // Set Searching to true
             MacroFSNode.Searching = false;
-            MacroFSNode.notifyAll(MacroFSNode.RootNode);
-        }
 
-        private static void notifyAll(MacroFSNode node)
-        {
-            node.NotifyPropertyChanged("IsMatch");
-
-            if (node.Children != null)
-            {
-                foreach (var child in node.Children)
-                {
-                    notifyAll(child);
-                }
-            }
+            // And then notify all node that their IsMatch property might be changed
+            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
         }
 
         // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
@@ -412,6 +402,19 @@ namespace VSMacros.Models
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        private static void NotifyAllNode(MacroFSNode node, string property)
+        {
+            node.NotifyPropertyChanged(property);
+
+            if (node.Children != null)
+            {
+                foreach (var child in node.Children)
+                {
+                    MacroFSNode.NotifyAllNode(child, "IsMatch");
+                }
             }
         }
     }

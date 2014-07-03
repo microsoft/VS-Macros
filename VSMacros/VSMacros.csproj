@@ -181,9 +181,7 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images.png" />
     <Resource Include="Resources\folderclosed.png" />
-    <Resource Include="Resources\js.png" />
     <Resource Include="Resources\macro.png" />
     <Resource Include="Resources\folderopened.png" />
     <Content Include="Documentation\License.txt">

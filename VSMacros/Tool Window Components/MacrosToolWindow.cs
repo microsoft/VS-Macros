@@ -8,6 +8,9 @@ using VSMacros.Engines;
 using VSMacros.Models;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.Windows.Controls;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.Internal.VisualStudio.PlatformUI;
+using System.Collections.Generic;
 
 namespace VSMacros
 {
@@ -143,7 +146,7 @@ namespace VSMacros
         {
             if (pSearchQuery == null || pSearchCallback == null)
                 return null;
-            return new TestSearchTask(dwCookie, pSearchQuery, pSearchCallback, this);
+            return new SearchTask(dwCookie, pSearchQuery, pSearchCallback, this);
         }
 
         public override void ClearSearch()
@@ -152,11 +155,61 @@ namespace VSMacros
             Manager.Instance.Refresh();
         }
 
-        internal class TestSearchTask : VsSearchTask
+        public override void ProvideSearchSettings(IVsUIDataSource pSearchSettings)
+        {
+            Utilities.SetValue(pSearchSettings, SearchSettingsDataSource.SearchStartTypeProperty.Name, (uint)VSSEARCHSTARTTYPE.SST_INSTANT);
+            Utilities.SetValue(pSearchSettings, SearchSettingsDataSource.SearchProgressTypeProperty.Name, (uint)VSSEARCHPROGRESSTYPE.SPT_DETERMINATE);
+        }
+
+        private IVsEnumWindowSearchOptions searchOptionsEnum;
+        public override IVsEnumWindowSearchOptions SearchOptionsEnum
+        {
+            get
+            {
+                if (this.searchOptionsEnum == null)
+                {
+                    List<IVsWindowSearchOption> list = new List<IVsWindowSearchOption>();
+
+                    list.Add(this.MatchCaseOption);
+                    list.Add(this.WithinFileOption);
+
+                    this.searchOptionsEnum = new WindowSearchOptionEnumerator(list) as IVsEnumWindowSearchOptions;
+                }
+                return this.searchOptionsEnum;
+            }
+        }
+
+        private WindowSearchBooleanOption withinFileOption;
+        public WindowSearchBooleanOption WithinFileOption
+        {
+            get
+            {
+                if (this.withinFileOption == null)
+                {
+                    this.withinFileOption = new WindowSearchBooleanOption("Search within file contents", "Search within file contents", false);
+                }
+                return this.withinFileOption;
+            }
+        }
+
+        private WindowSearchBooleanOption matchCaseOption;
+        public WindowSearchBooleanOption MatchCaseOption
+        {
+            get
+            {
+                if (this.matchCaseOption == null)
+                {
+                    this.matchCaseOption = new WindowSearchBooleanOption("Match case", "Match case", false);
+                }
+                return this.matchCaseOption;
+            }
+        }
+
+        internal class SearchTask : VsSearchTask
         {
             private MacrosToolWindow toolWindow;
 
-            public TestSearchTask(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback, MacrosToolWindow toolwindow)
+            public SearchTask(uint dwCookie, IVsSearchQuery pSearchQuery, IVsSearchCallback pSearchCallback, MacrosToolWindow toolwindow)
                 : base(dwCookie, pSearchQuery, pSearchCallback)
             {
                 this.toolWindow = toolwindow;
@@ -167,15 +220,15 @@ namespace VSMacros
                 MacroFSNode.EnableSearch();
 
                 // Get the search option. 
-                bool matchCase = false;
-                // matchCase = m_toolWindow.MatchCaseOption.Value; 
+                bool matchCase = toolWindow.MatchCaseOption.Value;
+                bool withinFileContents = toolWindow.WithinFileOption.Value;
 
                 try
                 {
                     string searchString = this.SearchQuery.SearchString;
                     StringComparison comp = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                    this.TraverseAndMark(MacroFSNode.RootNode, searchString, comp);
+                    this.TraverseAndMark(MacroFSNode.RootNode, searchString, comp, withinFileContents);
                 }
                 catch (Exception e)
                 {
@@ -188,23 +241,38 @@ namespace VSMacros
                 base.OnStartSearch();
             }
 
+
             protected override void OnStopSearch()
             {
                 MacroFSNode.DisableSearch();
             }
 
-            private void TraverseAndMark(MacroFSNode root, string searchString, StringComparison comp)
+            private void TraverseAndMark(MacroFSNode root, string searchString, StringComparison comp, bool withinFileContents)
             {
                 if (this.Contains(root.FullPath, searchString, comp))
                 {
+                    System.Diagnostics.Debug.WriteLine(root.Name);
                     root.IsMatch = true;
+                }
+                else if (withinFileContents && !root.IsDirectory)
+                {
+                    // TODO move to b/g thread!
+                    string allText = File.ReadAllText(root.FullPath);
+                    if (this.Contains(allText, searchString, comp))
+                    {
+                        root.IsMatch = true;
+                    }
+                }
+                else
+                {
+                    root.IsMatch = false;
                 }
 
                 if (root.Children != null)
                 {
                     foreach (var child in root.Children)
                     {
-                        this.TraverseAndMark(child, searchString, comp);
+                        this.TraverseAndMark(child, searchString, comp, withinFileContents);
                     }
                 }
             }

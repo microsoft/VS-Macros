@@ -22,17 +22,13 @@ namespace VSMacros.RecorderListeners
     {
         [Import]
         private SVsServiceProvider serviceProvider;
-        private EditorCommandFilter commandFilter;
 
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
-            if (this.commandFilter == null)
-            {
-                this.commandFilter = new EditorCommandFilter(serviceProvider: this.serviceProvider);
-            }
+            var commandFilter = new EditorCommandFilter(serviceProvider: this.serviceProvider);
             IOleCommandTarget nextTarget;
-            ErrorHandler.ThrowOnFailure(textViewAdapter.AddCommandFilter(this.commandFilter, out nextTarget));
-            this.commandFilter.NextCommandTarget = nextTarget;
+            ErrorHandler.ThrowOnFailure(textViewAdapter.AddCommandFilter(commandFilter, out nextTarget));
+            commandFilter.NextCommandTarget = nextTarget;
         }
     }
 }

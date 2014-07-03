@@ -68,9 +68,7 @@ namespace VSMacros
         #region Package Members
         private BitmapImage startIcon;
         private BitmapImage stopIcon;
-        private bool MenuButtonRemoved = false;
         private string commonPath;
-        private bool isShowingStartImage = true;
         private List<CommandBarButton> imageButtons;
         private IVsStatusbar statusBar;
         private object iconRecord = (short)Microsoft.VisualStudio.Shell.Interop.Constants.SBAI_Synch;
@@ -144,20 +142,19 @@ namespace VSMacros
 
         public void Record(object sender, EventArgs arguments)
         {
-            if (this.isShowingStartImage)
+            IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
+            if (!macroRecorder.IsRecording)
             {
                 this.StatusBarChange(Resources.StatusBarRecordingText, 1, this.StopIcon);
-                IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
-                macroRecorder.StartRecording();
+                IRecorder recorder = (IRecorder)this.GetService(typeof(IRecorder));
+                recorder.StartRecording();
             }
             else
             {
                 this.StatusBarChange(Resources.StatusBarReadyText, 0, this.StartIcon);
-                IRecorder macroRecorder = (IRecorder)this.GetService(typeof(IRecorder));
-                macroRecorder.StopRecording();
+                IRecorder recorder = (IRecorder)this.GetService(typeof(IRecorder));
+                recorder.StopRecording();
             }
-            this.isShowingStartImage = !this.isShowingStartImage;
-
             return;
         }
 
@@ -194,9 +191,16 @@ namespace VSMacros
             this.statusBar.Animation(animation, ref this.iconRecord);
             foreach (CommandBarButton button in this.ImageButtons)
             {
-                if (button != null)
+                try
                 {
-                    button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                    if (button != null)
+                    {
+                        button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                    }
+                }
+                catch (Exception menuButtonRemoved)
+                {
+                    // Do nothing since the removed button does not need to change its image;
                 }
             }
         }
@@ -210,7 +214,6 @@ namespace VSMacros
                     List<CommandBarButton> buttons = new List<CommandBarButton>();
                     this.imageButtons = this.AddMenuButton(buttons);
                 }
-
                 return this.imageButtons;
             }
         }
@@ -218,18 +221,25 @@ namespace VSMacros
         private List<CommandBarButton> AddMenuButton(List<CommandBarButton> buttons)
         {
             List<CommandBarButton> buttonsList = buttons;
-            DTE dte = (DTE)this.GetService(typeof(SDTE));
-            CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
-            CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
-            CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
-            if(macroMenu != null)
-            { 
-                CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
-                if (startButton != null)
+            //try
+            //{
+                DTE dte = (DTE)this.GetService(typeof(SDTE));
+                CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
+                CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
+                CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
+                if (macroMenu != null)
                 {
-                    buttons.Add(startButton);
+                    CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
+                    if (startButton != null)
+                    {
+                        buttons.Add(startButton);
+                    }
                 }
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    //do nothing;
+            //}
             return buttonsList;
         }
 

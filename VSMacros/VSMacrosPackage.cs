@@ -55,8 +55,8 @@ namespace VSMacros
         private string macroDirectory;
         public string MacroDirectory
         {
-            get 
-            { 
+            get
+            {
                 if (this.macroDirectory == default(string))
                     this.macroDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
                 return this.macroDirectory;
@@ -93,7 +93,7 @@ namespace VSMacros
 
             ((IServiceContainer)this).AddService(typeof(IRecorder), (serviceContainer, type) => { return new Recorder(this); }, promote: true);
             this.statusBar = (IVsStatusbar)GetService(typeof(SVsStatusbar));
-           
+
             // Add our command handlers for the menu
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs)
@@ -103,7 +103,7 @@ namespace VSMacros
                    ShowToolWindow,
                    new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.CmdIdMacroExplorer)));
 
-                 // Create the command for start recording
+                // Create the command for start recording
                 mcs.AddCommand(new MenuCommand(
                   Record,
                   new CommandID(GuidList.GuidVSMacrosCmdSet, (int)PkgCmdIDList.CmdIdRecord)));
@@ -221,25 +221,18 @@ namespace VSMacros
         private List<CommandBarButton> AddMenuButton(List<CommandBarButton> buttons)
         {
             List<CommandBarButton> buttonsList = buttons;
-            //try
-            //{
-                DTE dte = (DTE)this.GetService(typeof(SDTE));
-                CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
-                CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
-                CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
-                if (macroMenu != null)
+            DTE dte = (DTE)this.GetService(typeof(SDTE));
+            CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
+            CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
+            CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
+            if (macroMenu != null)
+            {
+                CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
+                if (startButton != null)
                 {
-                    CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
-                    if (startButton != null)
-                    {
-                        buttons.Add(startButton);
-                    }
+                    buttons.Add(startButton);
                 }
-            //}
-            //catch (Exception e)
-            //{
-            //    //do nothing;
-            //}
+            }
             return buttonsList;
         }
 

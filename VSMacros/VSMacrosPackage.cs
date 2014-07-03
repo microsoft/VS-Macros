@@ -244,7 +244,6 @@ namespace VSMacros
                 {
                     this.startIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "RecordRound.png")));
                 }
-
                 return this.startIcon;
             }
         }
@@ -257,7 +256,6 @@ namespace VSMacros
                 {
                     this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "stopIcon.png")));
                 }
-
                 return this.stopIcon;
             }
         }
@@ -270,7 +268,6 @@ namespace VSMacros
                 {
                     this.commonPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
                 }
-
                 return this.commonPath;
             }
         }
@@ -287,7 +284,6 @@ namespace VSMacros
 
                 // Displays the MessageBox.
                 result = MessageBox.Show(message, caption, buttons);
-
                 canClose = (result == System.Windows.Forms.DialogResult.Yes);
             }
             else

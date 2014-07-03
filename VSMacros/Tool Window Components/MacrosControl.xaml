@@ -9,76 +9,78 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyControl">
     <UserControl.Resources>
-        <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Mode=OneWay, Path=Children}">
+        <!-- Normal Data Template-->
+        <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Stretch="Fill" Source="{Binding Mode=OneTime, Path=Icon}"/>
-                <TextBox Text="{Binding Mode=TwoWay, Path=Name}" 
-                         Background="Transparent" 
-                         BorderThickness="0" 
-                         IsReadOnly="{Binding Mode=TwoWay, Path=IsReadOnly}" 
-                         TextWrapping="Wrap"
-                         Cursor="Arrow"
-                         Margin="5,2,0,0"
-                         LostKeyboardFocus="OnTextBoxLostFocus"/>
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,1,5,0"/>
+                <TextBlock Text="{Binding Shortcut, Mode=OneWay}"/>
             </StackPanel>
+        </DataTemplate>
+        
+        <!-- Edit Data Template -->
+        <DataTemplate x:Key="EditTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,1,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Child Hierarchical Data Template -->
+        <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Path=Children, Mode=OneWay}">
+            <ContentPresenter Content="{Binding}">
+                <ContentPresenter.Style>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="ContentTemplate" Value="{StaticResource NormalTemplate}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditable}" Value="True">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EditTemplate}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentPresenter.Style>
+            </ContentPresenter>
         </HierarchicalDataTemplate>
+        
+        <!-- Root Hierarchical Data Template -->
         <HierarchicalDataTemplate x:Key="MacroFSViewTemplate"
                                   ItemsSource="{Binding Mode=OneWay, Path=Children}"
                                   ItemTemplate="{StaticResource ChildTemplate}">
             <StackPanel Orientation="Horizontal">
-                <Image Width="20" Height="20" Stretch="Fill" Source="..\Resources\macro.png"/>
-                <TextBlock Text="Macro Browser List" Margin="5,3,0,0"/>
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="..\Resources\macro.png"/>
+                <TextBlock Text="Macro Browser List" Margin="5,1,0,0"/>
             </StackPanel>
-        </HierarchicalDataTemplate>
-        <ResourceDictionary x:Key="MyDictionary">
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="..\Assets\TreeView.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        </HierarchicalDataTemplate>        
     </UserControl.Resources>
-    <TreeView x:Name="macroTreeView"
+   
+    <!-- Macro Tree View -->
+    <TreeView x:Name="MacroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
-              SelectedItemChanged="macroTreeView_SelectedItemChanged"
-              Width="Auto"
-              Background="{DynamicResource VsBrush.Environment.ToolWindowBackground}"
-              BorderBrush="{DynamicResource VsBrush.Environment.ToolWindowBorder}"
-              >
-        <!-- Add right click handler (http://stackoverflow.com/a/592483/1146764) -->
+              SelectedItemChanged="MacroTreeView_SelectedItemChanged"
+              Loaded="MacroTreeView_Loaded"
+              AllowDrop="True"
+              Background="Transparent" BorderBrush="Transparent">
+
+        <TreeView.Resources>
+            <ResourceDictionary Source="..\Assets\TreeView.xaml"/>
+        </TreeView.Resources>
+        
         <TreeView.ItemContainerStyle>
-            <Style TargetType="{x:Type TreeViewItem}">
-                <!-- We have to select the item which is right-clicked on -->
-                <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="OnTreeItemMouseRightButtonDown"/>
-                <EventSetter Event="KeyDown" Handler="OnTreeKeyDown"/>
+            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource baseTreeViewItemStyle}">
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                <Setter Property="Visibility" Value="{Binding IsMatch, Mode=OneWay, Converter={StaticResource ResourceKey=BoolToVisibility}}"/>
+                <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
+                <!--<EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>-->
+                
+                <!-- Drag & Drop -->
+                <EventSetter Event="TreeViewItem.PreviewMouseLeftButtonDown" Handler="TreeViewItem_PreviewMouseLeftButtonDown"/>
+                <EventSetter Event="TreeViewItem.MouseMove" Handler="TreeViewItem_MouseMove"/>
+                <EventSetter Event="TreeViewItem.Drop" Handler="TreeViewItem_Drop"/>
+                <EventSetter Event="TreeViewItem.DragEnter" Handler="TreeViewItem_DragEnter"/>
+                <EventSetter Event="TreeViewItem.DragLeave" Handler="TreeViewItem_DragLeave"/>
+                <EventSetter Event="TreeViewItem.DragOver" Handler="MacroTreeView_DragOver"/>
             </Style>
         </TreeView.ItemContainerStyle>
-        <TreeView.Resources>
-            <ContextMenu x:Key="BrowserContext" StaysOpen="True">
-                <MenuItem Header="Refresh" Click="Refresh"/>
-                <MenuItem Header="Open in File Explorer" Click="Open"/>
-            </ContextMenu>
-            <ContextMenu x:Key="CurrentContext" StaysOpen="true">
-                <MenuItem Header="Playback" Click="Playback"/>
-                <Separator/>
-                <MenuItem Header="Edit" Click="Edit"/>
-                <MenuItem Header="Save Current Macro" Click="SaveCurrentMacro"/>
-            </ContextMenu>
-            <ContextMenu x:Key="MacroContext" StaysOpen="true">
-                <MenuItem Header="Playback" Click="Playback"/>
-                <Separator/>
-                <MenuItem Header="Edit" Click="Edit"/>
-                <MenuItem Header="Rename" Click="Rename"/>
-                <MenuItem Header="Assign Shortcut" Click="AssignShortcut"/>
-                <Separator/>
-                <MenuItem Header="Delete" Click="Delete"/>
-            </ContextMenu>
-            <ContextMenu x:Key="FolderContext" StaysOpen="true">
-                <!--<MenuItem Header="New Folder" Click="Playback"/>
-                    <MenuItem Header="New Macro" Click="Playback"/>
-                    <Separator/>-->
-                <MenuItem Header="Rename" Click="Rename"/>
-                <Separator/>
-                <MenuItem Header="Delete" Click="Delete"/>
-            </ContextMenu>
-        </TreeView.Resources>
     </TreeView>
 </UserControl>

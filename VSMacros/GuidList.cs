@@ -1,4 +1,6 @@
-﻿using System;
+﻿// GuidList.cs
+
+using System;
 
 namespace VSMacros
 {
@@ -9,5 +11,5 @@ namespace VSMacros
         public const string GuidToolWindowPersistanceString = "56fbfa32-c049-4fd5-9b54-39fcdf33629d";
 
         public static readonly Guid GuidVSMacrosCmdSet = new Guid(GuidVSMacrosCmdSetString);
-    };
+    }
 }

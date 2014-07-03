@@ -88,38 +88,58 @@ namespace VSMacros {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attention.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string ExitCaption {
+        internal static System.Drawing.Bitmap FolderClosed {
             get {
-                return ResourceManager.GetString("ExitCaption", resourceCulture);
+                object obj = ResourceManager.GetObject("FolderClosed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recording in process, are you sure to close the window?.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string ExitMessage {
+        internal static System.Drawing.Bitmap FolderOpened {
             get {
-                return ResourceManager.GetString("ExitMessage", resourceCulture);
+                object obj = ResourceManager.GetObject("FolderOpened", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ready.
+        ///   Looks up a localized string similar to Macro not found on disk..
         /// </summary>
-        internal static string StatusBarReadyText {
+        internal static string MacroNotFound {
             get {
-                return ResourceManager.GetString("StatusBarReadyText", resourceCulture);
+                return ResourceManager.GetString("MacroNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recording....
+        ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
         /// </summary>
-        internal static string StatusBarRecordingText {
+        internal static string ShortcutAlreadyUsed {
             get {
-                return ResourceManager.GetString("StatusBarRecordingText", resourceCulture);
+                return ResourceManager.GetString("ShortcutAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected shortcut is invalid..
+        /// </summary>
+        internal static string ShortcutIsInvalid {
+            get {
+                return ResourceManager.GetString("ShortcutIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcuts file was not found..
+        /// </summary>
+        internal static string ShortcutsFileNotFound {
+            get {
+                return ResourceManager.GetString("ShortcutsFileNotFound", resourceCulture);
             }
         }
         

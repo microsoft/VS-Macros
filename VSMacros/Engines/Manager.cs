@@ -23,6 +23,7 @@ namespace VSMacros.Engines
         private const string shortcutsFileName = "Shortcuts.xml";
         private string shortcutsFilePath;
 
+        private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
         private bool uiShellLoaded;
 
@@ -31,21 +32,22 @@ namespace VSMacros.Engines
             get { return MacrosControl.Current.SelectedNode; }
         }
 
-        private Manager(IServiceProvider serviceProvider) 
+        private Manager(IServiceProvider provider) 
         {
-            uiShell = (IVsUIShell)serviceProvider.GetService(typeof(SVsUIShell));
-            if (uiShell != null)
+            this.serviceProvider = provider;
+            this.uiShell = (IVsUIShell)provider.GetService(typeof(SVsUIShell));
+            if (this.uiShell != null)
             {
-                uiShellLoaded = true;
+                this.uiShellLoaded = true;
             }
             else
             {
-                uiShellLoaded = false;
+                this.uiShellLoaded = false;
             }
 
             this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, shortcutsFileName);
             this.LoadShortcuts();
-            shortcutsLoaded = true;
+            this.shortcutsLoaded = true;
         }
 
         public static Manager Instance
@@ -53,8 +55,18 @@ namespace VSMacros.Engines
             get { return Manager.instance; }
         }
 
-        public void ToggleRecording()
+        public void StartRecording()
         {
+            IRecorder recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
+            recorder.StartRecording();
+        }
+
+        public void StopRecording()
+        {
+            string current = Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation);
+
+            IRecorder recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
+            recorder.StopRecording(current);
         }
 
         public void Playback(string path, int times) 
@@ -63,15 +75,9 @@ namespace VSMacros.Engines
             {
                 path = this.SelectedMacro.FullPath;
             }
-            MacroFSNode.FindNodeFromFullPath(path);
 
-
-            //StreamReader str = this.LoadFile(path);
-
-            //if (str != null)
-            //{
-            //    this.ShowMessageBox(str.ReadLine());
-            //}
+            Executor executor = new Executor();
+            executor.StartExecution(new StreamReader(path), 1);
         }
 
         public void StopPlayback() 
@@ -340,6 +346,11 @@ namespace VSMacros.Engines
 
             // Create shortcuts file
             this.CreateShortcutFile();
+        }
+
+        public void Close()
+        {
+            this.SaveShortcuts();
         }
 
         private StreamReader LoadFile(string path) 

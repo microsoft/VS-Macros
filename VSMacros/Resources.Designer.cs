@@ -135,6 +135,24 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start Recording.
+        /// </summary>
+        internal static string MenuTextNormal {
+            get {
+                return ResourceManager.GetString("MenuTextNormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Recording.
+        /// </summary>
+        internal static string MenuTextRecording {
+            get {
+                return ResourceManager.GetString("MenuTextRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap RecordRound {
@@ -172,7 +190,7 @@ namespace VSMacros {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ready....
+        ///   Looks up a localized string similar to Ready.
         /// </summary>
         internal static string StatusBarReadyText {
             get {

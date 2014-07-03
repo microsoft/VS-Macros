@@ -5,7 +5,9 @@ namespace VSMacros.Interfaces
 {
     public interface IManager
     {
-        void ToggleRecording();
+        void StartRecording();
+
+        void StopRecording();
 
         void Playback(string path, int times);
 
@@ -22,5 +24,7 @@ namespace VSMacros.Interfaces
         void AssignShortcut();
 
         void Delete();
+
+        void Close();
     }
 }

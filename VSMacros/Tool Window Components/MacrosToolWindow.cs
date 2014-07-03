@@ -36,7 +36,6 @@ namespace VSMacros
 
             // Make sure it is opened and selected by default
             root.IsExpanded = true;
-            root.IsSelected = true;
 
             // Initialize Macros Control
             base.Content = new MacrosControl(root);
@@ -172,7 +171,6 @@ namespace VSMacros
         public override void ClearSearch()
         {
             MacroFSNode.DisableSearch();
-            Manager.Instance.Refresh();
         }
 
         public override void ProvideSearchSettings(IVsUIDataSource pSearchSettings)
@@ -267,11 +265,11 @@ namespace VSMacros
                 MacroFSNode.DisableSearch();
             }
 
+
             private void TraverseAndMark(MacroFSNode root, string searchString, StringComparison comp, bool withinFileContents)
             {
                 if (this.Contains(root.FullPath, searchString, comp))
                 {
-                    System.Diagnostics.Debug.WriteLine(root.Name);
                     root.IsMatch = true;
                 }
                 else if (withinFileContents && !root.IsDirectory)

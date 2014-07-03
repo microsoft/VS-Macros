@@ -184,10 +184,6 @@
     <Resource Include="Resources\folderclosed.png" />
     <Resource Include="Resources\macro.png" />
     <Resource Include="Resources\folderopened.png" />
-    <Content Include="Documentation\License.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>
@@ -209,7 +205,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Documentation\" />
+  </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

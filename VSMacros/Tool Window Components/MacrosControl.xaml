@@ -48,7 +48,7 @@
                                   ItemTemplate="{StaticResource ChildTemplate}">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="..\Resources\macro.png"/>
-                <TextBlock Text="Macro Browser List" Margin="5,2,0,0"/>
+                <TextBlock Text="Macro Browser List" Margin="5,1,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>        
     </UserControl.Resources>
@@ -57,6 +57,7 @@
     <TreeView x:Name="MacroTreeView"
               ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
               SelectedItemChanged="MacroTreeView_SelectedItemChanged"
+              Loaded="MacroTreeView_Loaded"
               AllowDrop="True"
               Background="Transparent" BorderBrush="Transparent">
 

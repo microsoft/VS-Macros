@@ -142,6 +142,9 @@
   <data name="MacroNotFound" xml:space="preserve">
     <value>Macro not found on disk.</value>
   </data>
+  <data name="MatchCase" xml:space="preserve">
+    <value>Match case</value>
+  </data>
   <data name="MenuTextNormal" xml:space="preserve">
     <value>Start Recording</value>
   </data>
@@ -150,6 +153,9 @@
   </data>
   <data name="RecordRound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\RecordRound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SearchWithinFileContents" xml:space="preserve">
+    <value>Search within file contents</value>
   </data>
   <data name="ShortcutAlreadyUsed" xml:space="preserve">
     <value>Shortcut already used. Overwrite?</value>

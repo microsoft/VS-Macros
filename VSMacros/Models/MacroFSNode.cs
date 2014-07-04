@@ -12,7 +12,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
@@ -81,36 +84,40 @@ namespace VSMacros.Models
 
             set
             {
-                string oldFullPath = this.FullPath;
-                string newFullPath = Path.Combine(Path.GetDirectoryName(this.FullPath), value + Path.GetExtension(this.FullPath));
-
-                try
+                // If new name is not empty
+                if (!string.IsNullOrEmpty(value))
                 {
-                     // Update file system
-                    if (this.IsDirectory)
-                    {
-                        Directory.Move(oldFullPath, newFullPath);
-                    }
-                    else
-                    {
-                        File.Move(oldFullPath, newFullPath);
-                    }
+                    string oldFullPath = this.FullPath;
+                    string newFullPath = Path.Combine(Path.GetDirectoryName(this.FullPath), value + Path.GetExtension(this.FullPath));
 
-                    // Update object
-                    this.FullPath = newFullPath;
+                    try
+                    {
+                        // Update file system
+                        if (this.IsDirectory)
+                        {
+                            Directory.Move(oldFullPath, newFullPath);
+                        }
+                        else
+                        {
+                            File.Move(oldFullPath, newFullPath);
+                        }
 
-                    // Update shortcut
-                    if (!string.IsNullOrEmpty(this.Shortcut))
-                    {
-                        Manager.Instance.Shortcuts[this.Shortcut[this.Shortcut.Length - 1]] = newFullPath;
+                        // Update object
+                        this.FullPath = newFullPath;
+
+                        // Update shortcut
+                        if (!string.IsNullOrEmpty(this.Shortcut))
+                        {
+                            Manager.Instance.Shortcuts[this.Shortcut[this.Shortcut.Length - 1]] = newFullPath;
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    if (e.Message != null)
+                    catch (Exception e)
                     {
-                        // TODO export VSMacros.Engines.Manager.Instance.ShowMessageBox to a helper class?
-                        VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
+                        if (e.Message != null)
+                        {
+                            // TODO export VSMacros.Engines.Manager.Instance.ShowMessageBox to a helper class?
+                            VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
+                        }
                     }
                 }
             }
@@ -138,6 +145,7 @@ namespace VSMacros.Models
             }
             set
             {
+                // Set shortcut to null so it will be re-fetched
                 this.shortcut = null;
 
                 // Just notify the binding
@@ -230,7 +238,7 @@ namespace VSMacros.Models
                 {
                     enabledDirectories.Add(this.FullPath);
 
-                    // Enable parent as well
+                    // Expand parent as well
                     if (this.parent != null)
                     {
                         this.parent.IsExpanded = true;
@@ -250,13 +258,14 @@ namespace VSMacros.Models
         {
             get
             {
-                if (MacroFSNode.searching)
+                // If searching is not enabled, always return true
+                if (!MacroFSNode.searching)
                 {
-                    return this.isMatch;
+                    return true;
                 }
                 else
                 {
-                    return true;
+                    return this.isMatch;
                 }
             }
             set
@@ -386,7 +395,7 @@ namespace VSMacros.Models
             // Set Searching to true
             MacroFSNode.searching = true;
 
-            // And then notify all node that their IsMatch property might be changed
+            // And then notify all node that their IsMatch property might have changed
             MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
         }
 
@@ -395,13 +404,18 @@ namespace VSMacros.Models
             // Set Searching to true
             MacroFSNode.searching = false;
 
-            // And then notify all node that their IsMatch property might be changed
+            // And then notify all node that their IsMatch property might have changed
             MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
         }
 
-        // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
+        /// <summary>
+        /// Expands all the node marked as expanded in enabledDirs
+        /// </summary>
+        /// <param name="node">Tree rooted at node</param>
+        /// <param name="enabledDirs">Hash set containing the enabled dirs</param>
         private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
         {
+            // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
             if (node.Children.Count > 0 && enabledDirs.Count > 0)
             {
                 foreach (var item in node.children)
@@ -411,7 +425,7 @@ namespace VSMacros.Models
                         // Set IsExpanded
                         item.IsExpanded = true;
 
-                        // Remove path from dirs
+                        // Remove path from dirs to improve performance of next call to HashSet.Contains
                         enabledDirs.Remove(item.FullPath);
 
                         // Recursion on children
@@ -428,6 +442,7 @@ namespace VSMacros.Models
         /// <returns>MacroFSNode  whose FullPath is path</returns>
         public static MacroFSNode FindNodeFromFullPath(string path)
         {
+            // shortenPath is the path relative to the Macros folder
             string shortenPath = path.Substring(path.IndexOf(@"\Macros\"));
 
             string[] substrings = shortenPath.Split(new char[] { '\\' });
@@ -462,7 +477,7 @@ namespace VSMacros.Models
             }
         }
 
-        // Notifies all the nodes from the tree rooted at 'node'
+        // Notifies all the nodes of the tree rooted at 'node'
         public static void NotifyAllNode(MacroFSNode node, string property)
         {
             node.NotifyPropertyChanged(property);

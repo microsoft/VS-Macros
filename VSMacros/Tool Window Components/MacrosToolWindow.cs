@@ -209,7 +209,7 @@ namespace VSMacros
             {
                 if (this.withinFileOption == null)
                 {
-                    this.withinFileOption = new WindowSearchBooleanOption("Search within file contents", "Search within file contents", false);
+                    this.withinFileOption = new WindowSearchBooleanOption(Resources.SearchWithinFileContents, Resources.SearchWithinFileContents, false);
                 }
                 return this.withinFileOption;
             }
@@ -222,7 +222,7 @@ namespace VSMacros
             {
                 if (this.matchCaseOption == null)
                 {
-                    this.matchCaseOption = new WindowSearchBooleanOption("Match case", "Match case", false);
+                    this.matchCaseOption = new WindowSearchBooleanOption(Resources.MatchCase, Resources.MatchCase, false);
                 }
                 return this.matchCaseOption;
             }
@@ -240,6 +240,7 @@ namespace VSMacros
 
             protected override void OnStartSearch()
             {
+                // Enable search on the MacroFSNodes so that only the matched nodes will be shown
                 MacroFSNode.EnableSearch();
 
                 // Get the search option. 
@@ -266,6 +267,7 @@ namespace VSMacros
 
             protected override void OnStopSearch()
             {
+                // Disable the search (will notify all nodes of the change)
                 MacroFSNode.DisableSearch();
             }
 

@@ -25,7 +25,7 @@ namespace ManagementTest
         {
             MacroFSNode node = this.CreateFileNode();
 
-            Assert.AreEqual(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros", "Test.js"), node.FullPath);
+            Assert.AreEqual(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js"), node.FullPath);
             Assert.IsFalse(node.IsEditable);
         }
 
@@ -77,7 +77,7 @@ namespace ManagementTest
         {
             MacroFSNode node = this.CreateDirectoryNode();
 
-            Assert.AreEqual(1, node.Children.Count);
+            Assert.AreEqual(5, node.Children.Count);
         }
 
         #endregion
@@ -97,7 +97,7 @@ namespace ManagementTest
             };
 
             // Change the name of the node
-            node.Name = "Test";
+            node.Name = "Another Name";
 
             // Two event are fired
             Assert.AreEqual(2, receivedEvents.Count);
@@ -200,14 +200,39 @@ namespace ManagementTest
 
         private MacroFSNode CreateFileNode()
         {
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros", "Test.js");
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js");
+
+            if (!File.Exists(path))
+            {
+                var myFile = File.Create(path);
+                myFile.Close();
+            }
+
             return new MacroFSNode(path);
         }
 
         private MacroFSNode CreateDirectoryNode()
         {
+            // Create a folder
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
-            return new MacroFSNode(path);
+
+            // Delete everything in the folder
+            Directory.Delete(path, true);
+
+            // Recreate the folder, empty
+            Directory.CreateDirectory(path);
+
+            MacroFSNode dir = new MacroFSNode(path);
+
+            // Add 5 files to the folder
+            for (int i = 0; i < 5; i++)
+            {
+                path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros", i + ".js");
+                var myFile = File.Create(path);
+                myFile.Close();
+            }
+
+            return dir;
         }
 
         #endregion

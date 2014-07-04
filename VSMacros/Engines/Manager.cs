@@ -210,6 +210,10 @@ namespace VSMacros.Engines
         public void Delete()
         {
             MacroFSNode macro = this.SelectedMacro;
+
+            // Don't delete if macro is being edited
+            if (macro.IsEditable) { return; }
+
             string path = macro.FullPath;
 
             FileSystemInfo file;
@@ -356,7 +360,9 @@ namespace VSMacros.Engines
             this.SaveShortcuts();
         }
 
-        private StreamReader LoadFile(string path) 
+        #region Helper Methods
+
+        private StreamReader LoadFile(string path)
         {
             try
             {
@@ -366,7 +372,7 @@ namespace VSMacros.Engines
                 }
 
                 StreamReader str = new StreamReader(path);
-                
+
                 return str;
             }
             catch (Exception e)
@@ -378,7 +384,7 @@ namespace VSMacros.Engines
         }
 
         private void SaveMacro(Stream str, string path)
-        { 
+        {
             try
             {
                 using (var fileStream = File.Create(path))
@@ -417,7 +423,7 @@ namespace VSMacros.Engines
                     this.Shortcuts = root.Descendants("command")
                                                 .Select(elmt => elmt.Value)
                                                 .ToArray();
-                }                
+                }
             }
             catch (Exception e)
             {
@@ -427,13 +433,13 @@ namespace VSMacros.Engines
 
         private void SaveShortcuts()
         {
-            XDocument xmlShortcuts = 
+            XDocument xmlShortcuts =
                 new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     new XElement("commands",
                         from s in this.Shortcuts
-                            select new XElement("command",
-                                new XText(s))));
+                        select new XElement("command",
+                            new XText(s))));
 
             xmlShortcuts.Save(this.shortcutsFilePath);
         }
@@ -448,7 +454,6 @@ namespace VSMacros.Engines
             }
         }
 
-        #region Helper Methods
         public int ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
             if (!this.uiShellLoaded)

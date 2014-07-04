@@ -40,11 +40,6 @@ namespace VSMacros
             }
         }
 
-        private TreeViewItem GetSelectedTreeViewItem()
-        {
-            return (TreeViewItem)(this.MacroTreeView.ItemContainerGenerator.ContainerFromIndex(this.MacroTreeView.Items.CurrentPosition));
-        }
-
         #region Events
 
         private void MacroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -79,9 +74,9 @@ namespace VSMacros
 
             if (uiShell != null)
             {
-                // Get CmdID
-                MacroFSNode selectedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
+                // Get context menu id
                 int menuID;
+                MacroFSNode selectedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
                 if (selectedNode.IsDirectory)
                 {
@@ -106,6 +101,7 @@ namespace VSMacros
                     }
                 }
 
+                // Show right context menu
                 System.Drawing.Point pt = System.Windows.Forms.Cursor.Position;
                 POINTS[] pnts = new POINTS[1];
                 pnts[0].x = (short)pt.X;
@@ -127,19 +123,17 @@ namespace VSMacros
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
+            // Update source and exit edit on Enter
             if (e.Key == Key.Enter)
             {
                 TextBox textBox = sender as TextBox;
-
+                
+                // Update source
                 BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty).UpdateSource();
+
+                // Disable edit for selected macro
                 this.SelectedNode.DisableEdit();
             }
-        }
-
-        private void TextBox_LostKeyboardFocus(object sender, RoutedEventArgs e)
-        {
-            Keyboard.ClearFocus();
-            this.SelectedNode.DisableEdit();
         }
 
         private void TreeViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
@@ -176,14 +170,14 @@ namespace VSMacros
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                // Has the mouse move enough?
+                // Has the mouse moved enough?
                 var mousePos = e.GetPosition(this.MacroTreeView);
                 var diff = mousePos - this.startPos;
 
                 if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                     Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    // Get the dragged TreeViewItem
+                    // Get the dragged MacroFSNode
                     this.draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
                     // The root node is not dragable
@@ -334,31 +328,6 @@ namespace VSMacros
                 return true;
             }
             return false;
-        }
-
-        private static TObject FindVisualParent<TObject>(UIElement child) where TObject : UIElement
-        {
-            if (child == null)
-            {
-                return null;
-            }
-
-            UIElement parent = VisualTreeHelper.GetParent(child) as UIElement;
-
-            while (parent != null)
-            {
-                TObject found = parent as TObject;
-                if (found != null)
-                {
-                    return found;
-                }
-                else
-                {
-                    parent = VisualTreeHelper.GetParent(parent) as UIElement;
-                }
-            }
-
-            return null;
         }
 
         private TreeViewItem GetNearestContainer(UIElement element)

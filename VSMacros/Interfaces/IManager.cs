@@ -16,6 +16,8 @@ namespace VSMacros.Interfaces
 
         void StopPlayback();
 
+        void OpenFolder(string path = null);
+
         void SaveCurrent();
 
         void Refresh();
@@ -27,6 +29,12 @@ namespace VSMacros.Interfaces
         void AssignShortcut();
 
         void Delete();
+
+        void NewMacro();
+
+        void NewFolder();
+
+        void CreateFileSystem();
 
         void Close();
     }

@@ -148,12 +148,12 @@ namespace VSMacros
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (!macroRecorder.IsRecording)
             {
-                this.StatusBarChange(Resources.StatusBarRecordingText, 1, this.StartIcon);
+                this.StatusBarChange(Resources.StatusBarRecordingText, 1, /*this.StartIcon*/null);
                 Manager.Instance.StartRecording();
             }
             else
             {
-                this.StatusBarChange(Resources.StatusBarReadyText, 0, this.StopIcon);
+                this.StatusBarChange(Resources.StatusBarReadyText, 0, /*this.StopIcon*/null);
                 Manager.Instance.StopRecording();
             }
         }
@@ -185,12 +185,14 @@ namespace VSMacros
 
         #endregion
 
+        #region Status Bar
         private void StatusBarChange(string status, int animation, BitmapSource icon)
         {
             this.statusBar.Clear();
             this.statusBar.SetText(status);
             this.statusBar.Animation(animation, ref this.iconRecord);
 
+            return;
             foreach (CommandBarButton button in this.ImageButtons)
             {
                 try
@@ -244,15 +246,8 @@ namespace VSMacros
             {
                 if (this.startIcon == null)
                 {
-                    Bitmap bmp = Resources.RecordRound;
-
-                    this.startIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                            bmp.GetHbitmap(),
-                            IntPtr.Zero,
-                            System.Windows.Int32Rect.Empty,
-                            BitmapSizeOptions.FromEmptyOptions());
+                    this.startIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "RecordRound.png")));
                 }
-
                 return this.startIcon;
             }
         }
@@ -263,17 +258,12 @@ namespace VSMacros
             {
                 if (this.stopIcon == null)
                 {
-                    Bitmap bmp = Resources.StopIcon;
-
-                    this.startIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                            bmp.GetHbitmap(),
-                            IntPtr.Zero,
-                            System.Windows.Int32Rect.Empty,
-                            BitmapSizeOptions.FromEmptyOptions());
+                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "stopIcon.png")));
                 }
                 return this.stopIcon;
             }
         }
+        #endregion
 
         private string CommonPath
         {

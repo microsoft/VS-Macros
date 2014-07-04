@@ -135,6 +135,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Match case.
+        /// </summary>
+        internal static string MatchCase {
+            get {
+                return ResourceManager.GetString("MatchCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start Recording.
         /// </summary>
         internal static string MenuTextNormal {
@@ -159,6 +168,15 @@ namespace VSMacros {
             get {
                 object obj = ResourceManager.GetObject("RecordRound", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search within file contents.
+        /// </summary>
+        internal static string SearchWithinFileContents {
+            get {
+                return ResourceManager.GetString("SearchWithinFileContents", resourceCulture);
             }
         }
         

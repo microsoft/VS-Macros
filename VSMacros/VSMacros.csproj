@@ -33,10 +33,12 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <DocumentationFile>bin\Release\VSMacros.XML</DocumentationFile>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -171,7 +173,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="VSMacrosPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdIDList.cs" />
@@ -204,8 +205,12 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\RecordRound.png" />
-    <Resource Include="Resources\stopIcon.png" />
+    <Resource Include="Resources\RecordRound.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\stopIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\macro.png" />
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />

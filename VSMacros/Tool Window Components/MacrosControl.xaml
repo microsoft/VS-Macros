@@ -3,16 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
              Background="{DynamicResource VsBrush.Window}"
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyControl">
-    <UserControl.Resources>
+    <UserControl.Resources>  
         <!-- Normal Data Template-->
         <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Icon}" />
                 <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,1,5,0"/>
                 <TextBlock Text="{Binding Shortcut, Mode=OneWay}"/>
             </StackPanel>
@@ -21,7 +22,7 @@
         <!-- Edit Data Template -->
         <DataTemplate x:Key="EditTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Mode=OneWay, Path=Icon}"/>
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Icon}" />
                 <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,1,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
             </StackPanel>
         </DataTemplate>
@@ -71,7 +72,7 @@
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                 <Setter Property="Visibility" Value="{Binding IsMatch, Mode=OneWay, Converter={StaticResource ResourceKey=BoolToVisibility}}"/>
                 <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
-                <!--<EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>-->
+                <EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
                 
                 <!-- Drag & Drop -->
                 <EventSetter Event="TreeViewItem.PreviewMouseLeftButtonDown" Handler="TreeViewItem_PreviewMouseLeftButtonDown"/>

@@ -97,7 +97,7 @@ namespace VSMacros {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recording in process, are you sure to close the window?.
+        ///   Looks up a localized string similar to Recording in process, are you sure to exit?.
         /// </summary>
         internal static string ExitMessage {
             get {

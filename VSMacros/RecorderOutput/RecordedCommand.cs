@@ -28,10 +28,17 @@ namespace VSMacros.RecorderOutput
 
         internal override void ConvertToJavascript(StreamWriter outputStream)
         {
-            string formatString = "dte.Commands.Raise(\"{0}\", {1}{2})";
-            string output = string.Format(formatString, this.commandSetGuid, this.commandId, (this.input == 0 ? string.Empty : ", " + this.input.ToString()));
-
-            outputStream.WriteLine(output);
+            string output;
+            if (this.commandName == null)
+            {
+                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2})";
+                output = string.Format(formatString, this.commandSetGuid, this.commandId, (this.input == 0 ? string.Empty : ", " + this.input.ToString()));
+                outputStream.WriteLine(output);
+            }
+            else
+            {
+                outputStream.WriteLine("dte.ExecuteCommand(\"" + this.commandName + "\")");
+            }
         }
     }
 }

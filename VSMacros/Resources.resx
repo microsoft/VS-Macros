@@ -130,7 +130,7 @@
     <value>Attention</value>
   </data>
   <data name="ExitMessage" xml:space="preserve">
-    <value>Recording in process, are you sure to close the window?</value>
+    <value>Recording in process, are you sure to exit?</value>
   </data>
   <data name="StatusBarReadyText" xml:space="preserve">
     <value>Ready</value>

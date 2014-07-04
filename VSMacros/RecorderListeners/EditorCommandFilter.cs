@@ -35,7 +35,7 @@ namespace VSMacros.RecorderListeners
             {
                 if ((pguidCmdGroup == VSConstants.CMDSETID.StandardCommandSet2K_guid) && (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR))
                 {
-                    this.macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, "Keyboard", (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn));
+                    this.macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, null, (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn));
                 }
             }
             if (this.NextCommandTarget != null)

@@ -65,6 +65,8 @@ namespace ExecutionEngine
             IMoniker moniker = GetItemMoniker(pid);
             IRunningObjectTable rot = GetRunningObjectTable();
             Engine.DteObject = GetDteObject(rot, moniker);
+
+            Validate.IsNotNull(Engine.DteObject, "Engine.DteObject");
         }
 
         internal IActiveScript CreateEngine()
@@ -109,10 +111,7 @@ namespace ExecutionEngine
 
         internal ParsedScript Parse(string unparsed)
         {
-            if (string.IsNullOrEmpty(unparsed))
-            {
-                throw new ArgumentNullException("unparsed");
-            }
+            Validate.IsNotNullAndNotEmpty(unparsed, "unparsed");
 
             this.engine.SetScriptState(ScriptState.Connected);
             this.parser.Parse(unparsed);

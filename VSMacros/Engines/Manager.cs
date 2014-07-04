@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
+using System.Diagnostics;
 
 namespace VSMacros.Engines
 {
@@ -61,10 +62,17 @@ namespace VSMacros.Engines
                 path = this.SelectedMacro.FullPath;
             }
 
-            //StreamReader str = this.LoadFile(path);
-
             var executor = new Executor();
-            executor.StartExecution(path, 1);
+
+            if (!Executor.IsEngineInitialized)
+            {
+                executor.InitializeEngine();
+                // TODO: eventually we'll want to run the macro here as well
+            }
+            else
+            {
+                executor.Shenanigans(path);
+            }
         }
 
         public void StopPlayback() 

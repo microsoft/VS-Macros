@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSMacros", "VSMacros\VSMacros.csproj", "{77E211B3-F4D8-4FAF-8B8B-79E9FF8A494B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F73F9E75-10E3-44FC-9A13-7E69A689AD0B} = {F73F9E75-10E3-44FC-9A13-7E69A689AD0B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionEngine", "ExecutionEngine\ExecutionEngine.csproj", "{F73F9E75-10E3-44FC-9A13-7E69A689AD0B}"
 EndProject

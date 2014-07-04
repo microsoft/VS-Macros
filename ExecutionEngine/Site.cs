@@ -35,6 +35,7 @@ namespace ExecutionEngine
             }
 
             item = Marshal.GetIUnknownForObject(Engine.DteObject);
+            //typeInfo = Marshal.GetITypeInfoForType(item.GetType());
         }
 
         public void GetDocVersionString(out string version)

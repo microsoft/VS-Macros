@@ -273,7 +273,7 @@ namespace VSMacros
 
             private void TraverseAndMark(MacroFSNode root, string searchString, StringComparison comp, bool withinFileContents)
             {
-                if (this.Contains(root.FullPath, searchString, comp))
+                if (this.Contains(root.Name, searchString, comp))
                 {
                     root.IsMatch = true;
                 }

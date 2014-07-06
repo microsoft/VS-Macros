@@ -67,8 +67,8 @@ namespace VSMacros
         /////////////////////////////////////////////////////////////////////////////
         // Overridden Package Implementation
         #region Package Members
-        private BitmapSource startIcon;
-        private BitmapSource stopIcon;
+        private BitmapImage startIcon;
+        private BitmapImage stopIcon;
         private string commonPath;
         private List<CommandBarButton> imageButtons;
         private IVsStatusbar statusBar;
@@ -148,12 +148,12 @@ namespace VSMacros
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (!macroRecorder.IsRecording)
             {
-                this.StatusBarChange(Resources.StatusBarRecordingText, 1, /*this.StartIcon*/null);
+                this.StatusBarChange(Resources.StatusBarRecordingText, 1, this.StartIcon);
                 Manager.Instance.StartRecording();
             }
             else
             {
-                this.StatusBarChange(Resources.StatusBarReadyText, 0, /*this.StopIcon*/null);
+                this.StatusBarChange(Resources.StatusBarReadyText, 0, this.StopIcon);
                 Manager.Instance.StopRecording();
             }
         }
@@ -192,7 +192,6 @@ namespace VSMacros
             this.statusBar.SetText(status);
             this.statusBar.Animation(animation, ref this.iconRecord);
 
-            return;
             foreach (CommandBarButton button in this.ImageButtons)
             {
                 try

@@ -48,7 +48,7 @@
                                   ItemsSource="{Binding Mode=OneWay, Path=Children}"
                                   ItemTemplate="{StaticResource ChildTemplate}">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="..\Resources\macro.png"/>
+                <Image Width="16" Height="16" Margin="-15,1,0,1" Stretch="Fill" Source="..\Resources\macro.png"/>
                 <TextBlock Text="Macro Browser List" Margin="5,1,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>        
@@ -60,7 +60,7 @@
               SelectedItemChanged="MacroTreeView_SelectedItemChanged"
               Loaded="MacroTreeView_Loaded"
               AllowDrop="True"
-              Background="Transparent" BorderBrush="Transparent">
+              Background="Transparent" BorderBrush="Transparent" Margin="5,0,0,0">
 
         <TreeView.Resources>
             <ResourceDictionary Source="..\Assets\TreeView.xaml"/>

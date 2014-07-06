@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
@@ -20,7 +21,7 @@ namespace VSMacros.Engines
     {
         private static readonly Manager instance = new Manager(VSMacrosPackage.Current);
         
-        private const string CurrentMacroLocation = "Current.js";
+        private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
         public string[] Shortcuts { get; private set; }
@@ -68,7 +69,7 @@ namespace VSMacros.Engines
 
         public void StopRecording()
         {
-            string current = Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation);
+            string current = Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName);
 
             IRecorder recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
             recorder.StopRecording(current);
@@ -82,7 +83,7 @@ namespace VSMacros.Engines
             }
 
             Executor executor = new Executor();
-            executor.StartExecution(new StreamReader(path), 1);
+            executor.StartExecution(path, 1);
         }
 
         public void StopPlayback() 
@@ -103,14 +104,14 @@ namespace VSMacros.Engines
         public void SaveCurrent() 
         {
             SaveCurrentDialog dlg = new SaveCurrentDialog();
-            dlg.ShowDialog();
+            bool? result = dlg.ShowDialog();
 
-            if (dlg.DialogResult == true)
+            if (result == true)
             {
                 try
                 {
                     string pathToNew = Path.Combine(VSMacrosPackage.Current.MacroDirectory, dlg.MacroName.Text + ".js");
-                    string pathToCurrent = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js");
+                    string pathToCurrent = Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName);
 
                     int newShortcutNumber = dlg.SelectedShortcutNumber;
 
@@ -145,7 +146,11 @@ namespace VSMacros.Engines
         public void Refresh()
         {
             this.SaveShortcuts();
+
+            this.CreateFileSystem();
+
             MacroFSNode.RefreshTree();
+
             this.LoadShortcuts();
         }
 
@@ -233,11 +238,11 @@ namespace VSMacros.Engines
 
             if (file.Exists)
             {
-                int result;
+                VSConstants.MessageBoxResult result;
                 result = this.ShowMessageBox(message, OLEMSGBUTTON.OLEMSGBUTTON_OKCANCEL);
 
                 // TODO 1 is for OK
-                if (result == 1)
+                if (result == VSConstants.MessageBoxResult.IDOK)
                 {
                     try
                     {
@@ -310,7 +315,10 @@ namespace VSMacros.Engines
             this.Refresh();
 
             // Select new node
-            MacroFSNode.FindNodeFromFullPath(path).IsSelected = true;
+            MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
+            node.IsSelected = true;
+            node.IsExpanded = true;
+            node.IsEditable = true;
         }
 
         public void NewFolder()
@@ -334,7 +342,9 @@ namespace VSMacros.Engines
             Directory.CreateDirectory(path);
             this.Refresh();
 
-            MacroFSNode.FindNodeFromFullPath(path).IsSelected = true;
+            MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
+            node.IsSelected = true;
+            node.IsEditable = true;
         }
 
         public void CreateFileSystem()
@@ -346,9 +356,9 @@ namespace VSMacros.Engines
             }
 
             // Create current macro file
-            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation)))
+            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName)))
             {
-                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroLocation));
+                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName));
             }
 
             // Create shortcuts file
@@ -368,14 +378,14 @@ namespace VSMacros.Engines
             {
                 if (!File.Exists(path))
                 {
-                    throw new Exception(Resources.MacroNotFound);
+                    throw new FileNotFoundException(Resources.MacroNotFound);
                 }
 
                 StreamReader str = new StreamReader(path);
 
                 return str;
             }
-            catch (Exception e)
+            catch (FileNotFoundException e)
             {
                 this.ShowMessageBox(e.Message);
             }
@@ -421,8 +431,8 @@ namespace VSMacros.Engines
 
                     // Parse to dictionary
                     this.Shortcuts = root.Descendants("command")
-                                                .Select(elmt => elmt.Value)
-                                                .ToArray();
+                                          .Select(elmt => elmt.Value)
+                                          .ToArray();
                 }
             }
             catch (Exception e)
@@ -454,11 +464,11 @@ namespace VSMacros.Engines
             }
         }
 
-        public int ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
+        public VSConstants.MessageBoxResult ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
             if (!this.uiShellLoaded)
             {
-                return -1;
+                return VSConstants.MessageBoxResult.IDABORT;
             }
 
             Guid clsid = Guid.Empty;
@@ -478,7 +488,7 @@ namespace VSMacros.Engines
                 0,        // false
                 out result));
 
-            return result;
+            return (VSConstants.MessageBoxResult)result;
         }
         #endregion
     }

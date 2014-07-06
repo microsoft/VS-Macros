@@ -40,6 +40,11 @@ namespace VSMacros
             }
         }
 
+        public string CurrentMacroPath
+        { 
+            get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"); } 
+        }
+
         #region Events
 
         private void MacroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -55,7 +60,7 @@ namespace VSMacros
         private void MacroTreeView_Loaded(object sender, RoutedEventArgs e)
         {
             // Select Current macro
-            MacroFSNode.FindNodeFromFullPath(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js")).IsSelected = true;
+            MacroFSNode.FindNodeFromFullPath(this.CurrentMacroPath).IsSelected = true;
         }
 
         private void TreeViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -91,7 +96,7 @@ namespace VSMacros
                 }
                 else
                 {
-                    if (selectedNode.Name == "Current")
+                    if (selectedNode.FullPath == this.CurrentMacroPath)
                     {
                         menuID = PkgCmdIDList.CurrentContextMenu;
                     }
@@ -280,12 +285,12 @@ namespace VSMacros
 
         private void MoveItem(MacroFSNode sourceItem, MacroFSNode targetItem)
         {
+            string sourcePath = sourceItem.FullPath;
+            string targetPath = Path.Combine(targetItem.FullPath, sourceItem.Name);
+            string extension = ".js";
+
             try
             {
-                string sourcePath = sourceItem.FullPath;
-                string targetPath = System.IO.Path.Combine(targetItem.FullPath, sourceItem.Name);
-                string extension = ".js";
-
                 // Move on disk
                 if (sourceItem.IsDirectory)
                 {
@@ -296,38 +301,41 @@ namespace VSMacros
                     targetPath = targetPath + extension;
                     System.IO.File.Move(sourcePath, targetPath);
                 }
-
-                // Move shortcut as well
-                if (!string.IsNullOrEmpty(sourceItem.Shortcut))
-                {
-                    int shortcutNumber = sourceItem.Shortcut[sourceItem.Shortcut.Length - 2] - '0';
-                    Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
-                }
-
-                // Refresh tree
-                MacroFSNode.RefreshTree();
-
-                // Restore previously selected node
-                MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-                selected.IsSelected = true;
-                
-                // and notify change in shortcut
-                selected.Shortcut = null;
             }
             catch (Exception e)
             {
                 Manager.Instance.ShowMessageBox(e.Message);
+            }
+
+            // Move shortcut as well
+            if (!string.IsNullOrEmpty(sourceItem.Shortcut))
+            {
+                int shortcutNumber = sourceItem.Shortcut[sourceItem.Shortcut.Length - 2] - '0';
+                Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
+            }
+
+            // Refresh tree
+            Manager.Instance.Refresh();
+
+            // Restore previously selected node
+            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+            selected.IsSelected = true;
+            selected.IsExpanded = true;
+
+            // Notify change in shortcut
+            selected.Shortcut = null;
+
+            // Make editable if the macro is the current macro
+            if (sourceItem.FullPath == this.CurrentMacroPath)
+            {
+                selected.IsEditable = true;
             }
         }
 
         private bool ValidDropTarget(MacroFSNode sourceItem, MacroFSNode targetItem)
         {
             // Check whether the target item is meeting your condition
-            if (!sourceItem.Equals(targetItem))
-            {
-                return true;
-            }
-            return false;
+            return !sourceItem.Equals(targetItem);
         }
 
         private TreeViewItem GetNearestContainer(UIElement element)

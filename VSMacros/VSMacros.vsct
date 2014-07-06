@@ -214,15 +214,15 @@
       <!-- Buttons added through command placements -->
       
       <!-- Macro Shortcut Commands Button -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand1" priority="000" type="Button"><Strings><ButtonText>command1</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand2" priority="000" type="Button"><Strings><ButtonText>command2</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand3" priority="000" type="Button"><Strings><ButtonText>command3</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand4" priority="000" type="Button"><Strings><ButtonText>command4</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand5" priority="000" type="Button"><Strings><ButtonText>command5</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand6" priority="000" type="Button"><Strings><ButtonText>command6</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand7" priority="000" type="Button"><Strings><ButtonText>command7</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand8" priority="000" type="Button"><Strings><ButtonText>command8</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand9" priority="000" type="Button"><Strings><ButtonText>command9</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand1" priority="00" type="Button"><Strings><ButtonText>command1</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand2" priority="01" type="Button"><Strings><ButtonText>command2</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand3" priority="02" type="Button"><Strings><ButtonText>command3</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand4" priority="03" type="Button"><Strings><ButtonText>command4</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand5" priority="04" type="Button"><Strings><ButtonText>command5</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand6" priority="05" type="Button"><Strings><ButtonText>command6</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand7" priority="06" type="Button"><Strings><ButtonText>command7</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand8" priority="07" type="Button"><Strings><ButtonText>command8</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand9" priority="08" type="Button"><Strings><ButtonText>command9</ButtonText></Strings></Button>
 
     </Buttons>
 

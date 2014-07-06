@@ -20,64 +20,55 @@ namespace ManagementTest
     {
         #region Initialization
 
+        private MacroFSNode fileNode;
+        private MacroFSNode directoryNode;
+
         [TestMethod]
         public void Constructor_InitializesNode()
         {
-            MacroFSNode node = this.CreateFileNode();
-
-            Assert.AreEqual(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js"), node.FullPath);
-            Assert.IsFalse(node.IsEditable);
+            Assert.AreEqual(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js"), fileNode.FullPath);
+            Assert.IsFalse(fileNode.IsEditable);
         }
 
         [TestMethod]
         public void Directory_Has_IsDirectory_SetToTrue()
         {
-            MacroFSNode node = this.CreateDirectoryNode();
-
-            Assert.IsTrue(node.IsDirectory);
+            Assert.IsTrue(directoryNode.IsDirectory);
         }
 
         [TestMethod]
         public void File_Has_IsDirectory_SetToFalse()
         {
-            MacroFSNode node = this.CreateFileNode();
-
-            Assert.IsFalse(node.IsDirectory);
+            Assert.IsFalse(fileNode.IsDirectory);
         }
 
         [TestMethod]
         public void Name_IsFileNameWithoutExtensionFor_FullPath()
         {
-            MacroFSNode node = this.CreateFileNode();
-
-            Assert.AreEqual(Path.GetFileNameWithoutExtension(node.FullPath), node.Name);
+            Assert.AreEqual(Path.GetFileNameWithoutExtension(fileNode.FullPath), fileNode.Name);
         }
 
         #endregion
 
         #region Properties
 
-        [TestMethod]
+        [Ignore]
         public void Shortcut_IsBoundToNode()
         {
-            MacroFSNode node = this.CreateFileNode();
-
-            // node.Shortcut is initially empty
-            // Assert.AreEqual(string.Empty, node.Shortcut);
-            //
-            // TODO Testing with static instances seems complicated - talk with Ryan about that
-            // Manager.Instance.Shortcuts[1] = node.FullPath;
-            //
-            // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut
-            // Assert.AreEqual("(CTRL+M, 1)", node.Shortcut);
+             // node.Shortcut is initially empty
+             Assert.AreEqual(string.Empty, fileNode.Shortcut);
+            
+             // TODO Testing with static instances seems complicated - talk with Ryan about that
+             Manager.Instance.Shortcuts[1] = fileNode.FullPath;
+            
+             // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut
+             Assert.AreEqual("(CTRL+M, 1)", fileNode.Shortcut);
         }
 
         [TestMethod]
         public void Children_ShouldNotBeEmpty()
         {
-            MacroFSNode node = this.CreateDirectoryNode();
-
-            Assert.AreEqual(5, node.Children.Count);
+            Assert.AreEqual(5, directoryNode.Children.Count);
         }
 
         #endregion
@@ -85,39 +76,34 @@ namespace ManagementTest
         #region NotifyPropertyChanged
 
         // When the name is changed, both the Name and the FullPath properties should be updated
-        [TestMethod]
+        [Ignore]
         public void Name_NotifiesOnChange()
         {
-            MacroFSNode node = this.CreateFileNode();
-
             List<string> receivedEvents = new List<string>();
-            node.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            fileNode.PropertyChanged += (sender, e) =>
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Change the name of the node
-            node.Name = "Another Name";
+            fileNode.Name = "Another Name";
 
             // Two event are fired
-            Assert.AreEqual(2, receivedEvents.Count);
-            Assert.AreEqual("FullPath", receivedEvents[0]);
-            Assert.AreEqual("Name", receivedEvents[1]);
+            List<string> expected = new List<string> { "FullPath", "Name" };
+            CollectionAssert.AreEquivalent(expected, receivedEvents);
         }
 
         [TestMethod]
         public void Shortcut_NotifiesOnChange()
         {
-            MacroFSNode node = this.CreateFileNode();
-
             string receivedEvent = string.Empty;
-            node.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvent = e.PropertyName;
             };
 
             // Select the node
-            node.Shortcut = string.Empty;
+            fileNode.Shortcut = string.Empty;
 
             // Only one event should have been fired
             Assert.AreEqual("Shortcut", receivedEvent);
@@ -126,22 +112,20 @@ namespace ManagementTest
         [TestMethod]
         public void IsEditable_NotifiesOnChange()
         {
-            MacroFSNode node = this.CreateFileNode();
-
             // By default, the node should not be selected
-            Assert.IsFalse(node.IsEditable);
+            Assert.IsFalse(fileNode.IsEditable);
 
             List<string> receivedEvents = new List<string>();
-            node.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Select the node
-            node.IsEditable = true;
+            fileNode.IsEditable = true;
 
             // Node should now be selected
-            Assert.IsTrue(node.IsEditable);
+            Assert.IsTrue(fileNode.IsEditable);
 
             // Only one event should have been fired
             Assert.AreEqual(1, receivedEvents.Count);
@@ -151,22 +135,20 @@ namespace ManagementTest
         [TestMethod]
         public void IsSelected_NotifiesOnChange()
         {
-            MacroFSNode node = this.CreateFileNode();
-
             // By default, the node should not be selected
-            Assert.IsFalse(node.IsSelected);
+            Assert.IsFalse(fileNode.IsSelected);
 
             List<string> receivedEvents = new List<string>();
-            node.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Select the node
-            node.IsSelected = true;
+            fileNode.IsSelected = true;
 
             // Node should now be selected
-            Assert.IsTrue(node.IsSelected);
+            Assert.IsTrue(fileNode.IsSelected);
             
             // Only one event should have been fired
             Assert.AreEqual(1, receivedEvents.Count);
@@ -177,16 +159,14 @@ namespace ManagementTest
         [TestMethod]
         public void IsExpanded_NotifiesOnChange()
         {
-            MacroFSNode node = this.CreateFileNode();
-
             List<string> receivedEvents = new List<string>();
-            node.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Expand the node
-            node.IsExpanded = true;
+            fileNode.IsExpanded = true;
 
             // Two event are fired
             Assert.AreEqual(2, receivedEvents.Count);
@@ -198,41 +178,45 @@ namespace ManagementTest
 
         #region Helpers
 
-        private MacroFSNode CreateFileNode()
+        [TestInitialize]
+        public void CreateFileSystemNodes()
         {
+            // Create a file MacroFSNode
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js");
 
             if (!File.Exists(path))
             {
-                var myFile = File.Create(path);
-                myFile.Close();
+                File.Create(path).Close();
             }
 
-            return new MacroFSNode(path);
-        }
+            fileNode = new MacroFSNode(path);
 
-        private MacroFSNode CreateDirectoryNode()
-        {
-            // Create a folder
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
+            // Create a directory MacroFSNode
 
-            // Delete everything in the folder
-            Directory.Delete(path, true);
-
-            // Recreate the folder, empty
+            path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
             Directory.CreateDirectory(path);
 
-            MacroFSNode dir = new MacroFSNode(path);
+            this.directoryNode = new MacroFSNode(path);
 
             // Add 5 files to the folder
             for (int i = 0; i < 5; i++)
             {
                 path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros", i + ".js");
-                var myFile = File.Create(path);
-                myFile.Close();
+                File.Create(path).Close();
             }
+        }
 
-            return dir;
+        [TestCleanup]
+        public void CleanUpFileSystem()
+        {
+            if (File.Exists(fileNode.FullPath))
+            {
+                File.Delete(fileNode.FullPath);
+            }
+            if (Directory.Exists(directoryNode.FullPath))
+            {
+                Directory.Delete(directoryNode.FullPath, true);
+            }
         }
 
         #endregion

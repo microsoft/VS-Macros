@@ -88,6 +88,60 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assign To.
+        /// </summary>
+        internal static string DialogAssignTo {
+            get {
+                return ResourceManager.GetString("DialogAssignTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not retrieve command index from selection..
+        /// </summary>
+        internal static string DialogCannotRetrieveCommandIndex {
+            get {
+                return ResourceManager.GetString("DialogCannotRetrieveCommandIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assign custom keyboard shortcut.
+        /// </summary>
+        internal static string DialogCustomShortcut {
+            get {
+                return ResourceManager.GetString("DialogCustomShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string DialogMacroName {
+            get {
+                return ResourceManager.GetString("DialogMacroName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
+        /// </summary>
+        internal static string DialogShortcutAlreadyUsed {
+            get {
+                return ResourceManager.GetString("DialogShortcutAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Predefined Keyboard Shortcuts.
+        /// </summary>
+        internal static string DialogShortcutSelectionText {
+            get {
+                return ResourceManager.GetString("DialogShortcutSelectionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string ExitCaption {
@@ -177,15 +231,6 @@ namespace VSMacros {
         internal static string SearchWithinFileContents {
             get {
                 return ResourceManager.GetString("SearchWithinFileContents", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
-        /// </summary>
-        internal static string ShortcutAlreadyUsed {
-            get {
-                return ResourceManager.GetString("ShortcutAlreadyUsed", resourceCulture);
             }
         }
         

@@ -84,14 +84,16 @@ namespace VSMacros.Models
 
             set
             {
-                // If new name is not empty
-                if (!string.IsNullOrEmpty(value))
+                try
                 {
-                    string oldFullPath = this.FullPath;
-                    string newFullPath = Path.Combine(Path.GetDirectoryName(this.FullPath), value + Path.GetExtension(this.FullPath));
+                    // Path.GetFullPath will throw an exception if the path is invalid
+                    Path.GetFileName(value);
 
-                    try
+                    if (value != this.Name)
                     {
+                        string oldFullPath = this.FullPath;
+                        string newFullPath = Path.Combine(Path.GetDirectoryName(this.FullPath), value + Path.GetExtension(this.FullPath));
+
                         // Update file system
                         if (this.IsDirectory)
                         {
@@ -111,13 +113,13 @@ namespace VSMacros.Models
                             Manager.Instance.Shortcuts[this.Shortcut[this.Shortcut.Length - 1]] = newFullPath;
                         }
                     }
-                    catch (Exception e)
+                }
+                catch (Exception e)
+                {
+                    if (e.Message != null)
                     {
-                        if (e.Message != null)
-                        {
-                            // TODO export VSMacros.Engines.Manager.Instance.ShowMessageBox to a helper class?
-                            VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
-                        }
+                        // TODO export VSMacros.Engines.Manager.Instance.ShowMessageBox to a helper class?
+                        VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
                     }
                 }
             }
@@ -236,7 +238,10 @@ namespace VSMacros.Models
 
                 if (this.IsExpanded)
                 {
-                    enabledDirectories.Add(this.FullPath);
+                    if (this.IsDirectory)
+                    {
+                        enabledDirectories.Add(this.FullPath);
+                    }
 
                     // Expand parent as well
                     if (this.parent != null)
@@ -246,7 +251,10 @@ namespace VSMacros.Models
                 }
                 else
                 {
-                    enabledDirectories.Remove(this.FullPath);
+                    if (this.IsDirectory)
+                    {
+                        enabledDirectories.Remove(this.FullPath);
+                    }
                 }
 
                 this.NotifyPropertyChanged("IsExpanded");
@@ -279,6 +287,14 @@ namespace VSMacros.Models
                 }
 
                 this.NotifyPropertyChanged("IsMatch");
+            }
+        }
+
+        public bool IsNotRoot
+        {
+            get
+            {
+                return this != MacroFSNode.RootNode;
             }
         }
 

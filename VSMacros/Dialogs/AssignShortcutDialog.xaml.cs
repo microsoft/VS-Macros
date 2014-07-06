@@ -25,7 +25,12 @@ namespace VSMacros.Dialogs
 
         public AssignShortcutDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
+            // Set the text of the fields
+            this.AssignToLabel.Content = VSMacros.Resources.DialogAssignTo;
+            this.shortcutsComboBox.Text = VSMacros.Resources.DialogShortcutSelectionText;
+            this.CustomShortcutButton.Content = VSMacros.Resources.DialogCustomShortcut;
 
             // Set default values for public members
             this.SelectedShortcutNumber = 0;
@@ -73,7 +78,7 @@ namespace VSMacros.Dialogs
                 {
                     // If a child dependency object is invalid, return false immediately, 
                     // otherwise keep checking 
-                    if (this.IsValid((DependencyObject)subnode) == false) return false;
+                    if (!this.IsValid((DependencyObject)subnode)) { return false; }
                 }
             }
 
@@ -106,7 +111,7 @@ namespace VSMacros.Dialogs
                     if (willOverwrite)
                     {
                         this.ShouldRefreshFileSystem = true;
-                        this.warningTextBlock.Text = VSMacros.Resources.ShortcutAlreadyUsed;
+                        this.warningTextBlock.Text = VSMacros.Resources.DialogShortcutAlreadyUsed;
                     }
                     else
                     {
@@ -123,7 +128,7 @@ namespace VSMacros.Dialogs
             int number;
             if (!int.TryParse(str[str.Length - 1].ToString(), out number))
             {
-                throw new Exception("Could not retrieve command index from selection.");
+                throw new FormatException(VSMacros.Resources.DialogCannotRetrieveCommandIndex);
             }
 
             return number;

@@ -126,6 +126,24 @@
   <data name="DeleteMacro" xml:space="preserve">
     <value>'{0}' will be sent to the recycle bin.</value>
   </data>
+  <data name="DialogAssignTo" xml:space="preserve">
+    <value>Assign To</value>
+  </data>
+  <data name="DialogCannotRetrieveCommandIndex" xml:space="preserve">
+    <value>Could not retrieve command index from selection.</value>
+  </data>
+  <data name="DialogCustomShortcut" xml:space="preserve">
+    <value>Assign custom keyboard shortcut</value>
+  </data>
+  <data name="DialogMacroName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DialogShortcutAlreadyUsed" xml:space="preserve">
+    <value>Shortcut already used. Overwrite?</value>
+  </data>
+  <data name="DialogShortcutSelectionText" xml:space="preserve">
+    <value>Predefined Keyboard Shortcuts</value>
+  </data>
   <data name="ExitCaption" xml:space="preserve">
     <value>Warning</value>
   </data>
@@ -156,9 +174,6 @@
   </data>
   <data name="SearchWithinFileContents" xml:space="preserve">
     <value>Search within file contents</value>
-  </data>
-  <data name="ShortcutAlreadyUsed" xml:space="preserve">
-    <value>Shortcut already used. Overwrite?</value>
   </data>
   <data name="ShortcutIsInvalid" xml:space="preserve">
     <value>Selected shortcut is invalid.</value>

@@ -39,9 +39,12 @@ namespace VSMacros.Dialogs
             this.oldShortcut = (MacrosControl.Current.SelectedNode).Shortcut;
 
             // Set the text to the previous shortcut, if it exists
-            if (!string.IsNullOrEmpty(this.oldShortcut))
+            if (!string.IsNullOrEmpty(this.oldShortcut) && this.oldShortcut.Length >= 3)
             {
+                // this.oldShortcut has format "(CTRL+M,#)" -> remove the parentheses
                 this.shortcutsComboBox.Text = this.oldShortcut.Substring(1, this.oldShortcut.Length - 2);
+                
+                // last char should be the command number
                 this.SelectedShortcutNumber = this.GetLastCharAsInt(this.shortcutsComboBox.Text);
             }
         }

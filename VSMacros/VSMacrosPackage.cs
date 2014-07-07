@@ -201,7 +201,7 @@ namespace VSMacros
                         button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
                     }
                 }
-                catch (Exception menuButtonRemoved)
+                catch (ObjectDisposedException)
                 {
                     // Do nothing since the removed button does not need to change its image;
                 }
@@ -214,29 +214,34 @@ namespace VSMacros
             {
                 if (this.imageButtons == null)
                 {
-                    List<CommandBarButton> buttons = new List<CommandBarButton>();
-                    this.imageButtons = this.AddMenuButton(buttons);
+                    this.imageButtons = new List<CommandBarButton>();
+                    this.AddMenuButton();
                 }
                 return this.imageButtons;
             }
         }
 
-        private List<CommandBarButton> AddMenuButton(List<CommandBarButton> buttons)
+        private void AddMenuButton()
         {
-            List<CommandBarButton> buttonsList = buttons;
             DTE dte = (DTE)this.GetService(typeof(SDTE));
             CommandBar mainMenu = ((CommandBars)dte.CommandBars)["MenuBar"];
             CommandBarPopup toolMenu = (CommandBarPopup)mainMenu.Controls["Tools"];
             CommandBarPopup macroMenu = (CommandBarPopup)toolMenu.Controls["Macros"];
             if (macroMenu != null)
             {
-                CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
-                if (startButton != null)
+                try
                 {
-                    buttons.Add(startButton);
+                    CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
+                    if (startButton != null)
+                    {
+                        this.imageButtons.Add(startButton);
+                    }
+                }
+                catch (ArgumentException)
+                {
+                    // nothing to do
                 }
             }
-            return buttonsList;
         }
 
         private BitmapSource StartIcon

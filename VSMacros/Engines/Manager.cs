@@ -83,7 +83,7 @@ namespace VSMacros.Engines
             }
 
             Executor executor = new Executor();
-            executor.StartExecution(path, 1);
+            executor.StartExecution(new StreamReader(path), 1);
         }
 
         public void StopPlayback() 

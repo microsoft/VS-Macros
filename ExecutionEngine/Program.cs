@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VisualStudio.Macros.ExecutionEngine.Stubs;
 using VSMacros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Helpers;
 
 namespace ExecutionEngine
 {
@@ -24,44 +25,7 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        private static string macroName = "currentScript";
-        //public static NamedPipeClientStream clientStream;
-
-        private static string[] SeparateArgs(string[] args)
-        {
-            string[] stringSeparator = new string[] {"[delimiter]"};
-            string[] separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
-            return separatedArgs;
-        }
-
-        private static short GetNumberOfIterations(string iter)
-        {
-            short iterations;
-
-            Validate.IsNotNullAndNotEmpty(iter, "iter");
-
-            if (!short.TryParse(iter, out iterations))
-            {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Resources.InvalidIterationsArgument, iter, "iter"));
-            }
-
-            return iterations;
-        }
-
-        private static string ExtractScript(string path)
-        {
-            Validate.IsNotNullAndNotEmpty(path, "path");
-            return File.ReadAllText(path);
-        }
-
-        private static string WrapScript(string unwrapped)
-        {
-            string wrapped = "function currentScript() {";
-            wrapped += unwrapped;
-            wrapped += "}";
-
-            return wrapped;
-        }
+        private const string macroName = "currentScript";
 
         internal static void RunMacro(string script, int iterations = 1)
         {
@@ -80,38 +44,17 @@ namespace ExecutionEngine
             string unparsedIter = separatedArgs[1];
             string encodedPath = separatedArgs[2];
 
-            int pid = GetPid(unparsedPid);
-            short iterations = GetNumberOfIterations(unparsedIter);
-            string decodedPath = DecodePath(encodedPath);
-            string unwrappedScript = ExtractScript(decodedPath);
-            string wrappedScript = WrapScript(unwrappedScript);
+            int pid = InputParser.GetPid(unparsedPid);
+            short iterations = InputParser.GetNumberOfIterations(unparsedIter);
+            string decodedPath = InputParser.DecodePath(encodedPath);
+            string unwrappedScript = InputParser.ExtractScript(decodedPath);
+            string wrappedScript = InputParser.WrapScript(unwrappedScript);
 
             Program.engine = new Engine(pid);
             var unwrapped = Script.CreateScriptStub();
-            var wrapped = WrapScript(unwrapped);
+            var wrapped = InputParser.WrapScript(unwrapped);
 
-            //Console.WriteLine("running the wrapped scdript");
             RunMacro(wrapped, iterations);
-        }
-
-        private static int GetPid(string unparsedPid)
-        {
-            int pid;
-
-            Validate.IsNotNullAndNotEmpty(unparsedPid, "unparsedPid");
-
-            if (!int.TryParse(unparsedPid, out pid))
-            {
-                MessageBox.Show("The pid is invalid.");
-                throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Resources.InvalidPIDArgument, unparsedPid, "unparsedPid"));
-            }
-
-            return pid;
-        }
-
-        private static string DecodePath(string encodedPath)
-        {
-            return encodedPath.Replace("%20", " ");
         }
 
         internal static void RunAsStartupProject()
@@ -123,7 +66,7 @@ namespace ExecutionEngine
 
             Debug.WriteLine("Warning: Hardcoded path");
             string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
-            string wrapped = WrapScript(unwrapped);
+            string wrapped = InputParser.WrapScript(unwrapped);
             //Console.WriteLine("wrapped is: " + wrapped);
 
             RunMacro(wrapped, 1);
@@ -135,14 +78,14 @@ namespace ExecutionEngine
 
             if (args.Length > 0)
             {
-                string[] separatedArgs = SeparateArgs(args);
+                string[] separatedArgs = InputParser.SeparateArgs(args);
 
                 if (separatedArgs[0] == "@")
                 {
                     Console.WriteLine("Initializing the engine and the pipes");
                     string guid = separatedArgs[1];
                     Console.WriteLine("guid is: " + guid);
-                    int pid = GetPid(separatedArgs[2]);
+                    int pid = InputParser.GetPid(separatedArgs[2]);
                     Console.WriteLine("pid is: " + pid);
                     // TODO: Check if guid is null
 
@@ -157,8 +100,8 @@ namespace ExecutionEngine
                         {
                             int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
                             string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
-                            string unwrappedScript = ExtractScript(filePath);
-                            string wrappedScript = WrapScript(unwrappedScript);
+                            string unwrappedScript = InputParser.ExtractScript(filePath);
+                            string wrappedScript = InputParser.WrapScript(unwrappedScript);
                             RunMacro(wrappedScript, iterations: 1);
                         }
                     });

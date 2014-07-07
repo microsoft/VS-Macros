@@ -54,6 +54,7 @@
     <Compile Include="Enums\ScriptText.cs" />
     <Compile Include="Enums\ScriptThreadState.cs" />
     <Compile Include="Helpers\ErrorHandler.cs" />
+    <Compile Include="Helpers\InputParser.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="ParsedScript.cs" />
     <Compile Include="Parser.cs" />

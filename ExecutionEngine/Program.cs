@@ -21,6 +21,8 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         private const string macroName = "currentScript";
+        private const string close = "close";
+        private static bool exit;
 
         internal static void RunMacro(string script, int iterations = 1)
         {
@@ -66,6 +68,76 @@ namespace ExecutionEngine
             RunMacro(wrapped, 1);
         }
 
+        internal static string GetMacroFromStream()
+        {
+            int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
+            string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
+            string unwrappedScript = InputParser.ExtractScript(filePath);
+            string wrappedScript = InputParser.WrapScript(unwrappedScript);
+
+            return wrappedScript;
+        }
+
+        internal static void RunMacroAsThread(out Thread readThread, int pid)
+        {
+            Program.exit = false;
+            readThread = new Thread(() =>
+            {
+                try
+                {
+                    Program.engine = new Engine(pid);
+                    while (!Program.exit)
+                    {
+                        string script = GetMacroFromStream();
+                        RunMacro(script, iterations: 1);
+                    }
+                }
+                catch (Exception e)
+                {
+                    var errorMessage = string.Format("An error occurred: {0}", e.Message);
+                    MessageBox.Show(errorMessage);
+                    Client.ShutDownServer(Client.ClientStream, close);
+                    Client.ClientStream.Close();
+                    Program.exit = true;
+                }
+            });
+        }
+
+        private static void SendMessageToServer()
+        {
+            Console.Write("\n>> ");
+            string line = Console.ReadLine();
+            if (line.ToLower() == "close")
+            {
+                Client.ShutDownServer(Client.ClientStream, close);
+                Program.exit = true;
+            }
+
+            byte[] message = Client.PackageMessage(line);
+            Client.SendMessageToServer(Client.ClientStream, message);
+        } 
+
+        private static void RunFromPipe(string[] separatedArgs)
+        {
+            Console.WriteLine("Initializing the engine and the pipes");
+            string guid = separatedArgs[1];
+            Console.WriteLine("guid is: " + guid);
+            int pid = InputParser.GetPid(separatedArgs[2]);
+            Console.WriteLine("pid is: " + pid);
+            // TODO: Check if guid is null
+
+            Client.InitializePipeClientStream(guid);
+
+            Thread readMacroFromStream;
+            RunMacroAsThread(out readMacroFromStream, pid);
+            readMacroFromStream.Start();
+
+            while (!Program.exit)
+            {
+                //SendMessageToServer();
+            }
+        }
+
         internal static void Main(string[] args)
         {
             try
@@ -74,64 +146,17 @@ namespace ExecutionEngine
 
                 if (args.Length > 0)
                 {
+                    var pipeToken = "@";
                     string[] separatedArgs = InputParser.SeparateArgs(args);
 
-                    if (separatedArgs[0] == "@")
+                    if (separatedArgs[0].Equals(pipeToken))
                     {
-                        Console.WriteLine("Initializing the engine and the pipes");
-                        string guid = separatedArgs[1];
-                        Console.WriteLine("guid is: " + guid);
-                        int pid = InputParser.GetPid(separatedArgs[2]);
-                        Console.WriteLine("pid is: " + pid);
-                        // TODO: Check if guid is null
-
-                        //MessageBox.Show("set breakpoint here");
-                        Client.InitializePipeClientStream(guid);
-
-                        bool exit = false;
-                        Thread readThread = new Thread(() =>
-                        {
-                            try
-                            {
-                                Program.engine = new Engine(pid);
-                                while (!exit)
-                                {
-                                    int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
-                                    string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
-                                    string unwrappedScript = InputParser.ExtractScript(filePath);
-                                    string wrappedScript = InputParser.WrapScript(unwrappedScript);
-                                    RunMacro(wrappedScript, iterations: 1);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                var errorMessage = string.Format("An error occurred: {0}", e.Message);
-                                MessageBox.Show(errorMessage);
-                            }
-                        });
-
-                        readThread.Start();
-
-                        while (true)
-                        {
-                            Console.Write("\n>> ");
-                            string line = Console.ReadLine();
-                            if (line.ToLower() == "close")
-                            {
-                                Client.ShutDownServer(Client.ClientStream, line);
-                                break;
-                            }
-
-                            byte[] message = Client.PackageMessage(line);
-                            Client.SendMessageToServer(Client.ClientStream, message);
-                        }
-                        Client.ClientStream.Close();
-                        exit = true;
+                        Console.WriteLine("running macro from pipe");
+                        RunFromPipe(separatedArgs);
                     }
                     else
                     {
-                        Console.WriteLine("Running macro as normal");
-                        //MessageBox.Show("Attach debugger here");
+                        Console.WriteLine("running macro from extension");
                         RunFromExtension(separatedArgs);
                     }
                 }
@@ -146,6 +171,6 @@ namespace ExecutionEngine
                 var errorMessage = string.Format("An error occurred: {0}", e.Message);
                 MessageBox.Show(errorMessage);
             }
-        } 
+        }
     }
 }

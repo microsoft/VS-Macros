@@ -63,15 +63,19 @@ namespace VSMacros.Engines
             }
 
             var executor = new Executor();
+            var enablePipes = true;
 
-            if (!Executor.IsEngineInitialized)
+            if (enablePipes)
             {
-                executor.InitializeEngine();
-                // TODO: eventually we'll want to run the macro here as well
+                if (!Executor.IsEngineInitialized)
+                {
+                    executor.InitializeEngine();
+                }
+                executor.RunEngine(path);
             }
             else
             {
-                executor.Shenanigans(path);
+                executor.StartExecution(path, 1);
             }
         }
 

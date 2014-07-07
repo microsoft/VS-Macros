@@ -34,6 +34,12 @@ namespace VSMacros.ExecutionEngine.Helpers
             return pid;
         }
 
+        internal static string GetGuid(string guid)
+        {
+            Validate.IsNotNullAndNotEmpty(guid, "guid");
+            return guid;
+        }
+
         internal static string DecodePath(string encodedPath)
         {
             return encodedPath.Replace("%20", " ");

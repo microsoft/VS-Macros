@@ -30,6 +30,7 @@ namespace VSMacros.Engines
         private Process executionEngine;
         public static bool IsEngineInitialized = false;
         public static bool IsServerInitialized = false;
+        private static bool enablePipes = false;
 
         /// <summary>
         /// Informs subscribers of an error during execution.
@@ -40,6 +41,7 @@ namespace VSMacros.Engines
         {
             string pid = Process.GetCurrentProcess().Id.ToString();
             var delimiter = "[delimiter]";
+            //path = string.Replac
             return pid + delimiter + iterations.ToString() + delimiter + path;
         }
 
@@ -61,11 +63,13 @@ namespace VSMacros.Engines
         public void InitializeEngine()
         {
             Debug.WriteLine("Initializing the engine");
+            string processName;
+  
             Server.InitializeServer();
             var client = new System.Diagnostics.Process();
 
             Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
-            var processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
+            processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
             //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
 
             client.StartInfo.FileName = processName;
@@ -79,12 +83,11 @@ namespace VSMacros.Engines
             Server.serverWait = new Thread(new ThreadStart(Server.WaitForMessage));
             Server.serverWait.Start();
 
-            //myThread.Abort();
 
             Executor.IsEngineInitialized = true;
         }
 
-        public void Shenanigans(string path)
+        public void RunEngine(string path)
         {
             if (Server.ServerStream.IsConnected)
             {

@@ -48,7 +48,7 @@ namespace ExecutionEngine
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
 
             Program.engine = new Engine(pid);
-            var unwrapped = Script.CreateScriptStub();
+            var unwrapped = InputParser.ExtractScript(decodedPath);
             var wrapped = InputParser.WrapScript(unwrapped);
 
             RunMacro(wrapped, iterations);
@@ -120,11 +120,8 @@ namespace ExecutionEngine
         private static void RunFromPipe(string[] separatedArgs)
         {
             Console.WriteLine("Initializing the engine and the pipes");
-            string guid = separatedArgs[1];
-            Console.WriteLine("guid is: " + guid);
+            string guid = InputParser.GetGuid(separatedArgs[1]);
             int pid = InputParser.GetPid(separatedArgs[2]);
-            Console.WriteLine("pid is: " + pid);
-            // TODO: Check if guid is null
 
             Client.InitializePipeClientStream(guid);
 
@@ -132,18 +129,18 @@ namespace ExecutionEngine
             RunMacroAsThread(out readMacroFromStream, pid);
             readMacroFromStream.Start();
 
-            while (!Program.exit)
-            {
+            //while (!Program.exit)
+            //{
                 //SendMessageToServer();
-            }
+            //}
         }
 
         internal static void Main(string[] args)
         {
+            Console.WriteLine("Hello there!  Welcome to our macro extension!");
+
             try
             {
-                Console.WriteLine("Hello there!  Welcome to our macro extension!");
-
                 if (args.Length > 0)
                 {
                     var pipeToken = "@";
@@ -166,6 +163,7 @@ namespace ExecutionEngine
                     RunAsStartupProject();
                 }
             }
+
             catch (Exception e)
             {
                 var errorMessage = string.Format("An error occurred: {0}", e.Message);

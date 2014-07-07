@@ -48,7 +48,7 @@ namespace VSMacros.Pipes
                 int sizeOfMessage = Server.GetSizeOfMessageFromStream(Server.ServerStream);
                 string message = Server.GetMessageFromStream(Server.ServerStream, sizeOfMessage);
 
-                Debug.WriteLine(string.Format("\nclient said: {0}", message));
+                //Debug.WriteLine(string.Format("\nclient said: {0}", message));
 
                 if (message.ToLower().Equals("close"))
                 {

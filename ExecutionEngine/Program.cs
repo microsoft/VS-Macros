@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VisualStudio.Macros.ExecutionEngine.Stubs;
 using VSMacros.ExecutionEngine;
 
@@ -24,7 +25,7 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         private static string macroName = "currentScript";
-        public static NamedPipeClientStream clientStream;
+        //public static NamedPipeClientStream clientStream;
 
         private static string[] SeparateArgs(string[] args)
         {
@@ -89,7 +90,7 @@ namespace ExecutionEngine
             var unwrapped = Script.CreateScriptStub();
             var wrapped = WrapScript(unwrapped);
 
-            Console.WriteLine("running the wrapped scdript");
+            //Console.WriteLine("running the wrapped scdript");
             RunMacro(wrapped, iterations);
         }
 
@@ -123,7 +124,7 @@ namespace ExecutionEngine
             Debug.WriteLine("Warning: Hardcoded path");
             string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
             string wrapped = WrapScript(unwrapped);
-            Console.WriteLine("wrapped is: " + wrapped);
+            //Console.WriteLine("wrapped is: " + wrapped);
 
             RunMacro(wrapped, 1);
         }
@@ -146,7 +147,7 @@ namespace ExecutionEngine
                     // TODO: Check if guid is null
 
                     //MessageBox.Show("set breakpoint here");
-                    clientStream = InitializePipeClientStream(guid);
+                    Client.InitializePipeClientStream(guid);
 
                     bool exit = false;
                     Thread readThread = new Thread(() => 
@@ -154,11 +155,10 @@ namespace ExecutionEngine
                         Program.engine = new Engine(pid);
                         while(!exit)
                         {
-                            int sizeOfFilePath = GetSizeOfMessageFromStream(clientStream);
-                            string filePath = GetMessageFromStream(clientStream, sizeOfFilePath);
+                            int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
+                            string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
                             string unwrappedScript = ExtractScript(filePath);
                             string wrappedScript = WrapScript(unwrappedScript);
-                            Console.WriteLine("wrapped script is: " + wrappedScript);
                             RunMacro(wrappedScript, iterations: 1);
                         }
                     });
@@ -171,14 +171,14 @@ namespace ExecutionEngine
                         string line = Console.ReadLine();
                         if (line.ToLower() == "close")
                         {
-                            ShutDownServer(clientStream, line);
+                            Client.ShutDownServer(Client.ClientStream, line);
                             break;
                         }
 
-                        byte[] message = PackageMessage(line);
-                        SendMessageToServer(clientStream, message);
+                        byte[] message = Client.PackageMessage(line);
+                        Client.SendMessageToServer(Client.ClientStream, message);
                     }
-                    clientStream.Close();
+                    Client.ClientStream.Close();
                     exit = true;
                 }
                 else
@@ -193,69 +193,6 @@ namespace ExecutionEngine
                 Console.WriteLine("running as startup");
                 RunAsStartupProject();   
             }
-        }
-
-        private static string GetMessageFromStream(NamedPipeClientStream clientStream, int sizeOfMessage)
-        {
-            byte[] messageBuffer = new byte[sizeOfMessage];
-            clientStream.Read(messageBuffer, 0, sizeOfMessage);
-            return UnicodeEncoding.Unicode.GetString(messageBuffer);
-        }
-
-        private static int GetSizeOfMessageFromStream(NamedPipeClientStream clientStream)
-        {
-            int intSize = sizeof(int);
-            byte[] sizeBuffer = new byte[intSize];
-            clientStream.Read(sizeBuffer, 0, intSize);
-            return BitConverter.ToInt32(sizeBuffer, 0);
-        }
-
-        private static void SendMessageToServer(NamedPipeClientStream clientStream, byte[] packet)
-        {
-            clientStream.Write(packet, 0, packet.Length);
-        }
-
-        private static byte[] PackageMessage(string line)
-        {
-            byte[] messageBuffer = UnicodeEncoding.Unicode.GetBytes(line);
-            int messageSize = messageBuffer.Length;
-            byte[] sizeBuffer = BitConverter.GetBytes(messageSize);
-
-            int intSize = sizeof(int);
-            byte[] packet = new byte[intSize + messageSize];
-            sizeBuffer.CopyTo(packet, 0);
-
-            int offset = intSize;
-            messageBuffer.CopyTo(packet, offset);
-
-            return packet;
-        }
-
-        private static void ShutDownServer(NamedPipeClientStream clientStream, string line)
-        {
-            byte[] close = PackageMessage("close");
-            SendMessageToServer(clientStream, close);
-        }
-
-        private static NamedPipeClientStream InitializePipeClientStream(string guid)
-        {
-            NamedPipeClientStream clientStream = new NamedPipeClientStream(".", guid, PipeDirection.InOut, PipeOptions.Asynchronous);
-            clientStream.Connect(120000); // is that unreasonable
-            return clientStream;
-        }
-
-        private static string ExtractGuid(string arg)
-        {
-            return arg.Substring(1);
-        }
-
-        private static void CreateClientPipe(string guid)
-        {
-            //TODO: This should probably be its own class
-            clientStream = new NamedPipeClientStream(guid);
-            Console.WriteLine(string.Format("guid of client string is: {0}", guid));
-            clientStream.Connect(120);
-            Console.WriteLine("connected");
         }
     }
 }

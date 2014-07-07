@@ -6,12 +6,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.IO.Pipes;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
@@ -67,75 +62,90 @@ namespace ExecutionEngine
             Debug.WriteLine("Warning: Hardcoded path");
             string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
             string wrapped = InputParser.WrapScript(unwrapped);
-            //Console.WriteLine("wrapped is: " + wrapped);
 
             RunMacro(wrapped, 1);
         }
 
         internal static void Main(string[] args)
         {
-            Console.WriteLine("Hello there!  Welcome to our macro extension!");
-
-            if (args.Length > 0)
+            try
             {
-                string[] separatedArgs = InputParser.SeparateArgs(args);
+                Console.WriteLine("Hello there!  Welcome to our macro extension!");
 
-                if (separatedArgs[0] == "@")
+                if (args.Length > 0)
                 {
-                    Console.WriteLine("Initializing the engine and the pipes");
-                    string guid = separatedArgs[1];
-                    Console.WriteLine("guid is: " + guid);
-                    int pid = InputParser.GetPid(separatedArgs[2]);
-                    Console.WriteLine("pid is: " + pid);
-                    // TODO: Check if guid is null
+                    string[] separatedArgs = InputParser.SeparateArgs(args);
 
-                    //MessageBox.Show("set breakpoint here");
-                    Client.InitializePipeClientStream(guid);
-
-                    bool exit = false;
-                    Thread readThread = new Thread(() => 
+                    if (separatedArgs[0] == "@")
                     {
-                        Program.engine = new Engine(pid);
-                        while(!exit)
+                        Console.WriteLine("Initializing the engine and the pipes");
+                        string guid = separatedArgs[1];
+                        Console.WriteLine("guid is: " + guid);
+                        int pid = InputParser.GetPid(separatedArgs[2]);
+                        Console.WriteLine("pid is: " + pid);
+                        // TODO: Check if guid is null
+
+                        //MessageBox.Show("set breakpoint here");
+                        Client.InitializePipeClientStream(guid);
+
+                        bool exit = false;
+                        Thread readThread = new Thread(() =>
                         {
-                            int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
-                            string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
-                            string unwrappedScript = InputParser.ExtractScript(filePath);
-                            string wrappedScript = InputParser.WrapScript(unwrappedScript);
-                            RunMacro(wrappedScript, iterations: 1);
-                        }
-                    });
+                            try
+                            {
+                                Program.engine = new Engine(pid);
+                                while (!exit)
+                                {
+                                    int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
+                                    string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
+                                    string unwrappedScript = InputParser.ExtractScript(filePath);
+                                    string wrappedScript = InputParser.WrapScript(unwrappedScript);
+                                    RunMacro(wrappedScript, iterations: 1);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                var errorMessage = string.Format("An error occurred: {0}", e.Message);
+                                MessageBox.Show(errorMessage);
+                            }
+                        });
 
-                    readThread.Start();
+                        readThread.Start();
 
-                    while (true)
-                    {
-                        Console.Write("\n>> ");
-                        string line = Console.ReadLine();
-                        if (line.ToLower() == "close")
+                        while (true)
                         {
-                            Client.ShutDownServer(Client.ClientStream, line);
-                            break;
-                        }
+                            Console.Write("\n>> ");
+                            string line = Console.ReadLine();
+                            if (line.ToLower() == "close")
+                            {
+                                Client.ShutDownServer(Client.ClientStream, line);
+                                break;
+                            }
 
-                        byte[] message = Client.PackageMessage(line);
-                        Client.SendMessageToServer(Client.ClientStream, message);
+                            byte[] message = Client.PackageMessage(line);
+                            Client.SendMessageToServer(Client.ClientStream, message);
+                        }
+                        Client.ClientStream.Close();
+                        exit = true;
                     }
-                    Client.ClientStream.Close();
-                    exit = true;
+                    else
+                    {
+                        Console.WriteLine("Running macro as normal");
+                        //MessageBox.Show("Attach debugger here");
+                        RunFromExtension(separatedArgs);
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Running macro as normal");
-                    //MessageBox.Show("Attach debugger here");
-                    RunFromExtension(separatedArgs);
+                    Console.WriteLine("running as startup");
+                    RunAsStartupProject();
                 }
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("running as startup");
-                RunAsStartupProject();   
+                var errorMessage = string.Format("An error occurred: {0}", e.Message);
+                MessageBox.Show(errorMessage);
             }
-        }
+        } 
     }
 }

@@ -12,6 +12,16 @@ namespace VSMacros.ExecutionEngine.Helpers
 {
     public static class InputParser
     {
+        internal static bool IsRequestToClose(string s)
+        {
+            return s[0] == '@';
+        }
+
+        internal static bool IsDebuggerStopped(string message)
+        {
+            return string.IsNullOrEmpty(message);
+        }
+
         internal static string[] SeparateArgs(string[] args)
         {
             string[] stringSeparator = new string[] { "[delimiter]" };

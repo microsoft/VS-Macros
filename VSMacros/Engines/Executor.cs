@@ -27,7 +27,7 @@ namespace VSMacros.Engines
         /// <summary>
         /// The execution engine.
         /// </summary>
-        private Process executionEngine;
+        public static Process executionEngine;
         public static bool IsEngineInitialized = false;
         public static bool IsServerInitialized = false;
         private static bool enablePipes = false;
@@ -66,23 +66,22 @@ namespace VSMacros.Engines
             string processName;
   
             Server.InitializeServer();
-            var client = new System.Diagnostics.Process();
+            Executor.executionEngine = new Process();
 
             Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
             processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
             //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
 
-            client.StartInfo.FileName = processName;
-            client.StartInfo.Arguments = ProvideClientArguments(Server.Guid);
+            Executor.executionEngine.StartInfo.FileName = processName;
+            Executor.executionEngine.StartInfo.Arguments = ProvideClientArguments(Server.Guid);
 
             Debug.WriteLine(string.Format("guid of server is: {0}", Server.Guid));
 
-            client.Start();
+            Executor.executionEngine.Start();
 
             Server.ServerStream.WaitForConnection();
             Server.serverWait = new Thread(new ThreadStart(Server.WaitForMessage));
             Server.serverWait.Start();
-
 
             Executor.IsEngineInitialized = true;
         }
@@ -98,6 +97,7 @@ namespace VSMacros.Engines
             else
             {
                 MessageBox.Show("The server is not connected.");
+                InitializeEngine();
             }
         }
 
@@ -112,12 +112,12 @@ namespace VSMacros.Engines
             var processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
             //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             var encodedPath = path.Replace(" ", "%20");
-            this.executionEngine = new Process();
-            this.executionEngine.StartInfo.FileName = processName;
-            this.executionEngine.StartInfo.UseShellExecute = false;
-            this.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, encodedPath);
-            Debug.WriteLine("arguments are: " + this.executionEngine.StartInfo.Arguments);
-            this.executionEngine.Start();
+            Executor.executionEngine = new Process();
+            Executor.executionEngine.StartInfo.FileName = processName;
+            Executor.executionEngine.StartInfo.UseShellExecute = false;
+            Executor.executionEngine.StartInfo.Arguments = ProvideArguments(iterations, encodedPath);
+            Debug.WriteLine("arguments are: " + Executor.executionEngine.StartInfo.Arguments);
+            Executor.executionEngine.Start();
         }
 
         /// <summary>

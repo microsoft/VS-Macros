@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MicrosoftCorporation.VSMacros.Pipes;
+using VSMacros.Engines;
 
 namespace VSMacros.Pipes
 {
@@ -44,14 +45,12 @@ namespace VSMacros.Pipes
 
             while (true)
             {
-
                 int sizeOfMessage = Server.GetSizeOfMessageFromStream(Server.ServerStream);
                 string message = Server.GetMessageFromStream(Server.ServerStream, sizeOfMessage);
 
-                //Debug.WriteLine(string.Format("\nclient said: {0}", message));
-
                 if (message.ToLower().Equals("close"))
                 {
+                    Executor.IsEngineInitialized = false;
                     break;
                 }
             }
@@ -59,13 +58,11 @@ namespace VSMacros.Pipes
 
         public static void SendMessage()
         {
-            string rawMessage = "Hello World";
+            string rawMessage = "@";
             byte[] message = PackageMessage(rawMessage);
 
             if (Server.ServerStream.IsConnected)
-            {
-                Debug.Write("message is: ");
-                
+            {   
                 for (int i = 0; i < message.Length; i++)
                 {
                     Debug.Write(message[i]);

@@ -26,7 +26,7 @@ namespace VisualStudio.Macros.ExecutionEngine.Pipes
             Console.WriteLine("connected");
         }
 
-        public static void ShutDownServer(NamedPipeClientStream clientStream, string line)
+        public static void ShutDownServer(NamedPipeClientStream clientStream)
         {
             byte[] close = PackageMessage("close");
             SendMessageToServer(clientStream, close);

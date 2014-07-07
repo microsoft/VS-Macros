@@ -68,14 +68,32 @@ namespace ExecutionEngine
             RunMacro(wrapped, 1);
         }
 
-        internal static string GetMacroFromStream()
+        private static void HandleInput()
         {
-            int sizeOfFilePath = Client.GetSizeOfMessageFromStream(Client.ClientStream);
-            string filePath = Client.GetMessageFromStream(Client.ClientStream, sizeOfFilePath);
-            string unwrappedScript = InputParser.ExtractScript(filePath);
-            string wrappedScript = InputParser.WrapScript(unwrappedScript);
+            int sizeOfMessage = Client.GetSizeOfMessageFromStream(Client.ClientStream);
+            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfMessage);
 
-            return wrappedScript;
+            if (InputParser.IsDebuggerStopped(message))
+            {
+                Client.ClientStream.Close();
+                Program.exit = true;
+            }
+
+            else
+            {
+                if (InputParser.IsRequestToClose(message))
+                {
+                    Client.ShutDownServer(Client.ClientStream);
+                    Client.ClientStream.Close();
+                    Program.exit = true;
+                }
+                else
+                {
+                    string unwrappedScript = InputParser.ExtractScript(message);
+                    string wrappedScript = InputParser.WrapScript(unwrappedScript);
+                    RunMacro(wrappedScript, iterations: 1);
+                }
+            }
         }
 
         internal static void RunMacroAsThread(out Thread readThread, int pid)
@@ -88,38 +106,23 @@ namespace ExecutionEngine
                     Program.engine = new Engine(pid);
                     while (!Program.exit)
                     {
-                        string script = GetMacroFromStream();
-                        RunMacro(script, iterations: 1);
+                        HandleInput();
                     }
                 }
                 catch (Exception e)
                 {
-                    var errorMessage = string.Format("An error occurred: {0}", e.Message);
+                    var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
                     MessageBox.Show(errorMessage);
-                    Client.ShutDownServer(Client.ClientStream, close);
+
+                    Client.ShutDownServer(Client.ClientStream);
                     Client.ClientStream.Close();
                     Program.exit = true;
                 }
             });
         }
 
-        private static void SendMessageToServer()
-        {
-            Console.Write("\n>> ");
-            string line = Console.ReadLine();
-            if (line.ToLower() == "close")
-            {
-                Client.ShutDownServer(Client.ClientStream, close);
-                Program.exit = true;
-            }
-
-            byte[] message = Client.PackageMessage(line);
-            Client.SendMessageToServer(Client.ClientStream, message);
-        } 
-
         private static void RunFromPipe(string[] separatedArgs)
         {
-            Console.WriteLine("Initializing the engine and the pipes");
             string guid = InputParser.GetGuid(separatedArgs[1]);
             int pid = InputParser.GetPid(separatedArgs[2]);
 
@@ -166,7 +169,7 @@ namespace ExecutionEngine
 
             catch (Exception e)
             {
-                var errorMessage = string.Format("An error occurred: {0}", e.Message);
+                var errorMessage = string.Format("This is in the giant try/catch block.  An error occurred: {0}: {1}", e.Message, e.GetBaseException());
                 MessageBox.Show(errorMessage);
             }
         }

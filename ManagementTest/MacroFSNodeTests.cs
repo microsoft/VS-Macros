@@ -56,13 +56,13 @@ namespace ManagementTest
         public void Shortcut_IsBoundToNode()
         {
              // node.Shortcut is initially empty
-             Assert.AreEqual(string.Empty, fileNode.Shortcut);
+             Assert.AreEqual(string.Empty, fileNode.FormattedShortcut);
             
              // TODO Testing with static instances seems complicated - talk with Ryan about that
              Manager.Instance.Shortcuts[1] = fileNode.FullPath;
             
              // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut
-             Assert.AreEqual("(CTRL+M, 1)", fileNode.Shortcut);
+             Assert.AreEqual("(CTRL+M, 1)", fileNode.FormattedShortcut);
         }
 
         [TestMethod]
@@ -103,7 +103,7 @@ namespace ManagementTest
             };
 
             // Select the node
-            fileNode.Shortcut = string.Empty;
+            fileNode.FormattedShortcut = string.Empty;
 
             // Only one event should have been fired
             Assert.AreEqual("Shortcut", receivedEvent);

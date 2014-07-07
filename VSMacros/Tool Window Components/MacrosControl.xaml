@@ -15,7 +15,7 @@
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Icon}" />
                 <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,1,5,0"/>
-                <TextBlock Text="{Binding Shortcut, Mode=OneWay}"/>
+                <TextBlock Text="{Binding FormattedShortcut, Mode=OneWay}" Margin="0,1,0,0"/>
             </StackPanel>
         </DataTemplate>
         

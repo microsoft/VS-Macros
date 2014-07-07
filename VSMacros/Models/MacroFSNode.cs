@@ -27,7 +27,7 @@ namespace VSMacros.Models
         private static HashSet<string> enabledDirectories = new HashSet<string>();
 
         private string fullPath;
-        private string shortcut;
+        private int shortcut;
         private bool isEditable;
         private bool isExpanded;
         private bool isSelected;
@@ -35,6 +35,9 @@ namespace VSMacros.Models
 
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
+
+        public const int TO_FETCH = -1;
+        public const int NONE = 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -47,6 +50,7 @@ namespace VSMacros.Models
         {
             this.IsDirectory = (File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory;
             this.FullPath = path;
+            this.shortcut = TO_FETCH;
             this.isEditable = false;
             this.isSelected = false;
             this.isMatch = false;
@@ -108,9 +112,9 @@ namespace VSMacros.Models
                         this.FullPath = newFullPath;
 
                         // Update shortcut
-                        if (!string.IsNullOrEmpty(this.Shortcut))
+                        if (this.Shortcut != MacroFSNode.NONE)
                         {
-                            Manager.Instance.Shortcuts[this.Shortcut[this.Shortcut.Length - 1]] = newFullPath;
+                            Manager.Instance.Shortcuts[this.shortcut] = newFullPath;
                         }
                     }
                 }
@@ -125,33 +129,47 @@ namespace VSMacros.Models
             }
         }
 
-        public string Shortcut
+        public int Shortcut
         {
             get
             {
-                if (this.shortcut == null)
+                return this.shortcut;
+            }
+        }
+
+        public string FormattedShortcut
+        {
+            get
+            {
+                if (this.shortcut == TO_FETCH)
                 {
-                    this.shortcut = string.Empty;
+                    
+                    this.shortcut = NONE;
 
                     // TODO can probably be optimized
                     for (int i = 1; i < 10; i++)
                     {
                         if (string.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            this.shortcut = "(CTRL+M, " + i + ")";
+                            this.shortcut = i;
                         }
                     }                  
                 }
 
-                return this.shortcut;
+                if (this.shortcut != NONE)
+                {
+                    return "(CTRL+M, " + this.shortcut + ")";
+                }
+
+                return string.Empty;
             }
             set
             {
-                // Set shortcut to null so it will be re-fetched
-                this.shortcut = null;
+                // Shortcut will be refetched
+                this.shortcut = TO_FETCH;
 
                 // Just notify the binding
-                this.NotifyPropertyChanged("Shortcut");
+                this.NotifyPropertyChanged("FormattedShortcut");
             }
         }
 
@@ -362,10 +380,11 @@ namespace VSMacros.Models
         #region Context Menu
         public void Delete()
         {
-            if (!string.IsNullOrEmpty(this.shortcut))
+            // If a shortcut is bound to the macro
+            if (this.shortcut > 0)
             {
                 // Remove shortcut from shortcut list
-                Manager.Instance.Shortcuts[this.shortcut[this.shortcut.Length - 2] - '0'] = string.Empty;
+                Manager.Instance.Shortcuts[this.shortcut] = string.Empty;
             }
 
             // Remove macro from collection

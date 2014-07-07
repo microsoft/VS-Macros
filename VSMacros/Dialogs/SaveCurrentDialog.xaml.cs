@@ -33,12 +33,6 @@ namespace VSMacros.Dialogs
         public SaveCurrentDialog()
         {
             this.InitializeComponent();
-
-            // Set the text of the fields
-            this.AssignToLabel.Content = VSMacros.Resources.DialogAssignTo;
-            this.shortcutsComboBox.Text = VSMacros.Resources.DialogShortcutSelectionText;
-            this.CustomShortcutButton.Content = VSMacros.Resources.DialogCustomShortcut;
-            this.MacroNameLabel.Content = VSMacros.Resources.DialogMacroName;
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)

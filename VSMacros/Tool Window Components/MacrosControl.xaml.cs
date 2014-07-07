@@ -261,7 +261,7 @@ namespace VSMacros
         {
             // Highlight item on DragEnter
             TreeViewItem item = sender as TreeViewItem;
-            SetIsTreeViewItemDropOver(item, true);
+            MacrosControl.SetIsTreeViewItemDropOver(item, true);
             e.Handled = true;
         }
 
@@ -269,7 +269,7 @@ namespace VSMacros
         {
             // Remove highlight on DragLeave
             TreeViewItem item = sender as TreeViewItem;
-            SetIsTreeViewItemDropOver(item, false);
+            MacrosControl.SetIsTreeViewItemDropOver(item, false);
             e.Handled = true;
         }
 
@@ -288,6 +288,9 @@ namespace VSMacros
             string sourcePath = sourceItem.FullPath;
             string targetPath = Path.Combine(targetItem.FullPath, sourceItem.Name);
             string extension = ".js";
+            
+            // We want to expand the node and all its parents if it was expanded before OR if it is a file
+            bool wasExpanded = sourceItem.IsExpanded || !sourceItem.IsDirectory;
 
             try
             {
@@ -301,34 +304,34 @@ namespace VSMacros
                     targetPath = targetPath + extension;
                     System.IO.File.Move(sourcePath, targetPath);
                 }
+
+                // Move shortcut as well
+                if (sourceItem.Shortcut != MacroFSNode.NONE)
+                {
+                    int shortcutNumber = sourceItem.Shortcut;
+                    Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
+                }
+
+                // Refresh tree
+                Manager.Instance.Refresh();
+
+                // Restore previously selected node
+                MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+                selected.IsSelected = true;
+                selected.IsExpanded = wasExpanded;
+
+                // Notify change in shortcut
+                selected.FormattedShortcut = null;
+
+                // Make editable if the macro is the current macro
+                if (sourceItem.FullPath == this.CurrentMacroPath)
+                {
+                    selected.IsEditable = true;
+                }
             }
             catch (Exception e)
             {
                 Manager.Instance.ShowMessageBox(e.Message);
-            }
-
-            // Move shortcut as well
-            if (!string.IsNullOrEmpty(sourceItem.Shortcut))
-            {
-                int shortcutNumber = sourceItem.Shortcut[sourceItem.Shortcut.Length - 2] - '0';
-                Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
-            }
-
-            // Refresh tree
-            Manager.Instance.Refresh();
-
-            // Restore previously selected node
-            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-            selected.IsSelected = true;
-            selected.IsExpanded = true;
-
-            // Notify change in shortcut
-            selected.Shortcut = null;
-
-            // Make editable if the macro is the current macro
-            if (sourceItem.FullPath == this.CurrentMacroPath)
-            {
-                selected.IsEditable = true;
             }
         }
 

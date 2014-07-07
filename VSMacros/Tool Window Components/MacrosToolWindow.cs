@@ -88,6 +88,11 @@ namespace VSMacros
                     this.Rename,
                     new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.Rename)));
 
+                // Will bind F2 to the Rename handler
+                mcs.AddCommand(new MenuCommand(
+                this.Rename,
+                new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.EditLabel)));
+
                 // Create the command to rename a macro
                 mcs.AddCommand(new MenuCommand(
                     this.NewMacro,

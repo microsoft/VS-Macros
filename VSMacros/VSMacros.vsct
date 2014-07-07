@@ -298,6 +298,13 @@
     
   </CommandPlacements>
 
+  <UsedCommands>
+    <UsedCommand guid="guidVSStd97" id="cmdidNewFolder" />
+    <UsedCommand guid="guidVSStd97" id="cmdidRename" />
+    <UsedCommand guid="guidVSStd97" id="cmdidDelete" />
+    <UsedCommand guid="guidVSStd97" id="cmdidEditLabel" />
+  </UsedCommands>
+
   <KeyBindings>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord"    editor="guidVSStd97" key1="M" mod1="Control" key2="R"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control" key2="P"/>

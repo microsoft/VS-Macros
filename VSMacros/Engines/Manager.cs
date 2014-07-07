@@ -179,19 +179,16 @@ namespace VSMacros.Engines
                 MacroFSNode macro = this.SelectedMacro;
 
                 // Remove old shortcut if it exists
-                int oldKey;
-                if (macro.Shortcut != string.Empty)
+                if (macro.Shortcut != MacroFSNode.NONE)
                 {
-                    string oldShortcut = macro.Shortcut;
-                    oldKey = (int)oldShortcut[oldShortcut.Length - 2] - '0';
-                    this.Shortcuts[oldKey] = string.Empty;
+                    this.Shortcuts[macro.Shortcut] = string.Empty;
                 }
 
                 int newShortcutNumber = dlg.SelectedShortcutNumber;
 
                 // At this point, the shortcut has been removed
                 // Assign a new one only if the user selected a key binding
-                if (newShortcutNumber != 0)
+                if (newShortcutNumber != MacroFSNode.NONE)
                 {
                     // Update dictionary
                     this.Shortcuts[newShortcutNumber] = macro.FullPath;
@@ -207,7 +204,7 @@ namespace VSMacros.Engines
                 else
                 {
                     // Refresh selected macro
-                    macro.Shortcut = string.Empty;
+                    macro.FormattedShortcut = string.Empty;
                 }
             }
         }

@@ -17,26 +17,24 @@ namespace VSMacros.Dialogs
     /// </summary>
     public partial class AssignShortcutDialog : Window
     {
-        public ComboBoxItem SelectedItem { get; set; }
         public int SelectedShortcutNumber { get; set; }
+
         public bool ShouldRefreshFileSystem { get; set; }
 
         private string oldShortcut;
+        private int oldShortcutNumber;
 
         public AssignShortcutDialog()
         {
             this.InitializeComponent();
 
-            // Set the text of the fields
-            this.AssignToLabel.Content = VSMacros.Resources.DialogAssignTo;
-            this.shortcutsComboBox.Text = VSMacros.Resources.DialogShortcutSelectionText;
-            this.CustomShortcutButton.Content = VSMacros.Resources.DialogCustomShortcut;
-
             // Set default values for public members
             this.SelectedShortcutNumber = 0;
             this.ShouldRefreshFileSystem = false;
 
-            this.oldShortcut = (MacrosControl.Current.SelectedNode).Shortcut;
+            // Retrieve old shortcut
+            this.oldShortcut = (MacrosControl.Current.SelectedNode).FormattedShortcut;
+            this.oldShortcutNumber = (MacrosControl.Current.SelectedNode).Shortcut;
 
             // Set the text to the previous shortcut, if it exists
             if (!string.IsNullOrEmpty(this.oldShortcut) && this.oldShortcut.Length >= 3)
@@ -45,7 +43,7 @@ namespace VSMacros.Dialogs
                 this.shortcutsComboBox.Text = this.oldShortcut.Substring(1, this.oldShortcut.Length - 2);
                 
                 // last char should be the command number
-                this.SelectedShortcutNumber = this.GetLastCharAsInt(this.shortcutsComboBox.Text);
+                this.SelectedShortcutNumber = this.oldShortcutNumber;
             }
         }
 
@@ -95,46 +93,32 @@ namespace VSMacros.Dialogs
 
         private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            string selectedShortcut = this.shortcutsComboBox.Text;
-            int index = 0;
+            // Get selected number as an integer
+            int selectedNumber = ((ComboBoxItem)this.shortcutsComboBox.SelectedItem).Tag.ToString()[0] - '0';
             
             // Reset bool
             this.ShouldRefreshFileSystem = false;
 
-            if (selectedShortcut != "None")
+            if (selectedNumber != 0)
             {
-                // Get the command number into index                
-                index = this.GetLastCharAsInt(selectedShortcut);
-
                 // Show overwrite message if needed
-                if (selectedShortcut != this.oldShortcut && !string.IsNullOrEmpty(selectedShortcut))
+                if (selectedNumber != this.oldShortcutNumber)
                 {
-                    bool willOverwrite = Manager.Instance.Shortcuts[index] != string.Empty;
+                    bool willOverwrite = Manager.Instance.Shortcuts[selectedNumber] != string.Empty;
 
                     if (willOverwrite)
                     {
                         this.ShouldRefreshFileSystem = true;
-                        this.warningTextBlock.Text = VSMacros.Resources.DialogShortcutAlreadyUsed;
+                        this.WarningTextBlock.Text = VSMacros.Resources.DialogShortcutAlreadyUsed;
                     }
                     else
                     {
-                        this.warningTextBlock.Text = string.Empty;
+                        this.WarningTextBlock.Text = string.Empty;
                     }
                 }
             }
 
-            this.SelectedShortcutNumber = index;
-        }
-
-        private int GetLastCharAsInt(string str)
-        {
-            int number;
-            if (!int.TryParse(str[str.Length - 1].ToString(), out number))
-            {
-                throw new FormatException(VSMacros.Resources.DialogCannotRetrieveCommandIndex);
-            }
-
-            return number;
+            this.SelectedShortcutNumber = selectedNumber;
         }
     }
 }

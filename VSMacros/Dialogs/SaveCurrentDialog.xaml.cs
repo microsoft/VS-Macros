@@ -24,68 +24,28 @@ namespace VSMacros.Dialogs
     /// <summary>
     /// Interaction logic for SaveCurrentDialog.xaml
     /// </summary>
-    public partial class SaveCurrentDialog : Window
+    public partial class SaveCurrentDialog : MacroDialog
     {
-        public ComboBoxItem SelectedItem { get; set; }
-        public int SelectedShortcutNumber { get; set; }
-        public bool ShouldRefreshFileSystem { get; set; }
-
         public SaveCurrentDialog()
         {
             this.InitializeComponent();
         }
 
-        private void OkButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.DialogResult = true;
-        }
-
-        private void CustomAssignButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
-            string selectedShortcut = this.shortcutsComboBox.Text;
-            int index = 0;
+            // Get selected number as an integer
+            int selectedNumber = base.GetSelectedNumber((ComboBoxItem)this.shortcutsComboBox.SelectedItem);
 
-            // Reset bool
-            this.ShouldRefreshFileSystem = false;
+            // Temporary variables
+            bool shouldRefresh = false;
+            string warningText = string.Empty;
 
-            if (selectedShortcut != "None")
+            if (selectedNumber > 0 && selectedNumber <= 9)
             {
-                // Get the command number into index                
-                index = this.GetLastCharAsInt(selectedShortcut);
-
-                // Show overwrite message if needed
-                if (!string.IsNullOrEmpty(selectedShortcut))
-                {
-                    bool willOverwrite = Manager.Instance.Shortcuts[index] != string.Empty;
-
-                    if (willOverwrite)
-                    {
-                        this.ShouldRefreshFileSystem = true;
-                        this.warningTextBlock.Text = VSMacros.Resources.DialogShortcutAlreadyUsed;
-                    }
-                    else
-                    {
-                        this.warningTextBlock.Text = string.Empty;
-                    }
-                }
+                base.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
             }
 
-            this.SelectedShortcutNumber = index;
-        }
-
-        private int GetLastCharAsInt(string str)
-        {
-            int number;
-            if (!int.TryParse(str[str.Length - 1].ToString(), out number))
-            {
-                throw new Exception("Could not retrieve command index from selection.");
-            }
-
-            return number;
+            this.SelectedShortcutNumber = selectedNumber;
         }
     }
 }

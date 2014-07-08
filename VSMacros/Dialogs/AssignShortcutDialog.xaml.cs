@@ -17,12 +17,8 @@ namespace VSMacros.Dialogs
     /// <summary>
     /// Interaction logic for AssignShortcutDialog.xaml
     /// </summary>
-    public partial class AssignShortcutDialog : Window
+    public partial class AssignShortcutDialog : MacroDialog
     {
-        public int SelectedShortcutNumber { get; set; }
-
-        public bool ShouldRefreshFileSystem { get; set; }
-
         private string oldShortcut;
         private int oldShortcutNumber;
 
@@ -49,81 +45,27 @@ namespace VSMacros.Dialogs
             }
         }
 
-        private void OkButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Don't accept the dialog box if there is invalid data
-            if (!this.IsValid(this)) return;
-
-            this.DialogResult = true;
-        }
-
-        private bool IsValid(DependencyObject node)
-        {
-            // Check if dependency object was passed 
-            if (node != null)
-            {
-                // Check if dependency object is valid. 
-                // NOTE: Validation.GetHasError works for controls that have validation rules attached  
-                bool isValid = !Validation.GetHasError(node);
-                if (!isValid)
-                {
-                    // If the dependency object is invalid, and it can receive the focus, 
-                    // set the focus 
-                    if (node is IInputElement) Keyboard.Focus((IInputElement)node);
-                    return false;
-                }
-            }
-
-            // If this dependency object is valid, check all child dependency objects 
-            foreach (object subnode in LogicalTreeHelper.GetChildren(node))
-            {
-                if (subnode is DependencyObject)
-                {
-                    // If a child dependency object is invalid, return false immediately, 
-                    // otherwise keep checking 
-                    if (!this.IsValid((DependencyObject)subnode)) { return false; }
-                }
-            }
-
-            // All dependency objects are valid 
-            return true;
-        }
-
-        private void CustomAssignButton_Click(object sender, RoutedEventArgs e)
-        {
-            string targetGUID = "734A5DE2-DEBA-11d0-A6D0-00C04FB67F6A";
-            var command = new CommandID(VSConstants.GUID_VSStandardCommandSet97, VSConstants.cmdidToolsOptions);
-            var mcs = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(IMenuCommandService)) as MenuCommandService;
-            mcs.GlobalInvoke(command, targetGUID);
-        }
-
         private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
             // Get selected number as an integer
-            int selectedNumber = ((ComboBoxItem)this.shortcutsComboBox.SelectedItem).Tag.ToString()[0] - '0';
+            int selectedNumber = base.GetSelectedNumber((ComboBoxItem)this.shortcutsComboBox.SelectedItem);
             
-            // Reset bool
-            this.ShouldRefreshFileSystem = false;
+            // Temporary variables
+            bool shouldRefresh = false;
+            string warningText = string.Empty;
 
-            if (selectedNumber != 0)
+            // If selected number is between 1 and 9
+            if (selectedNumber > 0 && selectedNumber <= 9)
             {
                 // Show overwrite message if needed
                 if (selectedNumber != this.oldShortcutNumber)
                 {
-                    bool willOverwrite = Manager.Instance.Shortcuts[selectedNumber] != string.Empty;
-
-                    if (willOverwrite)
-                    {
-                        this.ShouldRefreshFileSystem = true;
-                        this.WarningTextBlock.Text = VSMacros.Resources.DialogShortcutAlreadyUsed;
-                    }
-                    else
-                    {
-                        this.WarningTextBlock.Text = string.Empty;
-                    }
+                    base.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
                 }
             }
 
+            this.ShouldRefreshFileSystem = shouldRefresh;
+            this.WarningTextBlock.Text = warningText;
             this.SelectedShortcutNumber = selectedNumber;
         }
     }

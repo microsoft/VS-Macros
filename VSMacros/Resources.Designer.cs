@@ -162,9 +162,9 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap FolderClosed {
+        public static System.Drawing.Bitmap FolderClosedIcon {
             get {
-                object obj = ResourceManager.GetObject("FolderClosed", resourceCulture);
+                object obj = ResourceManager.GetObject("FolderClosedIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -172,9 +172,9 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap FolderOpened {
+        public static System.Drawing.Bitmap FolderOpenedIcon {
             get {
-                object obj = ResourceManager.GetObject("FolderOpened", resourceCulture);
+                object obj = ResourceManager.GetObject("FolderOpenedIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -221,6 +221,16 @@ namespace VSMacros {
         public static System.Drawing.Bitmap RecordRound {
             get {
                 object obj = ResourceManager.GetObject("RecordRound", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap RootIcon {
+            get {
+                object obj = ResourceManager.GetObject("RootIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

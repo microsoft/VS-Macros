@@ -188,13 +188,17 @@ namespace VSMacros.Models
                 {
                     Bitmap bmp;
 
-                    if (this.isExpanded)
+                    if (this == MacroFSNode.RootNode)
                     {
-                        bmp = Resources.FolderOpened;
+                        bmp = Resources.RootIcon;
+                    }
+                    else if (this.isExpanded)
+                    {
+                        bmp = Resources.FolderOpenedIcon;
                     }
                     else
                     {
-                        bmp = Resources.FolderClosed;
+                        bmp = Resources.FolderClosedIcon;
                     }
 
                     return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
@@ -478,7 +482,7 @@ namespace VSMacros.Models
         }
 
         /// <summary>
-        /// Finds the node with FullPath path
+        /// Finds the node with FullPath path in the entire tree 
         /// </summary>
         /// <param name="path"></param>
         /// <returns>MacroFSNode  whose FullPath is path</returns>
@@ -503,8 +507,8 @@ namespace VSMacros.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.Message);
-                node = null;
+                // Return default node
+                node = MacroFSNode.RootNode;
             }
 
             return node;

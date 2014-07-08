@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Background="{DynamicResource VsBrush.Window}"
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d"
@@ -12,17 +13,19 @@
     <UserControl.Resources>
         
         <!-- Themed Image Converter -->
-        <vsui:ThemedImageConverter x:Key="ThemedImageConverter" />
+        <vsui:ThemedImageSourceConverter x:Key="ThemedImageSourceConverter" />
+        
+        <sys:Boolean x:Key="True">True</sys:Boolean>
         
         <!-- Normal Data Template-->
         <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill">
                     <Image.Source>
-                        <MultiBinding Converter="{StaticResource ThemedImageConverter}">
+                        <MultiBinding Converter="{StaticResource ThemedImageSourceConverter}">
                             <Binding Path="Icon" />
                             <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
-                            <Binding Path="IsEnabled" />
+                            <Binding Source="{StaticResource True}" />
                         </MultiBinding>
                     </Image.Source>
                 </Image>
@@ -34,7 +37,15 @@
         <!-- Edit Data Template -->
         <DataTemplate x:Key="EditTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Icon}" />
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill">
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource ThemedImageSourceConverter}">
+                            <Binding Path="Icon" />
+                            <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                            <Binding Source="{StaticResource True}" />
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
                 <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,1,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
             </StackPanel>
         </DataTemplate>
@@ -60,7 +71,15 @@
                                   ItemsSource="{Binding Mode=OneWay, Path=Children}"
                                   ItemTemplate="{StaticResource ChildTemplate}">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="-15,1,0,1" Stretch="Fill" Source="..\Resources\macro.png"/>
+                <Image Width="16" Height="16" Margin="-15,1,0,1" Stretch="Fill">
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource ThemedImageSourceConverter}">
+                            <Binding Path="Icon" />
+                            <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                            <Binding Source="{StaticResource True}" />
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
                 <TextBlock Text="Macro Browser List" Margin="5,1,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>        
@@ -72,7 +91,7 @@
               SelectedItemChanged="MacroTreeView_SelectedItemChanged"
               Loaded="MacroTreeView_Loaded"
               AllowDrop="True"
-              Background="Transparent" BorderBrush="Transparent" Margin="5,0,0,0">
+              BorderBrush="Transparent" Margin="5,0,0,0">
 
         <TreeView.Resources>
             <ResourceDictionary Source="..\Assets\TreeView.xaml"/>

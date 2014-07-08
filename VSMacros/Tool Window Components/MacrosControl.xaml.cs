@@ -55,6 +55,15 @@ namespace VSMacros
             {
                 oldNode.DisableEdit();
             }
+
+            if (((MacroFSNode)this.MacroTreeView.SelectedItem).IsDirectory)
+            {
+                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, false);
+            }
+            else
+            {
+                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, true);
+            }
         }
 
         private void MacroTreeView_Loaded(object sender, RoutedEventArgs e)
@@ -321,7 +330,7 @@ namespace VSMacros
                 selected.IsExpanded = wasExpanded;
 
                 // Notify change in shortcut
-                selected.FormattedShortcut = null;
+                selected.Shortcut = MacroFSNode.TO_FETCH;
 
                 // Make editable if the macro is the current macro
                 if (sourceItem.FullPath == this.CurrentMacroPath)

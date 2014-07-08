@@ -140,6 +140,7 @@
     <Compile Include="Dialogs\AssignShortcutDialog.xaml.cs">
       <DependentUpon>AssignShortcutDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\MacroDialog.cs" />
     <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>

@@ -38,6 +38,7 @@ namespace VSMacros.Models
 
         public const int TO_FETCH = -1;
         public const int NONE = 0;
+        public const string ShortcutKeys = "(CTRL+M, {0})";
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -93,7 +94,7 @@ namespace VSMacros.Models
                     // Path.GetFullPath will throw an exception if the path is invalid
                     Path.GetFileName(value);
 
-                    if (value != this.Name)
+                    if (value != this.Name && !string.IsNullOrWhiteSpace(value))
                     {
                         string oldFullPath = this.FullPath;
                         string newFullPath = Path.Combine(Path.GetDirectoryName(this.FullPath), value + Path.GetExtension(this.FullPath));
@@ -135,6 +136,16 @@ namespace VSMacros.Models
             {
                 return this.shortcut;
             }
+
+            set
+            {
+                // Shortcut will be refetched
+                this.shortcut = TO_FETCH;
+
+                // Just notify the binding
+                this.NotifyPropertyChanged("Shortcut");
+                this.NotifyPropertyChanged("FormattedShortcut");
+            }
         }
 
         public string FormattedShortcut
@@ -158,18 +169,14 @@ namespace VSMacros.Models
 
                 if (this.shortcut != NONE)
                 {
-                    return "(CTRL+M, " + this.shortcut + ")";
+                    return string.Format(MacroFSNode.ShortcutKeys, this.shortcut);
                 }
 
                 return string.Empty;
             }
             set
             {
-                // Shortcut will be refetched
-                this.shortcut = TO_FETCH;
 
-                // Just notify the binding
-                this.NotifyPropertyChanged("FormattedShortcut");
             }
         }
 

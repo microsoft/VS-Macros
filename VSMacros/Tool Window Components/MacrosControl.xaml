@@ -9,11 +9,23 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyControl">
-    <UserControl.Resources>  
+    <UserControl.Resources>
+        
+        <!-- Themed Image Converter -->
+        <vsui:ThemedImageConverter x:Key="ThemedImageConverter" />
+        
         <!-- Normal Data Template-->
         <DataTemplate x:Key="NormalTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Icon}" />
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill" Source="{Binding Path=Icon}">
+                    <!--<Image.Source>
+                        <MultiBinding Converter="{StaticResource ThemedImageConverter}">
+                            <Binding Path="Icon" />
+                            <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                            <Binding Path="IsEnabled" />
+                        </MultiBinding>
+                    </Image.Source>-->
+                </Image>
                 <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,1,5,0"/>
                 <TextBlock Text="{Binding FormattedShortcut, Mode=OneWay}" Margin="0,1,0,0"/>
             </StackPanel>

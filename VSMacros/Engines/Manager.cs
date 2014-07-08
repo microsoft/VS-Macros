@@ -51,7 +51,7 @@ namespace VSMacros.Engines
                 this.uiShellLoaded = false;
             }
 
-            this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, ShortcutsFileName);
+            this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName);
             this.LoadShortcuts();
             this.shortcutsLoaded = true;
         }
@@ -138,6 +138,7 @@ namespace VSMacros.Engines
                 }
                 catch (Exception e)
                 {
+                    if (ErrorHandler.IsCriticalException(e)) { throw e; }
                     this.ShowMessageBox(e.Message);
                 }
             }
@@ -453,7 +454,7 @@ namespace VSMacros.Engines
 
         private void CreateShortcutFile()
         {
-            string shortcutsPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, ShortcutsFileName);
+            string shortcutsPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName);
             if (!File.Exists(shortcutsPath))
             {
                 // Create file for writing UTF-8 encoded text

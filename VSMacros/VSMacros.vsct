@@ -112,7 +112,7 @@
       <!-- Control Group Buttons -->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
-        <Icon guid="guidVsShellIcons" id="Record" />
+        <Icon guid="guidIcons" id="iconRecord" />
         <CommandFlag>TextChanges</CommandFlag>
         <Strings>
           <ButtonText>Start/Stop Recording</ButtonText>

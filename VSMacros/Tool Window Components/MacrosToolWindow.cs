@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Design; // for CommandID
 using System.IO;
 using System.Runtime.InteropServices;
+using EnvDTE80;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -22,9 +24,13 @@ namespace VSMacros
     [Guid(GuidList.GuidToolWindowPersistanceString)]
     public class MacrosToolWindow : ToolWindowPane
     {
+        private VSMacrosPackage owningPackage;
+        private bool addedToolbarButton;
+
         public MacrosToolWindow() :
             base(null)
         {
+            this.owningPackage = VSMacrosPackage.Current;
             this.Caption = Resources.ToolWindowTitle;
             this.BitmapResourceID = 301;
             this.BitmapIndex = 1;
@@ -43,7 +49,23 @@ namespace VSMacros
             root.IsExpanded = true;
 
             // Initialize Macros Control
-            base.Content = new MacrosControl(root);
+            var macroControl = new MacrosControl(root);
+            macroControl.Loaded += this.OnLoaded;
+            base.Content = macroControl;
+        }
+
+        public void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!this.addedToolbarButton)
+            {
+                IVsWindowFrame windowFrame = (IVsWindowFrame)GetService(typeof(SVsWindowFrame));
+
+                object dteWindow;
+                windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_ExtWindowObject, out dteWindow);
+                Window2 window = (Window2)dteWindow;
+                this.owningPackage.ImageButtons.Add((CommandBarButton)((CommandBars)window.CommandBars)[1].Controls[1]);
+                this.addedToolbarButton = true;
+            }
         }
 
         protected override void Initialize()

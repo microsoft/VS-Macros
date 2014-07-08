@@ -151,7 +151,7 @@ namespace VSMacros {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot exit while recording a macro..
+        ///   Looks up a localized string similar to Recording in process, are you sure to exit?.
         /// </summary>
         public static string ExitMessage {
             get {

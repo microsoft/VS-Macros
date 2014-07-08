@@ -148,13 +148,18 @@ namespace VSMacros
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (!macroRecorder.IsRecording)
             {
-                this.StatusBarChange(Resources.StatusBarRecordingText, 1, this.StartIcon);
                 Manager.Instance.StartRecording();
+
+                this.UpdateButtonForRecording(false);
+                this.ChangeMenuCommands(Resources.StatusBarRecordingText, 1, this.StopIcon);
             }
             else
             {
-                this.StatusBarChange(Resources.StatusBarReadyText, 0, this.StopIcon);
                 Manager.Instance.StopRecording();
+
+                this.ChangeMenuCommands(Resources.StatusBarReadyText, 0, this.StartIcon);
+
+                this.UpdateButtonForRecording(true);
             }
         }
 
@@ -186,7 +191,7 @@ namespace VSMacros
         #endregion
 
         #region Status Bar
-        private void StatusBarChange(string status, int animation, BitmapSource icon)
+        private void ChangeMenuCommands(string status, int animation, BitmapSource icon)
         {
             this.statusBar.Clear();
             this.statusBar.SetText(status);
@@ -242,6 +247,35 @@ namespace VSMacros
                     // nothing to do
                 }
             }
+        }
+
+        private void UpdateButtonForRecording(bool isRecording)
+        {
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, isRecording);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, isRecording);
+            this.UpdateCommonButtons(isRecording);
+        }
+
+        private void UpdateCommonButtons(bool enable)
+        {
+            this.EnableMyCommand(PkgCmdIDList.CmdIdSaveTemporaryMacro, enable);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdRefresh, enable);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdOpenDirectory, enable);
+        }
+
+        public bool EnableMyCommand( int cmdID, bool fEnableCmd)
+        {
+            bool fCmdUpdated = false;
+            var mcs = this.GetService(typeof(IMenuCommandService))
+                    as OleMenuCommandService;
+            var newCmdID = new CommandID(GuidList.GuidVSMacrosCmdSet, cmdID);
+            MenuCommand mc = mcs.FindCommand(newCmdID);
+            if (mc != null)
+            {
+                mc.Enabled = fEnableCmd;
+                fCmdUpdated = true;
+            }
+            return fCmdUpdated;
         }
 
         private BitmapSource StartIcon

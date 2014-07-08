@@ -5,9 +5,11 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.ComponentModel.Design;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.VisualStudio;
 using VSMacros.Engines;
 
 namespace VSMacros.Dialogs
@@ -89,6 +91,10 @@ namespace VSMacros.Dialogs
 
         private void CustomAssignButton_Click(object sender, RoutedEventArgs e)
         {
+            string targetGUID = "734A5DE2-DEBA-11d0-A6D0-00C04FB67F6A";
+            var command = new CommandID(VSConstants.GUID_VSStandardCommandSet97, VSConstants.cmdidToolsOptions);
+            var mcs = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(IMenuCommandService)) as MenuCommandService;
+            mcs.GlobalInvoke(command, targetGUID);
         }
 
         private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)

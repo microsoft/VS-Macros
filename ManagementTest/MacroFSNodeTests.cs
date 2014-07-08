@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -26,49 +25,72 @@ namespace ManagementTest
         [TestMethod]
         public void Constructor_InitializesNode()
         {
-            Assert.AreEqual(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js"), fileNode.FullPath);
-            Assert.IsFalse(fileNode.IsEditable);
+            Assert.AreEqual(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.js"), this.fileNode.FullPath);
+            Assert.IsFalse(this.fileNode.IsEditable);
         }
 
         [TestMethod]
         public void Directory_Has_IsDirectory_SetToTrue()
         {
-            Assert.IsTrue(directoryNode.IsDirectory);
+            Assert.IsTrue(this.directoryNode.IsDirectory);
         }
 
         [TestMethod]
         public void File_Has_IsDirectory_SetToFalse()
         {
-            Assert.IsFalse(fileNode.IsDirectory);
+            Assert.IsFalse(this.fileNode.IsDirectory);
         }
 
         [TestMethod]
         public void Name_IsFileNameWithoutExtensionFor_FullPath()
         {
-            Assert.AreEqual(Path.GetFileNameWithoutExtension(fileNode.FullPath), fileNode.Name);
+            Assert.AreEqual(Path.GetFileNameWithoutExtension(this.fileNode.FullPath), this.fileNode.Name);
         }
 
         #endregion
 
         #region Properties
 
-        [Ignore]
+        [TestMethod]
         public void Shortcut_IsBoundToNode()
         {
              // node.Shortcut is initially empty
-             Assert.AreEqual(string.Empty, fileNode.FormattedShortcut);
+             Assert.AreEqual(string.Empty, this.fileNode.FormattedShortcut);
             
-             // TODO Testing with static instances seems complicated - talk with Ryan about that
-             Manager.Instance.Shortcuts[1] = fileNode.FullPath;
-            
+             // Set the shortcut
+             Manager.Instance.Shortcuts[1] = this.fileNode.FullPath;
+             this.fileNode.Shortcut = MacroFSNode.TO_FETCH; // notify the change
+
              // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut
-             Assert.AreEqual("(CTRL+M, 1)", fileNode.FormattedShortcut);
+             string expected = string.Format(MacroFSNode.ShortcutKeys, 1);
+             Assert.AreEqual(expected, this.fileNode.FormattedShortcut);
         }
 
         [TestMethod]
         public void Children_ShouldNotBeEmpty()
         {
-            Assert.AreEqual(5, directoryNode.Children.Count);
+            Assert.AreEqual(5, this.directoryNode.Children.Count);
+        }
+
+        [TestMethod]
+        public void Name_ShouldNotChange_OnInvalidInput()
+        {
+		   string oldName = this.fileNode.Name;
+
+		   // Input: Empty string
+		   this.fileNode.Name = "";
+		   Assert.AreEqual(oldName, this.fileNode.Name);
+
+			// Input: Contains invalid chars
+		   this.fileNode.Name = oldName;
+		   this.fileNode.Name = "<>:?*";
+           Assert.AreEqual(oldName, this.fileNode.Name);
+
+            // Input: Same name
+           this.fileNode.Name = oldName;
+           this.fileNode.Name = this.fileNode.Name;
+           Assert.AreEqual(oldName, this.fileNode.Name);
+
         }
 
         #endregion
@@ -80,13 +102,13 @@ namespace ManagementTest
         public void Name_NotifiesOnChange()
         {
             List<string> receivedEvents = new List<string>();
-            fileNode.PropertyChanged += (sender, e) =>
+            this.fileNode.PropertyChanged += (sender, e) =>
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Change the name of the node
-            fileNode.Name = "Another Name";
+            this.fileNode.Name = "Another Name";
 
             // Two event are fired
             List<string> expected = new List<string> { "FullPath", "Name" };
@@ -96,36 +118,37 @@ namespace ManagementTest
         [TestMethod]
         public void Shortcut_NotifiesOnChange()
         {
-            string receivedEvent = string.Empty;
-            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            List<string> receivedEvents = new List<string>();
+            this.fileNode.PropertyChanged += (sender, e) =>
             {
-                receivedEvent = e.PropertyName;
+                receivedEvents.Add(e.PropertyName);
             };
 
             // Select the node
-            fileNode.FormattedShortcut = string.Empty;
+            this.fileNode.Shortcut = MacroFSNode.TO_FETCH;
 
-            // Only one event should have been fired
-            Assert.AreEqual("Shortcut", receivedEvent);
+            // Two event are fired
+            List<string> expected = new List<string> { "Shortcut", "FormattedShortcut" };
+            CollectionAssert.AreEquivalent(expected, receivedEvents);
         }
 
         [TestMethod]
         public void IsEditable_NotifiesOnChange()
         {
             // By default, the node should not be selected
-            Assert.IsFalse(fileNode.IsEditable);
+            Assert.IsFalse(this.fileNode.IsEditable);
 
             List<string> receivedEvents = new List<string>();
-            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            this.fileNode.PropertyChanged += (sender, e) =>
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Select the node
-            fileNode.IsEditable = true;
+            this.fileNode.IsEditable = true;
 
             // Node should now be selected
-            Assert.IsTrue(fileNode.IsEditable);
+            Assert.IsTrue(this.fileNode.IsEditable);
 
             // Only one event should have been fired
             Assert.AreEqual(1, receivedEvents.Count);
@@ -136,19 +159,19 @@ namespace ManagementTest
         public void IsSelected_NotifiesOnChange()
         {
             // By default, the node should not be selected
-            Assert.IsFalse(fileNode.IsSelected);
+            Assert.IsFalse(this.fileNode.IsSelected);
 
             List<string> receivedEvents = new List<string>();
-            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            this.fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Select the node
-            fileNode.IsSelected = true;
+            this.fileNode.IsSelected = true;
 
             // Node should now be selected
-            Assert.IsTrue(fileNode.IsSelected);
+            Assert.IsTrue(this.fileNode.IsSelected);
             
             // Only one event should have been fired
             Assert.AreEqual(1, receivedEvents.Count);
@@ -160,18 +183,18 @@ namespace ManagementTest
         public void IsExpanded_NotifiesOnChange()
         {
             List<string> receivedEvents = new List<string>();
-            fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            this.fileNode.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents.Add(e.PropertyName);
             };
 
             // Expand the node
-            fileNode.IsExpanded = true;
+            this.fileNode.IsExpanded = true;
 
             // Two event are fired
-            Assert.AreEqual(2, receivedEvents.Count);
-            Assert.AreEqual("IsExpanded", receivedEvents[0]);
-            Assert.AreEqual("Icon", receivedEvents[1]);
+            // Two event are fired
+            List<string> expected = new List<string> { "IsExpanded", "Icon" };
+            CollectionAssert.AreEquivalent(expected, receivedEvents);
         }
 
         #endregion
@@ -189,7 +212,7 @@ namespace ManagementTest
                 File.Create(path).Close();
             }
 
-            fileNode = new MacroFSNode(path);
+            this.fileNode = new MacroFSNode(path);
 
             // Create a directory MacroFSNode
 
@@ -209,13 +232,13 @@ namespace ManagementTest
         [TestCleanup]
         public void CleanUpFileSystem()
         {
-            if (File.Exists(fileNode.FullPath))
+            if (File.Exists(this.fileNode.FullPath))
             {
-                File.Delete(fileNode.FullPath);
+                File.Delete(this.fileNode.FullPath);
             }
-            if (Directory.Exists(directoryNode.FullPath))
+            if (Directory.Exists(this.directoryNode.FullPath))
             {
-                Directory.Delete(directoryNode.FullPath, true);
+                Directory.Delete(this.directoryNode.FullPath, true);
             }
         }
 

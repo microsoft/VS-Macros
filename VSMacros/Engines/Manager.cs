@@ -19,7 +19,7 @@ namespace VSMacros.Engines
 {
     public sealed class Manager : IManager
     {
-        private static readonly Manager instance = new Manager(VSMacrosPackage.Current);
+        private static Manager instance;
         
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
@@ -58,7 +58,15 @@ namespace VSMacros.Engines
 
         public static Manager Instance
         {
-            get { return Manager.instance; }
+            get
+            {
+                if (Manager.instance == null)
+                {
+                    Manager.instance = new Manager(VSMacrosPackage.Current);
+                }
+                
+                return Manager.instance;
+            }
         }
 
         public void StartRecording()
@@ -205,7 +213,7 @@ namespace VSMacros.Engines
                 else
                 {
                     // Refresh selected macro
-                    macro.FormattedShortcut = string.Empty;
+                    macro.Shortcut = MacroFSNode.TO_FETCH;
                 }
             }
         }

@@ -33,11 +33,24 @@ namespace VSMacros
     [ProvideService(typeof(IRecorder))]
     public sealed class VSMacrosPackage : Package
     {
-        public static VSMacrosPackage Current { get; private set; }
+        private static VSMacrosPackage current;
+        public static VSMacrosPackage Current
+        {
+            get
+            {
+                // This is mainly for the unit tests
+                if (current == null)
+                {
+                    current = new VSMacrosPackage();
+                }
+
+                return current;
+            }
+        }
 
         public VSMacrosPackage()
         {
-            Current = this;
+            VSMacrosPackage.current = this;
         }
 
         private void ShowToolWindow(object sender = null, EventArgs e = null)

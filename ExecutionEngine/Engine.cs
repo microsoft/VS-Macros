@@ -27,6 +27,7 @@ namespace ExecutionEngine
         IMoniker GetItemMoniker(int pid)
         {
             IMoniker moniker;
+            // TODO: make it so it works with other versions of VS as well
             int hr = NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
             if (ErrorHandler.Failed(hr))
             {

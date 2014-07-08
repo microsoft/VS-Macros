@@ -8,14 +8,18 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
+using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
     internal sealed class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
+        internal static bool error;
+        internal static RuntimeException runtimeException;
 
         public void GetLCID(out int lcid)
         {
@@ -54,9 +58,27 @@ namespace ExecutionEngine
             // Debug.WriteLine("Site:IActiveScriptSite.OnStateChange");
         }
 
+        uint CorrectOffByOneCount(uint lineNumber)
+        {
+            return lineNumber + 1;
+        }
+
         public void OnScriptError(IActiveScriptError scriptError)
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.OnScriptError");
+            uint sourceContext;
+            uint lineNumber;
+            int characterPosition;
+            System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo;
+
+            scriptError.GetSourcePosition(out sourceContext, out lineNumber, out characterPosition);
+            scriptError.GetExceptionInfo(out exceptionInfo);
+
+            uint line = CorrectOffByOneCount(lineNumber);
+            string exceptionDescription = exceptionInfo.bstrDescription;
+            string exceptionSource = exceptionInfo.bstrSource;
+
+            Site.error = true;
+            Site.runtimeException = new RuntimeException(exceptionDescription, exceptionSource, line);
         }
 
         public void OnEnterScript()

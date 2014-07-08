@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VSMacros.ExecutionEngine;
@@ -82,6 +83,14 @@ namespace VSMacros.ExecutionEngine.Helpers
             wrapped += "}";
 
             return wrapped;
+        }
+
+        internal static string RemoveComments(string commented)
+        {
+            var re = @"(@(?:""[^""]*"")+|""(?:[^""\n\\]+|\\.)*""|'(?:[^'\n\\]+|\\.)*')|//.*|/\*(?s:.*?)\*/";
+            var noComments = Regex.Replace(commented, re, "$1");
+            Console.WriteLine(noComments);
+            return noComments;
         }
     }
 }

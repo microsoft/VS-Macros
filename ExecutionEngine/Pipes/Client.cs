@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VisualStudio.Macros.ExecutionEngine.Pipes
+namespace VSMacros.ExecutionEngine.Pipes
 {
     public static class Client
     {

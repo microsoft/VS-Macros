@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
@@ -34,19 +35,26 @@ namespace ExecutionEngine
 
         public object CallMethod(string methodName, params object[] arguments)
         {
-            if (methodName == null)
-            {
-                throw new ArgumentNullException("methodName");
-            }
-
             try
             {
-                return this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                return this.dispatch.GetType().InvokeMember(Program.macroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
             }
+
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
-                throw;
+                if (Site.error)
+                {
+                    var exception = Site.runtimeException;
+                    var exceptionMessage = string.Format("{0}: {1} at line {2}", exception.Source, exception.Description, exception.Line);
+                    MessageBox.Show(exceptionMessage);
+                    return null;
+                }
+                else
+                {
+                    var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
+                    MessageBox.Show(errorMessage);
+                    throw;
+                }
             }
         }
     }

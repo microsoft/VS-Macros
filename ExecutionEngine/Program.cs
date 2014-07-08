@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using VisualStudio.Macros.ExecutionEngine.Pipes;
-using VisualStudio.Macros.ExecutionEngine.Stubs;
 using VSMacros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Pipes;
+using VSMacros.ExecutionEngine.Stubs;
 using VSMacros.ExecutionEngine.Helpers;
 
 namespace ExecutionEngine
@@ -20,7 +20,7 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        private const string macroName = "currentScript";
+        internal static string macroName = "currentScript";
         private const string close = "close";
         private static bool exit;
 
@@ -44,25 +44,23 @@ namespace ExecutionEngine
             int pid = InputParser.GetPid(unparsedPid);
             short iterations = InputParser.GetNumberOfIterations(unparsedIter);
             string decodedPath = InputParser.DecodePath(encodedPath);
-            string unwrappedScript = InputParser.ExtractScript(decodedPath);
-            string wrappedScript = InputParser.WrapScript(unwrappedScript);
-
-            Program.engine = new Engine(pid);
             var unwrapped = InputParser.ExtractScript(decodedPath);
             var wrapped = InputParser.WrapScript(unwrapped);
 
+            Program.engine = new Engine(pid);
             RunMacro(wrapped, iterations);
         }
 
         internal static void RunAsStartupProject()
         {
             Debug.WriteLine("Warning: Hardcoded devenv pid");
-            short pidOfCurrentDevenv = 8516;
+            short pidOfCurrentDevenv = 9800;
 
             Program.engine = new Engine(pidOfCurrentDevenv);
 
             Debug.WriteLine("Warning: Hardcoded path");
             string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
+            //string cleaned = InputParser.RemoveComments(unwrapped);
             string wrapped = InputParser.WrapScript(unwrapped);
 
             RunMacro(wrapped, 1);
@@ -166,11 +164,10 @@ namespace ExecutionEngine
                     RunAsStartupProject();
                 }
             }
-
             catch (Exception e)
             {
-                var errorMessage = string.Format("This is in the giant try/catch block.  An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                MessageBox.Show(errorMessage);
+                var error = string.Format("Error at {0} from method {1}\n\n{2}", e.Source, e.TargetSite, e.Message);
+                MessageBox.Show(error);
             }
         }
     }

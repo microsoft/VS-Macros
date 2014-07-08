@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VisualStudio.Macros.ExecutionEngine.Stubs
+namespace VSMacros.ExecutionEngine.Stubs
 {
     public class Script
     {

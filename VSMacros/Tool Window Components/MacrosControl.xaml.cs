@@ -194,28 +194,11 @@ namespace VSMacros
                     // Get the dragged MacroFSNode
                     this.draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
-                    // The root node is not dragable
-                    if (this.draggedNode == MacroFSNode.RootNode)
-                    {
-                        this.draggedNode = null;
-                    }
-
-                    if (this.draggedNode != null)
+                    // The root node is not draggable
+                    if (this.draggedNode != MacroFSNode.RootNode && this.draggedNode != null)
                     {
                         // Initialize the drag & drop operation
-                        DragDropEffects finalDropEffect = DragDrop.DoDragDrop(this.MacroTreeView, this.draggedNode, DragDropEffects.Move);
-
-                        // Checking target is not null and item is dragging
-                        if ((finalDropEffect == DragDropEffects.Move) && (this.targetNode != null))
-                        {
-                            // A Move drop is accepted
-                            if (!this.draggedNode.Equals(this.targetNode))
-                            {
-                                this.MoveItem(this.draggedNode, this.targetNode);
-                                this.targetNode = null;
-                                this.draggedNode = null;
-                            }
-                        }
+                        DragDrop.DoDragDrop(this.MacroTreeView, this.draggedNode, DragDropEffects.Move);
                     }                   
                 }
             }
@@ -232,6 +215,7 @@ namespace VSMacros
                 TreeViewItem item = this.GetNearestContainer(e.OriginalSource as UIElement);
                 if (this.ValidDropTarget(this.draggedNode, item.Header as MacroFSNode))
                 {
+                    this.targetNode = item.Header as MacroFSNode;
                     e.Effects = DragDropEffects.Move;
                 }
                 else
@@ -251,18 +235,17 @@ namespace VSMacros
             TreeViewItem targetItem = this.GetNearestContainer(e.OriginalSource as UIElement);
             if (targetItem != null && this.draggedNode != null)
             {
-                MacroFSNode targetNode = targetItem.Header as MacroFSNode;
-
-                if (!targetNode.IsDirectory)
+                if (!this.targetNode.IsDirectory)
                 {
                     this.targetNode = targetNode.Parent;
                 }
-                else
-                {
-                    this.targetNode = targetNode;
-                }
 
-                e.Effects = DragDropEffects.Move;
+                if (!this.draggedNode.Equals(this.targetNode) && this.targetNode != null)
+                {
+                    Manager.Instance.MoveItem(this.draggedNode, this.targetNode);
+                    this.targetNode = null;
+                    this.draggedNode = null;
+                }
             }
         }
 
@@ -290,58 +273,6 @@ namespace VSMacros
         public static void SetIsTreeViewItemDropOver(TreeViewItem item, bool value)
         {
             item.SetValue(IsTreeViewItemDropOverProperty, value);
-        }
-
-        private void MoveItem(MacroFSNode sourceItem, MacroFSNode targetItem)
-        {
-            string sourcePath = sourceItem.FullPath;
-            string targetPath = Path.Combine(targetItem.FullPath, sourceItem.Name);
-            string extension = ".js";
-            
-            // We want to expand the node and all its parents if it was expanded before OR if it is a file
-            bool wasExpanded = sourceItem.IsExpanded || !sourceItem.IsDirectory;
-
-            try
-            {
-                // Move on disk
-                if (sourceItem.IsDirectory)
-                {
-                    System.IO.Directory.Move(sourcePath, targetPath);
-                }
-                else
-                {
-                    targetPath = targetPath + extension;
-                    System.IO.File.Move(sourcePath, targetPath);
-                }
-
-                // Move shortcut as well
-                if (sourceItem.Shortcut != MacroFSNode.NONE)
-                {
-                    int shortcutNumber = sourceItem.Shortcut;
-                    Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
-                }
-
-                // Refresh tree
-                Manager.Instance.Refresh();
-
-                // Restore previously selected node
-                MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-                selected.IsSelected = true;
-                selected.IsExpanded = wasExpanded;
-
-                // Notify change in shortcut
-                selected.Shortcut = MacroFSNode.TO_FETCH;
-
-                // Make editable if the macro is the current macro
-                if (sourceItem.FullPath == this.CurrentMacroPath)
-                {
-                    selected.IsEditable = true;
-                }
-            }
-            catch (Exception e)
-            {
-                Manager.Instance.ShowMessageBox(e.Message);
-            }
         }
 
         private bool ValidDropTarget(MacroFSNode sourceItem, MacroFSNode targetItem)

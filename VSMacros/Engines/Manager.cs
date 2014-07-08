@@ -24,6 +24,11 @@ namespace VSMacros.Engines
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
+        public static string CurrentMacroPath
+        {
+            get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); }
+        }
+
         public string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
        
@@ -77,7 +82,7 @@ namespace VSMacros.Engines
 
         public void StopRecording()
         {
-            string current = Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName);
+            string current = Manager.CurrentMacroPath;
 
             IRecorder recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
             recorder.StopRecording(current);
@@ -119,7 +124,7 @@ namespace VSMacros.Engines
                 try
                 {
                     string pathToNew = Path.Combine(VSMacrosPackage.Current.MacroDirectory, dlg.MacroName.Text + ".js");
-                    string pathToCurrent = Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName);
+                    string pathToCurrent = Manager.CurrentMacroPath;
 
                     int newShortcutNumber = dlg.SelectedShortcutNumber;
 
@@ -362,9 +367,9 @@ namespace VSMacros.Engines
             }
 
             // Create current macro file
-            if (!File.Exists(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName)))
+            if (!File.Exists(Manager.CurrentMacroPath))
             {
-                File.Create(Path.Combine(VSMacrosPackage.Current.MacroDirectory, CurrentMacroFileName));
+                File.Create(Manager.CurrentMacroPath);
             }
 
             // Create shortcuts file
@@ -376,6 +381,64 @@ namespace VSMacros.Engines
             this.SaveShortcuts();
         }
 
+        public void MoveItem(MacroFSNode sourceItem, MacroFSNode targetItem)
+        {
+            string sourcePath = sourceItem.FullPath;
+            string targetPath = Path.Combine(targetItem.FullPath, sourceItem.Name);
+            string extension = ".js";
+
+            MacroFSNode selected;
+
+            // We want to expand the node and all its parents if it was expanded before OR if it is a file
+            bool wasExpanded = sourceItem.IsExpanded || !sourceItem.IsDirectory;
+
+            try
+            {
+                // Move on disk
+                if (sourceItem.IsDirectory)
+                {
+                    System.IO.Directory.Move(sourcePath, targetPath);
+                }
+                else
+                {
+                    targetPath = targetPath + extension;
+                    System.IO.File.Move(sourcePath, targetPath);
+                }
+
+                // Move shortcut as well
+                if (sourceItem.Shortcut != MacroFSNode.NONE)
+                {
+                    int shortcutNumber = sourceItem.Shortcut;
+                    Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
+                }                
+            }
+            catch (Exception e)
+            {
+                targetPath = sourceItem.FullPath;
+
+                Manager.Instance.ShowMessageBox(e.Message);
+            }
+            finally
+            {
+                // Refresh tree
+                Manager.Instance.Refresh();
+
+                // Restore previously selected node
+                selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+                selected.IsSelected = true;
+                selected.IsExpanded = wasExpanded;
+
+                // Notify change in shortcut
+                selected.Shortcut = MacroFSNode.TO_FETCH;
+            }
+
+            // Make editable if the macro is the current macro
+            if (sourceItem.FullPath == Manager.CurrentMacroPath)
+            {
+                selected.IsEditable = true;
+            }
+
+        }
         #region Helper Methods
 
         private StreamReader LoadFile(string path)

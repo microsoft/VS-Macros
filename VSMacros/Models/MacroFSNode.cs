@@ -113,7 +113,7 @@ namespace VSMacros.Models
                         this.FullPath = newFullPath;
 
                         // Update shortcut
-                        if (this.Shortcut != MacroFSNode.NONE)
+                        if (this.Shortcut >= MacroFSNode.NONE)
                         {
                             Manager.Instance.Shortcuts[this.shortcut] = newFullPath;
                         }
@@ -377,6 +377,7 @@ namespace VSMacros.Models
         {
             var files = from childFile in Directory.GetFiles(this.FullPath)
                        where Path.GetExtension(childFile) == ".js"
+                       where childFile != Manager.CurrentMacroPath
                        orderby childFile
                        select childFile;
 
@@ -384,8 +385,14 @@ namespace VSMacros.Models
                               orderby childDirectory
                               select childDirectory;
 
-            return new ObservableCollection<MacroFSNode>(files.Union(directories)
+            // Merge files and directories into a collection
+            ObservableCollection<MacroFSNode> collection = new ObservableCollection<MacroFSNode>(files.Union(directories)
                     .Select((item) => new MacroFSNode(item, this)));
+
+            // Add Current macro at the beginning
+            collection.Insert(0, new MacroFSNode(Manager.CurrentMacroPath, this));
+
+            return collection;
         }
 
         #region Context Menu

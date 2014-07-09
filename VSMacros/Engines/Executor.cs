@@ -6,14 +6,8 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Pipes;
-using System.Reflection;
 using System.Threading;
 using System.Windows;
-using MicrosoftCorporation.VSMacros.Pipes;
-//using EnvDTE;
-using VSMacros.Engines;
 using VSMacros.Interfaces;
 using VSMacros.Pipes;
 
@@ -30,7 +24,6 @@ namespace VSMacros.Engines
         public static Process executionEngine;
         public static bool IsEngineInitialized = false;
         public static bool IsServerInitialized = false;
-        private static bool enablePipes = false;
 
         /// <summary>
         /// Informs subscribers of an error during execution.
@@ -45,7 +38,7 @@ namespace VSMacros.Engines
             return pid + delimiter + iterations.ToString() + delimiter + path;
         }
 
-        private string ProvideClientArguments(Guid guid)
+        private string ProvidePipeArguments(Guid guid)
         {
             var pipeToken = "@";
             var delimiter = "[delimiter]";
@@ -73,7 +66,7 @@ namespace VSMacros.Engines
             //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
 
             Executor.executionEngine.StartInfo.FileName = processName;
-            Executor.executionEngine.StartInfo.Arguments = ProvideClientArguments(Server.Guid);
+            Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
 
             Debug.WriteLine(string.Format("guid of server is: {0}", Server.Guid));
 

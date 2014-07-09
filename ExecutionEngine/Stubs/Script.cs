@@ -27,5 +27,15 @@ namespace VSMacros.ExecutionEngine.Stubs
             var script = "";
             return script;
         }
+
+        public static string OpenFileDialogStub()
+        {
+            return "dte.ExecuteCommand('File.NewFile');";
+        }
+
+        public static string OpenFileStub()
+        {
+            return "dte.Commands.Raise(\"{5EFC7975-14BC-11CF-9B2B-00AA00573819}\", 221, \"General\\\\Text File\", null);";
+        }
     }
 }

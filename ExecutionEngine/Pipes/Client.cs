@@ -4,6 +4,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VSMacros.ExecutionEngine.Helpers;
 
 namespace VSMacros.ExecutionEngine.Pipes
 {
@@ -37,12 +38,11 @@ namespace VSMacros.ExecutionEngine.Pipes
             clientStream.Write(packet, 0, packet.Length);
         }
 
-        public static int GetSizeOfMessageFromStream(NamedPipeClientStream clientStream)
+        public static int GetIntFromStream(NamedPipeClientStream clientStream)
         {
-            int intSize = sizeof(int);
-            byte[] sizeBuffer = new byte[intSize];
-            clientStream.Read(sizeBuffer, 0, intSize);
-            return BitConverter.ToInt32(sizeBuffer, 0);
+            byte[] number = new byte[sizeof(int)];
+            clientStream.Read(number, 0, sizeof(int));
+            return BitConverter.ToInt32(number, 0);
         }
 
         public static string GetMessageFromStream(NamedPipeClientStream clientStream, int sizeOfMessage)
@@ -66,6 +66,48 @@ namespace VSMacros.ExecutionEngine.Pipes
             messageBuffer.CopyTo(packet, offset);
 
             return packet;
+        }
+
+        public static string ParseFilePath(NamedPipeClientStream clientStream)
+        {
+            // Visual Studio -> Execution engine
+
+            int sizeOfMessage = Client.GetIntFromStream(Client.ClientStream);
+            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfMessage);
+            return message;
+        }
+
+        public static void HandlePacketClose(NamedPipeClientStream clientStream)
+        {
+            // Visual Studio -> Execution engine
+            // Execution engine -> Visual Studio??
+
+            // TODO: Close execution engine from QueryClose in VSMacrosPackage
+        }
+
+        public static void HandlePacketSuccess(NamedPipeClientStream clientStream)
+        {
+            // Execution engine -> Visual Studio
+            // TODO: update the CompletedEvent thing
+        }
+
+        public static void HandlePacketScriptError(NamedPipeClientStream clientStream)
+        {
+            // Execution engine -> Visual Studio
+
+            int lineNumber = Client.GetIntFromStream(Client.ClientStream);
+            int sizeOfDescription = Client.GetIntFromStream(Client.ClientStream);
+            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfDescription);
+
+            // TODO: update the CompletedEvent thing
+        }
+
+        internal static void HandlePacketOtherError(NamedPipeClientStream namedPipeClientStream)
+        {
+            // Execution engine -> Visual Studio
+
+            int sizeOfDescription = Client.GetIntFromStream(Client.ClientStream);
+            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfDescription);
         }
     }
 }

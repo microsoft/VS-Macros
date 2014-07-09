@@ -139,7 +139,7 @@
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />
-    <Compile Include="Pipes\Client.cs" />
+    <Compile Include="Pipes\Packet.cs" />
     <Compile Include="Pipes\Server.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>

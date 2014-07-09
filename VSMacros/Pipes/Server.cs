@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MicrosoftCorporation.VSMacros.Pipes;
+using VSMacros.Pipes;
 using VSMacros.Engines;
+using VSMacros.Enums;
 
 namespace VSMacros.Pipes
 {
@@ -59,7 +60,7 @@ namespace VSMacros.Pipes
         public static void SendMessage()
         {
             string rawMessage = "@";
-            byte[] message = PackageMessage(rawMessage);
+            byte[] message = PackageFilePathMessage(rawMessage);
 
             if (Server.ServerStream.IsConnected)
             {   
@@ -73,18 +74,25 @@ namespace VSMacros.Pipes
             }
         }
 
-        private static byte[] PackageMessage(string line)
+        private static byte[] PackageFilePathMessage(string line)
         {
-            byte[] messageBuffer = UnicodeEncoding.Unicode.GetBytes(line);
-            int messageSize = messageBuffer.Length;
-            byte[] serializedLength = BitConverter.GetBytes(messageSize);
+            byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
 
-            int intSize = sizeof(int);
-            byte[] packet = new byte[intSize + messageSize];
-            serializedLength.CopyTo(packet, 0);
+            byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
+            int message = serializedMessage.Length;
 
-            int offset = intSize;
-            messageBuffer.CopyTo(packet, offset);
+            byte[] serializedLength = BitConverter.GetBytes(message);
+
+            int type = sizeof(int), messageSize = sizeof(int);
+            byte[] packet = new byte[type + messageSize + message];
+
+            serializedTypeLength.CopyTo(packet, 0);
+
+            int offset = sizeof(int);
+            serializedLength.CopyTo(packet, offset);
+            offset += sizeof(int);
+
+            serializedMessage.CopyTo(packet, offset);
 
             return packet;
         }
@@ -96,7 +104,7 @@ namespace VSMacros.Pipes
 
         internal static void SendFilePath(string path)
         {
-            byte[] filePathPacket = PackageMessage(path);
+            byte[] filePathPacket = PackageFilePathMessage(path);
             SendMessageToClient(Server.ServerStream, filePathPacket);
         }
     }

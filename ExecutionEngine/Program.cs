@@ -13,6 +13,7 @@ using VSMacros.ExecutionEngine;
 using VSMacros.ExecutionEngine.Pipes;
 using VSMacros.ExecutionEngine.Stubs;
 using VSMacros.ExecutionEngine.Helpers;
+using ExecutionEngine.Enums;
 
 namespace ExecutionEngine
 {
@@ -68,9 +69,36 @@ namespace ExecutionEngine
 
         private static void HandleInput()
         {
-            int sizeOfMessage = Client.GetSizeOfMessageFromStream(Client.ClientStream);
-            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfMessage);
+            int typeOfMessage = Client.GetIntFromStream(Client.ClientStream);
 
+            switch ((Packet)typeOfMessage)
+            {
+                case (Packet.FilePath):
+                    HandleFilePath();
+                    break;
+
+                case (Packet.Close):
+                    Client.HandlePacketClose(Client.ClientStream);
+                    break;
+
+                case (Packet.Success):
+                    Client.HandlePacketSuccess(Client.ClientStream);
+                    break;
+
+                case (Packet.ScriptError):
+                    Client.HandlePacketScriptError(Client.ClientStream);
+                    break;
+
+                case (Packet.OtherError):
+                    Client.HandlePacketOtherError(Client.ClientStream);
+                    break;
+            }
+        }
+
+        private static void HandleFilePath()
+        {
+            Console.WriteLine("whoa is this actually working");
+            string message = Client.ParseFilePath(Client.ClientStream);
             if (InputParser.IsDebuggerStopped(message))
             {
                 Client.ClientStream.Close();
@@ -94,10 +122,10 @@ namespace ExecutionEngine
             }
         }
 
-        internal static void RunMacroAsThread(out Thread readThread, int pid)
+        internal static Thread CreateReadingThread(int pid)
         {
             Program.exit = false;
-            readThread = new Thread(() =>
+            Thread readThread = new Thread(() =>
             {
                 try
                 {
@@ -117,6 +145,8 @@ namespace ExecutionEngine
                     Program.exit = true;
                 }
             });
+
+            return readThread;
         }
 
         private static void RunFromPipe(string[] separatedArgs)
@@ -126,9 +156,8 @@ namespace ExecutionEngine
 
             Client.InitializePipeClientStream(guid);
 
-            Thread readMacroFromStream;
-            RunMacroAsThread(out readMacroFromStream, pid);
-            readMacroFromStream.Start();
+            Thread readThread = CreateReadingThread(pid);
+            readThread.Start();
 
             //while (!Program.exit)
             //{
@@ -138,6 +167,8 @@ namespace ExecutionEngine
 
         internal static void Main(string[] args)
         {
+            // TODO: Close pipes when Visual Studio closes
+
             Console.WriteLine("Hello there!  Welcome to our macro extension!");
 
             try

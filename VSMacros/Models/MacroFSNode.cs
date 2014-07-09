@@ -376,9 +376,11 @@ namespace VSMacros.Models
                     // Initialize children
                     this.children = new ObservableCollection<MacroFSNode>();
 
+                    this.children = this.GetChildNodes();
+
                     // Retrieve children in a background thread
-                    Task.Run(() => { this.children = this.GetChildNodes(); })
-                        .ContinueWith(_ => this.NotifyPropertyChanged("Children"), TaskScheduler.FromCurrentSynchronizationContext());
+                    //Task.Run(() => { this.children = this.GetChildNodes(); })
+                    //    .ContinueWith(_ => this.NotifyPropertyChanged("Children"), TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 return this.children;
@@ -449,17 +451,20 @@ namespace VSMacros.Models
             enabledDirectories.Clear();
 
             // Retrieve children in a background thread
-            Task.Run(() => root.children = root.GetChildNodes())
-                .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
+            //Task.Run(() => root.children = root.GetChildNodes())
+            //    .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
+
+            root.children = root.GetChildNodes();
+            root.AfterRefresh(root, selected.FullPath, dirs);
         }
 
-        private void AfterRefresh(MacroFSNode root, MacroFSNode selected, HashSet<string> dirs)
+        private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)
         {
             // Set IsEnabled for each folders
             root.SetIsExpanded(root, dirs);
 
-            // Select Current macro, which is the first element of the collection
-            selected = root.Children[0];
+            // Selecte the previously selected macro
+            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(selectedPath);
             selected.IsSelected = true;
 
             // Notify change

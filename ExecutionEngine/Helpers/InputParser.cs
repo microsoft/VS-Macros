@@ -78,19 +78,11 @@ namespace VSMacros.ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
-            string wrapped = "function currentScript() {";
+            string wrapped = "function currentScript() {\n";
             wrapped += unwrapped;
-            wrapped += "}";
+            wrapped += "\n}";
 
             return wrapped;
-        }
-
-        internal static string RemoveComments(string commented)
-        {
-            var re = @"(@(?:""[^""]*"")+|""(?:[^""\n\\]+|\\.)*""|'(?:[^'\n\\]+|\\.)*')|//.*|/\*(?s:.*?)\*/";
-            var noComments = Regex.Replace(commented, re, "$1");
-            Console.WriteLine(noComments);
-            return noComments;
         }
     }
 }

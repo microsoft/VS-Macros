@@ -58,11 +58,6 @@ namespace ExecutionEngine
             // Debug.WriteLine("Site:IActiveScriptSite.OnStateChange");
         }
 
-        uint CorrectOffByOneCount(uint lineNumber)
-        {
-            return lineNumber + 1;
-        }
-
         public void OnScriptError(IActiveScriptError scriptError)
         {
             uint sourceContext;
@@ -73,12 +68,11 @@ namespace ExecutionEngine
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out characterPosition);
             scriptError.GetExceptionInfo(out exceptionInfo);
 
-            uint line = CorrectOffByOneCount(lineNumber);
             string exceptionDescription = exceptionInfo.bstrDescription;
             string exceptionSource = exceptionInfo.bstrSource;
 
             Site.error = true;
-            Site.runtimeException = new RuntimeException(exceptionDescription, exceptionSource, line);
+            Site.runtimeException = new RuntimeException(exceptionDescription, exceptionSource, lineNumber);
         }
 
         public void OnEnterScript()

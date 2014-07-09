@@ -97,7 +97,6 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
-            Console.WriteLine("whoa is this actually working");
             string message = Client.ParseFilePath(Client.ClientStream);
             if (InputParser.IsDebuggerStopped(message))
             {
@@ -161,7 +160,7 @@ namespace ExecutionEngine
 
             //while (!Program.exit)
             //{
-                //SendMessageToServer();
+            //    Client.SendMessageToServer();
             //}
         }
 

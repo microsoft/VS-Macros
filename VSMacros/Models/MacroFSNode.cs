@@ -11,15 +11,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
+using Task = System.Threading.Tasks.Task;
 
 namespace VSMacros.Models
 {
@@ -104,6 +104,12 @@ namespace VSMacros.Models
                         if (this.IsDirectory)
                         {
                             Directory.Move(oldFullPath, newFullPath);
+
+                            if (MacroFSNode.enabledDirectories.Contains(oldFullPath))
+                            {
+                                MacroFSNode.enabledDirectories.Remove(oldFullPath);
+                                MacroFSNode.enabledDirectories.Add(newFullPath);
+                            }
                         }
                         else
                         {
@@ -270,7 +276,7 @@ namespace VSMacros.Models
                 {
                     if (this.IsDirectory)
                     {
-                        enabledDirectories.Add(this.FullPath);
+                        MacroFSNode.enabledDirectories.Add(this.FullPath);
                     }
 
                     // Expand parent as well
@@ -283,7 +289,7 @@ namespace VSMacros.Models
                 {
                     if (this.IsDirectory)
                     {
-                        enabledDirectories.Remove(this.FullPath);
+                        MacroFSNode.enabledDirectories.Remove(this.FullPath);
                     }
                 }
 
@@ -370,35 +376,12 @@ namespace VSMacros.Models
                     // Initialize children
                     this.children = new ObservableCollection<MacroFSNode>();
 
-                    BackgroundWorker bw = new BackgroundWorker();
-                    bw.DoWork += bw_DoWork;
-                    bw.RunWorkerCompleted += bw_RunWorkerCompleted;
-                    bw.RunWorkerAsync();
+                    // Retrieve children in a background thread
+                    Task.Run(() => { this.children = this.GetChildNodes(); })
+                        .ContinueWith(_ => this.NotifyPropertyChanged("Children"), TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 return this.children;
-            }
-        }
-
-        private void bw_DoWork(object sender, DoWorkEventArgs e)
-        {
-            e.Result = this.GetChildNodes();
-        }
-
-        private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            // Show error is message if an error occured
-            if (e.Error != null)
-            {
-                Manager.Instance.ShowMessageBox(e.Error.Message);
-            }
-            else
-            {
-                // Set the result
-                this.children = e.Result as ObservableCollection<MacroFSNode>;
-
-                // Collection has changed, notify the binding
-                this.NotifyPropertyChanged("Children");
             }
         }
 
@@ -415,11 +398,16 @@ namespace VSMacros.Models
                               select childDirectory;
 
             // Merge files and directories into a collection
-            ObservableCollection<MacroFSNode> collection = new ObservableCollection<MacroFSNode>(files.Union(directories)
-                .Select((item) => new MacroFSNode(item, this)));
+            ObservableCollection<MacroFSNode> collection = 
+                new ObservableCollection<MacroFSNode>(
+                    files.Union(directories)
+                         .Select((item) => new MacroFSNode(item, this)));
 
-            // Add Current macro at the beginning
-            collection.Insert(0, new MacroFSNode(Manager.CurrentMacroPath, this));
+            // Add Current macro at the beginning if this is the root node
+            if (this == MacroFSNode.RootNode)
+            {
+                collection.Insert(0, new MacroFSNode(Manager.CurrentMacroPath, this));
+            }
 
             return collection;
         }
@@ -460,20 +448,24 @@ namespace VSMacros.Models
             // Clear enableDirectories
             enabledDirectories.Clear();
 
-            // Refetch the children of the root node
-            // TODO move to a background thread
-            root.children = root.GetChildNodes();
+            // Retrieve children in a background thread
+            Task.Run(() => root.children = root.GetChildNodes())
+                .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
+        }
 
-            // Recursively set IsEnabled for each folders
+        private void AfterRefresh(MacroFSNode root, MacroFSNode selected, HashSet<string> dirs)
+        {
+            // Set IsEnabled for each folders
             root.SetIsExpanded(root, dirs);
 
             // Select Current macro, which is the first element of the collection
-            selected = MacroFSNode.FindNodeFromFullPath(selected.FullPath);
+            selected = root.Children[0];
             selected.IsSelected = true;
 
             // Notify change
             root.NotifyPropertyChanged("Children");
         }
+
         #endregion
 
         public static void EnableSearch()
@@ -529,7 +521,7 @@ namespace VSMacros.Models
         public static MacroFSNode FindNodeFromFullPath(string path)
         {
             // shortenPath is the path relative to the Macros folder
-            string shortenPath = path.Substring(path.IndexOf(@"\Macros\"));
+            string shortenPath = path.Substring(path.IndexOf(@"\Macros"));
 
             string[] substrings = shortenPath.Split(new char[] { '\\' });
 
@@ -550,7 +542,7 @@ namespace VSMacros.Models
                 if (ErrorHandler.IsCriticalException(e)) { throw e; }
 
                 // Return default node
-                node = MacroFSNode.RootNode;
+                node = MacroFSNode.RootNode.Children[0];
             }
 
             return node;
@@ -574,7 +566,7 @@ namespace VSMacros.Models
             {
                 foreach (var child in node.Children)
                 {
-                    MacroFSNode.NotifyAllNode(child, "IsMatch");
+                    MacroFSNode.NotifyAllNode(child, property);
                 }
             }
         }

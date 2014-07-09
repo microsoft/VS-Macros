@@ -14,6 +14,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -366,10 +367,38 @@ namespace VSMacros.Models
 
                 if (this.children == null)
                 {
-                    this.children = this.GetChildNodes();
+                    // Initialize children
+                    this.children = new ObservableCollection<MacroFSNode>();
+
+                    BackgroundWorker bw = new BackgroundWorker();
+                    bw.DoWork += bw_DoWork;
+                    bw.RunWorkerCompleted += bw_RunWorkerCompleted;
+                    bw.RunWorkerAsync();
                 }
 
                 return this.children;
+            }
+        }
+
+        private void bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = this.GetChildNodes();
+        }
+
+        private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // Show error is message if an error occured
+            if (e.Error != null)
+            {
+                Manager.Instance.ShowMessageBox(e.Error.Message);
+            }
+            else
+            {
+                // Set the result
+                this.children = e.Result as ObservableCollection<MacroFSNode>;
+
+                // Collection has changed, notify the binding
+                this.NotifyPropertyChanged("Children");
             }
         }
 
@@ -387,13 +416,14 @@ namespace VSMacros.Models
 
             // Merge files and directories into a collection
             ObservableCollection<MacroFSNode> collection = new ObservableCollection<MacroFSNode>(files.Union(directories)
-                    .Select((item) => new MacroFSNode(item, this)));
+                .Select((item) => new MacroFSNode(item, this)));
 
             // Add Current macro at the beginning
             collection.Insert(0, new MacroFSNode(Manager.CurrentMacroPath, this));
 
             return collection;
         }
+
 
         #region Context Menu
         public void Delete()
@@ -422,6 +452,7 @@ namespace VSMacros.Models
         public static void RefreshTree()
         {
             MacroFSNode root = MacroFSNode.RootNode;
+            MacroFSNode selected = MacrosControl.Current.MacroTreeView.SelectedItem as MacroFSNode;
 
             // Make a copy of the hashset
             HashSet<string> dirs = new HashSet<string>(enabledDirectories);
@@ -430,13 +461,15 @@ namespace VSMacros.Models
             enabledDirectories.Clear();
 
             // Refetch the children of the root node
+            // TODO move to a background thread
             root.children = root.GetChildNodes();
 
             // Recursively set IsEnabled for each folders
             root.SetIsExpanded(root, dirs);
 
-            // Select Current macro
-            MacroFSNode.FindNodeFromFullPath(Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js")).IsSelected = true;
+            // Select Current macro, which is the first element of the collection
+            selected = MacroFSNode.FindNodeFromFullPath(selected.FullPath);
+            selected.IsSelected = true;
 
             // Notify change
             root.NotifyPropertyChanged("Children");
@@ -514,6 +547,8 @@ namespace VSMacros.Models
             }
             catch (Exception e)
             {
+                if (ErrorHandler.IsCriticalException(e)) { throw e; }
+
                 // Return default node
                 node = MacroFSNode.RootNode;
             }

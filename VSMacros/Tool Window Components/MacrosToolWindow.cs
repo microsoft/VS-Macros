@@ -307,11 +307,16 @@ namespace VSMacros
                 else if (withinFileContents && !root.IsDirectory)
                 {
                     // TODO move to b/g thread!
-                    string allText = File.ReadAllText(root.FullPath);
-                    if (this.Contains(allText, searchString, comp))
+
+                    System.Threading.Tasks.Task.Run(() =>
                     {
-                        root.IsMatch = true;
-                    }
+                        string allText = File.ReadAllText(root.FullPath);
+                        if (this.Contains(allText, searchString, comp))
+                        {
+                            root.IsMatch = true;
+                        }
+                    });
+                    
                 }
                 else
                 {

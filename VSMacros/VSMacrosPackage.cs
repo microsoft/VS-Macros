@@ -72,8 +72,24 @@ namespace VSMacros
             get
             {
                 if (this.macroDirectory == default(string))
+                {
                     this.macroDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
+                }
                 return this.macroDirectory;
+            }
+        }
+
+        private string assemblyDirectory;
+        public string AssemblyDirectory
+        {
+            get
+            {
+                if (this.assemblyDirectory == default(string))
+                {
+                    this.assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                }
+
+                return this.assemblyDirectory;
             }
         }
 
@@ -309,7 +325,7 @@ namespace VSMacros
             {
                 if (this.stopIcon == null)
                 {
-                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "stopIcon.png")));
+                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "StopIcon.png")));
                 }
                 return this.stopIcon;
             }

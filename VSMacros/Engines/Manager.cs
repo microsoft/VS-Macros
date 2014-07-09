@@ -24,10 +24,8 @@ namespace VSMacros.Engines
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
-        public static string CurrentMacroPath
-        {
-            get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); }
-        }
+        public static string CurrentMacroPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName);
+        private static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
 
         public string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
@@ -318,7 +316,7 @@ namespace VSMacros.Engines
             }
 
             // Create the file
-            File.Create(path);
+            File.WriteAllText(path, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
 
             // Refresh the tree
             this.Refresh();
@@ -363,7 +361,7 @@ namespace VSMacros.Engines
             // Create current macro file
             if (!File.Exists(Manager.CurrentMacroPath))
             {
-                File.Create(Manager.CurrentMacroPath);
+                File.WriteAllText(Manager.CurrentMacroPath, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
             }
 
             // Create shortcuts file

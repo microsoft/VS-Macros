@@ -206,14 +206,19 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\RecordRound.png">
+    <Content Include="Resources\RecordRound.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\stopIcon.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\StopIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Resources\macro.png" />
-    <Content Include="dte.intellisense.js" />
+    <Content Include="Intellisense\dte.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>

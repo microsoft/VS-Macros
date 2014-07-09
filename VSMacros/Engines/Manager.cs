@@ -305,18 +305,16 @@ namespace VSMacros.Engines
             MacroFSNode macro = this.SelectedMacro;
             macro.IsExpanded = true;
 
-            string path = Path.Combine(macro.FullPath, "New Macro.js");
+            string basePath = Path.Combine(macro.FullPath, "New Macro");
+            string extension = ".js";
+
+            string path = basePath + extension;
 
             // Increase count until filename is available (e.g. 'New Macro (2).js')
-            int count = 1;
-            if (File.Exists(path))
-            {
-                path = path.Substring(0, path.Length - 3) + " (1).js";
-            }
-
+            int count = 2;
             while (File.Exists(path))
             {
-                path = path.Substring(0, path.Length - 7) + " (" + ++count + ").js";
+                path = basePath + " (" + count++ + ")" + extension;
             }
 
             // Create the file
@@ -337,17 +335,13 @@ namespace VSMacros.Engines
             MacroFSNode macro = this.SelectedMacro;
             macro.IsExpanded = true;
 
-            string path = Path.Combine(macro.FullPath, "New Folder");
-            int count = 1;
-
-            if (Directory.Exists(path))
-            {
-                path = path + " (1)";
-            }
-
+            string basePath = Path.Combine(macro.FullPath, "New Folder");
+            string path = basePath;
+            
+            int count = 2;
             while (Directory.Exists(path))
             {
-                path = path.Substring(0, path.Length - 4) + " (" + ++count + ")";
+                path = path.Substring(0, path.Length - 4) + " (" + count++ + ")";
             }
 
             Directory.CreateDirectory(path);

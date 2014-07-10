@@ -259,7 +259,7 @@ namespace VSMacros
             {
                 if (this.stopIcon == null)
                 {
-                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "stopIcon.png")));
+                    this.stopIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "StopIcon.png")));
                 }
                 return this.stopIcon;
             }

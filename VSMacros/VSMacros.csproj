@@ -194,8 +194,12 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\RecordRound.png" />
-    <Resource Include="Resources\stopIcon.png" />
+    <Content Include="Resources\RecordRound.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\stopIcon.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Resources\Images.png" />
     <Resource Include="Resources\folder.png" />
     <Resource Include="Resources\js.png" />

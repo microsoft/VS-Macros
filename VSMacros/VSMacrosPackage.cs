@@ -182,7 +182,8 @@ namespace VSMacros
             {
                 Manager.Instance.StartRecording();
 
-                this.SetStatusBar(Resources.StatusBarRecordingText, 1);
+                this.StatusBarChange(Resources.StatusBarRecordingText, 1);
+                //this.SetStatusBar(Resources.StatusBarRecordingText, 1);
                 this.ChangeMenuCommands(this.StopIcon, 0);
                 this.UpdateButtonsForRecording(true);
             }
@@ -190,6 +191,8 @@ namespace VSMacros
             {
                 Manager.Instance.StopRecording();
 
+                this.StatusBarChange(Resources.StatusBarReadyText, 0);
+                //this.SetStatusBar(Resources.StatusBarReadyText, 0);
                 this.ClearStatusBar();
                 this.ChangeMenuCommands(this.StartIcon, 0);
                 this.UpdateButtonsForRecording(false);
@@ -259,11 +262,19 @@ namespace VSMacros
             this.statusBar.IsFrozen(out frozen);
 
             if (frozen == 0)
-            {
+            { 
+                this.statusBar.Clear();
                 this.statusBar.SetColorText(text, 0, 1);
                 this.statusBar.Animation(animation, ref this.iconRecord);
                 this.statusBar.FreezeOutput(1);
             }
+        }
+
+        private void StatusBarChange(string status, int animation)
+        {
+            this.statusBar.Clear();
+            this.statusBar.SetText(status);
+            this.statusBar.Animation(animation, ref this.iconRecord);
         }
 
         private void ClearStatusBar()

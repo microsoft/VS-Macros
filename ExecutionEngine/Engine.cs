@@ -32,7 +32,9 @@ namespace ExecutionEngine
             IRunningObjectTable rot;
             NativeMethods.GetRunningObjectTable(0, out rot);
 
-            rot.GetObject(moniker, out Engine.dteObject);
+            object dteObject;
+            rot.GetObject(moniker, out dteObject);
+            Engine.DteObject = dteObject;
         }
 
         internal IActiveScript CreateEngine()

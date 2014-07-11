@@ -33,10 +33,12 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <DocumentationFile>bin\Release\VSMacros.XML</DocumentationFile>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +75,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
   </ItemGroup>
@@ -133,7 +136,20 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RecorderDataModel\RecorderDataModel.cs" />
+    <Compile Include="Converters\DepthToMarginConverter.cs" />
+    <Compile Include="Dialogs\AssignShortcutDialog.xaml.cs">
+      <DependentUpon>AssignShortcutDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MacroDialog.cs" />
+    <Compile Include="Dialogs\PlaybackMultipleTimesDialog.xaml.cs">
+      <DependentUpon>PlaybackMultipleTimesDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
+      <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
+    <Compile Include="Interfaces\IManager.cs" />
+    <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
     <Compile Include="Engines\Recorder.cs" />
     <Compile Include="Engines\Manager.cs" />
@@ -161,14 +177,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="VSMacrosPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdIDList.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
       <CustomToolNamespace>VSMacros</CustomToolNamespace>
@@ -194,21 +209,40 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\PlaybackIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\RecordRound.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\stopIcon.png">
+    <Content Include="Resources\StopIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Resource Include="Resources\Images.png" />
-    <Resource Include="Resources\folder.png" />
-    <Resource Include="Resources\js.png" />
     <Resource Include="Resources\macro.png" />
+    <Content Include="Intellisense\dte.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\Package.ico" />
     <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Assets\TreeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\AssignShortcutDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PlaybackMultipleTimesDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\SaveCurrentDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -222,6 +256,9 @@
       <Project>{f73f9e75-10e3-44fc-9a13-7e69a689ad0b}</Project>
       <Name>ExecutionEngine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Documentation\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

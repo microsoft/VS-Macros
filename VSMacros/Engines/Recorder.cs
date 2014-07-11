@@ -35,9 +35,17 @@ namespace VSMacros.Engines
             this.recording = true;         
         }
 
-        public void StopRecording()
+        public void StopRecording(string path)
         {
-            this.recording = false;
+            using (StreamWriter fs = new StreamWriter(path))
+            {
+                foreach (var action in this.dataModel.Actions)
+                {
+                    action.ConvertToJavascript(fs);
+                }
+            }
+
+            this.recording = false;            
         }
 
         public bool IsRecording

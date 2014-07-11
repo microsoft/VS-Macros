@@ -4,11 +4,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.IO;
 namespace VSMacros.Interfaces
 {
     interface IRecorder
     {
         void StartRecording();
-        void StopRecording();
+
+        void StopRecording(string path);
     }
 }

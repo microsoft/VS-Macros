@@ -92,6 +92,7 @@ namespace ExecutionEngine
                 short iterations = DetermineNumberOfIterations(args);
                 string unwrappedScript = ExtractScript(args);
                 string wrappedScript = WrapScriptInFunction(unwrappedScript);
+
                 RunMacro(wrappedScript, iterations);
             }
             else

@@ -22,7 +22,7 @@ namespace VSMacros {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace VSMacros {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MicrosoftCorporation.VSMacros.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace VSMacros {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized string similar to The tool window cannot be created..
         /// </summary>
-        internal static string CannotCreateWindow {
+        public static string CannotCreateWindow {
             get {
                 return ResourceManager.GetString("CannotCreateWindow", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; and all its contents will be sent to the recycle bin..
         /// </summary>
-        internal static string DeleteFolder {
+        public static string DeleteFolder {
             get {
                 return ResourceManager.GetString("DeleteFolder", resourceCulture);
             }
@@ -81,16 +81,97 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; will be sent to the recycle bin..
         /// </summary>
-        internal static string DeleteMacro {
+        public static string DeleteMacro {
             get {
                 return ResourceManager.GetString("DeleteMacro", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attention.
+        ///   Looks up a localized string similar to Assign To.
         /// </summary>
-        internal static string ExitCaption {
+        public static string DialogAssignTo {
+            get {
+                return ResourceManager.GetString("DialogAssignTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not retrieve command index from selection..
+        /// </summary>
+        public static string DialogCannotRetrieveCommandIndex {
+            get {
+                return ResourceManager.GetString("DialogCannotRetrieveCommandIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assign custom keyboard shortcut.
+        /// </summary>
+        public static string DialogCustomShortcut {
+            get {
+                return ResourceManager.GetString("DialogCustomShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string DialogMacroName {
+            get {
+                return ResourceManager.GetString("DialogMacroName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playback.
+        /// </summary>
+        public static string DialogPlayback {
+            get {
+                return ResourceManager.GetString("DialogPlayback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
+        /// </summary>
+        public static string DialogShortcutAlreadyUsed {
+            get {
+                return ResourceManager.GetString("DialogShortcutAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Predefined Keyboard Shortcuts.
+        /// </summary>
+        public static string DialogShortcutSelectionText {
+            get {
+                return ResourceManager.GetString("DialogShortcutSelectionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Times.
+        /// </summary>
+        public static string DialogTimesPlural {
+            get {
+                return ResourceManager.GetString("DialogTimesPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        public static string DialogTimesSingular {
+            get {
+                return ResourceManager.GetString("DialogTimesSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string ExitCaption {
             get {
                 return ResourceManager.GetString("ExitCaption", resourceCulture);
             }
@@ -99,16 +180,128 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized string similar to Recording in process, are you sure to exit?.
         /// </summary>
-        internal static string ExitMessage {
+        public static string ExitMessage {
             get {
                 return ResourceManager.GetString("ExitMessage", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap FolderClosedIcon {
+            get {
+                object obj = ResourceManager.GetObject("FolderClosedIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap FolderOpenedIcon {
+            get {
+                object obj = ResourceManager.GetObject("FolderOpenedIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Macro not found on disk..
+        /// </summary>
+        public static string MacroNotFound {
+            get {
+                return ResourceManager.GetString("MacroNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match case.
+        /// </summary>
+        public static string MatchCase {
+            get {
+                return ResourceManager.GetString("MatchCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Recording.
+        /// </summary>
+        public static string MenuTextNormal {
+            get {
+                return ResourceManager.GetString("MenuTextNormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Recording.
+        /// </summary>
+        public static string MenuTextRecording {
+            get {
+                return ResourceManager.GetString("MenuTextRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap RecordRound {
+            get {
+                object obj = ResourceManager.GetObject("RecordRound", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap RootIcon {
+            get {
+                object obj = ResourceManager.GetObject("RootIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search within file contents.
+        /// </summary>
+        public static string SearchWithinFileContents {
+            get {
+                return ResourceManager.GetString("SearchWithinFileContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected shortcut is invalid..
+        /// </summary>
+        public static string ShortcutIsInvalid {
+            get {
+                return ResourceManager.GetString("ShortcutIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcuts file was not found..
+        /// </summary>
+        public static string ShortcutsFileNotFound {
+            get {
+                return ResourceManager.GetString("ShortcutsFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executing macro.
+        /// </summary>
+        public static string StatusBarPlayingText {
+            get {
+                return ResourceManager.GetString("StatusBarPlayingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ready.
         /// </summary>
-        internal static string StatusBarReadyText {
+        public static string StatusBarReadyText {
             get {
                 return ResourceManager.GetString("StatusBarReadyText", resourceCulture);
             }
@@ -117,16 +310,26 @@ namespace VSMacros {
         /// <summary>
         ///   Looks up a localized string similar to Recording....
         /// </summary>
-        internal static string StatusBarRecordingText {
+        public static string StatusBarRecordingText {
             get {
                 return ResourceManager.GetString("StatusBarRecordingText", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap StopIcon {
+            get {
+                object obj = ResourceManager.GetObject("StopIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Macro Explorer.
         /// </summary>
-        internal static string ToolWindowTitle {
+        public static string ToolWindowTitle {
             get {
                 return ResourceManager.GetString("ToolWindowTitle", resourceCulture);
             }

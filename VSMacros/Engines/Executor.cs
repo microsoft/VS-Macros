@@ -58,7 +58,7 @@ namespace VSMacros.Engines
         /// </summary>
         public void StartExecution(StreamReader reader, int iterations)
         {
-            var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ExecutionEngine.exe");
+            var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             var script = CreateScriptFromReader(reader);
             this.executionEngine = new Process();
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using VSMacros.Engines;
 
 namespace VSMacros.Interfaces
@@ -22,10 +21,10 @@ namespace VSMacros.Interfaces
 
         /// <summary>
         /// Will run the macro file.
-        /// <param name="macro">Name of macro.</param>
+        /// <param name="path">Path to macro.</param>
         /// <param name="iterations">Times to be executed.</param>
         /// </summary>
-        void StartExecution(StreamReader reader, int iterations);
+        void StartExecution(string path, int iterations);
 
         /// <summary>
         /// Will stop the currently executing macro file.

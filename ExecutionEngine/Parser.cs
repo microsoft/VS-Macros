@@ -5,13 +5,12 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Runtime.InteropServices;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 
 namespace ExecutionEngine
 {
-    internal sealed class Parser
+    internal sealed class Parser : IDisposable
     {
         private IActiveScriptParse32 parse32;
         private IActiveScriptParse64 parse64;
@@ -19,7 +18,7 @@ namespace ExecutionEngine
 
         public Parser(IActiveScript engine)
         {
-            this.isParse32 = this.is32BitEnvironment();
+            this.isParse32 = this.Is32BitEnvironment();
             this.InitializeParsers(engine);
         }
 
@@ -27,17 +26,17 @@ namespace ExecutionEngine
         {
             if (this.isParse32)
             {
-                this.parse32 = engine as IActiveScriptParse32;
+                this.parse32 = (IActiveScriptParse32)engine;
                 this.parse32.InitNew();
             }
             else
             {
-                this.parse64 = engine as IActiveScriptParse64;
+                this.parse64 = (IActiveScriptParse64)engine;
                 this.parse64.InitNew();
             }
         }
 
-        internal bool is32BitEnvironment()
+        internal bool Is32BitEnvironment()
         {
             if (IntPtr.Size == 4)
                 return true;
@@ -53,11 +52,27 @@ namespace ExecutionEngine
 
             if (this.isParse32)
             {
-                this.parse32.ParseScriptText(unparsed, null, null, null, IntPtr.Zero, 0, flags, out result, out exceptionInfo);
+                this.parse32.ParseScriptText(unparsed,
+                    itemName: null,
+                    context: null, 
+                    delimiter: null, 
+                    sourceContextCookie: IntPtr.Zero, 
+                    startingLineNumber: 0, 
+                    flags: flags, 
+                    result: out result, 
+                    exceptionInfo: out exceptionInfo);
             }
             else
             {
-                this.parse64.ParseScriptText(unparsed, null, null, null, IntPtr.Zero, 0, flags, out result, out exceptionInfo);
+                this.parse64.ParseScriptText(unparsed,
+                    itemName: null,
+                    context: null,
+                    delimiter: null,
+                    sourceContextCookie: IntPtr.Zero,
+                    startingLineNumber: 0,
+                    flags: flags,
+                    result: out result,
+                    exceptionInfo: out exceptionInfo);
             }
         }
 
@@ -65,12 +80,10 @@ namespace ExecutionEngine
         {
             if (this.isParse32 && this.parse32 != null)
             {
-                Marshal.ReleaseComObject(this.parse32);
                 this.parse32 = null;
             }
             if (this.parse64 != null)
             {
-                Marshal.ReleaseComObject(this.parse64);
                 this.parse64 = null;
             }
         }

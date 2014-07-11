@@ -7,9 +7,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
+using ExecutionEngine.Enums;
+using VSMacros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Helpers;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -17,131 +20,177 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        private static int pid;
-        private static string macroName = "currentScript";
-
-        // Helper methods
-        private static string[] SeparateArgs(string[] args)
-        {
-            string[] stringSeparator = new string[] {"[delimiter]"};
-            string[] separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < args.Length; i++)
-            {
-                Console.WriteLine(args[i]);
-            }
-
-            return separatedArgs;
-        }
-        private static short DetermineNumberOfIterations(string[] args)
-        {
-            short iterations;
-
-            if (args.Length < 2 || !short.TryParse(args[1], out iterations))
-            {
-                return 1;
-            }
-
-            return iterations;
-        }
-
-        private static string ExtractScript(string[] args)
-        {
-            if (args.Length > 2)
-            {
-                return args[2];
-            }
-            else
-            {
-                MessageBox.Show("You did not provide a script");
-                return string.Empty;
-            }
-        }
-
-        private static string WrapScriptInFunction(string unwrapped)
-        {
-            string wrapped = "function currentScript() {";
-            wrapped += unwrapped;
-            wrapped += "}";
-
-            return wrapped;
-        }
+        internal static string MacroName = "currentScript";
+        private const string close = "close";
+        private static bool exit;
 
         internal static void RunMacro(string script, int iterations = 1)
         {
-            if (!string.IsNullOrEmpty(script))
-            {
-                Program.parsedScript = Program.engine.Parse(script);
-            }
-            else
-            {
-                throw new Exception(script);
-            }
+            Validate.IsNotNullAndNotEmpty(script, "script");
+            Program.parsedScript = Program.engine.Parse(script);
 
             for (int i = 0; i < iterations; i++)
             {
-                Program.parsedScript.CallMethod(Program.macroName);
+                Program.parsedScript.CallMethod(Program.MacroName);
             }
         }
 
-        internal static void RunFromExtension(string[] args)
+        internal static void RunFromExtension(string[] separatedArgs)
         {
-            if (int.TryParse(args[0], out Program.pid))
+            string unparsedPid = separatedArgs[0];
+            string unparsedIter = separatedArgs[1];
+            string encodedPath = separatedArgs[2];
+
+            int pid = InputParser.GetPid(unparsedPid);
+            short iterations = InputParser.GetNumberOfIterations(unparsedIter);
+            string decodedPath = InputParser.DecodePath(encodedPath);
+            var unwrapped = InputParser.ExtractScript(decodedPath);
+            var wrapped = InputParser.WrapScript(unwrapped);
+
+            Program.engine = new Engine(pid);
+            RunMacro(wrapped, iterations);
+        }
+
+        internal static void RunAsStartupProject()
+        {
+            Debug.WriteLine("Warning: Hardcoded devenv pid");
+            short pidOfCurrentDevenv = 9800;
+
+            Program.engine = new Engine(pidOfCurrentDevenv);
+
+            Debug.WriteLine("Warning: Hardcoded path");
+            string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
+            string wrapped = InputParser.WrapScript(unwrapped);
+
+            RunMacro(wrapped, 1);
+        }
+
+        private static void HandleInput()
+        {
+            int typeOfMessage = Client.GetIntFromStream(Client.ClientStream);
+
+            switch ((Packet)typeOfMessage)
             {
-                Program.engine = new Engine(Program.pid);
+                case (Packet.FilePath):
+                    HandleFilePath();
+                    break;
 
-                short iterations = DetermineNumberOfIterations(args);
-                string unwrappedScript = ExtractScript(args);
-                string wrappedScript = WrapScriptInFunction(unwrappedScript);
+                case (Packet.Close):
+                    HandleCloseRequest();
+                    break;
 
-                RunMacro(wrappedScript, iterations);
+                case (Packet.Success):
+                    Client.HandlePacketSuccess(Client.ClientStream);
+                    break;
+
+                case (Packet.ScriptError):
+                    Client.HandlePacketScriptError(Client.ClientStream);
+                    break;
+
+                case (Packet.OtherError):
+                    Client.HandlePacketOtherError(Client.ClientStream);
+                    break;
+            }
+        }
+
+        private static void HandleCloseRequest()
+        {
+            Client.ShutDownServer(Client.ClientStream);
+            Client.ClientStream.Close();
+            Program.exit = true;
+        }
+
+        private static void HandleFilePath()
+        {
+            string message = Client.ParseFilePath(Client.ClientStream);
+
+            if (InputParser.IsDebuggerStopped(message))
+            {
+                Program.exit = true;
             }
             else
             {
-                MessageBox.Show("You did not provide any arguments to the Execution Engine");
-                throw new ArgumentException(args[0]);
+                string unwrappedScript = InputParser.ExtractScript(message);
+                string wrappedScript = InputParser.WrapScript(unwrappedScript);
+                RunMacro(wrappedScript, iterations: 1);
             }
         }
 
-        internal static void RunAsStartupProject(int tempPid)
+        internal static Thread CreateReadingThread(int pid)
         {
-            Program.pid = tempPid;
-            Program.engine = new Engine(Program.pid);
-            string script = CreateScriptStub();
-            RunMacro(script, 2);
+            Program.exit = false;
+            Thread readThread = new Thread(() =>
+            {
+                try
+                {
+                    Program.engine = new Engine(pid);
+                    while (!Program.exit)
+                    {
+                        HandleInput();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Client.ShutDownServer(Client.ClientStream);
+                    Client.ClientStream.Close();
+                    Program.exit = true;
+
+                    var errorMessage = string.Format("From thread: An error occurred: {0}: {1}", e.Message, e.GetBaseException());
+                }
+            });
+
+            readThread.SetApartmentState(ApartmentState.STA);
+            return readThread;
         }
 
-        private static string CreateScriptStub()
+        private static void RunFromPipe(string[] separatedArgs)
         {
-            return "function currentScript() { dte.ExecuteCommand('File.NewFile'); } ";
+            string guid = InputParser.GetGuid(separatedArgs[1]);
+            int pid = InputParser.GetPid(separatedArgs[2]);
+
+            Client.InitializePipeClientStream(guid);
+
+            Thread readThread = CreateReadingThread(pid);
+            readThread.Start();
+
+            // byte[] packet = Client.PackageFilePathMessage("hello from engine!");
+            // Client.SendMessageToServer(Client.ClientStream, packet);
         }
 
         internal static void Main(string[] args)
         {
-            Console.WriteLine("Hello there!  Welcome to our macro extension!");
+            // TODO: Close pipes when Visual Studio closes
 
-            if (args.Length > 0)
+            // Console.WriteLine("Hello there!  Welcome to our macro extension!");
+            try
             {
-                string[] separatedArgs = SeparateArgs(args);
-                RunFromExtension(separatedArgs);
-            }
-            else
-            {
-                var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.js";
-                var reader = new StreamReader(path);
-                short pidOfCurrentDevenv = 4300;
-                RunAsStartupProject(pidOfCurrentDevenv);
-            }
-        }
+                if (args.Length > 0)
+                {
+                    var pipeToken = "@";
+                    string[] separatedArgs = InputParser.SeparateArgs(args);
 
-        private static string GetPathFromArgs(string[] args)
-        {
-            if (args[2] == null)
-            {
-                MessageBox.Show("A path to the macro file was not provided");
-                return string.Empty;
+                    if (separatedArgs[0].Equals(pipeToken))
+                    {
+                        // Console.WriteLine("running macro from pipe");
+                        RunFromPipe(separatedArgs);
+                    }
+                    else
+                    {
+                        // Console.WriteLine("running macro from extension");
+                        RunFromExtension(separatedArgs);
+                    }
+                }
+                else
+                {
+                    // Console.WriteLine("running as startup");
+                    RunAsStartupProject();
+                }
             }
-
-            return args[2];
+            catch (Exception e)
+            {
+                var error = string.Format("Error at {0} from method {1}\n\n{2}", e.Source, e.TargetSite, e.Message);
+                MessageBox.Show(error);
+            }
         }
     }
 }

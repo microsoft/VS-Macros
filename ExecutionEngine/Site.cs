@@ -5,36 +5,46 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
+using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
     internal sealed class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
+        internal static bool Error;
+        internal static RuntimeException RuntimeException;
 
         public void GetLCID(out int lcid)
         {
             lcid = Thread.CurrentThread.CurrentCulture.LCID;
         }
 
-        public void GetItemInfo(string name, Enums.ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
+        public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
             {
                 throw new NotImplementedException();
             }
 
-            if (Engine.DteObject == null)
+            if (name.Equals("dte") && !(Engine.DteObject == null))
+            {
+                item = Marshal.GetIUnknownForObject(Engine.DteObject);
+                //// typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+            }
+            else if (name.Equals("cmdHelper") && !(Engine.CommandHelper == null))
+            {
+                item = Marshal.GetIUnknownForObject(Engine.CommandHelper);
+                //// typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+            }
+            else
             {
                 throw new COMException(null, TypeEElementNotFound);
             }
-
-            item = Marshal.GetIUnknownForObject(Engine.DteObject);
         }
 
         public void GetDocVersionString(out string version)
@@ -55,7 +65,19 @@ namespace ExecutionEngine
 
         public void OnScriptError(IActiveScriptError scriptError)
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.OnScriptError");
+            uint sourceContext;
+            uint lineNumber;
+            int characterPosition;
+            System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo;
+
+            scriptError.GetSourcePosition(out sourceContext, out lineNumber, out characterPosition);
+            scriptError.GetExceptionInfo(out exceptionInfo);
+
+            string description = exceptionInfo.bstrDescription;
+            string source = exceptionInfo.bstrSource;
+
+            Site.Error = true;
+            Site.RuntimeException = new RuntimeException(description, source, lineNumber);
         }
 
         public void OnEnterScript()

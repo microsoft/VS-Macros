@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 using VSMacros.ExecutionEngine;
@@ -18,8 +16,8 @@ namespace ExecutionEngine
     internal sealed class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
-        internal static bool error;
-        internal static RuntimeException runtimeException;
+        internal static bool Error;
+        internal static RuntimeException RuntimeException;
 
         public void GetLCID(out int lcid)
         {
@@ -36,20 +34,17 @@ namespace ExecutionEngine
             if (name.Equals("dte") && !(Engine.DteObject == null))
             {
                 item = Marshal.GetIUnknownForObject(Engine.DteObject);
-                //typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+                //// typeInfo = Marshal.GetITypeInfoForType(item.GetType());
             }
-
             else if (name.Equals("cmdHelper") && !(Engine.CommandHelper == null))
             {
                 item = Marshal.GetIUnknownForObject(Engine.CommandHelper);
-                //typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+                //// typeInfo = Marshal.GetITypeInfoForType(item.GetType());
             }
-
             else
             {
                 throw new COMException(null, TypeEElementNotFound);
             }
-            
         }
 
         public void GetDocVersionString(out string version)
@@ -81,8 +76,8 @@ namespace ExecutionEngine
             string description = exceptionInfo.bstrDescription;
             string source = exceptionInfo.bstrSource;
 
-            Site.error = true;
-            Site.runtimeException = new RuntimeException(description, source, lineNumber);
+            Site.Error = true;
+            Site.RuntimeException = new RuntimeException(description, source, lineNumber);
         }
 
         public void OnEnterScript()

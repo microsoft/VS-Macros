@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Validate.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VSMacros.ExecutionEngine
 {
@@ -33,7 +35,7 @@ namespace VSMacros.ExecutionEngine
         {
             if (o != null)
             {
-                string message = String.Format(CultureInfo.CurrentUICulture, Resources.ValidateError_InvalidOperation, paramName);
+                string message = string.Format(CultureInfo.CurrentUICulture, Resources.ValidateErrorInvalidOperation, paramName);
                 throw new InvalidOperationException(message);
             }
         }
@@ -47,12 +49,12 @@ namespace VSMacros.ExecutionEngine
         /// </param>
         public static void IsNotEmpty(string s, string paramName)
         {
-            if (s == String.Empty)
-                throw new ArgumentException(Resources.ValidateError_StringEmpty, paramName);
+            if (s == string.Empty)
+                throw new ArgumentException(Resources.ValidateErrorStringEmpty, paramName);
         }
 
         /// <summary>
-        /// Throws an ArgumentException if the given guid is empty.
+        /// Throws an ArgumentException if the given Guid is empty.
         /// </summary>
         /// <param name="s">Guid to test</param>
         /// <param name="paramName">
@@ -61,7 +63,7 @@ namespace VSMacros.ExecutionEngine
         public static void IsNotEmpty(Guid g, string paramName)
         {
             if (g == Guid.Empty)
-                throw new ArgumentException(Resources.ValidateError_GuidEmpty, paramName);
+                throw new ArgumentException(Resources.ValidateErrorGuidEmpty, paramName);
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace VSMacros.ExecutionEngine
         public static void IsNotWhiteSpace(string s, string paramName)
         {
             if (s != null && string.IsNullOrWhiteSpace(s))
-                throw new ArgumentException(Resources.ValidateError_StringWhiteSpace, paramName);
+                throw new ArgumentException(Resources.ValidateErrorStringWhiteSpace, paramName);
         }
 
         /// <summary>

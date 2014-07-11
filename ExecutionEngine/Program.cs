@@ -9,11 +9,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using VSMacros.ExecutionEngine;
-using VSMacros.ExecutionEngine.Pipes;
-using VSMacros.ExecutionEngine.Stubs;
-using VSMacros.ExecutionEngine.Helpers;
 using ExecutionEngine.Enums;
+using VSMacros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Helpers;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -21,7 +20,7 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        internal static string macroName = "currentScript";
+        internal static string MacroName = "currentScript";
         private const string close = "close";
         private static bool exit;
 
@@ -32,7 +31,7 @@ namespace ExecutionEngine
 
             for (int i = 0; i < iterations; i++)
             {
-                Program.parsedScript.CallMethod(Program.macroName);
+                Program.parsedScript.CallMethod(Program.MacroName);
             }
         }
 
@@ -61,7 +60,6 @@ namespace ExecutionEngine
 
             Debug.WriteLine("Warning: Hardcoded path");
             string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
-            //string cleaned = InputParser.RemoveComments(unwrapped);
             string wrapped = InputParser.WrapScript(unwrapped);
 
             RunMacro(wrapped, 1);
@@ -78,9 +76,7 @@ namespace ExecutionEngine
                     break;
 
                 case (Packet.Close):
-                    Client.ShutDownServer(Client.ClientStream);
-                    Client.ClientStream.Close();
-                    Program.exit = true;
+                    HandleCloseRequest();
                     break;
 
                 case (Packet.Success):
@@ -97,6 +93,13 @@ namespace ExecutionEngine
             }
         }
 
+        private static void HandleCloseRequest()
+        {
+            Client.ShutDownServer(Client.ClientStream);
+            Client.ClientStream.Close();
+            Program.exit = true;
+        }
+
         private static void HandleFilePath()
         {
             string message = Client.ParseFilePath(Client.ClientStream);
@@ -104,9 +107,7 @@ namespace ExecutionEngine
             if (InputParser.IsDebuggerStopped(message))
             {
                 Program.exit = true;
-                //Client.ClientStream.Close();
             }
-
             else
             {
                 string unwrappedScript = InputParser.ExtractScript(message);
@@ -139,7 +140,6 @@ namespace ExecutionEngine
             });
 
             readThread.SetApartmentState(ApartmentState.STA);
-            Console.WriteLine(readThread.GetApartmentState());
             return readThread;
         }
 
@@ -153,16 +153,15 @@ namespace ExecutionEngine
             Thread readThread = CreateReadingThread(pid);
             readThread.Start();
 
-            //byte[] packet = Client.PackageFilePathMessage("hello from engine!");
-            //Client.SendMessageToServer(Client.ClientStream, packet);
+            // byte[] packet = Client.PackageFilePathMessage("hello from engine!");
+            // Client.SendMessageToServer(Client.ClientStream, packet);
         }
 
         internal static void Main(string[] args)
         {
             // TODO: Close pipes when Visual Studio closes
 
-            Console.WriteLine("Hello there!  Welcome to our macro extension!");
-
+            // Console.WriteLine("Hello there!  Welcome to our macro extension!");
             try
             {
                 if (args.Length > 0)
@@ -172,25 +171,25 @@ namespace ExecutionEngine
 
                     if (separatedArgs[0].Equals(pipeToken))
                     {
-                        Console.WriteLine("running macro from pipe");
+                        // Console.WriteLine("running macro from pipe");
                         RunFromPipe(separatedArgs);
                     }
                     else
                     {
-                        Console.WriteLine("running macro from extension");
+                        // Console.WriteLine("running macro from extension");
                         RunFromExtension(separatedArgs);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("running as startup");
+                    // Console.WriteLine("running as startup");
                     RunAsStartupProject();
                 }
             }
             catch (Exception e)
             {
                 var error = string.Format("Error at {0} from method {1}\n\n{2}", e.Source, e.TargetSite, e.Message);
-                MessageBox.Show("from big try/catch: " + error);
+                MessageBox.Show(error);
             }
         }
     }

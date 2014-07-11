@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Server.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using VSMacros.Pipes;
+using System.Windows;
 using VSMacros.Engines;
 using VSMacros.Enums;
-using System.Windows;
 
 namespace VSMacros.Pipes
 {
+    /// <summary>
+    /// Aids in IPC.
+    /// </summary>
     public static class Server
     {
         public static NamedPipeServerStream ServerStream;
@@ -54,23 +59,34 @@ namespace VSMacros.Pipes
 
                 switch ((Packet)typeOfMessage)
                 {
-                    case (Packet.FilePath):
+                    case Packet.FilePath:
                         string message = ParseFilePath(Server.ServerStream);
                         Debug.WriteLine("message: " + message);
                         break;
 
-                    case (Packet.Close):
-                        MessageBox.Show("in Server, Packet.Close");
+                    case Packet.Close:
+                        MessageBox.Show("Received a close packet in Server.");
                         Executor.IsEngineInitialized = false;
                         willKeepRunning = false;
                         break;
 
-                    case (Packet.Success):
+                    case Packet.Success:
                         Server.HandlePacketSuccess(Server.ServerStream);
                         break;
 
-                    case (Packet.ScriptError):
-                        Server.HandlePacketScriptError(Server.ServerStream);
+                    case Packet.ScriptError:
+                        // int lineNumber = GetIntFromStream(Server.ServerStream);
+                        // Debug.WriteLine("line number of error is: " + lineNumber);
+                        // int sizeOfSource = GetIntFromStream(Server.ServerStream);
+                        // Debug.WriteLine("size of source is: " + sizeOfSource);
+                        // string source = GetMessageFromStream(Server.ServerStream, sizeOfSource);
+                        // Debug.WriteLine("source is: " + source);
+                        // int sizeOfDescription = GetIntFromStream(Server.ServerStream);
+                        // Debug.WriteLine("size of description is: " + sizeOfDescription);
+                        // string description = GetMessageFromStream(Server.ServerStream, sizeOfDescription);
+                        // Debug.WriteLine("description is: " + description);
+
+                        //Server.HandlePacketScriptError(Server.ServerStream);
                         break;
 
                     case (Packet.OtherError):
@@ -103,8 +119,6 @@ namespace VSMacros.Pipes
         }
 
         #endregion
-
-        #region Sending
 
         private static byte[] PackageFilePathMessage(string line)
         {
@@ -157,7 +171,5 @@ namespace VSMacros.Pipes
             byte[] filePathPacket = PackageFilePathMessage(path);
             SendMessageToClient(Server.ServerStream, filePathPacket);
         }
-
-        #endregion
     }
 }

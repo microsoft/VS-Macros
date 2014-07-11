@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Runtime.InteropServices;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 
@@ -19,7 +18,7 @@ namespace ExecutionEngine
 
         public Parser(IActiveScript engine)
         {
-            this.isParse32 = this.is32BitEnvironment();
+            this.isParse32 = this.Is32BitEnvironment();
             this.InitializeParsers(engine);
         }
 
@@ -37,7 +36,7 @@ namespace ExecutionEngine
             }
         }
 
-        internal bool is32BitEnvironment()
+        internal bool Is32BitEnvironment()
         {
             if (IntPtr.Size == 4)
                 return true;

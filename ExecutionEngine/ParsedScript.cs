@@ -5,15 +5,9 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
@@ -37,22 +31,26 @@ namespace ExecutionEngine
         {
             try
             {
-                return this.dispatch.GetType().InvokeMember(Program.macroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                return this.dispatch.GetType().InvokeMember(Program.MacroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
             }
-
             catch (Exception e)
             {
-                if (Site.error)
+                if (Site.Error)
                 {
-                    var exception = Site.runtimeException;
+                    var exception = Site.RuntimeException;
                     var exceptionMessage = string.Format("{0}: {1} at line {2}", exception.Source, exception.Description, exception.Line);
-                    MessageBox.Show("from CallMethod, Site.error: " + exceptionMessage);
+                    MessageBox.Show("Error in the script: " + exceptionMessage);
+
+                    // Error messaging for IPC is acting weird for now
+                    // byte[] scriptErrorMessage = Client.PackageScriptError(exception.Line, exception.Source, exception.Description);
+                    // string message = System.Text.UnicodeEncoding.Unicode.GetString(scriptErrorMessage);
+                    // Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
                     return null;
                 }
                 else
                 {
                     var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                    MessageBox.Show("From CallMethod, general exception: " + errorMessage);
+                    MessageBox.Show(errorMessage);
                     throw;
                 }
             }

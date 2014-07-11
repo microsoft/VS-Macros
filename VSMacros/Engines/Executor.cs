@@ -20,6 +20,8 @@ using VSMacros.Pipes;
 
 
 using System.Runtime.InteropServices.ComTypes;
+using System.IO;
+using System.Reflection;
 //using System.Windows.Forms;
 
 namespace VSMacros.Engines
@@ -145,18 +147,15 @@ namespace VSMacros.Engines
 
         public void InitializeEngine()
         {
-            RegisterCmdNameMappinginROT();
-            RegisterCommandDispatcherinROT();
-
-            Debug.WriteLine("Initializing the engine");
-            string processName;
+            this.RegisterCmdNameMappinginROT();
+            this.RegisterCommandDispatcherinROT();
   
             Server.InitializeServer();
             Executor.executionEngine = new Process();
 
-            Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
-            processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
-            //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
+            // Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
+            // string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
+            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
 
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
@@ -193,10 +192,10 @@ namespace VSMacros.Engines
         {
             Debug.WriteLine("path is: " + path);
 
-            Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
-            var processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
-            //var processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
-            var encodedPath = path.Replace(" ", "%20");
+            // Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
+            // var processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
+            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
+            string encodedPath = path.Replace(" ", "%20");
             Executor.executionEngine = new Process();
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.UseShellExecute = false;

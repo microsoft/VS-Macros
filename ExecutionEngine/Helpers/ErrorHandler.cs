@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ErrorHandler.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VSMacros.ExecutionEngine
 {

@@ -5,16 +5,13 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Globalization;
 using System.Runtime.InteropServices.ComTypes;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
-using System.Globalization;
-using VSMacros.ExecutionEngine;
 using Microsoft.VisualStudio.Shell;
-using System.Windows.Forms;
+using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
@@ -27,9 +24,10 @@ namespace ExecutionEngine
         public static object DteObject { get; private set; }
         public static object CommandHelper { get; private set; }
 
-        IMoniker GetItemMoniker(int pid)
+        private IMoniker GetItemMoniker(int pid)
         {
             IMoniker moniker;
+
             // TODO: make it so it works with other versions of VS as well
             int hr = NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
             if (ErrorHandler.Failed(hr))
@@ -40,7 +38,7 @@ namespace ExecutionEngine
             return moniker;
         }
 
-        IRunningObjectTable GetRunningObjectTable()
+        private IRunningObjectTable GetRunningObjectTable()
         {
             IRunningObjectTable rot;
             int hr = NativeMethods.GetRunningObjectTable(0, out rot);
@@ -52,7 +50,7 @@ namespace ExecutionEngine
             return rot;
         }
 
-        object GetDteObject(IRunningObjectTable rot, IMoniker moniker)
+        private object GetDteObject(IRunningObjectTable rot, IMoniker moniker)
         {
             object dteObject;
             int hr = rot.GetObject(moniker, out dteObject);
@@ -66,9 +64,9 @@ namespace ExecutionEngine
 
         private void InitializeDteObject(int pid)
         {
-            IMoniker moniker = GetItemMoniker(pid);
-            IRunningObjectTable rot = GetRunningObjectTable();
-            Engine.DteObject = GetDteObject(rot, moniker);
+            IMoniker moniker = this.GetItemMoniker(pid);
+            IRunningObjectTable rot = this.GetRunningObjectTable();
+            Engine.DteObject = this.GetDteObject(rot, moniker);
 
             Validate.IsNotNull(Engine.DteObject, "Engine.DteObject");
         }
@@ -78,24 +76,24 @@ namespace ExecutionEngine
             var globalProvider = ServiceProvider.GlobalProvider;
             if (globalProvider == null)
             {
-                //MessageBox.Show("global provider is null");
+                // MessageBox.Show("global provider is null");
             }
-            //Engine.CommandHelper = new CommandHelper(ServiceProvider.GlobalProvider);
+
+            // Engine.CommandHelper = new CommandHelper(ServiceProvider.GlobalProvider);
             Engine.CommandHelper = new CommandHelper(globalProvider);
             Validate.IsNotNull(Engine.CommandHelper, "Engine.CommandHelper");
         }
 
         internal IActiveScript CreateEngine()
         {
-            const string language = "jscript";
+            const string Language = "jscript";
 
-            Type engine = Type.GetTypeFromProgID(language, true);
+            Type engine = Type.GetTypeFromProgID(Language, true);
             return Activator.CreateInstance(engine) as IActiveScript;
         }
 
         public Engine(int pid)
         {
-            MessageBox.Show("hi :)");
             const string dte = "dte";
             const string cmdHelper = "cmdHelper";
 

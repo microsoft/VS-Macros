@@ -1,6 +1,4 @@
-﻿using VSMacros.Engines;
-using System;
-using System.IO;
+﻿using System;
 using VSMacros.Engines;
 
 namespace VSMacros.Interfaces

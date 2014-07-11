@@ -148,6 +148,8 @@
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
+    <Compile Include="Helpers\ErrorHandler.cs" />
+    <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
@@ -157,6 +159,8 @@
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IRecorder.cs" />
     <Compile Include="Interfaces\IRecorderPrivate.cs" />
+    <Compile Include="Pipes\Packet.cs" />
+    <Compile Include="Pipes\Server.cs" />
     <Compile Include="RecorderListeners\EditorCommandFilter.cs" />
     <Compile Include="RecorderListeners\CommandExecutionWatcher.cs" />
     <Compile Include="RecorderListeners\TextViewCreationListener.cs" />

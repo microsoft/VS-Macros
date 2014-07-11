@@ -20,7 +20,7 @@ namespace VSMacros.Engines
     public sealed class Manager : IManager
     {
         private static Manager instance;
-        
+
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
@@ -29,7 +29,7 @@ namespace VSMacros.Engines
 
         public string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
-       
+
         private string shortcutsFilePath;
 
         private IServiceProvider serviceProvider;
@@ -41,7 +41,7 @@ namespace VSMacros.Engines
             get { return MacrosControl.Current.SelectedNode; }
         }
 
-        private Manager(IServiceProvider provider) 
+        private Manager(IServiceProvider provider)
         {
             this.serviceProvider = provider;
             this.uiShell = (IVsUIShell)provider.GetService(typeof(SVsUIShell));
@@ -67,7 +67,7 @@ namespace VSMacros.Engines
                 {
                     Manager.instance = new Manager(VSMacrosPackage.Current);
                 }
-                
+
                 return Manager.instance;
             }
         }
@@ -86,15 +86,29 @@ namespace VSMacros.Engines
             recorder.StopRecording(current);
         }
 
-        public void Playback(string path, int iterations = 1) 
+        public void Playback(string path, int iterations = 1)
         {
             if (path == string.Empty)
             {
                 path = this.SelectedMacro.FullPath;
             }
 
-            Executor executor = new Executor();
-            executor.StartExecution(new StreamReader(path), iterations);
+            var executor = new Executor();
+            var enablePipes = true;
+
+            if (enablePipes)
+            {
+                if (!Executor.IsEngineInitialized)
+                {
+                    executor.InitializeEngine();
+                }
+                executor.RunEngine(path);
+            }
+            else
+            {
+                executor.StartExecution(path, 1);
+            }
+
         }
 
         public void PlaybackMultipleTimes(string path)
@@ -108,7 +122,7 @@ namespace VSMacros.Engines
             }
         }
 
-        public void StopPlayback() 
+        public void StopPlayback()
         {
         }
 
@@ -123,7 +137,7 @@ namespace VSMacros.Engines
             System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(path); });
         }
 
-        public void SaveCurrent() 
+        public void SaveCurrent()
         {
             SaveCurrentDialog dlg = new SaveCurrentDialog();
             bool? result = dlg.ShowDialog();
@@ -160,9 +174,9 @@ namespace VSMacros.Engines
                 }
                 catch (Exception e)
                 {
-                    if (ErrorHandler.IsCriticalException(e)) 
-                    { 
-                        throw; 
+                    if (ErrorHandler.IsCriticalException(e))
+                    {
+                        throw;
                     }
 
                     this.ShowMessageBox(e.Message);
@@ -241,8 +255,8 @@ namespace VSMacros.Engines
             MacroFSNode macro = this.SelectedMacro;
 
             // Don't delete if macro is being edited
-            if (macro.IsEditable) 
-            { 
+            if (macro.IsEditable)
+            {
                 return;
             }
 
@@ -297,7 +311,7 @@ namespace VSMacros.Engines
                 macro.Delete();
             }
         }
-      
+
         public void PlaybackCommand(int cmd)
         {
             // Load shortcuts if not already loaded
@@ -305,7 +319,7 @@ namespace VSMacros.Engines
             {
                 this.LoadShortcuts();
             }
-            
+
             // Get path to macro bound to the shortcut
             string path = this.Shortcuts[cmd];
 
@@ -352,7 +366,7 @@ namespace VSMacros.Engines
 
             string basePath = Path.Combine(macro.FullPath, "New Folder");
             string path = basePath;
-            
+
             int count = 2;
             while (Directory.Exists(path))
             {
@@ -419,7 +433,7 @@ namespace VSMacros.Engines
                 {
                     int shortcutNumber = sourceItem.Shortcut;
                     Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
-                }                
+                }
             }
             catch (Exception e)
             {

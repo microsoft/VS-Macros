@@ -61,7 +61,6 @@ namespace VSMacros.Pipes
                 {
                     case Packet.FilePath:
                         string message = ParseFilePath(Server.ServerStream);
-                        Debug.WriteLine("message: " + message);
                         break;
 
                     case Packet.Close:

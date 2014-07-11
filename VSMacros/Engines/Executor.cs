@@ -6,10 +6,21 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Pipes;
+
+
+
+using System.Runtime.InteropServices.ComTypes;
+//using System.Windows.Forms;
 
 namespace VSMacros.Engines
 {
@@ -47,6 +58,85 @@ namespace VSMacros.Engines
             return pipeToken + delimiter + guid.ToString() + delimiter + pid;
         }
 
+        System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()
+        {
+            System.Runtime.InteropServices.ComTypes.IRunningObjectTable rot;
+            int hr = NativeMethods.GetRunningObjectTable(0, out rot);
+            if (ErrorHandler.Failed(hr))
+            {
+                ErrorHandler.ThrowOnFailure(hr, null);
+            }
+
+            return rot;
+        }
+
+        public void RegisterCommandDispatcherinROT()
+        {
+            int hResult;
+            System.Runtime.InteropServices.ComTypes.IBindCtx bc;
+            hResult = NativeMethods.CreateBindCtx(0, out bc);
+            if (hResult == NativeMethods.S_OK && bc != null)
+            {
+                System.Runtime.InteropServices.ComTypes.IRunningObjectTable rot = GetRunningObjectTable();
+                if (rot != null)
+                {
+                    string delim = "!";
+                    Guid guid = Marshal.GenerateGuidForType(typeof(SUIHostCommandDispatcher)); // what about IOleCommandTarget?
+
+                    string progID = String.Format(CultureInfo.InvariantCulture, "{0:B}", guid);
+
+                    System.Runtime.InteropServices.ComTypes.IMoniker moniker;
+                    hResult = NativeMethods.CreateItemMoniker(delim, progID, out moniker);
+
+                    if (hResult == NativeMethods.S_OK && moniker != null)
+                    {
+                        var serviceProvider = ServiceProvider.GlobalProvider;
+
+                        var suiHost = serviceProvider.GetService(typeof(SUIHostCommandDispatcher));
+                        hResult = rot.Register(NativeMethods.ROTFLAGS_REGISTRATIONKEEPSALIVE, suiHost, moniker);
+                        if (hResult != NativeMethods.S_OK)
+                        {
+                            // Todo: logging an error
+                        }
+                    }
+                }
+            }
+        }
+
+        public void RegisterCmdNameMappinginROT()
+        {
+            // thank you http://index/#HlpViewer/Application/HelpViewer.cs,452 you were very helpful
+
+            int hResult;
+            System.Runtime.InteropServices.ComTypes.IBindCtx bc;
+            hResult = NativeMethods.CreateBindCtx(0, out bc);
+            if (hResult == NativeMethods.S_OK && bc != null)
+            {
+                System.Runtime.InteropServices.ComTypes.IRunningObjectTable rot = GetRunningObjectTable();
+                if (rot != null)
+                {
+                    string delim = "!";
+                    Guid guid = Marshal.GenerateGuidForType(typeof(SVsCmdNameMapping)); // what about IVsCmdNameMapping?  // think i can just cast later
+
+                    string progID = String.Format(CultureInfo.InvariantCulture, "{0:B}", guid);
+                    System.Runtime.InteropServices.ComTypes.IMoniker moniker;
+                    hResult = NativeMethods.CreateItemMoniker(delim, progID, out moniker);
+
+                    if (hResult == NativeMethods.S_OK && moniker != null)
+                    {
+                        var serviceProvider = ServiceProvider.GlobalProvider;
+
+                        var svsCmdName = serviceProvider.GetService(typeof(SVsCmdNameMapping));
+                        hResult = rot.Register(NativeMethods.ROTFLAGS_REGISTRATIONKEEPSALIVE, svsCmdName, moniker);
+                        if (hResult != NativeMethods.S_OK)
+                        {
+                            // Todo: logging an error
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Initializes the engine and then runs the macro script.
         /// This method will be removed after IPC is implemented.
@@ -55,6 +145,9 @@ namespace VSMacros.Engines
 
         public void InitializeEngine()
         {
+            RegisterCmdNameMappinginROT();
+            RegisterCommandDispatcherinROT();
+
             Debug.WriteLine("Initializing the engine");
             string processName;
   
@@ -83,7 +176,6 @@ namespace VSMacros.Engines
         {
             if (Server.ServerStream.IsConnected)
             {
-                //MessageBox.Show("hello");
                 //Server.SendMessage();
                 Server.SendFilePath(path);
             }

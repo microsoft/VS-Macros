@@ -4,6 +4,8 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using ExecutionEngine.Enums;
 using VSMacros.ExecutionEngine.Helpers;
 
 namespace VSMacros.ExecutionEngine.Pipes
@@ -13,23 +15,16 @@ namespace VSMacros.ExecutionEngine.Pipes
         public static NamedPipeClientStream ClientStream;
         public static void InitializePipeClientStream(string guid)
         {
-            //NamedPipeClientStream clientStream = new NamedPipeClientStream(".", guid, PipeDirection.InOut, PipeOptions.Asynchronous);
+            var someUnreasonableNumber = 1200000;
             Client.ClientStream = new NamedPipeClientStream(".", guid, PipeDirection.InOut, PipeOptions.Asynchronous);
-            Client.ClientStream.Connect(120000); // is that unreasonable
+            Client.ClientStream.Connect(someUnreasonableNumber);
             //return clientStream;
         }
 
-        public static void CreateClientPipe(string guid)
-        {
-            Client.ClientStream = new NamedPipeClientStream(guid);
-            Console.WriteLine(string.Format("guid of client string is: {0}", guid));
-            Client.ClientStream.Connect(120);
-            Console.WriteLine("connected");
-        }
-
+        #region Sending
         public static void ShutDownServer(NamedPipeClientStream clientStream)
         {
-            byte[] close = PackageMessage("close");
+            byte[] close = PackageCloseMessage();
             SendMessageToServer(clientStream, close);
         }
 
@@ -38,6 +33,44 @@ namespace VSMacros.ExecutionEngine.Pipes
             clientStream.Write(packet, 0, packet.Length);
         }
 
+        public static byte[] PackageCloseMessage()
+        {
+            byte[] serializedType = BitConverter.GetBytes((int)Packet.Close);
+
+            int type = sizeof(int);
+            byte[] packet = new byte[type];
+
+            serializedType.CopyTo(packet, 0);
+
+            return packet;
+        }
+
+        public static byte[] PackageFilePathMessage(string line)
+        {
+            byte[] serializedType = BitConverter.GetBytes((int)Packet.FilePath);
+
+            byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
+            int message = serializedMessage.Length;
+
+            byte[] serializedLength = BitConverter.GetBytes(message);
+
+            int type = sizeof(int), messageSize = sizeof(int);
+            byte[] packet = new byte[type + messageSize + message];
+
+            serializedType.CopyTo(packet, 0);
+
+            int offset = sizeof(int);
+            serializedLength.CopyTo(packet, offset);
+            offset += sizeof(int);
+
+            serializedMessage.CopyTo(packet, offset);
+
+            return packet;
+        }
+
+        #endregion
+
+        #region Getting
         public static int GetIntFromStream(NamedPipeClientStream clientStream)
         {
             byte[] number = new byte[sizeof(int)];
@@ -50,22 +83,6 @@ namespace VSMacros.ExecutionEngine.Pipes
             byte[] messageBuffer = new byte[sizeOfMessage];
             clientStream.Read(messageBuffer, 0, sizeOfMessage);
             return UnicodeEncoding.Unicode.GetString(messageBuffer);
-        }
-
-        public static byte[] PackageMessage(string line)
-        {
-            byte[] messageBuffer = UnicodeEncoding.Unicode.GetBytes(line);
-            int messageSize = messageBuffer.Length;
-            byte[] sizeBuffer = BitConverter.GetBytes(messageSize);
-
-            int intSize = sizeof(int);
-            byte[] packet = new byte[intSize + messageSize];
-            sizeBuffer.CopyTo(packet, 0);
-
-            int offset = intSize;
-            messageBuffer.CopyTo(packet, offset);
-
-            return packet;
         }
 
         public static string ParseFilePath(NamedPipeClientStream clientStream)
@@ -109,5 +126,7 @@ namespace VSMacros.ExecutionEngine.Pipes
             int sizeOfDescription = Client.GetIntFromStream(Client.ClientStream);
             string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfDescription);
         }
+
+        #endregion
     }
 }

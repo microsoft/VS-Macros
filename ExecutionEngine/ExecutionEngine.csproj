@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.VisualStudio.Shell.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -54,7 +57,9 @@
     <Compile Include="Enums\ScriptState.cs" />
     <Compile Include="Enums\ScriptText.cs" />
     <Compile Include="Enums\ScriptThreadState.cs" />
+    <Compile Include="Helpers\CommandHelper.cs" />
     <Compile Include="Helpers\ErrorHandler.cs" />
+    <Compile Include="Helpers\Interfaces\ICommandHelper.cs" />
     <Compile Include="Helpers\InputParser.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="ParsedScript.cs" />

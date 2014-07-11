@@ -13,6 +13,8 @@ using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
 using System.Globalization;
 using VSMacros.ExecutionEngine;
+using Microsoft.VisualStudio.Shell;
+using System.Windows.Forms;
 
 namespace ExecutionEngine
 {
@@ -23,6 +25,7 @@ namespace ExecutionEngine
         private Site scriptSite;
 
         public static object DteObject { get; private set; }
+        public static object CommandHelper { get; private set; }
 
         IMoniker GetItemMoniker(int pid)
         {
@@ -70,6 +73,18 @@ namespace ExecutionEngine
             Validate.IsNotNull(Engine.DteObject, "Engine.DteObject");
         }
 
+        private void InitializeCommandHelper()
+        {
+            var globalProvider = ServiceProvider.GlobalProvider;
+            if (globalProvider == null)
+            {
+                //MessageBox.Show("global provider is null");
+            }
+            //Engine.CommandHelper = new CommandHelper(ServiceProvider.GlobalProvider);
+            Engine.CommandHelper = new CommandHelper(globalProvider);
+            Validate.IsNotNull(Engine.CommandHelper, "Engine.CommandHelper");
+        }
+
         internal IActiveScript CreateEngine()
         {
             const string language = "jscript";
@@ -80,17 +95,19 @@ namespace ExecutionEngine
 
         public Engine(int pid)
         {
+            MessageBox.Show("hi :)");
             const string dte = "dte";
+            const string cmdHelper = "cmdHelper";
+
             this.engine = this.CreateEngine();
             this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
 
-            if (Engine.DteObject == null)
-            {
-                this.InitializeDteObject(pid);
-                this.engine.SetScriptSite(this.scriptSite);
-                this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
-            }
+            this.InitializeCommandHelper();
+            this.InitializeDteObject(pid);
+            this.engine.SetScriptSite(this.scriptSite);
+            this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
+            this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);
         }
 
         public void Dispose()

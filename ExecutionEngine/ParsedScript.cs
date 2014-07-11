@@ -46,13 +46,13 @@ namespace ExecutionEngine
                 {
                     var exception = Site.runtimeException;
                     var exceptionMessage = string.Format("{0}: {1} at line {2}", exception.Source, exception.Description, exception.Line);
-                    MessageBox.Show(exceptionMessage);
+                    MessageBox.Show("from CallMethod, Site.error: " + exceptionMessage);
                     return null;
                 }
                 else
                 {
                     var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                    MessageBox.Show(errorMessage);
+                    MessageBox.Show("From CallMethod, general exception: " + errorMessage);
                     throw;
                 }
             }

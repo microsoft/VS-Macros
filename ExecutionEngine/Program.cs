@@ -78,7 +78,9 @@ namespace ExecutionEngine
                     break;
 
                 case (Packet.Close):
-                    Client.HandlePacketClose(Client.ClientStream);
+                    Client.ShutDownServer(Client.ClientStream);
+                    Client.ClientStream.Close();
+                    Program.exit = true;
                     break;
 
                 case (Packet.Success):
@@ -98,26 +100,18 @@ namespace ExecutionEngine
         private static void HandleFilePath()
         {
             string message = Client.ParseFilePath(Client.ClientStream);
+
             if (InputParser.IsDebuggerStopped(message))
             {
-                Client.ClientStream.Close();
                 Program.exit = true;
+                //Client.ClientStream.Close();
             }
 
             else
             {
-                if (InputParser.IsRequestToClose(message))
-                {
-                    Client.ShutDownServer(Client.ClientStream);
-                    Client.ClientStream.Close();
-                    Program.exit = true;
-                }
-                else
-                {
-                    string unwrappedScript = InputParser.ExtractScript(message);
-                    string wrappedScript = InputParser.WrapScript(unwrappedScript);
-                    RunMacro(wrappedScript, iterations: 1);
-                }
+                string unwrappedScript = InputParser.ExtractScript(message);
+                string wrappedScript = InputParser.WrapScript(unwrappedScript);
+                RunMacro(wrappedScript, iterations: 1);
             }
         }
 
@@ -136,15 +130,16 @@ namespace ExecutionEngine
                 }
                 catch (Exception e)
                 {
-                    var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                    MessageBox.Show(errorMessage);
-
                     Client.ShutDownServer(Client.ClientStream);
                     Client.ClientStream.Close();
                     Program.exit = true;
+
+                    var errorMessage = string.Format("From thread: An error occurred: {0}: {1}", e.Message, e.GetBaseException());
                 }
             });
 
+            readThread.SetApartmentState(ApartmentState.STA);
+            Console.WriteLine(readThread.GetApartmentState());
             return readThread;
         }
 
@@ -158,10 +153,8 @@ namespace ExecutionEngine
             Thread readThread = CreateReadingThread(pid);
             readThread.Start();
 
-            //while (!Program.exit)
-            //{
-            //    Client.SendMessageToServer();
-            //}
+            //byte[] packet = Client.PackageFilePathMessage("hello from engine!");
+            //Client.SendMessageToServer(Client.ClientStream, packet);
         }
 
         internal static void Main(string[] args)
@@ -197,7 +190,7 @@ namespace ExecutionEngine
             catch (Exception e)
             {
                 var error = string.Format("Error at {0} from method {1}\n\n{2}", e.Source, e.TargetSite, e.Message);
-                MessageBox.Show(error);
+                MessageBox.Show("from big try/catch: " + error);
             }
         }
     }

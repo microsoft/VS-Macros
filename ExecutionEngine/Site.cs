@@ -33,13 +33,23 @@ namespace ExecutionEngine
                 throw new NotImplementedException();
             }
 
-            if (Engine.DteObject == null)
+            if (name.Equals("dte") && !(Engine.DteObject == null))
+            {
+                item = Marshal.GetIUnknownForObject(Engine.DteObject);
+                //typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+            }
+
+            else if (name.Equals("cmdHelper") && !(Engine.CommandHelper == null))
+            {
+                item = Marshal.GetIUnknownForObject(Engine.CommandHelper);
+                //typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+            }
+
+            else
             {
                 throw new COMException(null, TypeEElementNotFound);
             }
-
-            item = Marshal.GetIUnknownForObject(Engine.DteObject);
-            //typeInfo = Marshal.GetITypeInfoForType(item.GetType());
+            
         }
 
         public void GetDocVersionString(out string version)
@@ -68,11 +78,11 @@ namespace ExecutionEngine
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out characterPosition);
             scriptError.GetExceptionInfo(out exceptionInfo);
 
-            string exceptionDescription = exceptionInfo.bstrDescription;
-            string exceptionSource = exceptionInfo.bstrSource;
+            string description = exceptionInfo.bstrDescription;
+            string source = exceptionInfo.bstrSource;
 
             Site.error = true;
-            Site.runtimeException = new RuntimeException(exceptionDescription, exceptionSource, lineNumber);
+            Site.runtimeException = new RuntimeException(description, source, lineNumber);
         }
 
         public void OnEnterScript()

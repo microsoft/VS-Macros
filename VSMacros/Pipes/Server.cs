@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using VSMacros.Pipes;
 using VSMacros.Engines;
 using VSMacros.Enums;
+using System.Windows;
 
 namespace VSMacros.Pipes
 {
@@ -25,54 +26,85 @@ namespace VSMacros.Pipes
             Server.ServerStream = new NamedPipeServerStream(guid, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
         }
 
-        public static string GetMessageFromStream(NamedPipeServerStream namedPipeServerStream, int sizeOfMessage)
+        #region Getting
+
+        public static string GetMessageFromStream(NamedPipeServerStream serverStream, int sizeOfMessage)
         {
             byte[] messageBuffer = new byte[sizeOfMessage];
-            namedPipeServerStream.Read(messageBuffer, 0, sizeOfMessage);
+            serverStream.Read(messageBuffer, 0, sizeOfMessage);
             return System.Text.UnicodeEncoding.Unicode.GetString(messageBuffer);
         }
 
-        public static int GetSizeOfMessageFromStream(NamedPipeServerStream namedPipeServerStream)
+        public static int GetIntFromStream(NamedPipeServerStream serverStream)
         {
-            int intSize = sizeof(int);
-            byte[] sizeBuffer = new byte[intSize];
-            namedPipeServerStream.Read(sizeBuffer, 0, intSize);
-            return BitConverter.ToInt32(sizeBuffer, 0);
+            byte[] number = new byte[sizeof(int)];
+            serverStream.Read(number, 0, sizeof(int));
+            return BitConverter.ToInt32(number, 0);
         }
 
         public static void WaitForMessage()
         {
-            string pipeGuid = Server.Guid.ToString();
+            //string pipeGuid = Server.Guid.ToString();
 
-            while (true)
+            bool willKeepRunning = true;
+
+            while (willKeepRunning)
             {
-                int sizeOfMessage = Server.GetSizeOfMessageFromStream(Server.ServerStream);
-                string message = Server.GetMessageFromStream(Server.ServerStream, sizeOfMessage);
+                int typeOfMessage = Server.GetIntFromStream(Server.ServerStream);
 
-                if (message.ToLower().Equals("close"))
+                switch ((Packet)typeOfMessage)
                 {
-                    Executor.IsEngineInitialized = false;
-                    break;
+                    case (Packet.FilePath):
+                        string message = ParseFilePath(Server.ServerStream);
+                        Debug.WriteLine("message: " + message);
+                        break;
+
+                    case (Packet.Close):
+                        MessageBox.Show("in Server, Packet.Close");
+                        Executor.IsEngineInitialized = false;
+                        willKeepRunning = false;
+                        break;
+
+                    case (Packet.Success):
+                        Server.HandlePacketSuccess(Server.ServerStream);
+                        break;
+
+                    case (Packet.ScriptError):
+                        Server.HandlePacketScriptError(Server.ServerStream);
+                        break;
+
+                    case (Packet.OtherError):
+                        Server.HandlePacketOtherError(Server.ServerStream);
+                        break;
                 }
             }
         }
 
-        public static void SendMessage()
+        private static void HandlePacketOtherError(NamedPipeServerStream namedPipeServerStream)
         {
-            string rawMessage = "@";
-            byte[] message = PackageFilePathMessage(rawMessage);
-
-            if (Server.ServerStream.IsConnected)
-            {   
-                for (int i = 0; i < message.Length; i++)
-                {
-                    Debug.Write(message[i]);
-                }
-                Debug.WriteLine(" ");
-                
-                SendMessageToClient(Server.ServerStream, message);
-            }
+            throw new NotImplementedException();
         }
+
+        private static void HandlePacketScriptError(NamedPipeServerStream namedPipeServerStream)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void HandlePacketSuccess(NamedPipeServerStream namedPipeServerStream)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static string ParseFilePath(NamedPipeServerStream serverStream)
+        {
+            int sizeOfMessage = Server.GetIntFromStream(serverStream);
+            string message = Server.GetMessageFromStream(serverStream, sizeOfMessage);
+            return message;
+        }
+
+        #endregion
+
+        #region Sending
 
         private static byte[] PackageFilePathMessage(string line)
         {
@@ -97,7 +129,19 @@ namespace VSMacros.Pipes
             return packet;
         }
 
-        private static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)
+        public static byte[] PackageCloseMessage()
+        {
+            byte[] serializedType = BitConverter.GetBytes((int)Packet.Close);
+
+            int type = sizeof(int);
+            byte[] packet = new byte[type];
+
+            serializedType.CopyTo(packet, 0);
+
+            return packet;
+        }
+
+        public static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)
         {
             serverStream.Write(packet, 0, packet.Length);
         }
@@ -107,5 +151,7 @@ namespace VSMacros.Pipes
             byte[] filePathPacket = PackageFilePathMessage(path);
             SendMessageToClient(Server.ServerStream, filePathPacket);
         }
+
+        #endregion
     }
 }

@@ -136,6 +136,8 @@
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
     <Compile Include="Engines\Executor.cs" />
     <Compile Include="Engines\Manager.cs" />
+    <Compile Include="Helpers\ErrorHandler.cs" />
+    <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\MacroFSNode.cs" />

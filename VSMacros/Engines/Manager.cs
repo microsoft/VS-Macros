@@ -9,6 +9,8 @@ using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
 using System.Diagnostics;
+using VSMacros.Pipes;
+using System.Windows;
 
 namespace VSMacros.Engines
 {

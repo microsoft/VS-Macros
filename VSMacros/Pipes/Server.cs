@@ -146,6 +146,12 @@ namespace VSMacros.Pipes
             serverStream.Write(packet, 0, packet.Length);
         }
 
+        internal static void SendCloseRequest()
+        {
+            byte[] closePacket = PackageCloseMessage();
+            SendMessageToClient(Server.ServerStream, closePacket);
+        }
+
         internal static void SendFilePath(string path)
         {
             byte[] filePathPacket = PackageFilePathMessage(path);

@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using VSMacros.Engines;
+using System.Diagnostics;
+using VSMacros.Pipes;
 
 namespace VSMacros
 {
@@ -88,6 +90,10 @@ namespace VSMacros
 
         protected override int QueryClose(out bool canClose)
         {
+            if (Server.ServerStream != null)
+            {
+                Server.SendCloseRequest();
+            }
             return base.QueryClose(out canClose);
         }
         #endregion

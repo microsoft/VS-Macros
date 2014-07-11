@@ -141,6 +141,9 @@
       <DependentUpon>AssignShortcutDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\MacroDialog.cs" />
+    <Compile Include="Dialogs\PlaybackMultipleTimesDialog.xaml.cs">
+      <DependentUpon>PlaybackMultipleTimesDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
@@ -206,6 +209,10 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\PlaybackIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\RecordRound.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -230,6 +237,10 @@
     <Page Include="Dialogs\AssignShortcutDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PlaybackMultipleTimesDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\SaveCurrentDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

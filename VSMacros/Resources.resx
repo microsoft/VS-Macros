@@ -184,6 +184,9 @@
   <data name="ShortcutsFileNotFound" xml:space="preserve">
     <value>Shortcuts file was not found.</value>
   </data>
+  <data name="StatusBarPlayingText" xml:space="preserve">
+    <value>Executing macro</value>
+  </data>
   <data name="StatusBarReadyText" xml:space="preserve">
     <value>Ready</value>
   </data>

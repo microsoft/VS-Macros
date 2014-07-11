@@ -110,6 +110,7 @@
     <Buttons>
       
       <!-- Control Group Buttons -->
+      <!-- !!Do not alter the priorities of cmdidRecord, cmdidPlayback and cmdidPlaybackMultipleTimes because the icon change relies on these priorities -->
       <Button guid="guidVSMacrosCmdSet" id="cmdidRecord" priority="000" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidIcons" id="iconRecord" />

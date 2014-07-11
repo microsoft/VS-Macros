@@ -22,6 +22,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Interfaces;
 using VSMacros.Model;
+using Task = System.Threading.Tasks.Task;
 
 namespace VSMacros
 {
@@ -97,11 +98,13 @@ namespace VSMacros
         // Overridden Package Implementation
         #region Package Members
         private BitmapImage startIcon;
+        private BitmapImage playbackIcon;
+        private BitmapImage playMultipleTimesIcon;
         private BitmapImage stopIcon;
         private string commonPath;
         private List<CommandBarButton> imageButtons;
         private IVsStatusbar statusBar;
-        private object iconRecord = (short)Microsoft.VisualStudio.Shell.Interop.Constants.SBAI_Synch;
+        private object iconRecord = (short)Microsoft.VisualStudio.Shell.Interop.Constants.SBAI_General;
         private static RecorderDataModel dataModel;
 
         internal static RecorderDataModel DataModel
@@ -179,27 +182,36 @@ namespace VSMacros
             {
                 Manager.Instance.StartRecording();
 
-                this.UpdateButtonForRecording(false);
-                this.ChangeMenuCommands(Resources.StatusBarRecordingText, 1, this.StopIcon);
+                this.SetStatusBar(Resources.StatusBarRecordingText, 1);
+                this.ChangeMenuCommands(this.StopIcon, 0);
+                this.UpdateButtonsForRecording(true);
             }
             else
             {
                 Manager.Instance.StopRecording();
 
-                this.ChangeMenuCommands(Resources.StatusBarReadyText, 0, this.StartIcon);
-
-                this.UpdateButtonForRecording(true);
+                this.ClearStatusBar();
+                this.ChangeMenuCommands(this.StartIcon, 0);
+                this.UpdateButtonsForRecording(false);
             }
         }
 
         private void Playback(object sender, EventArgs arguments)
         {
             Manager.Instance.Playback(string.Empty, 1);
+
+            //this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
+            this.SetStatusBar(Resources.StatusBarPlayingText, 1);
+            this.UpdateButtonsForPlayback(true);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
             Manager.Instance.Playback(string.Empty, 0);
+
+            //this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
+            this.SetStatusBar(Resources.StatusBarPlayingText, 1);
+            this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)
@@ -220,26 +232,45 @@ namespace VSMacros
         #endregion
 
         #region Status Bar
-        private void ChangeMenuCommands(string status, int animation, BitmapSource icon)
+        private void ChangeMenuCommands(BitmapSource icon, int commandNumber)
         {
-            this.statusBar.Clear();
-            this.statusBar.SetText(status);
-            this.statusBar.Animation(animation, ref this.iconRecord);
-
-            foreach (CommandBarButton button in this.ImageButtons)
+            // commandNumber is 0 for Recording, 1 for Playback and 2 for Playback Multiple Times         
+            try
             {
-                try
+                if (this.ImageButtons[commandNumber] != null)
                 {
-                    if (button != null)
-                    {
-                        button.Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
-                    }
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Do nothing since the removed button does not need to change its image;
+                    // Change icon in menu
+                    this.ImageButtons[commandNumber].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+
+                    // Change icon in toolbar
+                    this.ImageButtons[commandNumber+3].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
                 }
             }
+            catch (ObjectDisposedException)
+            {
+                // Do nothing since the removed button does not need to change its image;
+            }
+        }
+
+        private void SetStatusBar(string text, int animation)
+        {
+            int frozen;
+
+            this.statusBar.IsFrozen(out frozen);
+
+            if (frozen == 0)
+            {
+                this.statusBar.SetColorText(text, 0, 1);
+                this.statusBar.Animation(animation, ref this.iconRecord);
+                this.statusBar.FreezeOutput(1);
+            }
+        }
+
+        private void ClearStatusBar()
+        {
+            this.statusBar.FreezeOutput(0);
+            this.statusBar.Clear();
+            this.statusBar.SetText(Resources.StatusBarReadyText);
         }
 
         internal List<CommandBarButton> ImageButtons
@@ -265,10 +296,18 @@ namespace VSMacros
             {
                 try
                 {
-                    CommandBarButton startButton = (CommandBarButton)macroMenu.Controls["Start/Stop Recording"];
-                    if (startButton != null)
+                    List<CommandBarButton> buttons = new List<CommandBarButton>() {
+                        (CommandBarButton)macroMenu.Controls["Start/Stop Recording"],
+                        (CommandBarButton)macroMenu.Controls["Playback"],
+                        (CommandBarButton)macroMenu.Controls["Playback Multiple Times"]
+                    };
+
+                    foreach (var item in buttons)
                     {
-                        this.imageButtons.Add(startButton);
+                        if (item != null)
+                        {
+                            this.imageButtons.Add(item);
+                        }
                     }
                 }
                 catch (ArgumentException)
@@ -278,11 +317,27 @@ namespace VSMacros
             }
         }
 
-        private void UpdateButtonForRecording(bool isRecording)
+        private void UpdateButtonsForRecording(bool isRecording)
         {
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, isRecording);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, isRecording);
-            this.UpdateCommonButtons(isRecording);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isRecording);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isRecording);
+            this.UpdateCommonButtons(!isRecording);
+        }
+
+        private void UpdateButtonsForPlayback(bool isPlaying)
+        {
+            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
+            this.UpdateCommonButtons(!isPlaying);
+        }
+
+        private void UpdateButtonsForPlaybackMultipleTimes(bool isPlaying)
+        {
+            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
+            this.UpdateCommonButtons(!isPlaying);
         }
 
         private void UpdateCommonButtons(bool enable)
@@ -292,7 +347,7 @@ namespace VSMacros
             this.EnableMyCommand(PkgCmdIDList.CmdIdOpenDirectory, enable);
         }
 
-        public bool EnableMyCommand( int cmdID, bool fEnableCmd)
+        public bool EnableMyCommand(int cmdID, bool fEnableCmd)
         {
             bool fCmdUpdated = false;
             var mcs = this.GetService(typeof(IMenuCommandService))
@@ -319,6 +374,18 @@ namespace VSMacros
             }
         }
 
+        private BitmapSource PlaybackIcon
+        {
+            get
+            {
+                if (this.playbackIcon == null)
+                {
+                    this.playbackIcon = new BitmapImage(new Uri(Path.Combine(this.CommonPath, "PlaybackIcon.png")));
+                }
+                return this.playbackIcon;
+            }
+        }
+
         private BitmapSource StopIcon
         {
             get
@@ -330,6 +397,7 @@ namespace VSMacros
                 return this.stopIcon;
             }
         }
+
         #endregion
 
         private string CommonPath

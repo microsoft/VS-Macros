@@ -59,10 +59,12 @@ namespace VSMacros
             if (((MacroFSNode)this.MacroTreeView.SelectedItem).IsDirectory)
             {
                 VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, false);
+                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, false);
             }
             else
             {
                 VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, true);
+                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, true);
             }
         }
 

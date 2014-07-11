@@ -263,6 +263,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Executing macro.
+        /// </summary>
+        public static string StatusBarPlayingText {
+            get {
+                return ResourceManager.GetString("StatusBarPlayingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ready.
         /// </summary>
         public static string StatusBarReadyText {

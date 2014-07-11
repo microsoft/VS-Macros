@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace VSMacros.Dialogs.Validation_Rules
 {
-    class ShortcutValidationRule : ValidationRule
+    internal class ShortcutValidationRule : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

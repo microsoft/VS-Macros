@@ -24,7 +24,7 @@ namespace VSMacros.Engines
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
-        public static string CurrentMacroPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName);
+        public static string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
         private static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
 
         public string[] Shortcuts { get; private set; }
@@ -160,7 +160,11 @@ namespace VSMacros.Engines
                 }
                 catch (Exception e)
                 {
-                    if (ErrorHandler.IsCriticalException(e)) { throw; }
+                    if (ErrorHandler.IsCriticalException(e)) 
+                    { 
+                        throw; 
+                    }
+
                     this.ShowMessageBox(e.Message);
                 }
             }
@@ -202,7 +206,7 @@ namespace VSMacros.Engines
                 MacroFSNode macro = this.SelectedMacro;
 
                 // Remove old shortcut if it exists
-                if (macro.Shortcut != MacroFSNode.NONE)
+                if (macro.Shortcut != MacroFSNode.None)
                 {
                     this.Shortcuts[macro.Shortcut] = string.Empty;
                 }
@@ -211,7 +215,7 @@ namespace VSMacros.Engines
 
                 // At this point, the shortcut has been removed
                 // Assign a new one only if the user selected a key binding
-                if (newShortcutNumber != MacroFSNode.NONE)
+                if (newShortcutNumber != MacroFSNode.None)
                 {
                     // Update dictionary
                     this.Shortcuts[newShortcutNumber] = macro.FullPath;
@@ -227,7 +231,7 @@ namespace VSMacros.Engines
                 else
                 {
                     // Refresh selected macro
-                    macro.Shortcut = MacroFSNode.TO_FETCH;
+                    macro.Shortcut = MacroFSNode.ToFetch;
                 }
             }
         }
@@ -237,7 +241,10 @@ namespace VSMacros.Engines
             MacroFSNode macro = this.SelectedMacro;
 
             // Don't delete if macro is being edited
-            if (macro.IsEditable) { return; }
+            if (macro.IsEditable) 
+            { 
+                return;
+            }
 
             string path = macro.FullPath;
 
@@ -261,7 +268,6 @@ namespace VSMacros.Engines
                 VSConstants.MessageBoxResult result;
                 result = this.ShowMessageBox(message, OLEMSGBUTTON.OLEMSGBUTTON_OKCANCEL);
 
-                // TODO 1 is for OK
                 if (result == VSConstants.MessageBoxResult.IDOK)
                 {
                     try
@@ -409,7 +415,7 @@ namespace VSMacros.Engines
                 }
 
                 // Move shortcut as well
-                if (sourceItem.Shortcut != MacroFSNode.NONE)
+                if (sourceItem.Shortcut != MacroFSNode.None)
                 {
                     int shortcutNumber = sourceItem.Shortcut;
                     Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
@@ -432,7 +438,7 @@ namespace VSMacros.Engines
                 selected.IsExpanded = wasExpanded;
 
                 // Notify change in shortcut
-                selected.Shortcut = MacroFSNode.TO_FETCH;
+                selected.Shortcut = MacroFSNode.ToFetch;
             }
 
             // Make editable if the macro is the current macro
@@ -440,8 +446,8 @@ namespace VSMacros.Engines
             {
                 selected.IsEditable = true;
             }
-
         }
+
         #region Helper Methods
 
         private StreamReader LoadFile(string path)

@@ -34,7 +34,7 @@ namespace VSMacros.Dialogs
         private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
         {
             // Get selected number as an integer
-            int selectedNumber = base.GetSelectedNumber((ComboBoxItem)this.shortcutsComboBox.SelectedItem);
+            int selectedNumber = this.GetSelectedNumber((ComboBoxItem)this.shortcutsComboBox.SelectedItem);
 
             // Temporary variables
             bool shouldRefresh = false;
@@ -42,7 +42,7 @@ namespace VSMacros.Dialogs
 
             if (selectedNumber > 0 && selectedNumber <= 9)
             {
-                base.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
+                this.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
             }
 
             this.SelectedShortcutNumber = selectedNumber;

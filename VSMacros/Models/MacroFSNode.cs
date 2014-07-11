@@ -37,8 +37,8 @@ namespace VSMacros.Models
         private MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
 
-        public const int TO_FETCH = -1;
-        public const int NONE = 0;
+        public const int ToFetch = -1;
+        public const int None = 0;
         public const string ShortcutKeys = "(CTRL+M, {0})";
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -52,7 +52,7 @@ namespace VSMacros.Models
         {
             this.IsDirectory = (File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory;
             this.FullPath = path;
-            this.shortcut = TO_FETCH;
+            this.shortcut = ToFetch;
             this.isEditable = false;
             this.isSelected = false;
             this.isMatch = false;
@@ -120,7 +120,7 @@ namespace VSMacros.Models
                         this.FullPath = newFullPath;
 
                         // Update shortcut
-                        if (this.Shortcut >= MacroFSNode.NONE)
+                        if (this.Shortcut >= MacroFSNode.None)
                         {
                             Manager.Instance.Shortcuts[this.shortcut] = newFullPath;
                         }
@@ -147,7 +147,7 @@ namespace VSMacros.Models
             set
             {
                 // Shortcut will be refetched
-                this.shortcut = TO_FETCH;
+                this.shortcut = ToFetch;
 
                 // Just notify the binding
                 this.NotifyPropertyChanged("Shortcut");
@@ -159,10 +159,10 @@ namespace VSMacros.Models
         {
             get
             {
-                if (this.shortcut == TO_FETCH)
+                if (this.shortcut == ToFetch)
                 {
                     
-                    this.shortcut = NONE;
+                    this.shortcut = None;
 
                     // TODO can probably be optimized
                     for (int i = 1; i < 10; i++)
@@ -174,16 +174,12 @@ namespace VSMacros.Models
                     }                  
                 }
 
-                if (this.shortcut != NONE)
+                if (this.shortcut != None)
                 {
                     return string.Format(MacroFSNode.ShortcutKeys, this.shortcut);
                 }
 
                 return string.Empty;
-            }
-            set
-            {
-
             }
         }
 
@@ -379,7 +375,7 @@ namespace VSMacros.Models
                     this.children = this.GetChildNodes();
 
                     // Retrieve children in a background thread
-                    //Task.Run(() => { this.children = this.GetChildNodes(); })
+                    // Task.Run(() => { this.children = this.GetChildNodes(); })
                     //    .ContinueWith(_ => this.NotifyPropertyChanged("Children"), TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
@@ -413,7 +409,6 @@ namespace VSMacros.Models
 
             return collection;
         }
-
 
         #region Context Menu
         public void Delete()
@@ -450,10 +445,10 @@ namespace VSMacros.Models
             // Clear enableDirectories
             enabledDirectories.Clear();
 
+            // TODO decide if I want to use a b/g thread
             // Retrieve children in a background thread
             //Task.Run(() => root.children = root.GetChildNodes())
             //    .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
-
             root.children = root.GetChildNodes();
             root.AfterRefresh(root, selected.FullPath, dirs);
         }
@@ -544,7 +539,10 @@ namespace VSMacros.Models
             }
             catch (Exception e)
             {
-                if (ErrorHandler.IsCriticalException(e)) { throw; }
+                if (ErrorHandler.IsCriticalException(e))
+                { 
+                    throw; 
+                }
 
                 // Return default node
                 node = MacroFSNode.RootNode.Children[0];

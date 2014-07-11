@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MacroDialog.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
@@ -86,7 +92,10 @@ namespace VSMacros.Dialogs
                 {
                     // If a child dependency object is invalid, return false immediately, 
                     // otherwise keep checking 
-                    if (!this.IsValid((DependencyObject)subnode)) { return false; }
+                    if (!this.IsValid((DependencyObject)subnode))
+                    { 
+                        return false;
+                    }
                 }
             }
 

@@ -200,7 +200,7 @@ namespace VSMacros
         {
             Manager.Instance.Playback(string.Empty);
 
-            //this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
+            // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
             this.SetStatusBar(Resources.StatusBarPlayingText, 1);
             this.UpdateButtonsForPlayback(true);
         }
@@ -209,7 +209,7 @@ namespace VSMacros
         {
             Manager.Instance.PlaybackMultipleTimes(string.Empty);
 
-            //this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
+            // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
             this.SetStatusBar(Resources.StatusBarPlayingText, 1);
             this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
@@ -243,7 +243,7 @@ namespace VSMacros
                     this.ImageButtons[commandNumber].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
 
                     // Change icon in toolbar
-                    this.ImageButtons[commandNumber+3].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                    this.ImageButtons[commandNumber + 3].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
                 }
             }
             catch (ObjectDisposedException)
@@ -296,7 +296,8 @@ namespace VSMacros
             {
                 try
                 {
-                    List<CommandBarButton> buttons = new List<CommandBarButton>() {
+                    List<CommandBarButton> buttons = new List<CommandBarButton>()
+                    {
                         (CommandBarButton)macroMenu.Controls["Start/Stop Recording"],
                         (CommandBarButton)macroMenu.Controls["Playback"],
                         (CommandBarButton)macroMenu.Controls["Playback Multiple Times"]
@@ -347,19 +348,19 @@ namespace VSMacros
             this.EnableMyCommand(PkgCmdIDList.CmdIdOpenDirectory, enable);
         }
 
-        public bool EnableMyCommand(int cmdID, bool fEnableCmd)
+        public bool EnableMyCommand(int cmdID, bool enableCmd)
         {
-            bool fCmdUpdated = false;
+            bool cmdUpdated = false;
             var mcs = this.GetService(typeof(IMenuCommandService))
                     as OleMenuCommandService;
             var newCmdID = new CommandID(GuidList.GuidVSMacrosCmdSet, cmdID);
             MenuCommand mc = mcs.FindCommand(newCmdID);
             if (mc != null)
             {
-                mc.Enabled = fEnableCmd;
-                fCmdUpdated = true;
+                mc.Enabled = enableCmd;
+                cmdUpdated = true;
             }
-            return fCmdUpdated;
+            return cmdUpdated;
         }
 
         private BitmapSource StartIcon

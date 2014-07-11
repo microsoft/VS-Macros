@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="PlaybackMultipleTimesDialog.xaml.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +40,8 @@ namespace VSMacros.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ToInt(this.IterationsTextbox.Text, true) == -1) {
+            if (this.ToInt(this.IterationsTextbox.Text, true) == -1)
+            {
                 this.DialogResult = false;
                 return;
             }
@@ -47,24 +54,23 @@ namespace VSMacros.Dialogs
             // Regex that allows numeric input only
             Regex regex = new Regex("[0-9]+");
 
-            int maxLength = Int32.MaxValue.ToString().Length;
+            int maxLength = int.MaxValue.ToString().Length;
             return regex.IsMatch(text) && this.IterationsTextbox.Text.Length < maxLength;
         }
 
         private void IterationsTextbox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             // Preventing the input event if the input is invalid will only allow the user to enter numeric values
-            e.Handled = !IsValid(e.Text);
+            e.Handled = !this.IsValid(e.Text);
 
-            if (e.Handled || ToInt(this.IterationsTextbox.Text + e.Text) > 1) {
+            if (e.Handled || this.ToInt(this.IterationsTextbox.Text + e.Text) > 1)
+            {
                 this.TimesLabel.Content = VSMacros.Resources.DialogTimesPlural;
             }
             else
             {
                 this.TimesLabel.Content = VSMacros.Resources.DialogTimesSingular;
-            }
-                
-
+            } 
         }
 
         private int ToInt(string str, bool showMessage = false)
@@ -84,7 +90,10 @@ namespace VSMacros.Dialogs
             }
             catch (Exception e)
             {
-                if (ErrorHandler.IsCriticalException(e)) { throw; }
+                if (ErrorHandler.IsCriticalException(e)) 
+                { 
+                    throw; 
+                }
             }
 
             return ret;

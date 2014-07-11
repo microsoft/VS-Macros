@@ -239,7 +239,7 @@ namespace VSMacros
             {
                 if (!this.targetNode.IsDirectory)
                 {
-                    this.targetNode = targetNode.Parent;
+                    this.targetNode = this.targetNode.Parent;
                 }
 
                 if (!this.draggedNode.Equals(this.targetNode) && this.targetNode != null)

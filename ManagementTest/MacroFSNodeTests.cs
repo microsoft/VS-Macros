@@ -59,7 +59,7 @@ namespace ManagementTest
             
              // Set the shortcut
              Manager.Instance.Shortcuts[1] = this.fileNode.FullPath;
-             this.fileNode.Shortcut = MacroFSNode.TO_FETCH; // notify the change
+             this.fileNode.Shortcut = MacroFSNode.ToFetch; // notify the change
 
              // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut
              string expected = string.Format(MacroFSNode.ShortcutKeys, 1);
@@ -75,22 +75,21 @@ namespace ManagementTest
         [TestMethod]
         public void Name_ShouldNotChange_OnInvalidInput()
         {
-		   string oldName = this.fileNode.Name;
+            string oldName = this.fileNode.Name;
 
-		   // Input: Empty string
-		   this.fileNode.Name = "";
-		   Assert.AreEqual(oldName, this.fileNode.Name);
+            // Input: Empty string
+            this.fileNode.Name = string.Empty;
+            Assert.AreEqual(oldName, this.fileNode.Name);
 
 			// Input: Contains invalid chars
-		   this.fileNode.Name = oldName;
-		   this.fileNode.Name = "<>:?*";
-           Assert.AreEqual(oldName, this.fileNode.Name);
+            this.fileNode.Name = oldName;
+            this.fileNode.Name = "<>:?*";
+            Assert.AreEqual(oldName, this.fileNode.Name);
 
             // Input: Same name
-           this.fileNode.Name = oldName;
-           this.fileNode.Name = this.fileNode.Name;
-           Assert.AreEqual(oldName, this.fileNode.Name);
-
+            this.fileNode.Name = oldName;
+            this.fileNode.Name = this.fileNode.Name;
+            Assert.AreEqual(oldName, this.fileNode.Name);
         }
 
         #endregion
@@ -125,7 +124,7 @@ namespace ManagementTest
             };
 
             // Select the node
-            this.fileNode.Shortcut = MacroFSNode.TO_FETCH;
+            this.fileNode.Shortcut = MacroFSNode.ToFetch;
 
             // Two event are fired
             List<string> expected = new List<string> { "Shortcut", "FormattedShortcut" };
@@ -215,7 +214,6 @@ namespace ManagementTest
             this.fileNode = new MacroFSNode(path);
 
             // Create a directory MacroFSNode
-
             path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
             Directory.CreateDirectory(path);
 

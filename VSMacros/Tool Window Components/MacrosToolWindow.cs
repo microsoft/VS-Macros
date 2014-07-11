@@ -51,7 +51,7 @@ namespace VSMacros
             // Initialize Macros Control
             var macroControl = new MacrosControl(root);
             macroControl.Loaded += this.OnLoaded;
-            base.Content = macroControl;
+            this.Content = macroControl;
         }
 
         public void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
@@ -311,8 +311,6 @@ namespace VSMacros
                 }
                 else if (withinFileContents && !root.IsDirectory)
                 {
-                    // TODO move to b/g thread!
-
                     System.Threading.Tasks.Task.Run(() =>
                     {
                         string allText = File.ReadAllText(root.FullPath);
@@ -321,7 +319,6 @@ namespace VSMacros
                             root.IsMatch = true;
                         }
                     });
-                    
                 }
                 else
                 {

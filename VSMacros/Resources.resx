@@ -138,11 +138,20 @@
   <data name="DialogMacroName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="DialogPlayback" xml:space="preserve">
+    <value>Playback</value>
+  </data>
   <data name="DialogShortcutAlreadyUsed" xml:space="preserve">
     <value>Shortcut already used. Overwrite?</value>
   </data>
   <data name="DialogShortcutSelectionText" xml:space="preserve">
     <value>Predefined Keyboard Shortcuts</value>
+  </data>
+  <data name="DialogTimesPlural" xml:space="preserve">
+    <value>Times</value>
+  </data>
+  <data name="DialogTimesSingular" xml:space="preserve">
+    <value>Time</value>
   </data>
   <data name="ExitCaption" xml:space="preserve">
     <value>Warning</value>

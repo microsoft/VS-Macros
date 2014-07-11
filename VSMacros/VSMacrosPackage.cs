@@ -198,7 +198,7 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback(string.Empty, 1);
+            Manager.Instance.Playback(string.Empty);
 
             //this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
             this.SetStatusBar(Resources.StatusBarPlayingText, 1);
@@ -207,7 +207,7 @@ namespace VSMacros
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback(string.Empty, 0);
+            Manager.Instance.PlaybackMultipleTimes(string.Empty);
 
             //this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
             this.SetStatusBar(Resources.StatusBarPlayingText, 1);

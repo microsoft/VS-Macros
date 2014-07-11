@@ -86,7 +86,7 @@ namespace VSMacros.Engines
             recorder.StopRecording(current);
         }
 
-        public void Playback(string path, int times) 
+        public void Playback(string path, int iterations = 1) 
         {
             if (path == string.Empty)
             {
@@ -94,7 +94,18 @@ namespace VSMacros.Engines
             }
 
             Executor executor = new Executor();
-            executor.StartExecution(new StreamReader(path), 1);
+            executor.StartExecution(new StreamReader(path), iterations);
+        }
+
+        public void PlaybackMultipleTimes(string path)
+        {
+            PlaybackMultipleTimesDialog dlg = new PlaybackMultipleTimesDialog();
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                int iterations = dlg.Iterations;
+            }
         }
 
         public void StopPlayback() 
@@ -149,7 +160,7 @@ namespace VSMacros.Engines
                 }
                 catch (Exception e)
                 {
-                    if (ErrorHandler.IsCriticalException(e)) { throw e; }
+                    if (ErrorHandler.IsCriticalException(e)) { throw; }
                     this.ShowMessageBox(e.Message);
                 }
             }

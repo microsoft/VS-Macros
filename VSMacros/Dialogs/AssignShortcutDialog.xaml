@@ -1,12 +1,12 @@
 ﻿<src:MacroDialog x:Class="VSMacros.Dialogs.AssignShortcutDialog"
-        x:Name="Window"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 x:Name="Window"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:src="clr-namespace:VSMacros.Dialogs"
-        xmlns:local="clr-namespace:VSMacros.Dialogs.Validation_Rules"
-        xmlns:l="clr-namespace:VSMacros"
-        Title="Set Keyboard Shortcut" Height="150" Width="400"
-        ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+                 xmlns:local="clr-namespace:VSMacros.Dialogs.Validation_Rules"
+                 xmlns:l="clr-namespace:VSMacros"
+                 Title="Set Keyboard Shortcut" Height="150" Width="400"
+                 ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

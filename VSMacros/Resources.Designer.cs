@@ -124,6 +124,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Playback.
+        /// </summary>
+        public static string DialogPlayback {
+            get {
+                return ResourceManager.GetString("DialogPlayback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shortcut already used. Overwrite?.
         /// </summary>
         public static string DialogShortcutAlreadyUsed {
@@ -138,6 +147,24 @@ namespace VSMacros {
         public static string DialogShortcutSelectionText {
             get {
                 return ResourceManager.GetString("DialogShortcutSelectionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Times.
+        /// </summary>
+        public static string DialogTimesPlural {
+            get {
+                return ResourceManager.GetString("DialogTimesPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        public static string DialogTimesSingular {
+            get {
+                return ResourceManager.GetString("DialogTimesSingular", resourceCulture);
             }
         }
         

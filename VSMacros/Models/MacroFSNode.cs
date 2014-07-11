@@ -544,7 +544,7 @@ namespace VSMacros.Models
             }
             catch (Exception e)
             {
-                if (ErrorHandler.IsCriticalException(e)) { throw e; }
+                if (ErrorHandler.IsCriticalException(e)) { throw; }
 
                 // Return default node
                 node = MacroFSNode.RootNode.Children[0];

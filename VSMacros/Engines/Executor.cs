@@ -175,7 +175,6 @@ namespace VSMacros.Engines
         {
             if (Server.ServerStream.IsConnected)
             {
-                //Server.SendMessage();
                 Server.SendFilePath(path);
             }
             else
@@ -192,8 +191,6 @@ namespace VSMacros.Engines
         {
             Debug.WriteLine("path is: " + path);
 
-            // Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
-            // var processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
             string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             string encodedPath = path.Replace(" ", "%20");
             Executor.executionEngine = new Process();

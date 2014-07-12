@@ -203,7 +203,7 @@ namespace VSMacros
 
             // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
-            this.UpdateButtonsForPlayback(true);
+            //this.UpdateButtonsForPlayback(true);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
@@ -212,7 +212,7 @@ namespace VSMacros
 
             // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
-            this.UpdateButtonsForPlaybackMultipleTimes(true);
+            //this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)

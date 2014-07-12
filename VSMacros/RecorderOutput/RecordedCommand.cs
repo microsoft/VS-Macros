@@ -37,8 +37,9 @@ namespace VSMacros.RecorderOutput
             }
             else if (this.commandName == "keyboard")
             {
-                string formatString = "cmdHelper.DispatchCommandWithArgs(\"{0}\", {1}{2})";
-                output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null" : ", \"" + this.input.ToString() + "\""));
+                //string formatString = "cmdHelper.DispatchCommandWithArgs(\"{0}\", {1}{2})";
+                //output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null" : ", \"" + this.input.ToString() + "\""));
+                output = string.Format("dte.ActiveDocument.Selection.Insert(\"{0}\", 1)", this.input.ToString().Replace("\"", "\\\""));
                 outputStream.WriteLine(output);
             }
             else

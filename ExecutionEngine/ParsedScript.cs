@@ -38,8 +38,9 @@ namespace ExecutionEngine
                 if (Site.Error)
                 {
                     var exception = Site.RuntimeException;
-                    var exceptionMessage = string.Format("{0}: {1} at line {2}", exception.Source, exception.Description, exception.Line);
-                    MessageBox.Show("Error in the script: " + exceptionMessage);
+                    string description = exception.Description ?? "Error";
+                    var exceptionMessage = string.Format("{0} {1} at line {2}", exception.Source == null ? string.Empty : exception.Source + ":", description, exception.Line);
+                    MessageBox.Show(/*"Error in the script: " + */exceptionMessage);
 
                     // Error messaging for IPC is acting weird for now
                     // byte[] scriptErrorMessage = Client.PackageScriptError(exception.Line, exception.Source, exception.Description);

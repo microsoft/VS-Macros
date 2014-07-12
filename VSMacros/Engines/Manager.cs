@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
+using VSMacros.Pipes;
 
 namespace VSMacros.Engines
 {
@@ -460,6 +461,8 @@ namespace VSMacros.Engines
             {
                 selected.IsEditable = true;
             }
+
+            Server.SendCloseRequest();
         }
 
         #region Helper Methods

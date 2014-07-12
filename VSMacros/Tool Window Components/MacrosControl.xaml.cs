@@ -156,8 +156,11 @@ namespace VSMacros
         {
             if (!this.SelectedNode.IsDirectory)
             {
-                VSMacros.Engines.Manager.Instance.Playback(this.SelectedNode.FullPath, 1);
+                // TODO remove this
+                // VSMacros.Engines.Manager.Instance.Playback(string.Empty);
             }
+
+            e.Handled = true;
         }
 
         private void TextBox_Loaded(object sender, RoutedEventArgs e)

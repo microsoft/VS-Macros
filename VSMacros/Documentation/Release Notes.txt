@@ -1,0 +1,26 @@
+﻿Macros for Visual Studio 2013
+Date: 7/11/2014
+Version: 1.1
+
+What's New:
+	- Improved recording output
+	- Improved playback functionality
+	- Drag and drop macros
+	- Search macros
+	- Add new macros and new folders directly from the Macro Browser List
+	- DTE Intellisense when editing macros
+	- UI Improvements
+	- Various bug fixes and improvements
+
+Suggested Testing:
+	- Playback "New File" -> creates a new javascript file
+	- Save file anywhere
+	- Playback "C#/Header" -> add a header containing the file name
+	- Playback "New File" again
+	- Copy the contents of "Parse macro text.txt" (was in the same folder as the VSIX) to the new file
+	- Place the cursor at the beginning of the file (line 0, col 0)
+	- Playback "Parse Interface for JS Intellisense" -> converts c# properties to a javascript object that can be used by Intellisense
+
+Warning:
+	- Closing the terminal window crashes the extension
+	- Drag and drop has been altered when we integrated Execution into the package

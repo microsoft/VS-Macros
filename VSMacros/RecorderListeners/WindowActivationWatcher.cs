@@ -77,7 +77,10 @@ namespace VSMacros.RecorderListeners
                                 Guid windowID;
                                 if (ErrorHandler.Succeeded(windowFrame.GetGuidProperty((int)__VSFPROPID.VSFPROPID_GuidPersistenceSlot, out windowID)))
                                 {
-                                    this.macroRecorder.AddWindowActivation(windowID, caption);
+                                    if (caption != "Macro Explorer")
+                                    {
+                                        this.macroRecorder.AddWindowActivation(windowID, caption);
+                                    }
                                 }
                             }
                         }

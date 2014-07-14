@@ -24,10 +24,10 @@ namespace VSMacros.Engines
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
-        public static string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
+        public static readonly string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
         private static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
 
-        public string[] Shortcuts { get; private set; }
+        public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
        
         private string shortcutsFilePath;
@@ -35,6 +35,8 @@ namespace VSMacros.Engines
         private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
         private bool uiShellLoaded;
+
+        private IRecorder recorder;
 
         private MacroFSNode SelectedMacro
         {
@@ -53,6 +55,8 @@ namespace VSMacros.Engines
             {
                 this.uiShellLoaded = false;
             }
+
+            this.recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
 
             this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName);
             this.LoadShortcuts();
@@ -74,24 +78,19 @@ namespace VSMacros.Engines
 
         public void StartRecording()
         {
-            IRecorder recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
-            recorder.StartRecording();
+            this.recorder.StartRecording();
         }
 
         public void StopRecording()
         {
             string current = Manager.CurrentMacroPath;
 
-            IRecorder recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
-            recorder.StopRecording(current);
+            this.recorder.StopRecording(current);
         }
 
         public void Playback(string path, int iterations = 1) 
         {
-            if (path == string.Empty)
-            {
-                path = this.SelectedMacro.FullPath;
-            }
+            path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
             Executor executor = new Executor();
             executor.StartExecution(new StreamReader(path), iterations);
@@ -107,18 +106,31 @@ namespace VSMacros.Engines
                 int iterations = dlg.Iterations;
             }
         }
+        
+        public void PlaybackCommand(int cmd)
+        {
+            // Load shortcuts if not already loaded
+            if (!this.shortcutsLoaded)
+            {
+                this.LoadShortcuts();
+            }
 
+            // Get path to macro bound to the shortcut
+            string path = Manager.Shortcuts[cmd];
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                this.Playback(path, 1);
+            }
+        }
         public void StopPlayback() 
         {
         }
 
         public void OpenFolder(string path = null)
         {
-            if (path == null)
-            {
-                path = this.SelectedMacro.FullPath;
-            }
-
+            path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
+            
             // Open the macro directory and let the user manage the macros
             System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(path); });
         }
@@ -144,7 +156,7 @@ namespace VSMacros.Engines
                     if (newShortcutNumber != 0)
                     {
                         // Update dictionary
-                        this.Shortcuts[newShortcutNumber] = macro.FullPath;
+                        Manager.Shortcuts[newShortcutNumber] = macro.FullPath;
                     }
 
                     // Notify the change
@@ -172,6 +184,7 @@ namespace VSMacros.Engines
 
         public void Refresh()
         {
+            // TODO ask to save if dirty
             this.SaveShortcuts();
 
             this.CreateFileSystem();
@@ -183,6 +196,7 @@ namespace VSMacros.Engines
 
         public void Edit()
         {
+            // TODO detect when a macro is dragged and it's opened -> use the overload to get the itemID
             MacroFSNode macro = this.SelectedMacro;
             string path = macro.FullPath;
 
@@ -208,7 +222,7 @@ namespace VSMacros.Engines
                 // Remove old shortcut if it exists
                 if (macro.Shortcut != MacroFSNode.None)
                 {
-                    this.Shortcuts[macro.Shortcut] = string.Empty;
+                    Manager.Shortcuts[macro.Shortcut] = string.Empty;
                 }
 
                 int newShortcutNumber = dlg.SelectedShortcutNumber;
@@ -218,7 +232,7 @@ namespace VSMacros.Engines
                 if (newShortcutNumber != MacroFSNode.None)
                 {
                     // Update dictionary
-                    this.Shortcuts[newShortcutNumber] = macro.FullPath;
+                    Manager.Shortcuts[newShortcutNumber] = macro.FullPath;
                 }
 
                 // Notify the change
@@ -295,23 +309,6 @@ namespace VSMacros.Engines
             else
             {
                 macro.Delete();
-            }
-        }
-      
-        public void PlaybackCommand(int cmd)
-        {
-            // Load shortcuts if not already loaded
-            if (!this.shortcutsLoaded)
-            {
-                this.LoadShortcuts();
-            }
-            
-            // Get path to macro bound to the shortcut
-            string path = this.Shortcuts[cmd];
-
-            if (path != string.Empty)
-            {
-                this.Playback(path, 1);
             }
         }
 
@@ -418,7 +415,7 @@ namespace VSMacros.Engines
                 if (sourceItem.Shortcut != MacroFSNode.None)
                 {
                     int shortcutNumber = sourceItem.Shortcut;
-                    Manager.Instance.Shortcuts[shortcutNumber] = targetPath;
+                    Manager.Shortcuts[shortcutNumber] = targetPath;
                 }                
             }
             catch (Exception e)
@@ -499,7 +496,7 @@ namespace VSMacros.Engines
                 // If the file doesn't exist, initialize the Shortcuts array with empty strings
                 if (!File.Exists(path))
                 {
-                    this.Shortcuts = Enumerable.Repeat(string.Empty, 10).ToArray();
+                    Manager.Shortcuts = Enumerable.Repeat(string.Empty, 10).ToArray();
                 }
                 else
                 {
@@ -508,7 +505,7 @@ namespace VSMacros.Engines
                     var root = XDocument.Load(path);
 
                     // Parse to dictionary
-                    this.Shortcuts = root.Descendants("command")
+                    Manager.Shortcuts = root.Descendants("command")
                                           .Select(elmt => elmt.Value)
                                           .ToArray();
                 }
@@ -525,7 +522,7 @@ namespace VSMacros.Engines
                 new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     new XElement("commands",
-                        from s in this.Shortcuts
+                        from s in Manager.Shortcuts
                         select new XElement("command",
                             new XText(s))));
 
@@ -568,6 +565,7 @@ namespace VSMacros.Engines
 
             return (VSConstants.MessageBoxResult)result;
         }
+
         #endregion
     }
 }

@@ -173,14 +173,6 @@
       <!-- Buttons added through command placements -->
 
       <!-- Macro Context Group Buttons -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidEdit" priority="10" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
-        <Icon guid="guidSHLMainMenu" id="Open" />
-        <Strings>
-          <ButtonText>Open</ButtonText>
-        </Strings>
-      </Button>
-
       <Button guid="guidVSStd97" id="cmdidRename" priority="15" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
         <Strings>
@@ -262,14 +254,19 @@
       <Parent guid="guidVSMacrosCmdSet" id="CurrentContextMenu" />
     </CommandPlacement>
 
-    <!-- Edit command in Current Context Group -->
-    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidEdit" priority="75">
+    <!-- Open command in Current Context Group -->
+    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="75">
       <Parent guid="guidVSMacrosCmdSet" id="CurrentContextGroup" />
     </CommandPlacement>
 
     <!-- Save Current command in Current Context Group -->
     <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" priority="100">
       <Parent guid="guidVSMacrosCmdSet" id="CurrentContextGroup" />
+    </CommandPlacement>
+
+    <!-- Open command in Macro Context Group -->
+    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="75">
+      <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
     </CommandPlacement>
     
     <!-- Delete Group in Macro Context Menu -->
@@ -303,7 +300,6 @@
     <UsedCommand guid="guidVSStd97" id="cmdidNewFolder" />
     <UsedCommand guid="guidVSStd97" id="cmdidRename" />
     <UsedCommand guid="guidVSStd97" id="cmdidDelete" />
-    <UsedCommand guid="guidVSStd97" id="cmdidEditLabel" />
   </UsedCommands>
 
   <KeyBindings>

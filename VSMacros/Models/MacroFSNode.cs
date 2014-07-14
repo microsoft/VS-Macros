@@ -25,8 +25,10 @@ namespace VSMacros.Models
 {
     public sealed class MacroFSNode : INotifyPropertyChanged
     {
+        // HashSet containing the enabled directories
         private static HashSet<string> enabledDirectories = new HashSet<string>();
 
+        // Properties the binding client watches
         private string fullPath;
         private int shortcut;
         private bool isEditable;
@@ -34,19 +36,20 @@ namespace VSMacros.Models
         private bool isSelected;
         private bool isMatch;
 
-        private MacroFSNode parent;
+        private readonly MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
 
+        // Constants
         public const int ToFetch = -1;
         public const int None = 0;
         public const string ShortcutKeys = "(CTRL+ALT+M, {0})";
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        // Static members
         public static MacroFSNode RootNode { get; set; }
         private static bool searching = false;
 
-        public bool IsDirectory { get; private set; }
+        // For INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MacroFSNode(string path, MacroFSNode parent = null)
         {
@@ -122,7 +125,7 @@ namespace VSMacros.Models
                         // Update shortcut
                         if (this.Shortcut >= MacroFSNode.None)
                         {
-                            Manager.Instance.Shortcuts[this.shortcut] = newFullPath;
+                            Manager.Shortcuts[this.shortcut] = newFullPath;
                         }
                     }
                 }
@@ -167,7 +170,7 @@ namespace VSMacros.Models
                     // TODO can probably be optimized
                     for (int i = 1; i < 10; i++)
                     {
-                        if (string.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(Manager.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.shortcut = i;
                         }
@@ -345,13 +348,9 @@ namespace VSMacros.Models
             }
         }
 
-        public MacroFSNode Parent
-        {
-            get
-            {
-                return this.parent;
-            }
-        }
+        public bool IsDirectory { get; private set; }
+
+        public MacroFSNode Parent { get; private set; }
 
         public bool Equals(MacroFSNode node)
         {
@@ -410,14 +409,13 @@ namespace VSMacros.Models
             return collection;
         }
 
-        #region Context Menu
         public void Delete()
         {
             // If a shortcut is bound to the macro
             if (this.shortcut > 0)
             {
                 // Remove shortcut from shortcut list
-                Manager.Instance.Shortcuts[this.shortcut] = string.Empty;
+                Manager.Shortcuts[this.shortcut] = string.Empty;
             }
 
             // Remove macro from collection
@@ -432,6 +430,62 @@ namespace VSMacros.Models
         public void DisableEdit()
         {
             this.IsEditable = false;
+        }
+
+        public static void EnableSearch()
+        {
+            // Set Searching to true
+            MacroFSNode.searching = true;
+
+            // And then notify all node that their IsMatch property might have changed
+            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
+        }
+
+        public static void DisableSearch()
+        {
+            // Set Searching to true
+            MacroFSNode.searching = false;
+
+            // And then notify all node that their IsMatch property might have changed
+            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
+        }
+
+        /// <summary>
+        /// Finds the node with FullPath path in the entire tree 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>MacroFSNode  whose FullPath is path</returns>
+        public static MacroFSNode FindNodeFromFullPath(string path)
+        {
+            // shortenPath is the path relative to the Macros folder
+            string shortenPath = path.Substring(path.IndexOf(@"\Macros"));
+
+            string[] substrings = shortenPath.Split(new char[] { '\\' });
+
+            // Starting from the root,
+            MacroFSNode node = MacroFSNode.RootNode;
+
+            try
+            {
+                // Go down the tree to find the right node
+                // 2 because substrings[0] == "" and substrings[1] is root
+                for (int i = 2; i < substrings.Length; i++)
+                {
+                    node = node.Children.Single(x => x.Name == Path.GetFileNameWithoutExtension(substrings[i]));
+                }
+            }
+            catch (Exception e)
+            {
+                if (ErrorHandler.IsCriticalException(e))
+                {
+                    throw;
+                }
+
+                // Return default node
+                node = MacroFSNode.RootNode.Children[0];
+            }
+
+            return node;
         }
 
         public static void RefreshTree()
@@ -466,26 +520,6 @@ namespace VSMacros.Models
             root.NotifyPropertyChanged("Children");
         }
 
-        #endregion
-
-        public static void EnableSearch()
-        {
-            // Set Searching to true
-            MacroFSNode.searching = true;
-
-            // And then notify all node that their IsMatch property might have changed
-            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
-        }
-
-        public static void DisableSearch()
-        {
-            // Set Searching to true
-            MacroFSNode.searching = false;
-
-            // And then notify all node that their IsMatch property might have changed
-            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
-        }
-
         /// <summary>
         /// Expands all the node marked as expanded in enabledDirs
         /// </summary>
@@ -511,44 +545,6 @@ namespace VSMacros.Models
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Finds the node with FullPath path in the entire tree 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns>MacroFSNode  whose FullPath is path</returns>
-        public static MacroFSNode FindNodeFromFullPath(string path)
-        {
-            // shortenPath is the path relative to the Macros folder
-            string shortenPath = path.Substring(path.IndexOf(@"\Macros"));
-
-            string[] substrings = shortenPath.Split(new char[] { '\\' });
-
-            // Starting from the root,
-            MacroFSNode node = MacroFSNode.RootNode;
-
-            try
-            {
-                // Go down the tree to find the right node
-                // 2 because substrings[0] == "" and substrings[1] is root
-                for (int i = 2; i < substrings.Length; i++)
-                {
-                    node = node.Children.Single(x => x.Name == Path.GetFileNameWithoutExtension(substrings[i]));
-                }
-            }
-            catch (Exception e)
-            {
-                if (ErrorHandler.IsCriticalException(e))
-                { 
-                    throw; 
-                }
-
-                // Return default node
-                node = MacroFSNode.RootNode.Children[0];
-            }
-
-            return node;
         }
 
         private void NotifyPropertyChanged(string name)

@@ -39,7 +39,7 @@ namespace VSMacros.Dialogs
 
         protected void CheckOverwrite(int selectedNumber, out bool shouldRefresh, out string warningText)
         {
-            bool willOverwrite = Manager.Instance.Shortcuts[selectedNumber] != string.Empty;
+            bool willOverwrite = Manager.Shortcuts[selectedNumber] != string.Empty;
 
             if (willOverwrite)
             {

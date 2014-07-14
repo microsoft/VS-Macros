@@ -58,7 +58,7 @@ namespace ManagementTest
              Assert.AreEqual(string.Empty, this.fileNode.FormattedShortcut);
             
              // Set the shortcut
-             Manager.Instance.Shortcuts[1] = this.fileNode.FullPath;
+             Manager.Shortcuts[1] = this.fileNode.FullPath;
              this.fileNode.Shortcut = MacroFSNode.ToFetch; // notify the change
 
              // After assigning a shortcut to a node, node.Shortcut should return the formatted shortcut

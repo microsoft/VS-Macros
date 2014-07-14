@@ -307,19 +307,36 @@
   </UsedCommands>
 
   <KeyBindings>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord"    editor="guidVSStd97" key1="M" mod1="Control" key2="R"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control" key2="P"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" key2="O"/>
 
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand3" editor="guidVSStd97" key1="M" mod1="Control" key2="3"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand4" editor="guidVSStd97" key1="M" mod1="Control" key2="4"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand5" editor="guidVSStd97" key1="M" mod1="Control" key2="5"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand6" editor="guidVSStd97" key1="M" mod1="Control" key2="6"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand7" editor="guidVSStd97" key1="M" mod1="Control" key2="7"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand8" editor="guidVSStd97" key1="M" mod1="Control" key2="8"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand9" editor="guidVSStd97" key1="M" mod1="Control" key2="9"/>
+    <!-- Control-ed key bindings -->
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="R"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="P"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="O"/>
+
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand1" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="1"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand2" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="2"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand3" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="3"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand4" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="4"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand5" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="5"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand6" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="6"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand7" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="7"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand8" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="8"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand9" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="9"/>
+    
+    <!-- Non-Control-ed key bindings -->
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="R"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="P"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="O"/>
+
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand1" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="1"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand2" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="2"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand3" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="3"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand4" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="4"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand5" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="5"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand6" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="6"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand7" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="7"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand8" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="8"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand9" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="9"/>
 
   </KeyBindings>
   

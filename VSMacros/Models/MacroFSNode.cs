@@ -39,7 +39,7 @@ namespace VSMacros.Models
 
         public const int ToFetch = -1;
         public const int None = 0;
-        public const string ShortcutKeys = "(CTRL+M, {0})";
+        public const string ShortcutKeys = "(CTRL+ALT+M, {0})";
 
         public event PropertyChangedEventHandler PropertyChanged;
 

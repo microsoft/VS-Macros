@@ -104,16 +104,16 @@ namespace ExecutionEngine
         {
             string message = Client.ParseFilePath(Client.ClientStream);
 
-            if (InputParser.IsDebuggerStopped(message))
-            {
-                Program.exit = true;
-            }
-            else
-            {
+            //if (InputParser.IsDebuggerStopped(message))
+            //{
+            //    Program.exit = true;
+            //}
+            //else
+            //{
                 string unwrappedScript = InputParser.ExtractScript(message);
                 string wrappedScript = InputParser.WrapScript(unwrappedScript);
                 RunMacro(wrappedScript, iterations: 1);
-            }
+            //}
         }
 
         internal static Thread CreateReadingThread(int pid)

@@ -461,8 +461,6 @@ namespace VSMacros.Engines
             {
                 selected.IsEditable = true;
             }
-
-            Server.SendCloseRequest();
         }
 
         #region Helper Methods

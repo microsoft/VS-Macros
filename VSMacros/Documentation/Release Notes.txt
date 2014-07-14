@@ -12,6 +12,12 @@ What's New:
 	- UI Improvements
 	- Various bug fixes and improvements
 
+Installation Instructions:
+	- Install extension
+	- Run VS
+	- Open Macro Folder (Ctrl+M, O)
+	- Extract Macros.zip to that folder, overwritting if asked
+
 Suggested Testing:
 	- Playback "New File" -> creates a new javascript file
 	- Save file anywhere
@@ -19,7 +25,7 @@ Suggested Testing:
 	- Playback "New File" again
 	- Copy the contents of "Parse macro text.txt" (was in the same folder as the VSIX) to the new file
 	- Place the cursor at the beginning of the file (line 0, col 0)
-	- Playback "Parse Interface for JS Intellisense" -> converts c# properties to a javascript object that can be used by Intellisense
+	- Playback "EnvDTE.TextSelection.cs" -> converts c# properties to a javascript object that can be used by Intellisense
 
 Warning:
 	- Closing the terminal window crashes the extension

@@ -200,7 +200,7 @@ namespace VSMacros
                     this.draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
                     // The root node is not draggable
-                    if (this.draggedNode != MacroFSNode.RootNode && this.draggedNode != null)
+                    if (this.draggedNode != null  && this.draggedNode != MacroFSNode.RootNode)
                     {
                         // Initialize the drag & drop operation
                         DragDrop.DoDragDrop(this.MacroTreeView, this.draggedNode, DragDropEffects.Move);

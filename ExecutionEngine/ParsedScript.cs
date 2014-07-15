@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -54,7 +55,7 @@ namespace ExecutionEngine
                 else
                 {
                     var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                    MessageBox.Show(errorMessage);
+                    Debug.WriteLine(errorMessage);
                     throw;
                 }
             }

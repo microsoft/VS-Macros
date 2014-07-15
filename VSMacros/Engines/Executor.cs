@@ -29,7 +29,6 @@ namespace VSMacros.Engines
         /// </summary>
         public static Process executionEngine;
         public static bool IsEngineInitialized = false;
-        public static bool IsServerInitialized = false;
         public static Job Job;
 
         /// <summary>

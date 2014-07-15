@@ -55,14 +55,8 @@ namespace VSMacros.Pipes
             {
                 int typeOfMessage = Server.GetIntFromStream(Server.ServerStream);
 
-                // TODO: I think FilePath needs to be modified as well
-
                 switch ((Packet)typeOfMessage)
                 {
-                    case Packet.FilePath:
-                        string message = ParseFilePath(Server.ServerStream);
-                        break;
-
                     case Packet.Close:
                         MessageBox.Show("Received a close packet in Server.");
                         Executor.IsEngineInitialized = false;
@@ -76,28 +70,20 @@ namespace VSMacros.Pipes
                     case Packet.ScriptError:
                         Server.HandlePacketScriptError(Server.ServerStream);
                         break;
-
-                    case (Packet.Iterations):
-                        Server.HandlePacketOtherError(Server.ServerStream);
-                        break;
                 }
             }
-        }
-
-        private static void HandlePacketOtherError(NamedPipeServerStream namedPipeServerStream)
-        {
-            throw new NotImplementedException();
         }
 
         private static void HandlePacketScriptError(NamedPipeServerStream serverStream)
         {
             int lineNumber = GetIntFromStream(serverStream);
+            int characterPos = GetIntFromStream(serverStream);
             int sizeOfSource = GetIntFromStream(serverStream);
             string source = GetMessageFromStream(serverStream, sizeOfSource);
             int sizeOfDescription = GetIntFromStream(serverStream);
             string description = GetMessageFromStream(serverStream, sizeOfDescription);
 
-            var exceptionMessage = string.Format("{0}: {1} at line {2}.", source, description, lineNumber);
+            var exceptionMessage = string.Format("{0}: {1} at line {2}, character position {3}.", source, description, lineNumber, characterPos);
             string gloat = "Visual Studio presents:\n";
             MessageBox.Show(gloat + exceptionMessage);
         }
@@ -107,37 +93,9 @@ namespace VSMacros.Pipes
             //throw new NotImplementedException();
         }
 
-        private static string ParseFilePath(NamedPipeServerStream serverStream)
-        {
-            int sizeOfMessage = Server.GetIntFromStream(serverStream);
-            string message = Server.GetMessageFromStream(serverStream, sizeOfMessage);
-            return message;
-        }
-
         #endregion
 
-        private static byte[] PackageFilePathMessage(string line)
-        {
-            byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
-
-            byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
-            int message = serializedMessage.Length;
-
-            byte[] serializedLength = BitConverter.GetBytes(message);
-
-            int type = sizeof(int), messageSize = sizeof(int);
-            byte[] packet = new byte[type + messageSize + message];
-
-            serializedTypeLength.CopyTo(packet, 0);
-
-            int offset = sizeof(int);
-            serializedLength.CopyTo(packet, offset);
-            offset += sizeof(int);
-
-            serializedMessage.CopyTo(packet, offset);
-
-            return packet;
-        }
+        #region Sending
 
         private static byte[] PackageFilePathMessage(int iterations, string line)
         {
@@ -161,14 +119,7 @@ namespace VSMacros.Pipes
             offset += sizeof(int);
             serializedMessage.CopyTo(packet, offset);
 
-            Debug.WriteLine("This is what the server is sending oout:");
-            for (int i = 0; i < packet.Length; i++)
-            {
-                Debug.Write(packet[i]);
-                Debug.Write(' ');
-            }
-
-                return packet;
+            return packet;
         }
 
         public static byte[] PackageCloseMessage()
@@ -194,16 +145,12 @@ namespace VSMacros.Pipes
             SendMessageToClient(Server.ServerStream, closePacket);
         }
 
-        internal static void SendFilePath(string path)
-        {
-            byte[] filePathPacket = PackageFilePathMessage(path);
-            SendMessageToClient(Server.ServerStream, filePathPacket);
-        }
-
         internal static void SendFilePath(int iterations, string path)
         {
             byte[] filePathPacket = PackageFilePathMessage(iterations, path);
             SendMessageToClient(Server.ServerStream, filePathPacket);
         }
     }
+
+        #endregion
 }

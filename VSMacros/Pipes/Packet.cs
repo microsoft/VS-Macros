@@ -30,10 +30,5 @@ namespace VSMacros.Enums
         /// Notifies subscribers of an error upon running the script.
         /// </summary>
         ScriptError = 3,
-
-        /// <summary>
-        /// Passes number of iterations to execute.
-        /// </summary>
-        Iterations = 4,
     }
 }

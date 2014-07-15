@@ -281,6 +281,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The shortcuts have been modified. Do you want to save the changes?.
+        /// </summary>
+        public static string ShortcutsChanged {
+            get {
+                return ResourceManager.GetString("ShortcutsChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shortcuts file was not found..
         /// </summary>
         public static string ShortcutsFileNotFound {

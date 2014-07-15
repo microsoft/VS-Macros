@@ -29,6 +29,7 @@ namespace VSMacros.Engines
 
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
+        private bool shortcutsDirty;
        
         private string shortcutsFilePath;
 
@@ -61,6 +62,7 @@ namespace VSMacros.Engines
             this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName);
             this.LoadShortcuts();
             this.shortcutsLoaded = true;
+            this.shortcutsDirty = false;
         }
 
         public static Manager Instance
@@ -184,9 +186,22 @@ namespace VSMacros.Engines
 
         public void Refresh()
         {
-            // TODO ask to save if dirty
-            this.SaveShortcuts();
+            // If the shortcuts have been modified, ask to save them
+            if (this.shortcutsDirty)
+            {
+                VSConstants.MessageBoxResult result = this.ShowMessageBox(Resources.ShortcutsChanged, OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL);
 
+                switch (result)
+                {
+                    case VSConstants.MessageBoxResult.IDCANCEL:
+                        return;
+                    case VSConstants.MessageBoxResult.IDYES:
+                        this.SaveShortcuts();
+                        break;
+                }
+            }
+
+            // Recreate file system to ensure that the required files exist
             this.CreateFileSystem();
 
             MacroFSNode.RefreshTree();
@@ -247,6 +262,9 @@ namespace VSMacros.Engines
                     // Refresh selected macro
                     macro.Shortcut = MacroFSNode.ToFetch;
                 }
+
+                // Mark the shortcuts in memory as dirty
+                this.shortcutsDirty = true;
             }
         }
 
@@ -518,7 +536,9 @@ namespace VSMacros.Engines
 
         private void SaveShortcuts()
         {
-            XDocument xmlShortcuts =
+            if (this.shortcutsDirty)
+            {
+                XDocument xmlShortcuts =
                 new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     new XElement("commands",
@@ -526,7 +546,10 @@ namespace VSMacros.Engines
                         select new XElement("command",
                             new XText(s))));
 
-            xmlShortcuts.Save(this.shortcutsFilePath);
+                xmlShortcuts.Save(this.shortcutsFilePath);
+
+                this.shortcutsDirty = false;
+            }
         }
 
         private void CreateShortcutFile()

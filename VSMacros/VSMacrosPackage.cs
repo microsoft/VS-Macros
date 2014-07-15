@@ -404,9 +404,9 @@ namespace VSMacros
         Job job;
         protected override int QueryClose(out bool canClose)
         {
-            if (Executor.job != null)
+            if (Executor.Job != null)
             {
-                Executor.job.Close();
+                Executor.Job.Close();
             }
 
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));

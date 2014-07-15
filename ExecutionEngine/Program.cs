@@ -93,7 +93,7 @@ namespace ExecutionEngine
         private static void HandleFilePath()
         {
             int iterations = Client.GetIterations(Client.ClientStream);
-            string message = Client.ParseFilePath(Client.ClientStream);
+            string message = Client.GetFilePath(Client.ClientStream);
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
             RunMacro(wrappedScript, iterations);

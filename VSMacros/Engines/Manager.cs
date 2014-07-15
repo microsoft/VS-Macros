@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -20,7 +21,7 @@ namespace VSMacros.Engines
     public sealed class Manager : IManager
     {
         private static Manager instance;
-        private Executor executor;
+        internal Executor executor;
 
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
@@ -60,6 +61,17 @@ namespace VSMacros.Engines
             this.shortcutsLoaded = true;
         }
 
+        private static void AttachEvents(Executor executor)
+        {
+            executor.Complete += (sender, eventInfo) => 
+                {
+                    if (eventInfo.IsError)
+                    {
+                        MessageBox.Show(eventInfo.ErrorMessage);
+                    }
+                };
+        }
+
         public static Manager Instance
         {
             get
@@ -97,6 +109,7 @@ namespace VSMacros.Engines
             if (executor == null)
             {
                 executor = new Executor();
+                AttachEvents(executor);
             }
 
             PlayMacro(path, iterations: 1);
@@ -112,6 +125,7 @@ namespace VSMacros.Engines
             if (executor == null)
             {
                 executor = new Executor();
+                AttachEvents(executor);
             }
 
             PlaybackMultipleTimesDialog dlg = new PlaybackMultipleTimesDialog();

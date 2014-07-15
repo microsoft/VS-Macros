@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Helpers;
@@ -36,6 +37,15 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
 
+        public void SendCompletionMessage(bool isError, string errorMessage)
+        {
+            if (this.Complete != null)
+            {
+                var eventArgs = new CompletionReachedEventArgs(isError, errorMessage);
+                this.Complete(this, eventArgs);
+            }
+        }
+
         #region Helpers
         private string ProvideArguments(int iterations, string path)
         {
@@ -56,11 +66,7 @@ namespace VSMacros.Engines
         private System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()
         {
             System.Runtime.InteropServices.ComTypes.IRunningObjectTable rot;
-            int hr = NativeMethods.GetRunningObjectTable(0, out rot);
-            if (ErrorHandler.Failed(hr))
-            {
-                ErrorHandler.ThrowOnFailure(hr, null);
-            }
+            ErrorHandler.ThrowOnFailure(NativeMethods.GetRunningObjectTable(0, out rot));
 
             return rot;
         }
@@ -150,7 +156,8 @@ namespace VSMacros.Engines
             Server.InitializeServer();
 
             Executor.executionEngine = new Process();
-            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualSt .Macros.ExecutionEngine.exe");
+            string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
+            //string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
             Executor.executionEngine.Start();

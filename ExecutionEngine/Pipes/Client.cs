@@ -115,7 +115,7 @@ namespace VSMacros.ExecutionEngine.Pipes
             return UnicodeEncoding.Unicode.GetString(messageBuffer);
         }
 
-        public static string ParseFilePath(NamedPipeClientStream clientStream)
+        public static string GetFilePath(NamedPipeClientStream clientStream)
         {
             int sizeOfMessage = Client.GetInt(Client.ClientStream);
             string message = Client.GetMessage(Client.ClientStream, sizeOfMessage);

@@ -64,17 +64,20 @@ namespace VSMacros.Pipes
                         break;
 
                     case Packet.Success:
-                        Server.HandlePacketSuccess(Server.ServerStream);
+                        var executor = Manager.Instance.executor;
+                        executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
                         break;
 
                     case Packet.ScriptError:
-                        Server.HandlePacketScriptError(Server.ServerStream);
+                        executor = Manager.Instance.executor;
+                        string error = Server.HandlePacketScriptError(Server.ServerStream);
+                        executor.SendCompletionMessage(isError: true, errorMessage: error);
                         break;
                 }
             }
         }
 
-        private static void HandlePacketScriptError(NamedPipeServerStream serverStream)
+        private static string HandlePacketScriptError(NamedPipeServerStream serverStream)
         {
             int lineNumber = GetIntFromStream(serverStream);
             int characterPos = GetIntFromStream(serverStream);
@@ -84,12 +87,7 @@ namespace VSMacros.Pipes
             string description = GetMessageFromStream(serverStream, sizeOfDescription);
 
             var exceptionMessage = string.Format("{0}: {1} at line {2}, character position {3}.", source, description, lineNumber, characterPos);
-            MessageBox.Show(exceptionMessage);
-        }
-
-        private static void HandlePacketSuccess(NamedPipeServerStream namedPipeServerStream)
-        {
-            //throw new NotImplementedException();
+            return exceptionMessage;
         }
 
         #endregion
@@ -109,13 +107,13 @@ namespace VSMacros.Pipes
             int offset = 0;
             serializedTypeLength.CopyTo(packet, offset);
 
-            offset += sizeof(int);
+            offset += type;
             serializedIterations.CopyTo(packet, offset);
 
-            offset += sizeof(int);
+            offset += iterations;
             serializedLength.CopyTo(packet, offset);
             
-            offset += sizeof(int);
+            offset += messageSize;
             serializedMessage.CopyTo(packet, offset);
 
             return packet;

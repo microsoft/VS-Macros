@@ -10,8 +10,9 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using ExecutionEngine.Enums;
+using ExecutionEngine.Helpers;
 using VSMacros.ExecutionEngine;
-using VSMacros.ExecutionEngine.Helpers;
+//using VSMacros.ExecutionEngine.Helpers;
 using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
@@ -24,17 +25,7 @@ namespace ExecutionEngine
         private const string close = "close";
         private static bool exit;
 
-        internal static void RunMacro(string script, int iterations)
-        {
-            Validate.IsNotNullAndNotEmpty(script, "script");
-            Program.parsedScript = Program.engine.Parse(script);
-
-            for (int i = 0; i < iterations; i++)
-            {
-                Program.parsedScript.CallMethod(Program.MacroName);
-            }
-        }
-
+        #region Debugging Purposes
         internal static void RunFromExtension(string[] separatedArgs)
         {
             string unparsedPid = separatedArgs[0];
@@ -65,9 +56,22 @@ namespace ExecutionEngine
             RunMacro(wrapped, 1);
         }
 
+        #endregion
+
+        internal static void RunMacro(string script, int iterations)
+        {
+            Validate.IsNotNullAndNotEmpty(script, "script");
+            Program.parsedScript = Program.engine.Parse(script);
+
+            for (int i = 0; i < iterations; i++)
+            {
+                Program.parsedScript.CallMethod(Program.MacroName);
+            }
+        }
+
         private static void HandleInput()
         {
-            int typeOfMessage = Client.GetIntFromStream(Client.ClientStream);
+            int typeOfMessage = Client.GetInt(Client.ClientStream);
 
             switch ((Packet)typeOfMessage)
             {
@@ -77,18 +81,6 @@ namespace ExecutionEngine
 
                 case (Packet.Close):
                     HandleCloseRequest();
-                    break;
-
-                case (Packet.Success):
-                    Client.HandlePacketSuccess(Client.ClientStream);
-                    break;
-
-                case (Packet.ScriptError):
-                    Client.HandlePacketScriptError(Client.ClientStream);
-                    break;
-
-                case (Packet.Iterations):
-                    Client.HandlePacketOtherError(Client.ClientStream);
                     break;
             }
         }
@@ -102,7 +94,7 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
-            int iterations = Client.ParseIterations(Client.ClientStream);
+            int iterations = Client.GetIterations(Client.ClientStream);
             string message = Client.ParseFilePath(Client.ClientStream);
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
@@ -129,6 +121,7 @@ namespace ExecutionEngine
                     Program.exit = true;
 
                     var errorMessage = string.Format("From thread: An error occurred: {0}: {1}", e.Message, e.GetBaseException());
+                    Debug.WriteLine(errorMessage);
                 }
             });
 
@@ -145,9 +138,6 @@ namespace ExecutionEngine
 
             Thread readThread = CreateReadingThread(pid);
             readThread.Start();
-
-            // byte[] packet = Client.PackageFilePathMessage("hello from engine!");
-            // Client.SendMessageToServer(Client.ClientStream, packet);
         }
 
         internal static void Main(string[] args)

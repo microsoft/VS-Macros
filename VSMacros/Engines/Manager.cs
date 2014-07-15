@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -15,13 +14,13 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
-using VSMacros.Pipes;
 
 namespace VSMacros.Engines
 {
     public sealed class Manager : IManager
     {
         private static Manager instance;
+        private Executor executor;
 
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
@@ -88,7 +87,6 @@ namespace VSMacros.Engines
             recorder.StopRecording(current);
         }
 
-        Executor executor;
         public void Playback(string path, int iterations = 1)
         {
             if (path == string.Empty)
@@ -101,11 +99,7 @@ namespace VSMacros.Engines
                 executor = new Executor();
             }
 
-            if (!Executor.IsEngineInitialized)
-            {
-                executor.InitializeEngine();
-            }
-            executor.RunEngine(1, path);
+            PlayMacro(path, iterations: 1);
         }
 
         public void PlaybackMultipleTimes(string path)
@@ -128,13 +122,18 @@ namespace VSMacros.Engines
                 int iterations;
                 if (int.TryParse(dlg.IterationsTextbox.Text, out iterations))
                 {
-                    if (!Executor.IsEngineInitialized)
-                    {
-                        executor.InitializeEngine();
-                    }
-                    executor.RunEngine(1, path);
+                    PlayMacro(path, iterations);
                 }
             }
+        }
+
+        private void PlayMacro(string path, int iterations)
+        {
+            if (!Executor.IsEngineInitialized)
+            {
+                executor.InitializeEngine();
+            }
+            executor.RunEngine(iterations, path);
         }
 
         public void StopPlayback()

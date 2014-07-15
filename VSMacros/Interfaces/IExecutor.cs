@@ -15,7 +15,6 @@ namespace VSMacros.Interfaces
 
         /// <summary>
         /// Initializes the engine and then runs the macro script.
-        /// This method will be removed after IPC is implemented.
         /// </summary>
         void InitializeEngine();
 
@@ -24,12 +23,6 @@ namespace VSMacros.Interfaces
         /// <param name="path">Path to macro.</param>
         /// <param name="iterations">Times to be executed.</param>
         /// </summary>
-        void StartExecution(int iterations, string path);
-
-        /// <summary>
-        /// Will stop the currently executing macro file.
-        /// We are considering removing this.
-        /// </summary>
-        void StopExecution();
+        void RunEngine(int iterations, string path);
     }
 }

@@ -8,6 +8,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -31,21 +32,25 @@ namespace ExecutionEngine
         {
             try
             {
-                return this.dispatch.GetType().InvokeMember(Program.MacroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                object result = this.dispatch.GetType().InvokeMember(Program.MacroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                // TODO: Can we assume that if we've made it here, running the script has been a success?
+
+                byte[] successMessage = Client.PackageSuccessMessage();
+                string message = System.Text.UnicodeEncoding.Unicode.GetString(successMessage);
+                Client.SendMessageToServer(Client.ClientStream, successMessage);
+
+                return result;
             }
             catch (Exception e)
             {
                 if (Site.Error)
                 {
-                    var exception = Site.RuntimeException;
-                    string description = exception.Description ?? "Error";
-                    var exceptionMessage = string.Format("{0} {1} at line {2}", exception.Source == null ? string.Empty : exception.Source + ":", description, exception.Line);
-                    MessageBox.Show(/*"Error in the script: " + */exceptionMessage);
+                    var ex = Site.RuntimeException;
 
                     // Error messaging for IPC is acting weird for now
-                    // byte[] scriptErrorMessage = Client.PackageScriptError(exception.Line, exception.Source, exception.Description);
-                    // string message = System.Text.UnicodeEncoding.Unicode.GetString(scriptErrorMessage);
-                    // Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
+                    byte[] scriptErrorMessage = Client.PackageScriptError(ex.Line, ex.CharacterPosition, ex.Source, ex.Description);
+                    string message = System.Text.UnicodeEncoding.Unicode.GetString(scriptErrorMessage);
+                    Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
                     return null;
                 }
                 else

@@ -7,6 +7,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 using VSMacros.ExecutionEngine;
@@ -77,7 +78,7 @@ namespace ExecutionEngine
             string source = exceptionInfo.bstrSource;
 
             Site.Error = true;
-            Site.RuntimeException = new RuntimeException(description, source, lineNumber);
+            Site.RuntimeException = new RuntimeException(description, source, lineNumber, characterPosition);
         }
 
         public void OnEnterScript()

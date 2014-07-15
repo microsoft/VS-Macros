@@ -7,7 +7,6 @@
 using System;
 using System.IO.Pipes;
 using System.Text;
-using System.Windows.Forms;
 using ExecutionEngine.Enums;
 
 namespace VSMacros.ExecutionEngine.Pipes
@@ -17,9 +16,9 @@ namespace VSMacros.ExecutionEngine.Pipes
         public static NamedPipeClientStream ClientStream;
         public static void InitializePipeClientStream(string guid)
         {
-            var someUnreasonableNumber = 1200000;
+            var someBigNumber = 1200000;
             Client.ClientStream = new NamedPipeClientStream(".", guid, PipeDirection.InOut, PipeOptions.Asynchronous);
-            Client.ClientStream.Connect(someUnreasonableNumber);
+            Client.ClientStream.Connect(someBigNumber);
         }
 
         #region Sending
@@ -69,39 +68,41 @@ namespace VSMacros.ExecutionEngine.Pipes
             return packet;
         }
 
-        internal static byte[] PackageScriptError(uint lineNumber, string source, string description)
+        internal static byte[] PackageScriptError(uint errorLineNumber, int errorCharacterPos, string errorSource, string errorDescription)
         {
             byte[] serializedType = BitConverter.GetBytes((int)Packet.ScriptError);
-            byte[] serializedLineNumber = BitConverter.GetBytes((int)lineNumber);
-            byte[] serializedSource = UnicodeEncoding.Unicode.GetBytes(source);
-            byte[] serializedDescription = UnicodeEncoding.Unicode.GetBytes(description);
+            byte[] serializedLineNumber = BitConverter.GetBytes((int)errorLineNumber);
+            byte[] serializedCharacterPos = BitConverter.GetBytes((int)errorCharacterPos);
+            byte[] serializedSource = UnicodeEncoding.Unicode.GetBytes(errorSource);
+            byte[] serializedDescription = UnicodeEncoding.Unicode.GetBytes(errorDescription);
             byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
             byte[] serializedSizeOfDescription = BitConverter.GetBytes(serializedDescription.Length);
 
-            int typePlaceholder = sizeof(int), lineNumberPlaceholder = sizeof(int), sourceSizePlaceholder = sizeof(int), descriptionSizePlaceholder = sizeof(int);
-            int sourcePlaceholder = serializedSource.Length, descriptionPlaceholder = serializedDescription.Length;
+            int type = sizeof(int), lineNumber = sizeof(int), characterPos = sizeof(int), sourceSize = sizeof(int), descriptionSize = sizeof(int);
+            int source = serializedSource.Length, description = serializedDescription.Length;
 
-            byte[] packet = new byte[typePlaceholder + lineNumberPlaceholder + sourceSizePlaceholder + sourcePlaceholder + descriptionSizePlaceholder + descriptionPlaceholder];
+            byte[] packet = new byte[type + lineNumber + characterPos + sourceSize + source + descriptionSize + description];
 
             int offset = 0;
             serializedType.CopyTo(packet, offset);
 
-            offset += typePlaceholder;
+            offset += type;
             serializedLineNumber.CopyTo(packet, offset);
 
-            offset += lineNumberPlaceholder;
+            offset += lineNumber;
+            serializedCharacterPos.CopyTo(packet, offset);
+
+            offset += characterPos;
             serializedSizeOfSource.CopyTo(packet, offset);
 
-            offset += sourceSizePlaceholder;
+            offset += sourceSize;
             serializedSource.CopyTo(packet, offset);
 
             offset += serializedSource.Length;
             serializedSizeOfDescription.CopyTo(packet, offset);
 
-            offset += descriptionSizePlaceholder;
+            offset += descriptionSize;
             serializedDescription.CopyTo(packet, offset);
-
-            //DEBUG_PrintBytes(packet);
 
             return packet;
         }
@@ -114,7 +115,14 @@ namespace VSMacros.ExecutionEngine.Pipes
         #endregion
 
         #region Getting
-        public static int GetIntFromStream(NamedPipeClientStream clientStream)
+
+        internal static int GetIterations(NamedPipeClientStream clientStream)
+        {
+            int iterations = Client.GetInt(Client.ClientStream);
+            return iterations;
+        }
+
+        public static int GetInt(NamedPipeClientStream clientStream)
         {
             byte[] number = new byte[sizeof(int)];
             clientStream.Read(number, 0, sizeof(int));
@@ -123,7 +131,7 @@ namespace VSMacros.ExecutionEngine.Pipes
             return intFromStream;
         }
 
-        public static string GetMessageFromStream(NamedPipeClientStream clientStream, int sizeOfMessage)
+        public static string GetMessage(NamedPipeClientStream clientStream, int sizeOfMessage)
         {
             byte[] messageBuffer = new byte[sizeOfMessage];
             clientStream.Read(messageBuffer, 0, sizeOfMessage);
@@ -132,59 +140,11 @@ namespace VSMacros.ExecutionEngine.Pipes
 
         public static string ParseFilePath(NamedPipeClientStream clientStream)
         {
-            // Visual Studio -> Execution engine
-            int sizeOfMessage = Client.GetIntFromStream(Client.ClientStream);
-            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfMessage);
+            int sizeOfMessage = Client.GetInt(Client.ClientStream);
+            string message = Client.GetMessage(Client.ClientStream, sizeOfMessage);
             return message;
         }
 
-        public static void HandlePacketClose(NamedPipeClientStream clientStream)
-        {
-            // Visual Studio -> Execution engine
-            // Execution engine -> Visual Studio??
-
-            // TODO: Close execution engine from QueryClose in VSMacrosPackage
-        }
-
-        public static void HandlePacketSuccess(NamedPipeClientStream clientStream)
-        {
-            // Execution engine -> Visual Studio
-            // TODO: update the CompletedEvent thing
-        }
-
-        public static void HandlePacketScriptError(NamedPipeClientStream clientStream)
-        {
-            // Execution engine -> Visual Studio
-            int lineNumber = Client.GetIntFromStream(Client.ClientStream);
-            int sizeOfDescription = Client.GetIntFromStream(Client.ClientStream);
-            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfDescription);
-
-            // TODO: update the CompletedEvent thing
-        }
-
-        internal static void HandlePacketOtherError(NamedPipeClientStream namedPipeClientStream)
-        {
-            // Execution engine -> Visual Studio
-            int sizeOfDescription = Client.GetIntFromStream(Client.ClientStream);
-            string message = Client.GetMessageFromStream(Client.ClientStream, sizeOfDescription);
-        }
-
         #endregion
-
-        private static void DEBUG_PrintBytes(byte[] packet)
-        {
-            for (int i = 0; i < packet.Length; i++)
-            {
-                Console.Write(packet[i]);
-                Console.Write(' ');
-            }
-            Console.WriteLine();
-        }
-
-        internal static int ParseIterations(NamedPipeClientStream clientStream)
-        {
-            int iterations = Client.GetIntFromStream(Client.ClientStream);
-            return iterations;
-        }
     }
 }

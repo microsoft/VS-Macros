@@ -60,6 +60,9 @@ namespace VSMacros.Models
             this.isSelected = false;
             this.isMatch = false;
             this.parent = parent;
+
+            // Monitor that node
+            FileChangeMonitor.Instance.MonitorFileSystemEntry(this.FullPath, this.IsDirectory);
         }
 
         public string FullPath
@@ -420,6 +423,9 @@ namespace VSMacros.Models
 
             // Remove macro from collection
             this.parent.children.Remove(this);
+
+            // Unmonitor the file
+            FileChangeMonitor.Instance.UnmonitorFileSystemEntry(this.FullPath, this.IsDirectory);
         }
 
         public void EnableEdit()
@@ -491,6 +497,11 @@ namespace VSMacros.Models
         public static void RefreshTree()
         {
             MacroFSNode root = MacroFSNode.RootNode;
+            MacroFSNode.RefreshTree(root);
+        }
+
+        public static void RefreshTree(MacroFSNode root)
+        {
             MacroFSNode selected = MacrosControl.Current.MacroTreeView.SelectedItem as MacroFSNode;
 
             // Make a copy of the hashset
@@ -527,6 +538,8 @@ namespace VSMacros.Models
         /// <param name="enabledDirs">Hash set containing the enabled dirs</param>
         private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
         {
+            node.IsExpanded = true;
+
             // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
             if (node.Children.Count > 0 && enabledDirs.Count > 0)
             {

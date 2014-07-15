@@ -148,6 +148,7 @@
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
+    <Compile Include="FileChangeMonitor.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />

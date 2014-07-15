@@ -96,15 +96,15 @@ namespace VSMacros.Pipes
 
         #region Sending
 
-        private static byte[] PackageFilePathMessage(int iterations, string line)
+        private static byte[] PackageFilePathMessage(int it, string line)
         {
             byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
-            byte[] serializedIterations = BitConverter.GetBytes((int)iterations);
+            byte[] serializedIterations = BitConverter.GetBytes((int)it);
             byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
             byte[] serializedLength = BitConverter.GetBytes(serializedMessage.Length);
 
-            int typePlaceholder = sizeof(int), iterationsPlaceholder = sizeof(int), messageSizePlaceholder = sizeof(int);
-            byte[] packet = new byte[typePlaceholder + iterationsPlaceholder + messageSizePlaceholder + serializedMessage.Length];
+            int type = sizeof(int), iterations = sizeof(int), messageSize = sizeof(int);
+            byte[] packet = new byte[type + iterations + messageSize + serializedMessage.Length];
 
             int offset = 0;
             serializedTypeLength.CopyTo(packet, offset);
@@ -124,9 +124,7 @@ namespace VSMacros.Pipes
         public static byte[] PackageCloseMessage()
         {
             byte[] serializedType = BitConverter.GetBytes((int)Packet.Close);
-
-            int type = sizeof(int);
-            byte[] packet = new byte[type];
+            byte[] packet = new byte[sizeof(int)];
 
             serializedType.CopyTo(packet, 0);
 

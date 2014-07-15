@@ -40,13 +40,16 @@ namespace VSMacros.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ToInt(this.IterationsTextbox.Text, true) == -1)
+            this.Iterations = this.ToInt(this.IterationsTextbox.Text, true);
+
+            if (this.Iterations == 0)
             {
                 this.DialogResult = false;
-                return;
             }
-            
-            this.DialogResult = true;
+            else
+            {
+                this.DialogResult = true;
+            }
         }
 
         private bool IsValid(string text)
@@ -75,26 +78,9 @@ namespace VSMacros.Dialogs
 
         private int ToInt(string str, bool showMessage = false)
         {
-            int ret = -1;
+            int ret = 0;
 
-            try
-            {
-                ret = Convert.ToInt32(str);
-            }
-            catch (FormatException e)
-            {
-                if (showMessage)
-                {
-                    VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
-                }
-            }
-            catch (Exception e)
-            {
-                if (ErrorHandler.IsCriticalException(e)) 
-                { 
-                    throw; 
-                }
-            }
+            Int32.TryParse(str, out ret);
 
             return ret;
         }

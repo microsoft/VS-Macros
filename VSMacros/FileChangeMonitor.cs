@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Models;
@@ -28,6 +25,7 @@ namespace VSMacros
                 return FileChangeMonitor.instance;
             }
         }
+
         public IVsFileChangeEx FileChangeService
         {
             get
@@ -70,7 +68,7 @@ namespace VSMacros
         /// Enables the monitor to receive notifications on changes of a file.
         /// </summary>
         /// <param name="path">
-        /// Full path of the file to monitor.
+        /// Full path to the file to monitor.
         /// </param>
         public void MonitorFile(string path)
         {
@@ -104,10 +102,10 @@ namespace VSMacros
 
 
         /// <summary>
-        /// Disables a client from receiving notifications to a directory
+        /// Disables a client from receiving notifications to a directory.
         /// </summary>
         /// <param name="path">
-        /// Full path of the directory.
+        /// Full path to the directory.
         /// </param>
         public void UnmonitorFolder(string path)
         {
@@ -117,10 +115,10 @@ namespace VSMacros
         }
 
         /// <summary>
-        /// Disables a client from receiving notifications to a file
+        /// Disables a client from receiving notifications to a file.
         /// </summary>
         /// <param name="path">
-        /// Full path of the file.
+        /// Full path to the file.
         /// </param>
         public void UnmonitorFile(string path)
         {
@@ -155,10 +153,6 @@ namespace VSMacros
         /// <param name="dir">
         /// Name of the directory that had a change.
         /// </param>
-        /// <returns>
-        /// If the method succeeds, it returns S_OK.
-        /// If it fails, it returns an error code.
-        /// </returns>
         public int DirectoryChanged(string dir)
         {
             MacroFSNode node = MacroFSNode.FindNodeFromFullPath(dir);
@@ -179,11 +173,7 @@ namespace VSMacros
         /// Array of file names.
         /// </param>
         /// <param name="typesOfChange">
-        /// Array of flags indicating the type of changes. See _VSFILECHANGEFLAGS.
-        /// <returns>
-        /// If the method succeeds, it returns S_OK. 
-        /// If it fails, it returns an error code.
-        /// </returns>
+        /// Array of flags indicating the type of changes. <see cref="_VSFILECHANGEFLAGS" />.
         public int FilesChanged(uint numberOfFilesChanged, string[] files, uint[] changeTypes)
         {
             // Go over each file and treat the change appropriately

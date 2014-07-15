@@ -7,7 +7,7 @@
 using System;
 using System.Globalization;
 
-namespace VSMacros.ExecutionEngine
+namespace ExecutionEngine
 {
     public static class Validate
     {

@@ -7,7 +7,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace VSMacros.ExecutionEngine
+namespace ExecutionEngine
 {
     public static class ErrorHandler
     {

@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace VSMacros.ExecutionEngine
+namespace ExecutionEngine
 {
     public static class Resources
     {

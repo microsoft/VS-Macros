@@ -9,7 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
-namespace VSMacros.ExecutionEngine.Helpers
+namespace ExecutionEngine.Helpers
 {
     public static class InputParser
     {

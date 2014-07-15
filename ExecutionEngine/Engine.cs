@@ -11,7 +11,6 @@ using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
 using Microsoft.VisualStudio.Shell;
-using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
@@ -74,12 +73,8 @@ namespace ExecutionEngine
         private void InitializeCommandHelper()
         {
             var globalProvider = ServiceProvider.GlobalProvider;
-            if (globalProvider == null)
-            {
-                // MessageBox.Show("global provider is null");
-            }
+            Validate.IsNotNull(globalProvider, "globalProvider");
 
-            // Engine.CommandHelper = new CommandHelper(ServiceProvider.GlobalProvider);
             Engine.CommandHelper = new CommandHelper(globalProvider);
             Validate.IsNotNull(Engine.CommandHelper, "Engine.CommandHelper");
         }

@@ -84,8 +84,7 @@ namespace VSMacros.Pipes
             string description = GetMessageFromStream(serverStream, sizeOfDescription);
 
             var exceptionMessage = string.Format("{0}: {1} at line {2}, character position {3}.", source, description, lineNumber, characterPos);
-            string gloat = "Visual Studio presents:\n";
-            MessageBox.Show(gloat + exceptionMessage);
+            MessageBox.Show(exceptionMessage);
         }
 
         private static void HandlePacketSuccess(NamedPipeServerStream namedPipeServerStream)

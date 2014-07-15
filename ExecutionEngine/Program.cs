@@ -11,8 +11,6 @@ using System.Threading;
 using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
-using VSMacros.ExecutionEngine;
-//using VSMacros.ExecutionEngine.Helpers;
 using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine

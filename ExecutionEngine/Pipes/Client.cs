@@ -45,29 +45,6 @@ namespace VSMacros.ExecutionEngine.Pipes
             return packet;
         }
 
-        public static byte[] PackageFilePathMessage(string line)
-        {
-            byte[] serializedType = BitConverter.GetBytes((int)Packet.FilePath);
-
-            byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
-            int message = serializedMessage.Length;
-
-            byte[] serializedLength = BitConverter.GetBytes(message);
-
-            int type = sizeof(int), messageSize = sizeof(int);
-            byte[] packet = new byte[type + messageSize + message];
-
-            serializedType.CopyTo(packet, 0);
-
-            int offset = sizeof(int);
-            serializedLength.CopyTo(packet, offset);
-            offset += sizeof(int);
-
-            serializedMessage.CopyTo(packet, offset);
-
-            return packet;
-        }
-
         internal static byte[] PackageScriptError(uint errorLineNumber, int errorCharacterPos, string errorSource, string errorDescription)
         {
             byte[] serializedType = BitConverter.GetBytes((int)Packet.ScriptError);

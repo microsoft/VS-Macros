@@ -151,8 +151,7 @@ namespace VSMacros.Engines
             Server.InitializeServer();
 
             Executor.executionEngine = new Process();
-            string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
-            //string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualSt .Macros.ExecutionEngine.exe");
+            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualSt .Macros.ExecutionEngine.exe");
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
             Executor.executionEngine.Start();

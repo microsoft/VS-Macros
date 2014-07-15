@@ -7,7 +7,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 using VSMacros.ExecutionEngine;

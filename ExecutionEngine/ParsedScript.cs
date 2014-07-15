@@ -33,7 +33,6 @@ namespace ExecutionEngine
             try
             {
                 object result = this.dispatch.GetType().InvokeMember(Program.MacroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
-                // TODO: Can we assume that if we've made it here, running the script has been a success?
 
                 byte[] successMessage = Client.PackageSuccessMessage();
                 string message = System.Text.UnicodeEncoding.Unicode.GetString(successMessage);
@@ -47,7 +46,6 @@ namespace ExecutionEngine
                 {
                     var ex = Site.RuntimeException;
 
-                    // Error messaging for IPC is acting weird for now
                     byte[] scriptErrorMessage = Client.PackageScriptError(ex.Line, ex.CharacterPosition, ex.Source, ex.Description);
                     string message = System.Text.UnicodeEncoding.Unicode.GetString(scriptErrorMessage);
                     Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);

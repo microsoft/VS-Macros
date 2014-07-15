@@ -168,6 +168,9 @@ namespace VSMacros.Engines
             Server.serverWait.Start();
 
             Executor.IsEngineInitialized = true;
+
+            job = new Job();
+            job.AddProcess(Executor.executionEngine.Handle);
         }
 
         internal void RunEngine(int iterations, string path)

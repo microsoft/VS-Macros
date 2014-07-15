@@ -7,6 +7,7 @@
 using System;
 using System.IO.Pipes;
 using System.Text;
+using System.Windows.Forms;
 using ExecutionEngine.Enums;
 
 namespace VSMacros.ExecutionEngine.Pipes
@@ -68,6 +69,48 @@ namespace VSMacros.ExecutionEngine.Pipes
             return packet;
         }
 
+        internal static byte[] PackageScriptError(uint lineNumber, string source, string description)
+        {
+            byte[] serializedType = BitConverter.GetBytes((int)Packet.ScriptError);
+            byte[] serializedLineNumber = BitConverter.GetBytes((int)lineNumber);
+            byte[] serializedSource = UnicodeEncoding.Unicode.GetBytes(source);
+            byte[] serializedDescription = UnicodeEncoding.Unicode.GetBytes(description);
+            byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
+            byte[] serializedSizeOfDescription = BitConverter.GetBytes(serializedDescription.Length);
+
+            int typePlaceholder = sizeof(int), lineNumberPlaceholder = sizeof(int), sourceSizePlaceholder = sizeof(int), descriptionSizePlaceholder = sizeof(int);
+            int sourcePlaceholder = serializedSource.Length, descriptionPlaceholder = serializedDescription.Length;
+
+            byte[] packet = new byte[typePlaceholder + lineNumberPlaceholder + sourceSizePlaceholder + sourcePlaceholder + descriptionSizePlaceholder + descriptionPlaceholder];
+
+            int offset = 0;
+            serializedType.CopyTo(packet, offset);
+
+            offset += typePlaceholder;
+            serializedLineNumber.CopyTo(packet, offset);
+
+            offset += lineNumberPlaceholder;
+            serializedSizeOfSource.CopyTo(packet, offset);
+
+            offset += sourceSizePlaceholder;
+            serializedSource.CopyTo(packet, offset);
+
+            offset += serializedSource.Length;
+            serializedSizeOfDescription.CopyTo(packet, offset);
+
+            offset += descriptionSizePlaceholder;
+            serializedDescription.CopyTo(packet, offset);
+
+            //DEBUG_PrintBytes(packet);
+
+            return packet;
+        }
+
+        internal static byte[] PackageSuccessMessage()
+        {
+            return BitConverter.GetBytes((int)Packet.Success);
+        }
+
         #endregion
 
         #region Getting
@@ -75,7 +118,9 @@ namespace VSMacros.ExecutionEngine.Pipes
         {
             byte[] number = new byte[sizeof(int)];
             clientStream.Read(number, 0, sizeof(int));
-            return BitConverter.ToInt32(number, 0);
+
+            var intFromStream = BitConverter.ToInt32(number, 0);
+            return intFromStream;
         }
 
         public static string GetMessageFromStream(NamedPipeClientStream clientStream, int sizeOfMessage)
@@ -126,60 +171,20 @@ namespace VSMacros.ExecutionEngine.Pipes
 
         #endregion
 
-        internal static byte[] PackageScriptError(uint lineNumber, string source, string description)
+        private static void DEBUG_PrintBytes(byte[] packet)
         {
-            byte[] serializedType = BitConverter.GetBytes((int)Packet.ScriptError);
-            byte[] serializedLineNumber = BitConverter.GetBytes((int)lineNumber);
-            byte[] serializedSource = UnicodeEncoding.Unicode.GetBytes(source);
-            byte[] serializedDescription = UnicodeEncoding.Unicode.GetBytes(description);
-            byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
-            byte[] serializedSizeOfDescription = BitConverter.GetBytes(serializedDescription.Length);
-
-            int typePlaceholder = sizeof(int), lineNumberPlaceholder = sizeof(int), sourceSizePlaceholder = sizeof(int), descriptionSizePlaceholder = sizeof(int);
-            int sourcePlaceholder = serializedSource.Length, descriptionPlaceholder = serializedDescription.Length;
-
-            byte[] packet = new byte[typePlaceholder + lineNumberPlaceholder + sourceSizePlaceholder + sourcePlaceholder + descriptionSizePlaceholder + descriptionPlaceholder];
-
-            int offset = 0;
-            string type = "type";
-            serializedType.CopyTo(packet, offset);
-
-            Console.WriteLine("hello");
-            var message = string.Format("at offset {0}, for {1}", offset, type);
-            Console.WriteLine(message);
-
-            offset += typePlaceholder;
-            type = "line number";
-            serializedLineNumber.CopyTo(packet, offset);
-            Console.WriteLine(message);
-
-            offset += lineNumberPlaceholder;
-            serializedSizeOfSource.CopyTo(packet, offset);
-            type = "size of source message";
-            Console.WriteLine(message);
-
-            offset += sourceSizePlaceholder;
-            serializedSource.CopyTo(packet, offset);
-            type = "source mssage";
-            Console.WriteLine(message);
-
-            offset += source.Length;
-            serializedSizeOfDescription.CopyTo(packet, offset);
-            type = "size of description message";
-            Console.WriteLine(message);
-
-            offset += descriptionSizePlaceholder;
-            serializedDescription.CopyTo(packet, offset);
-            type = "description message";
-            Console.WriteLine(message);
-
             for (int i = 0; i < packet.Length; i++)
             {
                 Console.Write(packet[i]);
+                Console.Write(' ');
             }
             Console.WriteLine();
+        }
 
-            return packet;
+        internal static int ParseIterations(NamedPipeClientStream clientStream)
+        {
+            int iterations = Client.GetIntFromStream(Client.ClientStream);
+            return iterations;
         }
     }
 }

@@ -32,8 +32,8 @@ namespace VSMacros.Enums
         ScriptError = 3,
 
         /// <summary>
-        /// I'm not sure if I need this actually.
+        /// Passes number of iterations to execute.
         /// </summary>
-        OtherError = 4,
+        Iterations = 4,
     }
 }

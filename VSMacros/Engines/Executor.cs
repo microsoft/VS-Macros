@@ -37,6 +37,7 @@ namespace VSMacros.Engines
         public static Process executionEngine;
         public static bool IsEngineInitialized = false;
         public static bool IsServerInitialized = false;
+        public static Job job;
 
         /// <summary>
         /// Informs subscribers of an error during execution.
@@ -47,7 +48,6 @@ namespace VSMacros.Engines
         {
             string pid = Process.GetCurrentProcess().Id.ToString();
             var delimiter = "[delimiter]";
-            //path = string.Replac
             return pid + delimiter + iterations.ToString() + delimiter + path;
         }
 
@@ -144,7 +144,6 @@ namespace VSMacros.Engines
         /// This method will be removed after IPC is implemented.
         /// </summary>
         /// 
-
         public void InitializeEngine()
         {
             this.RegisterCmdNameMappinginROT();
@@ -154,8 +153,8 @@ namespace VSMacros.Engines
             Executor.executionEngine = new Process();
 
             // Debug.WriteLine("for some reason it's not finding the executable, so the path is hardcoded for now");
-            // string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
-            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
+             string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
+            //string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualSt .Macros.ExecutionEngine.exe");
 
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
@@ -171,11 +170,11 @@ namespace VSMacros.Engines
             Executor.IsEngineInitialized = true;
         }
 
-        public void RunEngine(string path)
+        internal void RunEngine(int iterations, string path)
         {
             if (Server.ServerStream.IsConnected)
             {
-                Server.SendFilePath(path);
+                Server.SendFilePath(iterations, path);
             }
             else
             {
@@ -187,7 +186,7 @@ namespace VSMacros.Engines
         /// <summary>
         /// Will run the macro file.
         /// </summary>
-        public void StartExecution(string path, int iterations)
+        public void StartExecution(int iterations, string path)
         {
             Debug.WriteLine("path is: " + path);
 

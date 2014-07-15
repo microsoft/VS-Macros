@@ -49,13 +49,13 @@ namespace VSMacros.Pipes
 
         public static void WaitForMessage()
         {
-            //string pipeGuid = Server.Guid.ToString();
-
             bool willKeepRunning = true;
 
             while (willKeepRunning)
             {
                 int typeOfMessage = Server.GetIntFromStream(Server.ServerStream);
+
+                // TODO: I think FilePath needs to be modified as well
 
                 switch ((Packet)typeOfMessage)
                 {
@@ -74,21 +74,10 @@ namespace VSMacros.Pipes
                         break;
 
                     case Packet.ScriptError:
-                        // int lineNumber = GetIntFromStream(Server.ServerStream);
-                        // Debug.WriteLine("line number of error is: " + lineNumber);
-                        // int sizeOfSource = GetIntFromStream(Server.ServerStream);
-                        // Debug.WriteLine("size of source is: " + sizeOfSource);
-                        // string source = GetMessageFromStream(Server.ServerStream, sizeOfSource);
-                        // Debug.WriteLine("source is: " + source);
-                        // int sizeOfDescription = GetIntFromStream(Server.ServerStream);
-                        // Debug.WriteLine("size of description is: " + sizeOfDescription);
-                        // string description = GetMessageFromStream(Server.ServerStream, sizeOfDescription);
-                        // Debug.WriteLine("description is: " + description);
-
-                        //Server.HandlePacketScriptError(Server.ServerStream);
+                        Server.HandlePacketScriptError(Server.ServerStream);
                         break;
 
-                    case (Packet.OtherError):
+                    case (Packet.Iterations):
                         Server.HandlePacketOtherError(Server.ServerStream);
                         break;
                 }
@@ -100,14 +89,22 @@ namespace VSMacros.Pipes
             throw new NotImplementedException();
         }
 
-        private static void HandlePacketScriptError(NamedPipeServerStream namedPipeServerStream)
+        private static void HandlePacketScriptError(NamedPipeServerStream serverStream)
         {
-            throw new NotImplementedException();
+            int lineNumber = GetIntFromStream(serverStream);
+            int sizeOfSource = GetIntFromStream(serverStream);
+            string source = GetMessageFromStream(serverStream, sizeOfSource);
+            int sizeOfDescription = GetIntFromStream(serverStream);
+            string description = GetMessageFromStream(serverStream, sizeOfDescription);
+
+            var exceptionMessage = string.Format("{0}: {1} at line {2}.", source, description, lineNumber);
+            string gloat = "Visual Studio presents:\n";
+            MessageBox.Show(gloat + exceptionMessage);
         }
 
         private static void HandlePacketSuccess(NamedPipeServerStream namedPipeServerStream)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private static string ParseFilePath(NamedPipeServerStream serverStream)
@@ -142,6 +139,38 @@ namespace VSMacros.Pipes
             return packet;
         }
 
+        private static byte[] PackageFilePathMessage(int iterations, string line)
+        {
+            byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
+            byte[] serializedIterations = BitConverter.GetBytes((int)iterations);
+            byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
+            byte[] serializedLength = BitConverter.GetBytes(serializedMessage.Length);
+
+            int typePlaceholder = sizeof(int), iterationsPlaceholder = sizeof(int), messageSizePlaceholder = sizeof(int);
+            byte[] packet = new byte[typePlaceholder + iterationsPlaceholder + messageSizePlaceholder + serializedMessage.Length];
+
+            int offset = 0;
+            serializedTypeLength.CopyTo(packet, offset);
+
+            offset += sizeof(int);
+            serializedIterations.CopyTo(packet, offset);
+
+            offset += sizeof(int);
+            serializedLength.CopyTo(packet, offset);
+            
+            offset += sizeof(int);
+            serializedMessage.CopyTo(packet, offset);
+
+            Debug.WriteLine("This is what the server is sending oout:");
+            for (int i = 0; i < packet.Length; i++)
+            {
+                Debug.Write(packet[i]);
+                Debug.Write(' ');
+            }
+
+                return packet;
+        }
+
         public static byte[] PackageCloseMessage()
         {
             byte[] serializedType = BitConverter.GetBytes((int)Packet.Close);
@@ -168,6 +197,12 @@ namespace VSMacros.Pipes
         internal static void SendFilePath(string path)
         {
             byte[] filePathPacket = PackageFilePathMessage(path);
+            SendMessageToClient(Server.ServerStream, filePathPacket);
+        }
+
+        internal static void SendFilePath(int iterations, string path)
+        {
+            byte[] filePathPacket = PackageFilePathMessage(iterations, path);
             SendMessageToClient(Server.ServerStream, filePathPacket);
         }
     }

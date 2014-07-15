@@ -24,7 +24,7 @@ namespace ExecutionEngine
         private const string close = "close";
         private static bool exit;
 
-        internal static void RunMacro(string script, int iterations = 1)
+        internal static void RunMacro(string script, int iterations)
         {
             Validate.IsNotNullAndNotEmpty(script, "script");
             Program.parsedScript = Program.engine.Parse(script);
@@ -87,7 +87,7 @@ namespace ExecutionEngine
                     Client.HandlePacketScriptError(Client.ClientStream);
                     break;
 
-                case (Packet.OtherError):
+                case (Packet.Iterations):
                     Client.HandlePacketOtherError(Client.ClientStream);
                     break;
             }
@@ -102,18 +102,11 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
+            int iterations = Client.ParseIterations(Client.ClientStream);
             string message = Client.ParseFilePath(Client.ClientStream);
-
-            //if (InputParser.IsDebuggerStopped(message))
-            //{
-            //    Program.exit = true;
-            //}
-            //else
-            //{
-                string unwrappedScript = InputParser.ExtractScript(message);
-                string wrappedScript = InputParser.WrapScript(unwrappedScript);
-                RunMacro(wrappedScript, iterations: 1);
-            //}
+            string unwrappedScript = InputParser.ExtractScript(message);
+            string wrappedScript = InputParser.WrapScript(unwrappedScript);
+            RunMacro(wrappedScript, iterations);
         }
 
         internal static Thread CreateReadingThread(int pid)
@@ -159,9 +152,6 @@ namespace ExecutionEngine
 
         internal static void Main(string[] args)
         {
-            // TODO: Close pipes when Visual Studio closes
-
-            // Console.WriteLine("Hello there!  Welcome to our macro extension!");
             try
             {
                 if (args.Length > 0)
@@ -171,18 +161,15 @@ namespace ExecutionEngine
 
                     if (separatedArgs[0].Equals(pipeToken))
                     {
-                        // Console.WriteLine("running macro from pipe");
                         RunFromPipe(separatedArgs);
                     }
                     else
                     {
-                        // Console.WriteLine("running macro from extension");
                         RunFromExtension(separatedArgs);
                     }
                 }
                 else
                 {
-                    // Console.WriteLine("running as startup");
                     RunAsStartupProject();
                 }
             }

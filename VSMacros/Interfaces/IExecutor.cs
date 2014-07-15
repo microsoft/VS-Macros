@@ -24,7 +24,7 @@ namespace VSMacros.Interfaces
         /// <param name="path">Path to macro.</param>
         /// <param name="iterations">Times to be executed.</param>
         /// </summary>
-        void StartExecution(string path, int iterations);
+        void StartExecution(int iterations, string path);
 
         /// <summary>
         /// Will stop the currently executing macro file.

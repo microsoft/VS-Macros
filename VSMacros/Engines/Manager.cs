@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -87,6 +88,7 @@ namespace VSMacros.Engines
             recorder.StopRecording(current);
         }
 
+        Executor executor;
         public void Playback(string path, int iterations = 1)
         {
             if (path == string.Empty)
@@ -94,32 +96,44 @@ namespace VSMacros.Engines
                 path = this.SelectedMacro.FullPath;
             }
 
-            var executor = new Executor();
-            var enablePipes = true;
-
-            if (enablePipes)
+            if (executor == null)
             {
-                if (!Executor.IsEngineInitialized)
-                {
-                    executor.InitializeEngine();
-                }
-                executor.RunEngine(path);
-            }
-            else
-            {
-                executor.StartExecution(path, 1);
+                executor = new Executor();
             }
 
+            if (!Executor.IsEngineInitialized)
+            {
+                executor.InitializeEngine();
+            }
+            executor.RunEngine(1, path);
         }
 
         public void PlaybackMultipleTimes(string path)
         {
+            if (path == string.Empty)
+            {
+                path = this.SelectedMacro.FullPath;
+            }
+
+            if (executor == null)
+            {
+                executor = new Executor();
+            }
+
             PlaybackMultipleTimesDialog dlg = new PlaybackMultipleTimesDialog();
             bool? result = dlg.ShowDialog();
 
             if (result == true)
             {
-                int iterations = dlg.Iterations;
+                int iterations;
+                if (int.TryParse(dlg.IterationsTextbox.Text, out iterations))
+                {
+                    if (!Executor.IsEngineInitialized)
+                    {
+                        executor.InitializeEngine();
+                    }
+                    executor.RunEngine(1, path);
+                }
             }
         }
 

@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
+using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Model;
 using Task = System.Threading.Tasks.Task;
@@ -400,8 +401,14 @@ namespace VSMacros
             }
         }
 
+        Job job;
         protected override int QueryClose(out bool canClose)
         {
+            if (Executor.job != null)
+            {
+                Executor.job.Close();
+            }
+
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (macroRecorder.IsRecording)
             {

@@ -152,6 +152,7 @@
     </Compile>
     <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
     <Compile Include="Helpers\ErrorHandler.cs" />
+    <Compile Include="Helpers\Job.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\RecorderDataModel.cs" />

@@ -22,6 +22,13 @@ namespace VSMacros.Engines
     {
         private static Manager instance;
         internal Executor executor;
+        private Executor Executor
+        {
+            get
+            {
+                return (executor ?? (executor = new Executor()));
+            }
+        }
 
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
@@ -106,12 +113,6 @@ namespace VSMacros.Engines
                 path = this.SelectedMacro.FullPath;
             }
 
-            if (executor == null)
-            {
-                executor = new Executor();
-                AttachEvents(executor);
-            }
-
             PlayMacro(path, iterations: 1);
         }
 
@@ -122,16 +123,10 @@ namespace VSMacros.Engines
                 path = this.SelectedMacro.FullPath;
             }
 
-            if (executor == null)
-            {
-                executor = new Executor();
-                AttachEvents(executor);
-            }
-
             PlaybackMultipleTimesDialog dlg = new PlaybackMultipleTimesDialog();
             bool? result = dlg.ShowDialog();
 
-            if (result == true)
+            if (result.HasValue && result.Value)
             {
                 int iterations;
                 if (int.TryParse(dlg.IterationsTextbox.Text, out iterations))
@@ -143,11 +138,14 @@ namespace VSMacros.Engines
 
         private void PlayMacro(string path, int iterations)
         {
+            // TODO: Is this the right place to attach the event??
+            AttachEvents(this.Executor);
+
             if (!Executor.IsEngineInitialized)
             {
-                executor.InitializeEngine();
+                this.Executor.InitializeEngine();
             }
-            executor.RunEngine(iterations, path);
+            this.Executor.RunEngine(iterations, path);
         }
 
         public void StopPlayback()
@@ -162,7 +160,7 @@ namespace VSMacros.Engines
             }
 
             // Open the macro directory and let the user manage the macros
-            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(path); });
+            System.Threading.Tasks.Task.Run(() => System.Diagnostics.Process.Start(path));
         }
 
         public void SaveCurrent()

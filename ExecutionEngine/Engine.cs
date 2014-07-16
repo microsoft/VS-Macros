@@ -10,6 +10,8 @@ using System.Runtime.InteropServices.ComTypes;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
+using Microsoft.Internal.VisualStudio.Shell;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 
 namespace ExecutionEngine
@@ -28,11 +30,7 @@ namespace ExecutionEngine
             IMoniker moniker;
 
             // TODO: make it so it works with other versions of VS as well
-            int hr = NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
-            if (ErrorHandler.Failed(hr))
-            {
-                ErrorHandler.ThrowOnFailure(hr, null);
-            }
+            ErrorHandler.ThrowOnFailure(NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker));
 
             return moniker;
         }
@@ -67,7 +65,10 @@ namespace ExecutionEngine
             IRunningObjectTable rot = this.GetRunningObjectTable();
             Engine.DteObject = this.GetDteObject(rot, moniker);
 
-            Validate.IsNotNull(Engine.DteObject, "Engine.DteObject");
+            if (Engine.DteObject == null)
+            {
+                throw new InvalidOperationException();
+            }
         }
 
         private void InitializeCommandHelper()
@@ -81,9 +82,7 @@ namespace ExecutionEngine
 
         internal IActiveScript CreateEngine()
         {
-            const string Language = "jscript";
-
-            Type engine = Type.GetTypeFromProgID(Language, true);
+            Type engine = Type.GetTypeFromProgID("jscript", true);
             return Activator.CreateInstance(engine) as IActiveScript;
         }
 

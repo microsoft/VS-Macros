@@ -33,7 +33,7 @@ namespace ExecutionEngine
         {
             try
             {
-                object result = this.dispatch.GetType().InvokeMember(Program.MacroName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                object result = this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
 
                 byte[] successMessage = Client.PackageSuccessMessage();
                 string message = System.Text.UnicodeEncoding.Unicode.GetString(successMessage);
@@ -54,9 +54,9 @@ namespace ExecutionEngine
                 }
                 else
                 {
-                    var errorMessage = string.Format("An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                    Debug.WriteLine(errorMessage);
-                    throw;
+                    byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                    Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
+                    return null;
                 }
             }
         }

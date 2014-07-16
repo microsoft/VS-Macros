@@ -151,11 +151,11 @@
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
-    <Compile Include="Helpers\ErrorHandler.cs" />
-    <Compile Include="Helpers\Job.cs" />
+    <Compile Include="Helpers\ILogger.cs" />
+    <Compile Include="Helpers\JobHandle.cs" />
+    <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Helpers\Resources.cs" />
-    <Compile Include="Helpers\Validate.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />

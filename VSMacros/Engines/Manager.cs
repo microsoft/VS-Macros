@@ -67,7 +67,7 @@ namespace VSMacros.Engines
                 {
                     if (eventInfo.IsError)
                     {
-                        MessageBox.Show(eventInfo.ErrorMessage);
+                        Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
                     }
                 };
         }

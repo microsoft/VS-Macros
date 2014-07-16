@@ -12,7 +12,7 @@ namespace VSMacros.Enums
     internal enum Packet
     {
         /// <summary>
-        /// Contains information to parse a file path.
+        /// Contains information on the file path for a file containing a macro to execute.
         /// </summary>
         FilePath = 0,
 
@@ -30,5 +30,10 @@ namespace VSMacros.Enums
         /// Notifies subscribers of an error upon running the script.
         /// </summary>
         ScriptError = 3,
+
+        /// <summary>
+        /// Notifies subscribers of internal VS error.
+        /// </summary>
+        CriticalError = 4
     }
 }

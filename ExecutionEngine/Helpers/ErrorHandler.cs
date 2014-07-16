@@ -9,16 +9,16 @@ using System.Runtime.InteropServices;
 
 namespace ExecutionEngine
 {
-    public static class ErrorHandler
+    internal static class ErrorHandler
     {
         public static bool Failed(int hr)
         {
-            return (hr < 0);
+            return hr < 0;
         }
 
         public static bool Succeeded(int hr)
         {
-            return (hr >= 0);
+            return hr >= 0;
         }
 
         public static int ThrowOnFailure(int hr)

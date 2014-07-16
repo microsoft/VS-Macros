@@ -76,10 +76,10 @@
     <Compile Include="Enums\ScriptText.cs" />
     <Compile Include="Enums\ScriptThreadState.cs" />
     <Compile Include="Helpers\CommandHelper.cs" />
-    <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Helpers\Interfaces\ICommandHelper.cs" />
     <Compile Include="Helpers\InputParser.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
+    <Compile Include="MyException.cs" />
     <Compile Include="ParsedScript.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Pipes\Client.cs" />
@@ -89,7 +89,6 @@
     <Compile Include="RuntimeException.cs" />
     <Compile Include="Site.cs" />
     <Compile Include="Stubs\Script.cs" />
-    <Compile Include="Helpers\Validate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -8,11 +8,14 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Internal.VisualStudio.Shell;
 
 namespace ExecutionEngine.Helpers
 {
     public static class InputParser
     {
+        private static string[] stringSeparator = new [] { "[delimiter]" };
+
         internal static bool IsRequestToClose(string s)
         {
             return s[0] == '@';
@@ -25,8 +28,7 @@ namespace ExecutionEngine.Helpers
 
         internal static string[] SeparateArgs(string[] args)
         {
-            string[] stringSeparator = new string[] { "[delimiter]" };
-            string[] separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
+            string[] separatedArgs = args[0].Split(InputParser.stringSeparator, StringSplitOptions.RemoveEmptyEntries);
             return separatedArgs;
         }
 
@@ -38,16 +40,16 @@ namespace ExecutionEngine.Helpers
 
             if (!int.TryParse(unparsedPid, out pid))
             {
-                MessageBox.Show("The pid is invalid.");
                 throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Resources.InvalidPIDArgument, unparsedPid, "unparsedPid"));
             }
 
             return pid;
         }
 
-        internal static string GetGuid(string guid)
+        internal static Guid GetGuid(string unparsedGuid)
         {
-            Validate.IsNotNullAndNotEmpty(guid, "guid");
+            var guid = Guid.Parse(unparsedGuid);
+            Validate.IsNotNullAndNotEmpty(unparsedGuid, "unparsedGuid");
             return guid;
         }
 
@@ -78,11 +80,7 @@ namespace ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
-            string wrapped = "function currentScript() {\n";
-            wrapped += unwrapped;
-            wrapped += "\n}";
-
-            return wrapped;
+            return string.Format("function {0}() {{{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped);
         }
     }
 }

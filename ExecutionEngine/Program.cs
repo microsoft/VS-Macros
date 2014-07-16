@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using VSMacros.ExecutionEngine.Pipes;
+using VisualStudio.Macros.ExecutionEngine;
+using Microsoft.Internal.VisualStudio.Shell;
 
 namespace ExecutionEngine
 {
@@ -20,41 +22,7 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         internal static string MacroName = "currentScript";
-        private const string close = "close";
         private static bool exit;
-
-        #region Debugging Purposes
-        internal static void RunFromExtension(string[] separatedArgs)
-        {
-            string unparsedPid = separatedArgs[0];
-            string unparsedIter = separatedArgs[1];
-            string encodedPath = separatedArgs[2];
-
-            int pid = InputParser.GetPid(unparsedPid);
-            short iterations = InputParser.GetNumberOfIterations(unparsedIter);
-            string decodedPath = InputParser.DecodePath(encodedPath);
-            var unwrapped = InputParser.ExtractScript(decodedPath);
-            var wrapped = InputParser.WrapScript(unwrapped);
-
-            Program.engine = new Engine(pid);
-            RunMacro(wrapped, iterations);
-        }
-
-        internal static void RunAsStartupProject()
-        {
-            Debug.WriteLine("Warning: Hardcoded devenv pid");
-            short pidOfCurrentDevenv = 9800;
-
-            Program.engine = new Engine(pidOfCurrentDevenv);
-
-            Debug.WriteLine("Warning: Hardcoded path");
-            string unwrapped = File.ReadAllText(@"C:\Users\t-grawa\Desktop\test.js");
-            string wrapped = InputParser.WrapScript(unwrapped);
-
-            RunMacro(wrapped, 1);
-        }
-
-        #endregion
 
         internal static void RunMacro(string script, int iterations)
         {
@@ -73,11 +41,11 @@ namespace ExecutionEngine
 
             switch ((Packet)typeOfMessage)
             {
-                case (Packet.FilePath):
+                case Packet.FilePath:
                     HandleFilePath();
                     break;
 
-                case (Packet.Close):
+                case Packet.Close:
                     HandleCloseRequest();
                     break;
             }
@@ -96,7 +64,7 @@ namespace ExecutionEngine
             string message = Client.GetFilePath(Client.ClientStream);
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
-            RunMacro(wrappedScript, iterations);
+            Program.RunMacro(wrappedScript, iterations);
         }
 
         internal static Thread CreateReadingThread(int pid)
@@ -118,8 +86,8 @@ namespace ExecutionEngine
                     Client.ClientStream.Close();
                     Program.exit = true;
 
-                    var errorMessage = string.Format("From thread: An error occurred: {0}: {1}", e.Message, e.GetBaseException());
-                    Debug.WriteLine(errorMessage);
+                    byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                    Client.SendMessageToServer(Client.ClientStream, criticalError);
                 }
             });
 
@@ -129,8 +97,8 @@ namespace ExecutionEngine
 
         private static void RunFromPipe(string[] separatedArgs)
         {
-            string guid = InputParser.GetGuid(separatedArgs[1]);
-            int pid = InputParser.GetPid(separatedArgs[2]);
+            Guid guid = InputParser.GetGuid(separatedArgs[0]);
+            int pid = InputParser.GetPid(separatedArgs[1]);
 
             Client.InitializePipeClientStream(guid);
 
@@ -142,29 +110,13 @@ namespace ExecutionEngine
         {
             try
             {
-                if (args.Length > 0)
-                {
-                    var pipeToken = "@";
-                    string[] separatedArgs = InputParser.SeparateArgs(args);
-
-                    if (separatedArgs[0].Equals(pipeToken))
-                    {
-                        RunFromPipe(separatedArgs);
-                    }
-                    else
-                    {
-                        RunFromExtension(separatedArgs);
-                    }
-                }
-                else
-                {
-                    RunAsStartupProject();
-                }
+                string[] separatedArgs = InputParser.SeparateArgs(args);
+                RunFromPipe(separatedArgs);
             }
             catch (Exception e)
             {
-                var error = string.Format("Error at {0} from method {1}\n\n{2}", e.Source, e.TargetSite, e.Message);
-                MessageBox.Show(error);
+                byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                Client.SendMessageToServer(Client.ClientStream, criticalError);
             }
         }
     }

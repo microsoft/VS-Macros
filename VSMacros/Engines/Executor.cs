@@ -12,6 +12,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using Microsoft.Internal.VisualStudio.Shell;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Helpers;
@@ -30,7 +32,7 @@ namespace VSMacros.Engines
         /// </summary>
         public static Process executionEngine;
         public static bool IsEngineInitialized = false;
-        public static Job Job;
+        public static JobHandle Job;
 
         /// <summary>
         /// Informs subscribers of an error during execution.
@@ -56,11 +58,10 @@ namespace VSMacros.Engines
 
         private string ProvidePipeArguments(Guid guid)
         {
-            var pipeToken = "@";
             var delimiter = "[delimiter]";
             string pid = Process.GetCurrentProcess().Id.ToString();
 
-            return pipeToken + delimiter + guid.ToString() + delimiter + pid;
+            return guid.ToString() + delimiter + pid;
         }
 
         private System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()
@@ -73,7 +74,7 @@ namespace VSMacros.Engines
 
         private static string GetProgID(Type type)
         {
-            Guid guid = Marshal.GenerateGuidForType(type); // what about IOleCommandTarget?
+            Guid guid = Marshal.GenerateGuidForType(type);
             string progID = String.Format(CultureInfo.InvariantCulture, "{0:B}", guid);
             return progID;
         }
@@ -167,8 +168,9 @@ namespace VSMacros.Engines
             Server.serverWait.Start();
 
             Executor.IsEngineInitialized = true;
-            Executor.Job = new Job();
-            Executor.Job.AddProcess(Executor.executionEngine.Handle);
+            Logger logger = new Logger();
+            Executor.Job = JobHandle.CreateNewJob(logger);
+            Executor.Job.AddProcess(Executor.executionEngine);
         }
 
         /// <summary>

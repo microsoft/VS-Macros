@@ -28,7 +28,12 @@ namespace VSMacros.Pipes
         {
             Server.Guid = Guid.NewGuid();
             var guid = Server.Guid.ToString();
-            Server.ServerStream = new NamedPipeServerStream(guid, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+            Server.ServerStream = new NamedPipeServerStream(
+                pipeName:guid, 
+                direction: PipeDirection.InOut, 
+                maxNumberOfServerInstances: 1, 
+                transmissionMode: PipeTransmissionMode.Byte, 
+                options: PipeOptions.Asynchronous);
         }
 
         #region Getting
@@ -37,7 +42,7 @@ namespace VSMacros.Pipes
         {
             byte[] messageBuffer = new byte[sizeOfMessage];
             serverStream.Read(messageBuffer, 0, sizeOfMessage);
-            return System.Text.UnicodeEncoding.Unicode.GetString(messageBuffer);
+            return Encoding.Unicode.GetString(messageBuffer);
         }
 
         public static int GetIntFromStream(NamedPipeServerStream serverStream)
@@ -49,18 +54,20 @@ namespace VSMacros.Pipes
 
         public static void WaitForMessage()
         {
-            bool willKeepRunning = true;
+            bool shouldKeepRunning = true;
 
-            while (willKeepRunning)
+            while (shouldKeepRunning)
             {
                 int typeOfMessage = Server.GetIntFromStream(Server.ServerStream);
 
                 switch ((Packet)typeOfMessage)
                 {
                     case Packet.Close:
-                        MessageBox.Show("Received a close packet in Server.");
+                        #if DEBUG
+                        Manager.Instance.ShowMessageBox("Received a close packet in Server.");
+                        #endif
                         Executor.IsEngineInitialized = false;
-                        willKeepRunning = false;
+                        shouldKeepRunning = false;
                         break;
 
                     case Packet.Success:
@@ -72,6 +79,12 @@ namespace VSMacros.Pipes
                         executor = Manager.Instance.executor;
                         string error = Server.HandlePacketScriptError(Server.ServerStream);
                         executor.SendCompletionMessage(isError: true, errorMessage: error);
+                        break;
+
+                    case Packet.CriticalError:
+                        error = Server.HandlePacketCriticalError(Server.ServerStream);
+                        Debug.WriteLine(error);
+                        // TODO: I'm not quite sure what to do here.  Shut down the engine?
                         break;
                 }
             }
@@ -90,6 +103,21 @@ namespace VSMacros.Pipes
             return exceptionMessage;
         }
 
+        private static string HandlePacketCriticalError(NamedPipeServerStream serverStream)
+        {
+            int messageSize = GetIntFromStream(serverStream);
+            string message = GetMessageFromStream(serverStream, messageSize);
+            int sourceSize = GetIntFromStream(serverStream);
+            string source = GetMessageFromStream(serverStream, sourceSize);
+            int stackTraceSize = GetIntFromStream(serverStream);
+            string stackTrace = GetMessageFromStream(serverStream, stackTraceSize);
+            int targetSiteSize = GetIntFromStream(serverStream);
+            string targetSite = GetMessageFromStream(serverStream, targetSiteSize);
+
+            var exceptionMessage = string.Format("{0}, {1}, {2}, {3}", message, source, stackTrace, targetSite);
+            return exceptionMessage;
+        }
+
         #endregion
 
         #region Sending
@@ -98,7 +126,7 @@ namespace VSMacros.Pipes
         {
             byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
             byte[] serializedIterations = BitConverter.GetBytes((int)it);
-            byte[] serializedMessage = UnicodeEncoding.Unicode.GetBytes(line);
+            byte[] serializedMessage = Encoding.Unicode.GetBytes(line);
             byte[] serializedLength = BitConverter.GetBytes(serializedMessage.Length);
 
             int type = sizeof(int), iterations = sizeof(int), messageSize = sizeof(int);
@@ -121,12 +149,7 @@ namespace VSMacros.Pipes
 
         public static byte[] PackageCloseMessage()
         {
-            byte[] serializedType = BitConverter.GetBytes((int)Packet.Close);
-            byte[] packet = new byte[sizeof(int)];
-
-            serializedType.CopyTo(packet, 0);
-
-            return packet;
+            return BitConverter.GetBytes((int)Packet.Close);
         }
 
         public static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)

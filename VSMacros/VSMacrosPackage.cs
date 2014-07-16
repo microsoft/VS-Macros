@@ -401,7 +401,6 @@ namespace VSMacros
             }
         }
 
-        Job job;
         protected override int QueryClose(out bool canClose)
         {
             if (Executor.Job != null)

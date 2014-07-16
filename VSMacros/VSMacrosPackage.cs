@@ -182,7 +182,8 @@ namespace VSMacros
             {
                 Manager.Instance.StartRecording();
 
-                this.SetStatusBar(Resources.StatusBarRecordingText, 1);
+                this.StatusBarChange(Resources.StatusBarRecordingText, 1);
+                //this.SetStatusBar(Resources.StatusBarRecordingText, 1);
                 this.ChangeMenuCommands(this.StopIcon, 0);
                 this.UpdateButtonsForRecording(true);
             }
@@ -190,7 +191,7 @@ namespace VSMacros
             {
                 Manager.Instance.StopRecording();
 
-                this.ClearStatusBar();
+                this.StatusBarChange(Resources.StatusBarReadyText, 0);
                 this.ChangeMenuCommands(this.StartIcon, 0);
                 this.UpdateButtonsForRecording(false);
             }
@@ -201,7 +202,7 @@ namespace VSMacros
             Manager.Instance.Playback(string.Empty);
 
             // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
-            this.SetStatusBar(Resources.StatusBarPlayingText, 1);
+            this.StatusBarChange(Resources.StatusBarPlayingText, 1);
             this.UpdateButtonsForPlayback(true);
         }
 
@@ -210,7 +211,7 @@ namespace VSMacros
             Manager.Instance.PlaybackMultipleTimes(string.Empty);
 
             // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
-            this.SetStatusBar(Resources.StatusBarPlayingText, 1);
+            this.StatusBarChange(Resources.StatusBarPlayingText, 1);
             this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
 
@@ -252,25 +253,11 @@ namespace VSMacros
             }
         }
 
-        private void SetStatusBar(string text, int animation)
+        private void StatusBarChange(string status, int animation)
         {
-            int frozen;
-
-            this.statusBar.IsFrozen(out frozen);
-
-            if (frozen == 0)
-            {
-                this.statusBar.SetColorText(text, 0, 1);
-                this.statusBar.Animation(animation, ref this.iconRecord);
-                this.statusBar.FreezeOutput(1);
-            }
-        }
-
-        private void ClearStatusBar()
-        {
-            this.statusBar.FreezeOutput(0);
             this.statusBar.Clear();
-            this.statusBar.SetText(Resources.StatusBarReadyText);
+            this.statusBar.SetText(status);
+            this.statusBar.Animation(animation, ref this.iconRecord);
         }
 
         internal List<CommandBarButton> ImageButtons

@@ -35,6 +35,12 @@ namespace VSMacros.RecorderOutput
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(output);
             }
+            else if (this.commandName == "keyboard")
+            {
+                string formatString = "cmdHelper.DispatchCommandWithArgs(\"{0}\", {1}{2})";
+                output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null" : ", \"" + this.input.ToString() + "\""));
+                outputStream.WriteLine(output);
+            }
             else
             {
                 outputStream.WriteLine("dte.ExecuteCommand(\"" + this.commandName + "\")");

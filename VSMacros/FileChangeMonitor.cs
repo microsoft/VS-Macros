@@ -56,7 +56,7 @@ namespace VSMacros
 
             FileChangeService.AdviseDirChange(
                 path,
-                Convert.ToInt32(true),  // Recursive
+                Convert.ToInt32(false),  // Do not monitor subdfolders
                 this,
                 out cookie
                 );

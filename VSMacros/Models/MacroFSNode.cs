@@ -55,14 +55,14 @@ namespace VSMacros.Models
         {
             this.IsDirectory = (File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory;
             this.FullPath = path;
-            this.shortcut = ToFetch;
+            this.shortcut = MacroFSNode.ToFetch;
             this.isEditable = false;
             this.isSelected = false;
             this.isMatch = false;
             this.parent = parent;
 
-            // Monitor that node
-            FileChangeMonitor.Instance.MonitorFileSystemEntry(this.FullPath, this.IsDirectory);
+            // Monitor that node 
+            //FileChangeMonitor.Instance.MonitorFileSystemEntry(this.FullPath, this.IsDirectory);
         }
 
         public string FullPath
@@ -153,7 +153,7 @@ namespace VSMacros.Models
             set
             {
                 // Shortcut will be refetched
-                this.shortcut = ToFetch;
+                this.shortcut = MacroFSNode.ToFetch;
 
                 // Just notify the binding
                 this.NotifyPropertyChanged("Shortcut");
@@ -165,10 +165,10 @@ namespace VSMacros.Models
         {
             get
             {
-                if (this.shortcut == ToFetch)
+                if (this.shortcut == MacroFSNode.ToFetch)
                 {
                     
-                    this.shortcut = None;
+                    this.shortcut = MacroFSNode.None;
 
                     // TODO can probably be optimized
                     for (int i = 1; i < 10; i++)
@@ -180,7 +180,7 @@ namespace VSMacros.Models
                     }                  
                 }
 
-                if (this.shortcut != None)
+                if (this.shortcut != MacroFSNode.None)
                 {
                     return string.Format(MacroFSNode.ShortcutKeys, this.shortcut);
                 }
@@ -353,7 +353,13 @@ namespace VSMacros.Models
 
         public bool IsDirectory { get; private set; }
 
-        public MacroFSNode Parent { get; private set; }
+        public MacroFSNode Parent
+        {
+            get
+            {
+                return this.parent == null ? MacroFSNode.RootNode : this.parent;
+            }
+        }
 
         public bool Equals(MacroFSNode node)
         {
@@ -488,7 +494,7 @@ namespace VSMacros.Models
                 }
 
                 // Return default node
-                node = MacroFSNode.RootNode.Children[0];
+                node = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
             }
 
             return node;

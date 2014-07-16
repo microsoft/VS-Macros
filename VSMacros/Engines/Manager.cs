@@ -414,7 +414,7 @@ namespace VSMacros.Engines
             MacroFSNode selected;
 
             // We want to expand the node and all its parents if it was expanded before OR if it is a file
-            bool wasExpanded = sourceItem.IsExpanded || !sourceItem.IsDirectory;
+            bool wasExpanded = sourceItem.IsExpanded;
 
             try
             {
@@ -434,27 +434,31 @@ namespace VSMacros.Engines
                 {
                     int shortcutNumber = sourceItem.Shortcut;
                     Manager.Shortcuts[shortcutNumber] = targetPath;
-                }                
+                }
             }
             catch (Exception e)
             {
+                if (ErrorHandler.IsCriticalException(e))
+                {
+                    throw;
+                }
+
                 targetPath = sourceItem.FullPath;
 
                 Manager.Instance.ShowMessageBox(e.Message);
             }
-            finally
-            {
-                // Refresh tree
-                Manager.Instance.Refresh();
 
-                // Restore previously selected node
-                selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-                selected.IsSelected = true;
-                selected.IsExpanded = wasExpanded;
+            // Refresh tree
+            MacroFSNode.RefreshTree();
 
-                // Notify change in shortcut
-                selected.Shortcut = MacroFSNode.ToFetch;
-            }
+            // Restore previously selected node
+            selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+            selected.IsSelected = true;
+            selected.IsExpanded = wasExpanded;
+            selected.Parent.IsExpanded = true;
+
+            // Notify change in shortcut
+            selected.Shortcut = MacroFSNode.ToFetch;
 
             // Make editable if the macro is the current macro
             if (sourceItem.FullPath == Manager.CurrentMacroPath)

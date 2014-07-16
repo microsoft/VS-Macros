@@ -100,7 +100,6 @@ namespace VSMacros
             }
         }
 
-
         /// <summary>
         /// Disables a client from receiving notifications to a directory.
         /// </summary>

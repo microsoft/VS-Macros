@@ -538,10 +538,10 @@ namespace VSMacros.Models
         }
 
         /// <summary>
-        /// Expands all the node marked as expanded in enabledDirs
+        /// Expands all the node marked as expanded in <paramref name="enabledDirs"/>.
         /// </summary>
-        /// <param name="node">Tree rooted at node</param>
-        /// <param name="enabledDirs">Hash set containing the enabled dirs</param>
+        /// <param name="node">Tree rooted at node.</param>
+        /// <param name="enabledDirs">Hash set containing the enabled dirs.</param>
         private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
         {
             node.IsExpanded = true;
@@ -551,13 +551,10 @@ namespace VSMacros.Models
             {
                 foreach (var item in node.children)
                 {
-                    if (item.IsDirectory && enabledDirs.Contains(item.FullPath))
+                    if (item.IsDirectory && enabledDirs.Remove(item.FullPath))
                     {
                         // Set IsExpanded
                         item.IsExpanded = true;
-
-                        // Remove path from dirs to improve performance of next call to HashSet.Contains
-                        enabledDirs.Remove(item.FullPath);
 
                         // Recursion on children
                         this.SetIsExpanded(item, enabledDirs);

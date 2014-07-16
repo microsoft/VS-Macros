@@ -5,11 +5,13 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Internal.VisualStudio.Shell;
 using VSMacros.Interfaces;
 using VSMacros.Model;
 using VSMacros.RecorderListeners;
+using VSMacros.RecorderOutput;
 
 namespace VSMacros.Engines
 {
@@ -39,9 +41,39 @@ namespace VSMacros.Engines
         {
             using (StreamWriter fs = new StreamWriter(path))
             {
+                List<char> buffer = new List<char>();
+                string lastCommand;
+
                 foreach (var action in this.dataModel.Actions)
                 {
+                    if (action is RecordedCommand)
+                        {
+                        RecordedCommand cmd = action as RecordedCommand;
+
+
+                        // If the command is an 'insert' command, then save the character to the buffer
+                        if (cmd.IsInsertAction())
+                        {
+                            buffer.Add(cmd.Input);
+                        }
+
+                        // Else if the action is not 'insert' and the buffer is not empty, output an insert action
+                        else if (buffer.Count > 0)
+                        {
+                            // Output insert
+                            cmd.ConvertToJavascript(fs, buffer);
+                            buffer = new List<char>();
+                        }
+                    }
+
                     action.ConvertToJavascript(fs);
+                }
+
+                // Write the remaining text in the buffer
+                if (buffer.Count > 0)
+                {
+                    RecordedCommand cmd = new RecordedCommand();
+                    cmd.ConvertToJavascript(fs, buffer);
                 }
             }
 

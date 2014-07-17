@@ -70,6 +70,7 @@ namespace VSMacros.Engines
 
         private static void AttachEvents(Executor executor)
         {
+            executor.ResetMessages();
             executor.Complete += (sender, eventInfo) => 
                 {
                     if (eventInfo.IsError)

@@ -48,6 +48,11 @@ namespace VSMacros.Engines
             }
         }
 
+        public void ResetMessages()
+        {
+            this.Complete = null;
+        }
+
         #region Helpers
         private string ProvideArguments(int iterations, string path)
         {

@@ -80,7 +80,10 @@ namespace ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
-            return string.Format("function {0}() {{{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped);
+            // TODO review robustness of such a solution
+            // TODO: Line number in parser must be increased by one now.
+            string activateActiveDocument = "dte.ActiveDocument.Activate();";
+            return string.Format("function {0}() {{{1}{3}{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped, activateActiveDocument);
         }
     }
 }

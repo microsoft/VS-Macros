@@ -54,9 +54,11 @@ namespace ExecutionEngine
             {
                 if (Site.Error)
                 {
+                    uint activeDocumentAddition = 1;
                     var ex = Site.RuntimeException;
+                    uint modifiedLineNumber = ex.Line + activeDocumentAddition;
 
-                    byte[] scriptErrorMessage = Client.PackageScriptError(ex.Line, ex.CharacterPosition, ex.Source, ex.Description);
+                    byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, ex.CharacterPosition, ex.Source, ex.Description);
                     string message = Encoding.Unicode.GetString(scriptErrorMessage);
                     Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
                     return null;

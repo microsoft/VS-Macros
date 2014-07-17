@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using VSMacros.ExecutionEngine.Pipes;
 
@@ -25,7 +26,15 @@ namespace ExecutionEngine
 
             if (this.dispatch == null)
             {
-                throw new InvalidOperationException();
+                // TODO: Put these in resources
+                // TODO: Check if these messages are correct.
+                string message = "The dispatch object was null.";
+                string source = "Execution engine";
+                string stackTrace = "ParsedScript";
+                string targetSite = "ParsedScript??";
+
+                byte[] criticalErrorMessage = Client.PackageCriticalError(message, source, stackTrace, targetSite);
+                Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
             }
         }
 
@@ -36,7 +45,7 @@ namespace ExecutionEngine
                 object result = this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
 
                 byte[] successMessage = Client.PackageSuccessMessage();
-                string message = System.Text.UnicodeEncoding.Unicode.GetString(successMessage);
+                string message = Encoding.Unicode.GetString(successMessage);
                 Client.SendMessageToServer(Client.ClientStream, successMessage);
 
                 return result;
@@ -48,7 +57,7 @@ namespace ExecutionEngine
                     var ex = Site.RuntimeException;
 
                     byte[] scriptErrorMessage = Client.PackageScriptError(ex.Line, ex.CharacterPosition, ex.Source, ex.Description);
-                    string message = System.Text.UnicodeEncoding.Unicode.GetString(scriptErrorMessage);
+                    string message = Encoding.Unicode.GetString(scriptErrorMessage);
                     Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
                     return null;
                 }

@@ -104,8 +104,6 @@ namespace ExecutionEngine
 
         public void Dispose()
         {
-            this.parser.Dispose();
-
             if (this.engine != null)
             {
                 this.engine = null;

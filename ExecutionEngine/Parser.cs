@@ -10,7 +10,7 @@ using ExecutionEngine.Interfaces;
 
 namespace ExecutionEngine
 {
-    internal sealed class Parser : IDisposable
+        internal sealed class Parser
     {
         private IActiveScriptParse32 parse32;
         private IActiveScriptParse64 parse64;
@@ -70,18 +70,6 @@ namespace ExecutionEngine
                     flags: flags,
                     result: out result,
                     exceptionInfo: out exceptionInfo);
-            }
-        }
-
-        public void Dispose()
-        {
-            if (this.isParse32 && this.parse32 != null)
-            {
-                this.parse32 = null;
-            }
-            if (this.parse64 != null)
-            {
-                this.parse64 = null;
             }
         }
     }

@@ -38,37 +38,26 @@ namespace ExecutionEngine
             }
         }
 
-        public object CallMethod(string methodName, params object[] arguments)
+        public bool CallMethod(string methodName, params object[] arguments)
         {
             try
             {
-                object result = this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
 
                 byte[] successMessage = Client.PackageSuccessMessage();
                 string message = Encoding.Unicode.GetString(successMessage);
                 Client.SendMessageToServer(Client.ClientStream, successMessage);
 
-                return result;
+                return true;
             }
             catch (Exception e)
             {
-                if (Site.Error)
+                if (!Site.RuntimeError)
                 {
-                    uint activeDocumentAddition = 1;
-                    var ex = Site.RuntimeException;
-                    uint modifiedLineNumber = ex.Line + activeDocumentAddition;
-
-                    byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, ex.CharacterPosition, ex.Source, ex.Description);
-                    string message = Encoding.Unicode.GetString(scriptErrorMessage);
-                    Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
-                    return null;
+                    Site.CriticalError = true;
+                    Site.VSException = new Exception(e.Message, e);
                 }
-                else
-                {
-                    byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                    Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
-                    return null;
-                }
+                return false;
             }
         }
     }

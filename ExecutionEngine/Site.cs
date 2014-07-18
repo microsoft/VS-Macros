@@ -17,8 +17,10 @@ namespace ExecutionEngine
     internal sealed class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
-        internal static bool Error;
+        internal static bool RuntimeError;
         internal static RuntimeException RuntimeException;
+        internal static bool CriticalError;
+        internal static Exception VSException;
 
         public void GetLCID(out int lcid)
         {
@@ -82,6 +84,15 @@ namespace ExecutionEngine
             // Debug.WriteLine("Site:IActiveScriptSite.OnStateChange");
         }
 
+        public static void ResetError()
+        {
+            Site.RuntimeError = false;
+            Site.RuntimeException = null;
+
+            Site.CriticalError = false;
+            Site.VSException = null;
+        }
+
         public void OnScriptError(IActiveScriptError scriptError)
         {
             uint sourceContext;
@@ -95,7 +106,7 @@ namespace ExecutionEngine
             string description = exceptionInfo.bstrDescription;
             string source = exceptionInfo.bstrSource;
 
-            Site.Error = true;
+            Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);
         }
 

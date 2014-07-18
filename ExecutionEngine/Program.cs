@@ -5,15 +5,12 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
-using System.IO;
+using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
-using VSMacros.ExecutionEngine.Pipes;
-using VisualStudio.Macros.ExecutionEngine;
 using Microsoft.Internal.VisualStudio.Shell;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -21,7 +18,7 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        internal static string MacroName = "currentScript";
+        internal const string MacroName = "currentScript";
         private static bool exit;
 
         internal static void RunMacro(string script, int iterations)
@@ -31,7 +28,28 @@ namespace ExecutionEngine
 
             for (int i = 0; i < iterations; i++)
             {
-                Program.parsedScript.CallMethod(Program.MacroName);
+                if (!Program.parsedScript.CallMethod(Program.MacroName))
+                {
+                    if (Site.RuntimeError)
+                    {
+                        uint activeDocumentAddition = 1;
+                        var e = Site.RuntimeException;
+                        uint modifiedLineNumber = e.Line + activeDocumentAddition;
+
+                        byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
+                        string message = Encoding.Unicode.GetString(scriptErrorMessage);
+                        Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
+                    }
+                    else
+                    {
+                        var e = Site.VSException;
+                        byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
+                    }
+
+                    Site.ResetError();
+                    break;
+                }
             }
         }
 
@@ -44,18 +62,7 @@ namespace ExecutionEngine
                 case Packet.FilePath:
                     HandleFilePath();
                     break;
-
-                case Packet.Close:
-                    HandleCloseRequest();
-                    break;
             }
-        }
-
-        private static void HandleCloseRequest()
-        {
-            Client.ShutDownServer(Client.ClientStream);
-            Client.ClientStream.Close();
-            Program.exit = true;
         }
 
         private static void HandleFilePath()
@@ -82,12 +89,16 @@ namespace ExecutionEngine
                 }
                 catch (Exception e)
                 {
-                    Client.ShutDownServer(Client.ClientStream);
-                    Client.ClientStream.Close();
-                    Program.exit = true;
-
                     byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
                     Client.SendMessageToServer(Client.ClientStream, criticalError);
+                }
+                finally
+                {
+                    // TODO: Do I need this here?  If there's a critical error, VS shuts down the engine and restarts.
+                    // TODO: Not sure if that's necessary or if I just need to reinitialize the pipes.
+
+                    Client.ShutDownServer(Client.ClientStream);
+                    Client.ClientStream.Close();
                 }
             });
 
@@ -98,10 +109,9 @@ namespace ExecutionEngine
         private static void RunFromPipe(string[] separatedArgs)
         {
             Guid guid = InputParser.GetGuid(separatedArgs[0]);
-            int pid = InputParser.GetPid(separatedArgs[1]);
-
             Client.InitializePipeClientStream(guid);
 
+            int pid = InputParser.GetPid(separatedArgs[1]);
             Thread readThread = CreateReadingThread(pid);
             readThread.Start();
         }

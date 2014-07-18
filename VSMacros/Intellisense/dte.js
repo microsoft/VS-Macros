@@ -18,55 +18,55 @@ var _dte2 = new function () {
         /// </signature>
 
         /// Gets the current endpoint of the selection.
-        this.ActivePo = "";
+        this.ActivePoint = "";
 
-        ///     Microsoft Internal Use Only.
+        /// Microsoft Internal Use Only.
         this.AnchorColumn = "";
 
-        ///     Gets the origin point of the selection.
-        this.AnchorPo = "";
+        /// Gets the origin point of the selection.
+        this.AnchorPoint = "";
 
-        ///     Microsoft Internal Use Only.
+        /// Microsoft Internal Use Only.
         this.BottomLine = "";
 
-        ///     Gets the point at the end of the selection.
-        this.BottomPo = "";
+        /// Gets the point at the end of the selection.
+        this.BottomPoint = "";
 
-        ///     Microsoft Internal Use Only.
+        /// Microsoft Internal Use Only.
         this.CurrentColumn = "";
 
-        ///     Microsoft Internal Use Only.
+        /// Microsoft Internal Use Only.
         this.CurrentLine = "";
 
-        ///     Gets the top-level extensibility object.
+        /// Gets the top-level extensibility object.
         this.DTE = "";
 
-        ///     Gets whether the active pois equal to the bottom po.
+        /// Gets whether the active pois equal to the bottom po.
         this.IsActiveEndGreater = "";
 
-        ///     Gets whether the anchor pois equal to the active po.
+        /// Gets whether the anchor pois equal to the active po.
         this.IsEmpty = "";
 
-        ///     Sets or gets a value determining whether dragging the mouse selects in stream
+        /// Sets or gets a value determining whether dragging the mouse selects in stream
         this.Mode = "";
 
-        ///     Gets the immediate parent object of a EnvDTE.TextSelection object.
+        /// Gets the immediate parent object of a EnvDTE.TextSelection object.
         this.Parent = "";
 
-        ///     Sets or gets the selected text.
+        /// Sets or gets the selected text.
         this.Text = "";
 
-        ///     Gets the text pane that contains the selected text.
+        /// Gets the text pane that contains the selected text.
         this.TextPane = "";
 
-        ///     Gets a EnvDTE.TextRanges collection with one EnvDTE.TextRange object for each
+        /// Gets a EnvDTE.TextRanges collection with one EnvDTE.TextRange object for each
         this.TextRanges = "";
 
-        ///     Microsoft Internal Use Only.
+        /// Microsoft Internal Use Only.
         this.TopLine = "";
 
-        ///     Gets the top end of the selection.
-        this.TopPo = "";
+        /// Gets the top end of the selection.
+        this.TopPoint = "";
 
         /// <summary>Microsoft Internal Use Only.</summary>
         /// <param name="Count">The number of spaces.</param>
@@ -84,15 +84,15 @@ var _dte2 = new function () {
 
         this.CharRight = function (Extend, Count) {
             /// <summary>
-            ///     Moves the object the specified number of characters to the right.
+            /// Moves the object the specified number of characters to the right.
             /// </summary>
             /// <param name="Extend">
-            ///     Optional. Determines whether the moved text is collapsed or not. The default
-            ///     is false.
+            /// Optional. Determines whether the moved text is collapsed or not. The default
+            /// is false.
             /// </param>
             /// <param name="Count">
-            ///     Optional. Represents the number of characters to move to the right. The default
-            ///     is 1.
+            /// Optional. Represents the number of characters to move to the right. The default
+            /// is 1.
             /// </param>
         }
 
@@ -111,204 +111,204 @@ var _dte2 = new function () {
         /// <summary>Deletes the selected text.</summary>
         /// Parameters:
         ///   Count:
-        ///     Optional. Represents the number of characters to delete.
+        /// Optional. Represents the number of characters to delete.
         this.Delete = function (Count) { }
 
         /// <summary>Deletes a specified number of characters to the left of the active po.</summary>
         /// Parameters:
         ///   Count:
-        ///     Optional. Represents the number of characters to delete.
+        /// Optional. Represents the number of characters to delete.
         this.DeleteLeft = function (Count) { }
 
         /// <summary>Deletes the empty characters (white space) horizontally or vertically around  the current location in the text buffer.</summary>    
 
         /// Parameters:
         ///   Direction:
-        ///     Optional. A EnvDTE.vsWhitespaceOptions constant that determines how and where
-        ///     to remove empty spaces.
+        /// Optional. A EnvDTE.vsWhitespaceOptions constant that determines how and where
+        /// to remove empty spaces.
         this.DeleteWhitespace = function (Direction) { }
 
         /// <summary>Inserts text, overwriting the existing text.</summary>
         /// Parameters:
         ///   Text:
-        ///     Required. Represents the text to insert.
+        /// Required. Represents the text to insert.
         this.DestructiveInsert = function (Text) { }
 
         /// <summary>Moves the object to the end of the document.</summary>
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
         this.EndOfDocument = function (Extend) { }
 
         /// <summary>Moves the object to the end of the current line.</summary>
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
         this.EndOfLine = function (Extend) { }
 
         /// <summary>Searches for the given pattern from the active poto the end of the document.</summary>
         /// Parameters:
         ///   Pattern:
-        ///     Required. The text to find.
+        /// Required. The text to find.
 
         ///   vsFindOptionsValue:
-        ///     One of the EnvDTE.vsFindOptions values.
+        /// One of the EnvDTE.vsFindOptions values.
 
         ///   Tags:
-        ///     Optional. If the matched pattern is a regular expression containing tagged subexpressions,
-        ///     then the Tags argument contains a collection of EnvDTE.TextRange objects, one
-        ///     for each tagged subexpression.
+        /// Optional. If the matched pattern is a regular expression containing tagged subexpressions,
+        /// then the Tags argument contains a collection of EnvDTE.TextRange objects, one
+        /// for each tagged subexpression.
 
         /// Returns:
-        ///     A Boolean value indicating true if the pattern is found, false if not.
+        /// A Boolean value indicating true if the pattern is found, false if not.
         this.FindPattern = function (Pattern, vsFindOptionsValue, Tags) { }
 
         /// <summary>Searches for the given text from the active poto the end of the document.</summary>
         /// Parameters:
         ///   Pattern:
-        ///     Required. The text to find.
+        /// Required. The text to find.
 
         ///   vsFindOptionsValue:
-        ///     Optional. A EnvDTE.vsFindOptions constant indicating the search options to use.
+        /// Optional. A EnvDTE.vsFindOptions constant indicating the search options to use.
 
         /// Returns:
-        ///     A Boolean value indicating true if the text is found, false if not.
+        /// A Boolean value indicating true if the text is found, false if not.
         this.FindText = function (Pattern, vsFindOptionsValue) { }
 
         /// <summary>Moves to the beginning of the indicated line and selects the line if requested.</summary>
         /// Parameters:
         ///   Line:
-        ///     Required. The line number to go to, beginning at one.
+        /// Required. The line number to go to, beginning at one.
 
         ///   Select:
-        ///     Optional. Indicates whether the target line should be selected. The default is
-        ///     false.
+        /// Optional. Indicates whether the target line should be selected. The default is
+        /// false.
         this.GotoLine = function (Line, Select) { }
 
         /// <summary>Indents the selected lines by the given number of indentation levels.</summary>
         /// Parameters:
         ///   Count:
-        ///     Optional. The number of display indent levels to indent each line in the selected
-        ///     text. The default is 1.
+        /// Optional. The number of display indent levels to indent each line in the selected
+        /// text. The default is 1.
         this.Indent = function (Count) { }
 
         /// <summary>Inserts the given at the current insertion po.</summary>
         /// Parameters:
         ///   Text:
-        ///     The text to insert.
+        /// The text to insert.
 
         ///   vsInsertFlagsCollapseToEndValue:
-        ///     One of the EnvDTE.vsInsertFlags values indicating how to insert the text.
+        /// One of the EnvDTE.vsInsertFlags values indicating how to insert the text.
         this.Insert = function (Text, vsInsertFlagsCollapseToEndValue) { }
 
         /// <summary>Inserts the contents of the specified file at the current location in the buffer.</summary>
         /// Parameters:
         ///   File:
-        ///     Required. The name of the file to insert o the text buffer.
+        /// Required. The name of the file to insert o the text buffer.
         this.InsertFromFile = function (File) { }
 
         /// <summary>Moves the insertion poof the text selection down the specified number of lines.</summary>     
 
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the line in which the insertion pois moved is
-        ///     highlighted. The default is false.
+        /// Optional. Determines whether the line in which the insertion pois moved is
+        /// highlighted. The default is false.
 
         ///   Count:
-        ///     Optional. Indicates how many lines down to move the insertion po. The default
-        ///     value is 1.
+        /// Optional. Indicates how many lines down to move the insertion po. The default
+        /// value is 1.
         this.LineDown = function (Extend, Count) { }
 
         /// <summary>Moves the insertion poof the text selection up the specified number of lines.</summary>
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the line in which the insertion pois moved is
-        ///     highlighted. The default is false.
+        /// Optional. Determines whether the line in which the insertion pois moved is
+        /// highlighted. The default is false.
 
         ///   Count:
-        ///     Optional. Indicates how many lines up to move the insertion po. The default
-        ///     is 1.
+        /// Optional. Indicates how many lines up to move the insertion po. The default
+        /// is 1.
         this.LineUp = function (Extend, Count) { }
 
         /// <summary>Microsoft Internal Use Only.</summary>
         /// Parameters:
         ///   Line:
-        ///     The line number.
+        /// The line number.
 
         ///   Column:
-        ///     The column number.
+        /// The column number.
 
         ///   Extend:
-        ///     true if the move is extended, otherwise false.
+        /// true if the move is extended, otherwise false.
         this.MoveTo = function (Line, Column, Extend) { }
 
         /// <summary>Moves the active poto the given 1-based absolute character offset.</summary>
         /// Parameters:
         ///   Offset:
-        ///     Required. A character index from the start of the document, starting at one
+        /// Required. A character index from the start of the document, starting at one
 
         ///   Extend:
-        ///     Optional. Default. A Boolean value to extend the current selection. If
-        ///     Extend is true, then the active end of the selection moves to the location while
-        ///     the anchor end remains where it is. Otherwise, both ends are moved to the specified
-        ///     location. This argument applies only to the EnvDTE.TextSelection object.
+        /// Optional. Default. A Boolean value to extend the current selection. If
+        /// Extend is true, then the active end of the selection moves to the location while
+        /// the anchor end remains where it is. Otherwise, both ends are moved to the specified
+        /// location. This argument applies only to the EnvDTE.TextSelection object.
         this.MoveToAbsoluteOffset = function (Offset, Extend) { }
 
         /// <summary>Moves the active poto the indicated display column.</summary>
         /// Parameters:
         ///   Line:
-        ///     Required. A EnvDTE.vsGoToLineOptions constant representing the line offset, starting
-        ///     at one, from the beginning of the buffer.
+        /// Required. A EnvDTE.vsGoToLineOptions constant representing the line offset, starting
+        /// at one, from the beginning of the buffer.
 
         ///   Column:
-        ///     Required. Represents the virtual display column, starting at one, that is the
-        ///     new column location.
+        /// Required. Represents the virtual display column, starting at one, that is the
+        /// new column location.
 
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
         this.MoveToDisplayColumn = function (Line, Column, Extend) { }
 
         /// <summary>Moves the active poto the given position.</summary>
         /// Parameters:
         ///   Line:
-        ///     Required. The line number to move to, beginning at one. Line may also be one
-        ///     of the constants from EnvDTE.vsGoToLineOptions.
+        /// Required. The line number to move to, beginning at one. Line may also be one
+        /// of the constants from EnvDTE.vsGoToLineOptions.
 
         ///   Offset:
-        ///     Required. The character index position in the line, starting at one.
+        /// Required. The character index position in the line, starting at one.
 
         ///   Extend:
-        ///     Optional. Default. A Boolean value to extend the current selection. If
-        ///     Extend is true, then the active end of the selection moves to the location, while
-        ///     the anchor end remains where it is. Otherwise, both ends are moved to the specified
-        ///     location. This argument applies only to the EnvDTE.TextSelection object.
+        /// Optional. Default. A Boolean value to extend the current selection. If
+        /// Extend is true, then the active end of the selection moves to the location, while
+        /// the anchor end remains where it is. Otherwise, both ends are moved to the specified
+        /// location. This argument applies only to the EnvDTE.TextSelection object.
         this.MoveToLineAndOffset = function (Line, Offset, Extend) { }
 
         /// <summary>Moves the active poto the given position.</summary>
         /// Parameters:
         ///   Po:
-        ///     Required. The location in which to move the character.
+        /// Required. The location in which to move the character.
 
         ///   Extend:
-        ///     Optional. Default. Determines whether to extend the current selection.
-        ///     If Extend is true, then the active end of the selection moves to the location,
-        ///     while the anchor end remains where it is. Otherwise, both ends are moved to the
-        ///     specified location. This argument applies only to the EnvDTE.TextSelection object.
-        this.MoveToPo = function (TextPoPo, Extend) { }
+        /// Optional. Default. Determines whether to extend the current selection.
+        /// If Extend is true, then the active end of the selection moves to the location,
+        /// while the anchor end remains where it is. Otherwise, both ends are moved to the
+        /// specified location. This argument applies only to the EnvDTE.TextSelection object.
+        this.MoveToPoint = function (TextPoPo, Extend) { }
 
         /// <summary>Inserts a line break character at the active po.</summary>
         /// Parameters:
         ///   Count:
-        ///     Optional. Represents the number of NewLine characters to insert.
+        /// Optional. Represents the number of NewLine characters to insert.
         this.NewLine = function (Count) { }
 
         /// <summary>Moves to the location of the next bookmark in the document.</summary>
         /// Returns:
-        ///     A Boolean value indicating true if the insertion pomoves to the next bookmark,
-        ///     false if otherwise.
+        /// A Boolean value indicating true if the insertion pomoves to the next bookmark,
+        /// false if otherwise.
         this.NextBookmark = function () { }
 
         /// <summary>Creates an outlining section based on the current selection.</summary>        
@@ -318,29 +318,29 @@ var _dte2 = new function () {
 
         /// Parameters:
         ///   Column:
-        ///     Required. The number of columns to pad, starting at one.
+        /// Required. The number of columns to pad, starting at one.
         this.PadToColumn = function (Column) { }
 
         /// <summary>Moves the active poa specified number of pages down in the document, scrolling the view.</summary>    
 
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
 
         ///   Count:
-        ///     Optional. Represents the number of pages to move down. The default value is 1.
+        /// Optional. Represents the number of pages to move down. The default value is 1.
         this.PageDown = function (Extend, Count) { }
 
         /// <summary>Moves the active poa specified number of pages up in the document, scrolling the view.</summary>    
 
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
 
         ///   Count:
-        ///     Optional. Represents the number of pages to move up. The default value is 1.
+        /// Optional. Represents the number of pages to move up. The default value is 1.
         this.PageUp = function (Extend, Count) { }
 
         /// <summary>Inserts the clipboard contents at the current location.</summary>        
@@ -348,44 +348,44 @@ var _dte2 = new function () {
 
         /// <summary>Moves the text selection to the location of the previous bookmark in the document.</summary>
         /// Returns:
-        ///     A Boolean true if the text selection moves to a previous bookmark, false if not.
+        /// A Boolean true if the text selection moves to a previous bookmark, false if not.
         this.PreviousBookmark = function () { }
 
         /// <summary>Replaces matching text throughout an entire text document.</summary>
         /// Parameters:
         ///   Pattern:
-        ///     Required. The to find.
+        /// Required. The to find.
 
         ///   Replace:
-        ///     Required. The text to replace each occurrence of Pattern.
+        /// Required. The text to replace each occurrence of Pattern.
 
         ///   vsFindOptionsValue:
-        ///     Optional. A EnvDTE.vsFindOptions constant indicating the behavior of EnvDTE.TextSelection.ReplacePattern(System.String,System.String,System.Int32,EnvDTE.TextRanges@),
-        ///     such as how to search, where to begin the search, whether to search forward or
-        ///     backward, and the case sensitivity.
+        /// Optional. A EnvDTE.vsFindOptions constant indicating the behavior of EnvDTE.TextSelection.ReplacePattern(System.String,System.String,System.Int32,EnvDTE.TextRanges@),
+        /// such as how to search, where to begin the search, whether to search forward or
+        /// backward, and the case sensitivity.
 
         ///   Tags:
-        ///     Optional. A EnvDTE.TextRanges collection. If the matched text pattern is a regular
-        ///     expression and contains tagged subexpressions, then Tags contains a collection
-        ///     of EnvDTE.EditPoobjects, one for each tagged subexpression.
+        /// Optional. A EnvDTE.TextRanges collection. If the matched text pattern is a regular
+        /// expression and contains tagged subexpressions, then Tags contains a collection
+        /// of EnvDTE.EditPoobjects, one for each tagged subexpression.
 
         /// Returns:
-        ///     A Boolean value.
+        /// A Boolean value.
         this.ReplacePattern = function (Pattern, Replace, vsFindOptionsValue, Tags) { }
 
         /// <summary>Microsoft Internal Use Only.</summary>
         /// Parameters:
         ///   Pattern:
-        ///     The pattern to find.
+        /// The pattern to find.
 
         ///   Replace:
-        ///     The with which to replace the found text.
+        /// The with which to replace the found text.
 
         ///   vsFindOptionsValue:
-        ///     The find flags.
+        /// The find flags.
 
         /// Returns:
-        ///     true if the text was replaced, otherwise false.
+        /// true if the text was replaced, otherwise false.
         this.ReplaceText = function (Pattern, Replace, vsFindOptionsValue) { }
 
         /// <summary>Selects the entire document.</summary>        
@@ -403,19 +403,19 @@ var _dte2 = new function () {
         /// <summary>Moves the insertion poto the beginning of the document.</summary>
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the text between the current location of the insertion
-        ///     poand the beginning of the document is highlighted or not. The default value
-        ///     is false.
+        /// Optional. Determines whether the text between the current location of the insertion
+        /// poand the beginning of the document is highlighted or not. The default value
+        /// is false.
         this.StartOfDocument = function (Extend) { }
 
         /// <summary>Moves the object to the beginning of the current line.</summary>
         /// Parameters:
         ///   Where:
-        ///     Optional. A EnvDTE.vsStartOfLineOptions constant representing where the line
-        ///     starts.
+        /// Optional. A EnvDTE.vsStartOfLineOptions constant representing where the line
+        /// starts.
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
         this.StartOfLine = function (Where, Extend) { }
 
         /// <summary>Exchanges the position of the active and the anchor pos.</summary>        
@@ -427,8 +427,8 @@ var _dte2 = new function () {
         /// <summary>Removes indents from the selected text by the number of indentation levels given.</summary>
         /// Parameters:
         ///   Count:
-        ///     Optional. The number of display indent levels to remove from each line in the
-        ///     selected text. The default is 1.
+        /// Optional. The number of display indent levels to remove from each line in the
+        /// selected text. The default is 1.
         this.Unindent = function (Count) { }
 
         /// <summary>Converts tabs to spaces in the selection according to the user's tab settings.</summary>        
@@ -437,20 +437,20 @@ var _dte2 = new function () {
         /// <summary>Moves the selected text left the specified number of words.</summary>
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
         ///   Count:
-        ///     Optional. Represents the number of words to move left. The default value is 1.
+        /// Optional. Represents the number of words to move left. The default value is 1.
         this.WordLeft = function (Extend, Count) { }
 
         /// <summary>Moves the selected text right the specified number of words.</summary>
         /// Parameters:
         ///   Extend:
-        ///     Optional. Determines whether the moved text is collapsed or not. The default
-        ///     is false.
+        /// Optional. Determines whether the moved text is collapsed or not. The default
+        /// is false.
         ///   Count:
-        ///     Optional. Represents the number of words to move right. The default value is
-        ///     1.
+        /// Optional. Represents the number of words to move right. The default value is
+        /// 1.
         this.WordRight = function (Extend, Count) { }
     }
 }

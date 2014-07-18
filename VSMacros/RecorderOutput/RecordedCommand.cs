@@ -152,7 +152,7 @@ namespace VSMacros.RecorderOutput
                 }
                 else if (command.Contains(".Delete"))
                 {
-                    ret = this.textSelection + "Delete" + (command.Contains("Backwards") ? "Left" : "") + iterations + ")";
+                    ret = this.textSelection + "Delete" + (command.Contains("Backwards") ? "Left" : "") + "(" + iterations + ")";
                 }
                 else if (command.Contains("Copy") || command.Contains("Cut") || command.Contains("Paste"))
                 {

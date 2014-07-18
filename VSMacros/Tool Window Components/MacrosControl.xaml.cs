@@ -154,7 +154,9 @@ namespace VSMacros
 
         private void TreeViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            if (!this.SelectedNode.IsDirectory)
+            MacroFSNode node = ((TreeViewItem)sender).Header as MacroFSNode;
+
+            if (!node.IsDirectory)
             {
                 VSMacros.Engines.Manager.Instance.Playback(this.SelectedNode.FullPath, 1);
             }

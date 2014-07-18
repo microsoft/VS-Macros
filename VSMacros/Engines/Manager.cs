@@ -125,6 +125,7 @@ namespace VSMacros.Engines
                 this.Playback(path, 1);
             }
         }
+        
         public void StopPlayback() 
         {
         }
@@ -305,7 +306,7 @@ namespace VSMacros.Engines
                     try
                     {
                         // Delete file from disk
-                        // Must use Directory.Delete to delete directory and content
+                        // Must use Directory.Delete to delete directory and contents
                         if (macro.IsDirectory)
                         {
                             Directory.Delete(path, true);

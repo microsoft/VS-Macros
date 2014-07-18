@@ -111,9 +111,8 @@ namespace VSMacros.Models
                         {
                             Directory.Move(oldFullPath, newFullPath);
 
-                            if (MacroFSNode.enabledDirectories.Contains(oldFullPath))
+                            if (MacroFSNode.enabledDirectories.Remove(oldFullPath))
                             {
-                                MacroFSNode.enabledDirectories.Remove(oldFullPath);
                                 MacroFSNode.enabledDirectories.Add(newFullPath);
                             }
                         }
@@ -378,13 +377,14 @@ namespace VSMacros.Models
                 if (this.children == null)
                 {
                     // Initialize children
-                    this.children = new ObservableCollection<MacroFSNode>();
+                    //this.children = new ObservableCollection<MacroFSNode>();
 
                     this.children = this.GetChildNodes();
 
                     // Retrieve children in a background thread
-                    // Task.Run(() => { this.children = this.GetChildNodes(); })
-                    //    .ContinueWith(_ => this.NotifyPropertyChanged("Children"), TaskScheduler.FromCurrentSynchronizationContext());
+                    // TODO problem: SetIsExpanded goes down the tree and enables previously enabled folders -> if fetching the child is done in the background, the method thinks that the folder has no child and skips it
+                    //Task.Run(() => { this.children = this.GetChildNodes(); })
+                    //   .ContinueWith(_ => this.NotifyPropertyChanged("Children"), TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 return this.children;
@@ -431,7 +431,7 @@ namespace VSMacros.Models
             this.parent.children.Remove(this);
 
             // Unmonitor the file
-            FileChangeMonitor.Instance.UnmonitorFileSystemEntry(this.FullPath, this.IsDirectory);
+            //FileChangeMonitor.Instance.UnmonitorFileSystemEntry(this.FullPath, this.IsDirectory);
         }
 
         public void EnableEdit()
@@ -516,12 +516,9 @@ namespace VSMacros.Models
             // Clear enableDirectories
             enabledDirectories.Clear();
 
-            // TODO decide if I want to use a b/g thread
             // Retrieve children in a background thread
-            //Task.Run(() => root.children = root.GetChildNodes())
-            //    .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
-            root.children = root.GetChildNodes();
-            root.AfterRefresh(root, selected.FullPath, dirs);
+            Task.Run(() => root.children = root.GetChildNodes())
+                .ContinueWith(_ => root.AfterRefresh(root, selected.FullPath, dirs), TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)

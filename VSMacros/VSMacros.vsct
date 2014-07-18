@@ -255,7 +255,7 @@
     </CommandPlacement>
 
     <!-- Open command in Current Context Group -->
-    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="75">
+    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="5">
       <Parent guid="guidVSMacrosCmdSet" id="CurrentContextGroup" />
     </CommandPlacement>
 
@@ -265,7 +265,7 @@
     </CommandPlacement>
 
     <!-- Open command in Macro Context Group -->
-    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="75">
+    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="5">
       <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
     </CommandPlacement>
     

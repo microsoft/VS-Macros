@@ -517,8 +517,10 @@ namespace VSMacros.Models
             enabledDirectories.Clear();
 
             // Retrieve children in a background thread
-            Task.Run(() => root.children = root.GetChildNodes())
-                .ContinueWith(_ => root.AfterRefresh(root, selected.FullPath, dirs), TaskScheduler.FromCurrentSynchronizationContext());
+            //Task.Run(() => root.children = root.GetChildNodes())
+            //    .ContinueWith(_ => root.AfterRefresh(root, selected.FullPath, dirs), TaskScheduler.FromCurrentSynchronizationContext());
+            root.children = root.GetChildNodes();
+            root.AfterRefresh(root, selected.FullPath, dirs);
         }
 
         private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)

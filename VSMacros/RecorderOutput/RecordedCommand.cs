@@ -129,10 +129,6 @@ namespace VSMacros.RecorderOutput
                     {
                         ret = this.textSelection + "EndOfLine(" + (extend ? extend.ToString().ToLower() : string.Empty) + ")";
                     }
-                    //else if (command.Contains("Cut") || command.Contains("Delete"))
-                    //{
-                    //    ret = this.textSelection + "SelectLine();\n" + this.textSelection + "DeleteLeft(1)";
-                    //}
                 }
                 else if (command.Contains(".Page"))
                 {

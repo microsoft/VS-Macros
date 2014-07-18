@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
+using Microsoft.VisualBasic.FileIO;
 
 namespace VSMacros.Engines
 {
@@ -306,14 +307,13 @@ namespace VSMacros.Engines
                     try
                     {
                         // Delete file from disk
-                        // Must use Directory.Delete to delete directory and contents
                         if (macro.IsDirectory)
                         {
-                            Directory.Delete(path, true);
+                            FileSystem.DeleteDirectory(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                         }
                         else
                         {
-                            File.Delete(path);
+                            FileSystem.DeleteFile(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                         }
 
                         // Delete file from collection
@@ -352,7 +352,7 @@ namespace VSMacros.Engines
             File.WriteAllText(path, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
 
             // Refresh the tree
-            this.Refresh();
+            MacroFSNode.RefreshTree();
 
             // Select new node
             MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
@@ -376,7 +376,7 @@ namespace VSMacros.Engines
             }
 
             Directory.CreateDirectory(path);
-            this.Refresh();
+            MacroFSNode.RefreshTree();
 
             MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
             node.IsSelected = true;

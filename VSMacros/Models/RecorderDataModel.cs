@@ -15,7 +15,7 @@ namespace VSMacros.Model
     {
         private readonly List<RecordedActionBase> actions = new List<RecordedActionBase>();
 
-        public IEnumerable<RecordedActionBase> Actions
+        public List<RecordedActionBase> Actions
         {
             get
             {

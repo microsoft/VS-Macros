@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace VSMacros.RecorderOutput
 {
@@ -40,7 +42,7 @@ namespace VSMacros.RecorderOutput
             }
             else if (this.commandName != "keyboard")
             {
-                outputStream.WriteLine(Convert(commandName));
+                outputStream.WriteLine(Convert(commandName, 1));
             }
         }
 
@@ -52,19 +54,28 @@ namespace VSMacros.RecorderOutput
         internal void ConvertToJavascript(StreamWriter outputStream, List<char> input)
         {
             string escapedInput = string.Join("", input).Replace("\"", "\\\"");
-            string output = string.Format(this.textSelection + "Insert = \"{0}\";", escapedInput);
+            string output = string.Format(this.textSelection + "Text = \"{0}\";", escapedInput);
             outputStream.WriteLine(output);
         }
 
         #region Converter
 
-        private string Convert(string command, int iterations = 1)
+        internal bool IsHandledByConverter()
+        {
+            HashSet<string> handledCommands = new HashSet<string>() {
+                "Edit.CharRight", "Edit.CharRightExtend", "Edit.CharLeft", "Edit.CharLeftExtend",
+                "Edit.WordRight", "Edit.WordRightExtend", "Edit.WordLeft", "Edit.WordLeftExtend"
+            };
+
+            return handledCommands.Contains(this.commandName);
+        }
+        private string Convert(string command, int iterations)
         {
             // Handled commands: "Edit.Char*", "Edit.Word*", "Edit.Line*", "Edit.BreakLine", "Edit.EndOf*", "Edit.Delete*" \ {*Column}
             //                   "Edit.Copy", "Edit.Paste", "Edit.Cut"
 
             // Default is dte.ExecuteCommand
-            string ret = "dte.ExecuteCommand(\"" + command + "\")";
+            string ret = string.Empty;
 
             int length = command.Length;
             bool extend;
@@ -110,16 +121,16 @@ namespace VSMacros.RecorderOutput
                     }
                     else if (command.Contains("Start"))
                     {
-                        ret = this.textSelection + "StartOfLine(1, " + extend.ToString().ToLower() + ")";
+                        ret = this.DuplicateStrings(this.textSelection + "StartOfLine(1, " + extend.ToString().ToLower() + ")", iterations);
                     }
                     else if (command.Contains("End"))
                     {
                         ret = this.textSelection + "EndOfLine(" + extend.ToString().ToLower() + ")";
                     }
-                    else if (command.Contains("Cut") || command.Contains("Delete"))
-                    {
-                        ret = this.textSelection + "SelectLine();\n" + this.textSelection + "DeleteLeft(1)";
-                    }
+                    //else if (command.Contains("Cut") || command.Contains("Delete"))
+                    //{
+                    //    ret = this.textSelection + "SelectLine();\n" + this.textSelection + "DeleteLeft(1)";
+                    //}
                 }
                 else if (command.Contains(".Page"))
                 {
@@ -129,26 +140,44 @@ namespace VSMacros.RecorderOutput
 
                     ret = this.FormatEditWithExtend("Page", direction, extend, iterations);
                 }
+                else if (command.Contains(".Make"))
+                {
+                    // TODO test the valuees
+                    int newCase = command.Contains("Lower") ? 1 : 2;
+                    ret = this.textSelection + "ChangeCase(" + newCase + ")";
+                }
                 else if (command.Contains(".BreakLine"))
                 {
                     ret = this.textSelection + "NewLine(" + iterations + ")";
                 }
-                else if (command.Contains(".EndOf")) { }
                 else if (command.Contains(".Delete"))
                 {
-                    ret = command.Contains("Backwards") ? this.textSelection + "DeleteLeft(1)" : this.textSelection + "Delete(1)";
+                    ret = this.textSelection + "Delete" + (command.Contains("Backwards") ? "Left" : "") + iterations + ")";
                 }
                 else if (command.Contains("Copy") || command.Contains("Cut") || command.Contains("Paste"))
                 {
-                    ret = this.textSelection + command.Substring("Edit.".Length) + "()";
+                    ret = DuplicateStrings(this.textSelection + command.Substring("Edit.".Length) + "()", iterations);
                 }
                 else if (command.Contains("InsertTab"))
                 {
-                    ret = this.textSelection + "Insert = \"\\t\"";
+                    ret = this.textSelection + "Indent()";
                 }
             }
 
+            if (ret == string.Empty)
+            {
+                ret = this.DuplicateStrings("dte.ExecuteCommand(\"" + command + "\")", iterations);
+            }
+
             return ret + ";";
+        }
+
+        private string DuplicateStrings(string str, int iterations)
+        {
+            string ret = string.Concat(Enumerable.Repeat(str + ";\n", iterations));
+
+            // Remove the extra ";\n"
+            return ret.Substring(0, ret.Length - 2);
         }
 
         private string FormatEditWithExtend(string commandName, string direction, bool extend, int iterations)

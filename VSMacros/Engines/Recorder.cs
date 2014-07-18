@@ -34,50 +34,66 @@ namespace VSMacros.Engines
             this.ClearData();
             this.activationWatcher = this.activationWatcher ?? new WindowActivationWatcher(this.serviceProvider);
             this.commandWatcher = this.commandWatcher ?? new CommandExecutionWatcher(this.serviceProvider);
-            this.recording = true;         
+            this.recording = true;
         }
 
         public void StopRecording(string path)
         {
             using (StreamWriter fs = new StreamWriter(path))
             {
-                List<char> buffer = new List<char>();
-                string lastCommand;
-
-                foreach (var action in this.dataModel.Actions)
+                for (int i = 0; i < this.dataModel.Actions.Count; i++)
                 {
-                    if (action is RecordedCommand)
-                        {
-                        RecordedCommand cmd = action as RecordedCommand;
+                    RecordedActionBase action = this.dataModel.Actions[i];
 
+                    // If both current and next commands are RecordedCommand and if the next command exists
+                    if (action is RecordedCommand && i < this.dataModel.Actions.Count - 1 && this.dataModel.Actions[i + 1] is RecordedCommand)
+                    {
+                        RecordedCommand current = action as RecordedCommand;
+                        RecordedCommand next = this.dataModel.Actions[i + 1] as RecordedCommand;                        
 
-                        // If the command is an 'insert' command, then save the character to the buffer
-                        if (cmd.IsInsertAction())
+                        if (current.IsInsertAction())
                         {
-                            buffer.Add(cmd.Input);
-                        }
+                            List<char> buffer = new List<char>();
 
-                        // Else if the action is not 'insert' and the buffer is not empty, output an insert action
-                        else if (buffer.Count > 0)
-                        {
+                            buffer.Add(current.Input);
+
+                            // Get all the characters that forms the string
+                            while (next.IsInsertAction() && i + 1 < this.dataModel.Actions.Count)
+                            {
+                                next = this.dataModel.Actions[++i] as RecordedCommand;
+
+                                if (next.Input != '\0')
+                                {
+                                    buffer.Add(next.Input);
+                                }
+                            }
+
                             // Output insert
-                            cmd.ConvertToJavascript(fs, buffer);
+                            current.ConvertToJavascript(fs, buffer);
                             buffer = new List<char>();
                         }
+                        else
+                        {
+                            // Compute the number of iterations of the same command
+                            int iterations = 1;
+                            while (current.CommandName == next.CommandName && i + 2 < this.dataModel.Actions.Count)
+                            {
+                                iterations++;
+                                current = next;
+                                next = this.dataModel.Actions[++i + 1] as RecordedCommand;
+                            }
+
+                            current.ConvertToJavascript(fs, iterations);
+                        }
                     }
-
-                    action.ConvertToJavascript(fs);
-                }
-
-                // Write the remaining text in the buffer
-                if (buffer.Count > 0)
-                {
-                    RecordedCommand cmd = new RecordedCommand();
-                    cmd.ConvertToJavascript(fs, buffer);
+                    else
+                    {
+                        action.ConvertToJavascript(fs);
+                    }
                 }
             }
 
-            this.recording = false;            
+            this.recording = false;
         }
 
         public bool IsRecording

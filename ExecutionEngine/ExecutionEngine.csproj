@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F73F9E75-10E3-44FC-9A13-7E69A689AD0B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VisualStudio.Macros.ExecutionEngine</RootNamespace>
     <AssemblyName>VisualStudio.Macros.ExecutionEngine</AssemblyName>
@@ -79,7 +79,6 @@
     <Compile Include="Helpers\Interfaces\ICommandHelper.cs" />
     <Compile Include="Helpers\InputParser.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
-    <Compile Include="MyException.cs" />
     <Compile Include="ParsedScript.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Pipes\Client.cs" />

@@ -80,6 +80,8 @@ namespace VSMacros.RecorderOutput
             int length = command.Length;
             bool extend;
 
+            string iterationsAsString = iterations > 1 ? iterations.ToString() : string.Empty;
+
             if (command.Contains("Edit."))
             {
                 if (command.Contains(".Char"))
@@ -121,11 +123,11 @@ namespace VSMacros.RecorderOutput
                     }
                     else if (command.Contains("Start"))
                     {
-                        ret = this.DuplicateStrings(this.textSelection + "StartOfLine(1, " + extend.ToString().ToLower() + ")", iterations);
+                        ret = this.textSelection + "StartOfLine(1" + (extend ? ", " + extend.ToString().ToLower() : string.Empty) + ")";
                     }
                     else if (command.Contains("End"))
                     {
-                        ret = this.textSelection + "EndOfLine(" + extend.ToString().ToLower() + ")";
+                        ret = this.textSelection + "EndOfLine(" + (extend ? extend.ToString().ToLower() : string.Empty) + ")";
                     }
                     //else if (command.Contains("Cut") || command.Contains("Delete"))
                     //{
@@ -148,11 +150,11 @@ namespace VSMacros.RecorderOutput
                 }
                 else if (command.Contains(".BreakLine"))
                 {
-                    ret = this.textSelection + "NewLine(" + iterations + ")";
+                    ret = this.textSelection + "NewLine(" + iterationsAsString + ")";
                 }
                 else if (command.Contains(".Delete"))
                 {
-                    ret = this.textSelection + "Delete" + (command.Contains("Backwards") ? "Left" : "") + "(" + iterations + ")";
+                    ret = this.textSelection + "Delete" + (command.Contains("Backwards") ? "Left" : "") + "(" + iterationsAsString + ")";
                 }
                 else if (command.Contains("Copy") || command.Contains("Cut") || command.Contains("Paste"))
                 {
@@ -182,7 +184,11 @@ namespace VSMacros.RecorderOutput
 
         private string FormatEditWithExtend(string commandName, string direction, bool extend, int iterations)
         {
-            return this.textSelection + commandName + direction + "(" + extend.ToString().ToLower() + ", " + iterations + ")";
+            string extendLower = extend.ToString().ToLower();
+
+            // Default for extend is false, default for count is 1
+            string extendAndIterations = iterations > 1 ? extendLower + ", " + iterations.ToString() : (extend ? extendLower : string.Empty);
+            return this.textSelection + commandName + direction + "(" + extendAndIterations + ")";
         }
 
         private string textSelection

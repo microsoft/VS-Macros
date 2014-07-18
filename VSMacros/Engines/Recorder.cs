@@ -55,18 +55,22 @@ namespace VSMacros.Engines
                         {
                             List<char> buffer = new List<char>();
 
-                            buffer.Add(current.Input);
+                            // Setup for the loop
+                            next = current;
 
-                            // Get all the characters that forms the string
-                            while (next.IsInsertAction() && i + 1 < this.dataModel.Actions.Count)
+                            // Get all the characters that forms the input string
+                            do
                             {
-                                next = this.dataModel.Actions[++i] as RecordedCommand;
-
                                 if (next.Input != '\0')
                                 {
                                     buffer.Add(next.Input);
                                 }
-                            }
+
+                                next = this.dataModel.Actions[++i] as RecordedCommand;
+                            } while (next.IsInsertAction() && i + 1 < this.dataModel.Actions.Count);
+
+                            // The loop has incremented i an extra time, backtrack
+                            i--;
 
                             // Output insert
                             current.ConvertToJavascript(fs, buffer);

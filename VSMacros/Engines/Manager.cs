@@ -87,6 +87,7 @@ namespace VSMacros.Engines
                     else
                     {
                         VSMacrosPackage.Current.ClearStatusBar();
+                    }
                 };
         }
 

@@ -7,14 +7,11 @@ namespace VSMacros.Helpers
 {
     internal class JobHandle : SafeHandle
     {
-        private readonly ILogger logger;
         private readonly string jobName;
 
-        internal static JobHandle CreateNewJob(ILogger logger)
+        internal static JobHandle CreateNewJob()
         {
-            Validate.IsNotNull(logger, "logger");
-
-            JobHandle job = new JobHandle(logger);
+            JobHandle job = new JobHandle();
             if (job.InitializeJob())
             {
                 return job;
@@ -28,20 +25,11 @@ namespace VSMacros.Helpers
         private JobHandle()
             : base(NativeMethods.INVALIDHANDLEVALUE, ownsHandle: true)
         {
-        }
-
-        private JobHandle(ILogger logger)
-            : this()
-        {
             this.jobName = Guid.NewGuid().ToString();
-            this.logger = logger;
         }
 
         internal bool InitializeJob()
         {
-
-            this.logger.LogInfo("InitializeJob", "JobHandle : Creating job: {0}", this.jobName);
-
             // Create a job object and add the process to it. We do this to ensure that we can kill the process and 
             // all its children in one shot.  Simply killing the process does not kill its children.
             NativeMethods.SECURITY_ATTRIBUTES jobSecAttributes = new NativeMethods.SECURITY_ATTRIBUTES();
@@ -56,12 +44,11 @@ namespace VSMacros.Helpers
 
             if (this.IsInvalid)
             {
-                this.logger.LogError("InitializeJob", "JobHandle : Failed to SetInformation for job '{0}' because '{1}'", this.jobName, createJobObjectWin32Error);
+                var error = string.Format("In InitializeJob.JobHandle: Failed to SetInformation for job {0} because {1}", this.jobName, createJobObjectWin32Error);
+                Debug.WriteLine(error);
             }
             else
             {
-                this.logger.LogInfo("InitializeJob", "JobHandle : Created job object, setting basic information.");
-
                 // LimitFlags include JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
                 // to terminate all processes associated with the job when the last job handle is closed
                 NativeMethods.JOBOBJECT_BASIC_LIMIT_INFORMATION basicInfo = new NativeMethods.JOBOBJECT_BASIC_LIMIT_INFORMATION();
@@ -77,7 +64,7 @@ namespace VSMacros.Helpers
                 int setInformationJobObjectWin32Error = Marshal.GetLastWin32Error();
                 if (!result)
                 {
-                    this.logger.LogError("InitializeJob", "JobHandle : Failed to SetInformation for job '{0}' because '{1}'", this.jobName, setInformationJobObjectWin32Error);
+                    //this.logger.LogError("InitializeJob", "JobHandle : Failed to SetInformation for job '{0}' because '{1}'", this.jobName, setInformationJobObjectWin32Error);
                 }
                 else
                 {
@@ -90,7 +77,6 @@ namespace VSMacros.Helpers
 
         public bool AddProcess(Process process)
         {
-            this.logger.LogInfo("AddProcess", "Adding process '{0}' with PID '{1}' to job '{2}'", process.ProcessName, process.Id, this.jobName);
             using (ProcessHandle processHandle = new ProcessHandle(process.Id))
             {
                 if (!processHandle.IsInvalid)
@@ -99,11 +85,8 @@ namespace VSMacros.Helpers
                     int lastWin32Error = Marshal.GetLastWin32Error();
                     if (result)
                     {
-                        this.logger.LogInfo("AddProcess", "Process with PID '{0}' added to job '{1}'", process.Id, this.jobName);
                         return true;
                     }
-
-                    this.logger.LogError("AddProcess", "AddProcess : Failed to AssignProcessToJob '{0}' because '{1}'", this.jobName, lastWin32Error);
                 }
             }
 

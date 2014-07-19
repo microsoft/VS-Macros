@@ -403,11 +403,6 @@ namespace VSMacros
 
         protected override int QueryClose(out bool canClose)
         {
-            if (Executor.Job != null)
-            {
-                Executor.Job.Close();
-            }
-
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (macroRecorder.IsRecording)
             {
@@ -427,6 +422,11 @@ namespace VSMacros
 
             // Close manager
             Manager.Instance.Close();
+
+            if (Executor.Job != null)
+            {
+                Executor.Job.Close();
+            }
 
             return (int)VSConstants.S_OK;
         }

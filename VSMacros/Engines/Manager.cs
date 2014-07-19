@@ -141,11 +141,6 @@ namespace VSMacros.Engines
         {
             // TODO: Is this the right place to attach the event??
             AttachEvents(this.Executor);
-
-            if (!Executor.IsEngineInitialized)
-            {
-                this.Executor.InitializeEngine();
-            }
             this.Executor.RunEngine(iterations, path);
         }
 

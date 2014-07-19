@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VSMacros.ExecutionEngine
 {
@@ -18,7 +14,7 @@ namespace VSMacros.ExecutionEngine
 
         public string Description { get; private set; }
         public override string Source { get; set; }
-        public string StackTrace { get; private set; }
-        public string TargetSite { get; private set; }
+        public new string StackTrace { get; private set; }
+        public new string TargetSite { get; private set; }
     }
 }

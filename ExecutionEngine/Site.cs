@@ -28,6 +28,15 @@ namespace ExecutionEngine
             lcid = Thread.CurrentThread.CurrentCulture.LCID;
         }
 
+        private static void CreateInternalVSException(string message)
+        {
+            string source = "VSMacros.ExecutionEngine";
+            string stackTrace = string.Empty;
+            string targetSite = string.Empty;
+            Site.InternalVSException = new InternalVSException(message, source, stackTrace, targetSite);
+            Site.InternalError = true;
+        }
+
         public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
@@ -43,13 +52,7 @@ namespace ExecutionEngine
                 }
                 else
                 {
-                    string test = Resources.NullDte;
-                    string message = "Engine.DteObject is null";
-                    string source = "VSMacros.ExecutionEngine";
-                    string stackTrace = string.Empty;
-                    string targetSite = "Site.GetItemInfo";
-                    Site.InternalVSException = new InternalVSException(message, source, stackTrace, targetSite);
-                    Site.InternalError = true;
+                    CreateInternalVSException(Resources.NullDte);
                     item = IntPtr.Zero;
 
 #if DEBUG
@@ -65,12 +68,7 @@ namespace ExecutionEngine
                 }
                 else 
                 {
-                    string message = "Engine.CommandHelper is null";
-                    string source = "VSMacros.ExecutionEngine";
-                    string stackTrace = string.Empty;
-                    string targetSite = "Site.GetItemInfo";
-                    Site.InternalVSException = new InternalVSException(message, source, stackTrace, targetSite);
-                    Site.InternalError = true;
+                    CreateInternalVSException(Resources.NullCommandHelper);
                     item = IntPtr.Zero;
 
 #if DEBUG

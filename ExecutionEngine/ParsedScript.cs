@@ -8,6 +8,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using VisualStudio.Macros.ExecutionEngine;
 using VSMacros.ExecutionEngine;
 using VSMacros.ExecutionEngine.Pipes;
 
@@ -25,12 +26,10 @@ namespace ExecutionEngine
 
             if (this.dispatch == null)
             {
-                // TODO: Put these in resources
-                // TODO: Check if these messages are correct.
-                string message = "The dispatch object was null.";
-                string source = "Execution engine";
-                string stackTrace = "ParsedScript";
-                string targetSite = "ParsedScript??";
+                string message = Resources.NullDispatch;
+                string source = "ExecutionEngine";
+                string stackTrace = string.Empty;
+                string targetSite = string.Empty;
 
                 byte[] criticalErrorMessage = Client.PackageCriticalError(message, source, stackTrace, targetSite);
                 Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);

@@ -70,6 +70,24 @@ namespace VisualStudio.Macros.ExecutionEngine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Engine.CommandHelper is null&quot;.
+        /// </summary>
+        internal static string NullCommandHelper {
+            get {
+                return ResourceManager.GetString("NullCommandHelper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The dispatch object was null..
+        /// </summary>
+        internal static string NullDispatch {
+            get {
+                return ResourceManager.GetString("NullDispatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Engine.DteObject is null..
         /// </summary>
         internal static string NullDte {

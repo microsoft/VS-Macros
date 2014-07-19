@@ -7,11 +7,8 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -30,16 +27,17 @@ namespace VSMacros.Engines
         /// <summary>
         /// The execution engine.
         /// </summary>
-        public static Process executionEngine;
-        public static bool IsEngineInitialized = false;
-        public static JobHandle Job;
+        internal static Process executionEngine;
+        internal static bool IsEngineInitialized;
+        internal static JobHandle Job;
+        private const string Delimiter = "[delimiter]";
 
         /// <summary>
-        /// Informs subscribers of an error during execution.
+        /// Informs subscribers of success or error during execution.
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
 
-        public void SendCompletionMessage(bool isError, string errorMessage)
+        internal void SendCompletionMessage(bool isError, string errorMessage)
         {
             if (this.Complete != null)
             {
@@ -48,25 +46,16 @@ namespace VSMacros.Engines
             }
         }
 
-        public void ResetMessages()
+        internal void ResetMessages()
         {
             this.Complete = null;
         }
 
         #region Helpers
-        private string ProvideArguments(int iterations, string path)
-        {
-            string pid = Process.GetCurrentProcess().Id.ToString();
-            var delimiter = "[delimiter]";
-            return pid + delimiter + iterations.ToString() + delimiter + path;
-        }
-
         private string ProvidePipeArguments(Guid guid)
         {
-            var delimiter = "[delimiter]";
-            string pid = Process.GetCurrentProcess().Id.ToString();
-
-            return guid.ToString() + delimiter + pid;
+            int pid = Process.GetCurrentProcess().Id;
+            return string.Format("{0}{1}{2}", guid, Executor.Delimiter, pid);
         }
 
         private System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()
@@ -147,7 +136,6 @@ namespace VSMacros.Engines
                 }
             }
         }
-
         #endregion
 
         /// <summary>
@@ -160,37 +148,48 @@ namespace VSMacros.Engines
             this.RegisterCommandDispatcherinROT();
 
             Server.InitializeServer();
+            Server.serverWait = new Thread(new ThreadStart(Server.WaitForMessage));
+            Server.serverWait.Start();
 
             Executor.executionEngine = new Process();
             string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
             //string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             Executor.executionEngine.StartInfo.FileName = processName;
+            Executor.executionEngine.StartInfo.UseShellExecute = false;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
             Executor.executionEngine.Start();
 
-            Server.ServerStream.WaitForConnection();
-            Server.serverWait = new Thread(new ThreadStart(Server.WaitForMessage));
-            Server.serverWait.Start();
-
             Executor.IsEngineInitialized = true;
-            Logger logger = new Logger();
-            Executor.Job = JobHandle.CreateNewJob(logger);
+            Executor.Job = JobHandle.CreateNewJob();
             Executor.Job.AddProcess(Executor.executionEngine);
         }
 
         /// <summary>
-        /// Initializes the engine.
+        /// If engine is initialized, runs the engine.  Otherwise, initializes and runs the engine.
         /// </summary>
         /// 
         public void RunEngine(int iterations, string path)
         {
-            if (Server.ServerStream.IsConnected)
+            if (Executor.IsEngineInitialized && Server.ServerStream.IsConnected)
             {
                 Server.SendFilePath(iterations, path);
             }
             else
             {
-                InitializeEngine();
+                this.InitializeEngine();
+                Thread waitsUntilClientIsConnected = new Thread(() =>
+                    {
+                        while (true) 
+                        {
+                            if (Server.ServerStream.IsConnected)
+                            {
+                                Server.SendFilePath(iterations, path);
+                                break;
+                            }
+                        }
+                    }
+                );
+                waitsUntilClientIsConnected.Start();
             }
         }
     }

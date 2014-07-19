@@ -7,6 +7,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
@@ -19,7 +20,6 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         internal const string MacroName = "currentScript";
-        private static bool exit;
 
         internal static void RunMacro(string script, int iterations)
         {
@@ -32,9 +32,9 @@ namespace ExecutionEngine
                 {
                     if (Site.RuntimeError)
                     {
-                        uint activeDocumentAddition = 1;
+                        uint activeDocumentModification = 1;
                         var e = Site.RuntimeException;
-                        uint modifiedLineNumber = e.Line + activeDocumentAddition;
+                        uint modifiedLineNumber = e.Line - activeDocumentModification;
 
                         byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                         string message = Encoding.Unicode.GetString(scriptErrorMessage);
@@ -42,11 +42,10 @@ namespace ExecutionEngine
                     }
                     else
                     {
-                        var e = Site.VSException;
+                        var e = Site.InternalVSException;
                         byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
                         Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
                     }
-
                     Site.ResetError();
                     break;
                 }
@@ -57,6 +56,7 @@ namespace ExecutionEngine
         {
             int typeOfMessage = Client.GetInt(Client.ClientStream);
 
+            // I know a switch statement seems useless but just preparing for the possibility of other packets.
             switch ((Packet)typeOfMessage)
             {
                 case Packet.FilePath:
@@ -67,7 +67,7 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
-            int iterations = Client.GetIterations(Client.ClientStream);
+            int iterations = Client.GetInt(Client.ClientStream);
             string message = Client.GetFilePath(Client.ClientStream);
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
@@ -76,29 +76,43 @@ namespace ExecutionEngine
 
         internal static Thread CreateReadingThread(int pid)
         {
-            Program.exit = false;
             Thread readThread = new Thread(() =>
             {
                 try
                 {
                     Program.engine = new Engine(pid);
-                    while (!Program.exit)
+                    while (true)
                     {
                         HandleInput();
                     }
                 }
                 catch (Exception e)
                 {
-                    byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                    Client.SendMessageToServer(Client.ClientStream, criticalError);
+                    if (Client.ClientStream.IsConnected)
+                    {
+                        byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        Client.SendMessageToServer(Client.ClientStream, criticalError);
+                    }
+                    else
+                    {
+#if DEBUG
+                        MessageBox.Show("Execution engine's pipe is not connected.");
+#endif
+                    }
                 }
                 finally
                 {
-                    // TODO: Do I need this here?  If there's a critical error, VS shuts down the engine and restarts.
-                    // TODO: Not sure if that's necessary or if I just need to reinitialize the pipes.
-
-                    Client.ShutDownServer(Client.ClientStream);
-                    Client.ClientStream.Close();
+                    if (Client.ClientStream.IsConnected)
+                    {
+                        Client.ShutDownServer(Client.ClientStream);
+                        Client.ClientStream.Close();
+                    }
+                    else
+                    {
+#if DEBUG
+                        MessageBox.Show("Execution engine's pipe is not connected.");
+#endif
+                    }
                 }
             });
 

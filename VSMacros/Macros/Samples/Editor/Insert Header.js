@@ -1,6 +1,4 @@
-/// <reference path="C:\USERS\T-GRAWA\APPDATA\LOCAL\MICROSOFT\VISUALSTUDIO\12.0EXP\EXTENSIONS\MICROSOFT CORPORATION\MACROS FOR VISUAL STUDIO\1.0\Intellisense\dte.js" />
-//
-// Header: create a standard copyright header
+// Creates a standard copyright header
 
 var doc = dte.ActiveDocument;
 
@@ -23,7 +21,7 @@ doc.Selection.Insert("// <copyright file=\"", 1);
 doc.Selection.Insert(filename, 1);
 doc.Selection.Insert("\" company=\"Microsoft Corporation\">\n", 1);
 doc.Selection.Insert("//     Copyright Microsoft Corporation. All rights reserved.\n", 1);
-doc.Selection.Insert("// </copyright>\n", 1);
+doc.Selection.Insert("// </copyright>\n\n", 1);
 
 // Close header
 MakeDivider();

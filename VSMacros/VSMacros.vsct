@@ -198,6 +198,7 @@
 
       <Button guid="guidVSMacrosCmdSet" id="cmdidNewMacro" priority="01" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="AddGroup" />
+        <Icon guid="guidSHLMainMenu" id="NewItem" />
         <Strings>
           <ButtonText>New Macro</ButtonText>
         </Strings>
@@ -432,8 +433,9 @@
     </GuidSymbol>
 
     <GuidSymbol name="guidSHLMainMenu" value="{d309f791-903f-11d0-9efc-00a0c911004f}">
+      <IDSymbol name="NewItem" value="1"/>
       <IDSymbol name="Open" value="5"/>
-      <IDSymbol name="Refresh"    value="6"/>
+      <IDSymbol name="Refresh" value="6"/>
     </GuidSymbol>
 
   </Symbols>

@@ -3,32 +3,35 @@ Date: 7/18/2014
 Version: 1.0
 
 What's New:
-	- More sophisticated command parsing
-	- Engine closes when VS closes
-	- More graceful error handling
-	- Able to run user specified number of iterations
-	- Various bug fixes and improvements
+	• More sophisticated command parsing
+	• Engine closes when VS closes
+	• More graceful error handling
+	• Ability to playback a macro multiple times
+	• Various bug fixes and improvements
 
 Installation Instructions:
-	- Install extension
-	- Run VS
-	- Open Macro Folder (Ctrl+M, O)
-	- Extract Macros.zip to that folder, overwriting if asked
+	• Install extension
+	• Restart VS
+	• Extension is available under Tools > Macros
 
 Suggested Testing:
-	- Locate the "Samples" folder to run prewritten macros
-	- The following require a document to be open:
-		- Decrease Font Size
-		- Increase Font Size
-		- Beginning of Function
-		- Insert {Date & Time, Date, Header, Time}
-		- Find Case
-		- Find Line
-		- Toggle Line Numbers
-		- Toggle Word Wrap
-	- End to end scenario: http://cockneycoder.wordpress.com/2010/09/04/macros-in-vs2010/
+	• Locate the "Samples" folder to run prewritten macros
+	• The following require a document to be open:
+		• Decrease Font Size
+		• Increase Font Size
+		• Beginning of Function
+		• Insert {Date & Time, Date, Header, Time}
+		• Find Case
+		• Find Line
+		• Toggle Line Numbers
+		• Toggle Word Wrap
+	• End to end scenario: http://cockneycoder.wordpress.com/2010/09/04/macros-in-vs2010/
 
 Known issues:
-	- Column numbers in script errors are currently incorrect (always zero)
-	- Non text-editing functionality has not been tested extensively yet.
-	- Sometimes the error "Parameter name not set to instance of string" occurs when executing
+	• 
+	• Column numbers in script errors are currently incorrect (always zero)
+	• Sometimes the error "Parameter name not set to instance of string" occurs when executing
+	• Toggling recording when the tool window is closed won't change the icon in the tool window
+	• Searching expands all macro after search is done
+	• Opened instance of a macro won't be updated if macro is deleted or moved
+	• DTE Intellisense only offers a partial coverage of DTE

@@ -16,7 +16,7 @@ namespace VSMacros.Dialogs.Validation_Rules
         {
             string shortcut = value as string;
 
-            Regex rgx = new Regex(@"(CTRL+ALT+M, [1-9])");
+            Regex rgx = new Regex(@"(ALT+Q, [1-9])");
             MatchCollection matches = rgx.Matches(shortcut);
 
             if (matches.Count != 1)

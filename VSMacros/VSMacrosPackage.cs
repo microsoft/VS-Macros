@@ -184,7 +184,6 @@ namespace VSMacros
                 Manager.Instance.StartRecording();
 
                 this.StatusBarChange(Resources.StatusBarRecordingText, 1);
-                //this.SetStatusBar(Resources.StatusBarRecordingText, 1);
                 this.ChangeMenuCommands(this.StopIcon, 0);
                 this.UpdateButtonsForRecording(true);
             }
@@ -202,7 +201,6 @@ namespace VSMacros
         {
             Manager.Instance.Playback(string.Empty);
 
-            // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
             //this.UpdateButtonsForPlayback(true);
         }
@@ -211,7 +209,6 @@ namespace VSMacros
         {
             Manager.Instance.PlaybackMultipleTimes(string.Empty);
 
-            // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
             //this.UpdateButtonsForPlaybackMultipleTimes(true);
         }

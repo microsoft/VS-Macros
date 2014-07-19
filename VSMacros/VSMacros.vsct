@@ -208,15 +208,15 @@
       <!-- Buttons added through command placements -->
       
       <!-- Macro Shortcut Commands Button -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand1" priority="00" type="Button"><Strings><ButtonText>command1</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand2" priority="01" type="Button"><Strings><ButtonText>command2</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand3" priority="02" type="Button"><Strings><ButtonText>command3</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand4" priority="03" type="Button"><Strings><ButtonText>command4</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand5" priority="04" type="Button"><Strings><ButtonText>command5</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand6" priority="05" type="Button"><Strings><ButtonText>command6</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand7" priority="06" type="Button"><Strings><ButtonText>command7</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand8" priority="07" type="Button"><Strings><ButtonText>command8</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidCommand9" priority="08" type="Button"><Strings><ButtonText>command9</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" priority="00" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand1</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" priority="01" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand2</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" priority="02" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand3</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" priority="03" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand4</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" priority="04" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand5</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" priority="05" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand6</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" priority="06" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand7</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" priority="07" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand8</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" priority="08" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand9</ButtonText></Strings></Button>
 
       <Button guid="guidStd2kCmdSet" id="TYPECHAR" priority="0x0000" type="Button">
         <Strings>
@@ -316,35 +316,20 @@
   <KeyBindings>
 
     <!-- Control-ed key bindings -->
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="R"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="P"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="O"/>
-
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand1" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="1"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand2" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="2"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand3" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="3"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand4" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="4"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand5" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="5"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand6" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="6"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand7" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="7"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand8" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="8"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand9" editor="guidVSStd97" key1="M" mod1="Control Alt" mod2="Control Alt" key2="9"/>
-    
-    <!-- Non-Control-ed key bindings -->
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="R"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="P"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Alt" key1="R"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Alt" key1="P"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="O"/>
 
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand1" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="1"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand2" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="2"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand3" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="3"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand4" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="4"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand5" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="5"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand6" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="6"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand7" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="7"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand8" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="8"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidCommand9" editor="guidVSStd97" key1="M" mod1="Control Alt" key2="9"/>
-
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="Q" mod1="Alt" key2="1"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="Q" mod1="Alt" key2="2"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" editor="guidVSStd97" key1="Q" mod1="Alt" key2="3"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" editor="guidVSStd97" key1="Q" mod1="Alt" key2="4"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" editor="guidVSStd97" key1="Q" mod1="Alt" key2="5"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" editor="guidVSStd97" key1="Q" mod1="Alt" key2="6"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" editor="guidVSStd97" key1="Q" mod1="Alt" key2="7"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" editor="guidVSStd97" key1="Q" mod1="Alt" key2="8"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" editor="guidVSStd97" key1="Q" mod1="Alt" key2="9"/>
+    
   </KeyBindings>
   
   <Symbols>
@@ -399,15 +384,15 @@
       <IDSymbol name="cmdidNewMacro"      value="0x2050"/>
       
       <!-- Macro Shortcut Commands -->
-      <IDSymbol name="cmdidCommand1" value="0x3000"/>
-      <IDSymbol name="cmdidCommand2" value="0x3005"/>
-      <IDSymbol name="cmdidCommand3" value="0x3010"/>
-      <IDSymbol name="cmdidCommand4" value="0x3015"/>
-      <IDSymbol name="cmdidCommand5" value="0x3020"/>
-      <IDSymbol name="cmdidCommand6" value="0x3025"/>
-      <IDSymbol name="cmdidCommand7" value="0x3030"/>
-      <IDSymbol name="cmdidCommand8" value="0x3040"/>
-      <IDSymbol name="cmdidCommand9" value="0x3035"/>
+      <IDSymbol name="cmdidMacroCommand1" value="0x3000"/>
+      <IDSymbol name="cmdidMacroCommand2" value="0x3005"/>
+      <IDSymbol name="cmdidMacroCommand3" value="0x3010"/>
+      <IDSymbol name="cmdidMacroCommand4" value="0x3015"/>
+      <IDSymbol name="cmdidMacroCommand5" value="0x3020"/>
+      <IDSymbol name="cmdidMacroCommand6" value="0x3025"/>
+      <IDSymbol name="cmdidMacroCommand7" value="0x3030"/>
+      <IDSymbol name="cmdidMacroCommand8" value="0x3040"/>
+      <IDSymbol name="cmdidMacroCommand9" value="0x3035"/>
       
       <!-- Tool Window -->
       <IDSymbol name="cmdidMacroExplorer" value="0x0101" />

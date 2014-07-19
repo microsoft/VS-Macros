@@ -10,6 +10,8 @@ var MakeDivider = function () {
 
 var filename = doc.Name;
 
+dte.UndoContext.Open("Insert Header");
+
 // Go to start of document
 doc.Selection.StartOfDocument(false);
 
@@ -27,3 +29,5 @@ doc.Selection.Insert("// </copyright>\n", 1);
 MakeDivider();
 
 doc.Selection.NewLine();
+
+dte.UndoContext.Close();

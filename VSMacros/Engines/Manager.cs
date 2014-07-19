@@ -87,7 +87,6 @@ namespace VSMacros.Engines
                     else
                     {
                         VSMacrosPackage.Current.ClearStatusBar();
-                    }
                 };
         }
 
@@ -120,22 +119,21 @@ namespace VSMacros.Engines
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
-            PlayMacro(path, iterations: 1);
+            this.PlayMacro(path, iterations: 1);
         }
 
         public void PlaybackMultipleTimes(string path)
         {
-            if (path == string.Empty)
-            {
-                path = this.SelectedMacro.FullPath;
-            }
-
             PlaybackMultipleTimesDialog dlg = new PlaybackMultipleTimesDialog();
             bool? result = dlg.ShowDialog();
 
             if (result.HasValue && result.Value)
             {
-                PlayMacro(path, dlg.Iterations);
+                int iterations;
+                if (int.TryParse(dlg.IterationsTextbox.Text, out iterations)) 
+                {
+                    this.Playback(string.Empty, dlg.Iterations);
+                }
             }
         }
 

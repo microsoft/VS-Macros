@@ -125,7 +125,7 @@ namespace VSMacros.Pipes
             int targetSiteSize = GetIntFromStream(serverStream);
             string targetSite = GetMessageFromStream(serverStream, targetSiteSize);
 
-            var exceptionMessage = string.Format("{0}: {1}", source, message, Environment.NewLine);
+            var exceptionMessage = string.Format("{0}: {1}{2}Stack Trace: {3}{2}{2}TargetSite:{4}", source, message, Environment.NewLine, stackTrace, targetSite);
             return exceptionMessage;
         }
 

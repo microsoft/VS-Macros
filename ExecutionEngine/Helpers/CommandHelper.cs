@@ -70,32 +70,6 @@ namespace ExecutionEngine.Helpers
 
         public CommandHelper(System.IServiceProvider serviceProvider)
         {
-            //var dte = (EnvDTE.DTE)dteObject;
-            //IOleServiceProvider sp = (IOleServiceProvider)dte;
-
-            //Guid suiHostCommandDispatcherGuid = Marshal.GenerateGuidForType(typeof(SUIHostCommandDispatcher));
-            //Guid svsCmdNameMappingGuid = Marshal.GenerateGuidForType(typeof(SVsCmdNameMapping));
-            //IntPtr suiHostPtr, svsCmdNamePtr;
-
-            //int hr_host = sp.QueryService(ref suiHostCommandDispatcherGuid, ref suiHostCommandDispatcherGuid, out suiHostPtr);
-            //int hr_cmdName = sp.QueryService(ref svsCmdNameMappingGuid, ref svsCmdNameMappingGuid, out svsCmdNamePtr);
-
-            //object service_host, service_cmdName;
-            //if (hr_cmdName >= 0 && svsCmdNamePtr != IntPtr.Zero)
-            //{
-            //    service_cmdName = Marshal.GetObjectForIUnknown(svsCmdNamePtr);
-            //    this.cmdNameMapping = (IVsCmdNameMapping)Marshal.GetObjectForIUnknown(svsCmdNamePtr);
-            //}
-
-            //if (hr_host >= 0 && suiHostPtr != IntPtr.Zero)
-            //{
-            //    service_host = Marshal.GetObjectForIUnknown(suiHostPtr);
-            //    this.shellCmdTarget = (IOleCommandTarget)Marshal.GetObjectForIUnknown(suiHostPtr);
-            //}
-
-            //this.shellCmdTarget = (IOleCommandTarget)service_host;
-            //this.cmdNameMapping = (IVsCmdNameMapping)service_cmdName;
-
             var rot = this.GetRunningObjectTable();
 
             System.Runtime.InteropServices.ComTypes.IMoniker cmdDispatchMoniker = this.GetCmdDispatcherMoniker();

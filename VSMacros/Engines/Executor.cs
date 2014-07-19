@@ -54,10 +54,10 @@ namespace VSMacros.Engines
         }
 
         #region Helpers
-        private string ProvidePipeArguments(Guid guid)
+        private string ProvidePipeArguments(Guid guid, string version)
         {
             int pid = Process.GetCurrentProcess().Id;
-            return string.Format("{0}{1}{2}", guid, Executor.Delimiter, pid);
+            return string.Format("{0}{1}{2}{1}{3}", guid, Executor.Delimiter, pid, version);
         }
 
         private System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()
@@ -153,11 +153,14 @@ namespace VSMacros.Engines
             Server.serverWait = new Thread(new ThreadStart(Server.WaitForMessage));
             Server.serverWait.Start();
 
+            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
+            string version = dte.Version;
+
             Executor.executionEngine = new Process();
             string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.UseShellExecute = false;
-            Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);
+            Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid, version);
             Executor.executionEngine.Start();
 
             Executor.IsEngineInitialized = true;

@@ -20,6 +20,7 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         internal const string MacroName = "currentScript";
+        public static bool NeedsActiveDocument;
 
         internal static void RunMacro(string script, int iterations)
         {
@@ -74,13 +75,13 @@ namespace ExecutionEngine
             Program.RunMacro(wrappedScript, iterations);
         }
 
-        internal static Thread CreateReadingThread(int pid)
+        internal static Thread CreateReadingThread(int pid, string version)
         {
             Thread readThread = new Thread(() =>
             {
                 try
                 {
-                    Program.engine = new Engine(pid);
+                    Program.engine = new Engine(pid, version);
                     while (true)
                     {
                         HandleInput();
@@ -126,7 +127,9 @@ namespace ExecutionEngine
             Client.InitializePipeClientStream(guid);
 
             int pid = InputParser.GetPid(separatedArgs[1]);
-            Thread readThread = CreateReadingThread(pid);
+            string version = separatedArgs[2];
+
+            Thread readThread = CreateReadingThread(pid, version);
             readThread.Start();
         }
 

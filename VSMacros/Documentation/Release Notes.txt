@@ -1,32 +1,34 @@
 ﻿Macros for Visual Studio 2013
-Date: 7/11/2014
-Version: 1.1
+Date: 7/18/2014
+Version: 1.0
 
 What's New:
-	- Improved recording output
-	- Improved playback functionality
-	- Drag and drop macros
-	- Search macros
-	- Add new macros and new folders directly from the Macro Browser List
-	- DTE Intellisense when editing macros
-	- UI Improvements
+	- More sophisticated command parsing
+	- Engine closes when VS closes
+	- More graceful error handling
+	- Able to run user specified number of iterations
 	- Various bug fixes and improvements
 
 Installation Instructions:
 	- Install extension
 	- Run VS
 	- Open Macro Folder (Ctrl+M, O)
-	- Extract Macros.zip to that folder, overwritting if asked
+	- Extract Macros.zip to that folder, overwriting if asked
 
 Suggested Testing:
-	- Playback "New File" -> creates a new javascript file
-	- Save file anywhere
-	- Playback "C#/Header" -> add a header containing the file name
-	- Playback "New File" again
-	- Copy the contents of "Parse macro text.txt" (was in the same folder as the VSIX) to the new file
-	- Place the cursor at the beginning of the file (line 0, col 0)
-	- Playback "EnvDTE.TextSelection.cs" -> converts c# properties to a javascript object that can be used by Intellisense
+	- Locate the "Samples" folder to run prewritten macros
+	- The following require a document to be open:
+		- Decrease Font Size
+		- Increase Font Size
+		- Beginning of Function
+		- Insert {Date & Time, Date, Header, Time}
+		- Find Case
+		- Find Line
+		- Toggle Line Numbers
+		- Toggle Word Wrap
+	- End to end scenario: http://cockneycoder.wordpress.com/2010/09/04/macros-in-vs2010/
 
-Warning:
-	- Closing the terminal window crashes the extension
-	- Drag and drop has been altered when we integrated Execution into the package
+Known issues:
+	- Column numbers in script errors are currently incorrect (always zero)
+	- Non text-editing functionality has not been tested extensively yet.
+	- Sometimes the error "Parameter name not set to instance of string" occurs when executing

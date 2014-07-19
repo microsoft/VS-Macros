@@ -25,8 +25,10 @@ namespace VSMacros.Models
 {
     public sealed class MacroFSNode : INotifyPropertyChanged
     {
+        // HashSet containing the enabled directories
         private static HashSet<string> enabledDirectories = new HashSet<string>();
 
+        // Properties the binding client watches
         private string fullPath;
         private int shortcut;
         private bool isEditable;
@@ -34,29 +36,33 @@ namespace VSMacros.Models
         private bool isSelected;
         private bool isMatch;
 
-        private MacroFSNode parent;
+        private readonly MacroFSNode parent;
         private ObservableCollection<MacroFSNode> children;
 
+        // Constants
         public const int ToFetch = -1;
         public const int None = 0;
-        public const string ShortcutKeys = "(CTRL+M, {0})";
+        public const string ShortcutKeys = "(CTRL+ALT+M, {0})";
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        // Static members
         public static MacroFSNode RootNode { get; set; }
         private static bool searching = false;
 
-        public bool IsDirectory { get; private set; }
+        // For INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MacroFSNode(string path, MacroFSNode parent = null)
         {
             this.IsDirectory = (File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory;
             this.FullPath = path;
-            this.shortcut = ToFetch;
+            this.shortcut = MacroFSNode.ToFetch;
             this.isEditable = false;
             this.isSelected = false;
             this.isMatch = false;
             this.parent = parent;
+
+            // Monitor that node 
+            //FileChangeMonitor.Instance.MonitorFileSystemEntry(this.FullPath, this.IsDirectory);
         }
 
         public string FullPath
@@ -122,7 +128,7 @@ namespace VSMacros.Models
                         // Update shortcut
                         if (this.Shortcut >= MacroFSNode.None)
                         {
-                            Manager.Instance.Shortcuts[this.shortcut] = newFullPath;
+                            Manager.Shortcuts[this.shortcut] = newFullPath;
                         }
                     }
                 }
@@ -147,7 +153,7 @@ namespace VSMacros.Models
             set
             {
                 // Shortcut will be refetched
-                this.shortcut = ToFetch;
+                this.shortcut = MacroFSNode.ToFetch;
 
                 // Just notify the binding
                 this.NotifyPropertyChanged("Shortcut");
@@ -159,22 +165,22 @@ namespace VSMacros.Models
         {
             get
             {
-                if (this.shortcut == ToFetch)
+                if (this.shortcut == MacroFSNode.ToFetch)
                 {
                     
-                    this.shortcut = None;
+                    this.shortcut = MacroFSNode.None;
 
                     // TODO can probably be optimized
                     for (int i = 1; i < 10; i++)
                     {
-                        if (string.Compare(Manager.Instance.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(Manager.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             this.shortcut = i;
                         }
                     }                  
                 }
 
-                if (this.shortcut != None)
+                if (this.shortcut != MacroFSNode.None)
                 {
                     return string.Format(MacroFSNode.ShortcutKeys, this.shortcut);
                 }
@@ -345,11 +351,13 @@ namespace VSMacros.Models
             }
         }
 
+        public bool IsDirectory { get; private set; }
+
         public MacroFSNode Parent
         {
             get
             {
-                return this.parent;
+                return this.parent == null ? MacroFSNode.RootNode : this.parent;
             }
         }
 
@@ -410,18 +418,20 @@ namespace VSMacros.Models
             return collection;
         }
 
-        #region Context Menu
         public void Delete()
         {
             // If a shortcut is bound to the macro
             if (this.shortcut > 0)
             {
                 // Remove shortcut from shortcut list
-                Manager.Instance.Shortcuts[this.shortcut] = string.Empty;
+                Manager.Shortcuts[this.shortcut] = string.Empty;
             }
 
             // Remove macro from collection
             this.parent.children.Remove(this);
+
+            // Unmonitor the file
+            FileChangeMonitor.Instance.UnmonitorFileSystemEntry(this.FullPath, this.IsDirectory);
         }
 
         public void EnableEdit()
@@ -433,40 +443,6 @@ namespace VSMacros.Models
         {
             this.IsEditable = false;
         }
-
-        public static void RefreshTree()
-        {
-            MacroFSNode root = MacroFSNode.RootNode;
-            MacroFSNode selected = MacrosControl.Current.MacroTreeView.SelectedItem as MacroFSNode;
-
-            // Make a copy of the hashset
-            HashSet<string> dirs = new HashSet<string>(enabledDirectories);
-
-            // Clear enableDirectories
-            enabledDirectories.Clear();
-
-            // TODO decide if I want to use a b/g thread
-            // Retrieve children in a background thread
-            //Task.Run(() => root.children = root.GetChildNodes())
-            //    .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
-            root.children = root.GetChildNodes();
-            root.AfterRefresh(root, selected.FullPath, dirs);
-        }
-
-        private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)
-        {
-            // Set IsEnabled for each folders
-            root.SetIsExpanded(root, dirs);
-
-            // Selecte the previously selected macro
-            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(selectedPath);
-            selected.IsSelected = true;
-
-            // Notify change
-            root.NotifyPropertyChanged("Children");
-        }
-
-        #endregion
 
         public static void EnableSearch()
         {
@@ -484,33 +460,6 @@ namespace VSMacros.Models
 
             // And then notify all node that their IsMatch property might have changed
             MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
-        }
-
-        /// <summary>
-        /// Expands all the node marked as expanded in enabledDirs
-        /// </summary>
-        /// <param name="node">Tree rooted at node</param>
-        /// <param name="enabledDirs">Hash set containing the enabled dirs</param>
-        private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
-        {
-            // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
-            if (node.Children.Count > 0 && enabledDirs.Count > 0)
-            {
-                foreach (var item in node.children)
-                {
-                    if (item.IsDirectory && enabledDirs.Contains(item.FullPath))
-                    {
-                        // Set IsExpanded
-                        item.IsExpanded = true;
-
-                        // Remove path from dirs to improve performance of next call to HashSet.Contains
-                        enabledDirs.Remove(item.FullPath);
-
-                        // Recursion on children
-                        this.SetIsExpanded(item, enabledDirs);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -540,15 +489,81 @@ namespace VSMacros.Models
             catch (Exception e)
             {
                 if (ErrorHandler.IsCriticalException(e))
-                { 
-                    throw; 
+                {
+                    throw;
                 }
 
                 // Return default node
-                node = MacroFSNode.RootNode.Children[0];
+                node = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
             }
 
             return node;
+        }
+
+        public static void RefreshTree()
+        {
+            MacroFSNode root = MacroFSNode.RootNode;
+            MacroFSNode.RefreshTree(root);
+        }
+
+        public static void RefreshTree(MacroFSNode root)
+        {
+            MacroFSNode selected = MacrosControl.Current.MacroTreeView.SelectedItem as MacroFSNode;
+
+            // Make a copy of the hashset
+            HashSet<string> dirs = new HashSet<string>(enabledDirectories);
+
+            // Clear enableDirectories
+            enabledDirectories.Clear();
+
+            // TODO decide if I want to use a b/g thread
+            // Retrieve children in a background thread
+            //Task.Run(() => root.children = root.GetChildNodes())
+            //    .ContinueWith(_ => root.AfterRefresh(root, selected, dirs), TaskScheduler.FromCurrentSynchronizationContext());
+            root.children = root.GetChildNodes();
+            root.AfterRefresh(root, selected.FullPath, dirs);
+        }
+
+        private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)
+        {
+            // Set IsEnabled for each folders
+            root.SetIsExpanded(root, dirs);
+
+            // Selecte the previously selected macro
+            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(selectedPath);
+            selected.IsSelected = true;
+
+            // Notify change
+            root.NotifyPropertyChanged("Children");
+        }
+
+        /// <summary>
+        /// Expands all the node marked as expanded in enabledDirs
+        /// </summary>
+        /// <param name="node">Tree rooted at node</param>
+        /// <param name="enabledDirs">Hash set containing the enabled dirs</param>
+        private void SetIsExpanded(MacroFSNode node, HashSet<string> enabledDirs)
+        {
+            node.IsExpanded = true;
+
+            // OPTIMIZATION IDEA instead of iterating over the children, iterate over the enableDirs
+            if (node.Children.Count > 0 && enabledDirs.Count > 0)
+            {
+                foreach (var item in node.children)
+                {
+                    if (item.IsDirectory && enabledDirs.Contains(item.FullPath))
+                    {
+                        // Set IsExpanded
+                        item.IsExpanded = true;
+
+                        // Remove path from dirs to improve performance of next call to HashSet.Contains
+                        enabledDirs.Remove(item.FullPath);
+
+                        // Recursion on children
+                        this.SetIsExpanded(item, enabledDirs);
+                    }
+                }
+            }
         }
 
         private void NotifyPropertyChanged(string name)

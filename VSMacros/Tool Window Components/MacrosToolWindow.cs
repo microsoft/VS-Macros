@@ -98,7 +98,7 @@ namespace VSMacros
                 // Create the command to edit a macro
                 mcs.AddCommand(new MenuCommand(
                     this.Edit,
-                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdEdit)));
+                    new CommandID(typeof(VSConstants.VSStd97CmdID).GUID, (int)VSConstants.VSStd97CmdID.Open)));
 
                 // Create the command to assign a shortcut to a macro
                 mcs.AddCommand(new MenuCommand(

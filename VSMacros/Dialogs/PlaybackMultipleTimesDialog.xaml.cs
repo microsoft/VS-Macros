@@ -40,13 +40,16 @@ namespace VSMacros.Dialogs
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ToInt(this.IterationsTextbox.Text, true) == -1)
+            this.Iterations = this.ToInt(this.IterationsTextbox.Text, true);
+
+            if (this.Iterations == 0)
             {
                 this.DialogResult = false;
-                return;
             }
-            
-            this.DialogResult = true;
+            else
+            {
+                this.DialogResult = true;
+            }
         }
 
         private bool IsValid(string text)
@@ -63,7 +66,7 @@ namespace VSMacros.Dialogs
             // Preventing the input event if the input is invalid will only allow the user to enter numeric values
             e.Handled = !this.IsValid(e.Text);
 
-            if (e.Handled || this.ToInt(this.IterationsTextbox.Text + e.Text) > 1)
+            if (e.Handled || this.ToInt(this.IterationsTextbox.Text + e.Text) == 1)
             {
                 this.TimesLabel.Content = VSMacros.Resources.DialogTimesPlural;
             }
@@ -75,26 +78,9 @@ namespace VSMacros.Dialogs
 
         private int ToInt(string str, bool showMessage = false)
         {
-            int ret = -1;
+            int ret = 0;
 
-            try
-            {
-                ret = Convert.ToInt32(str);
-            }
-            catch (FormatException e)
-            {
-                if (showMessage)
-                {
-                    VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
-                }
-            }
-            catch (Exception e)
-            {
-                if (ErrorHandler.IsCriticalException(e)) 
-                { 
-                    throw; 
-                }
-            }
+            Int32.TryParse(str, out ret);
 
             return ret;
         }

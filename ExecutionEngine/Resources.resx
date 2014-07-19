@@ -117,98 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CannotCreateWindow" xml:space="preserve">
-    <value>The tool window cannot be created.</value>
+  <data name="InvalidPIDArgument" xml:space="preserve">
+    <value>The PID argument is invalid.</value>
   </data>
-  <data name="DeleteFolder" xml:space="preserve">
-    <value>'{0}' and all its contents will be sent to the recycle bin.</value>
-  </data>
-  <data name="DeleteMacro" xml:space="preserve">
-    <value>'{0}' will be sent to the recycle bin.</value>
-  </data>
-  <data name="DialogAssignTo" xml:space="preserve">
-    <value>Assign To</value>
-  </data>
-  <data name="DialogCannotRetrieveCommandIndex" xml:space="preserve">
-    <value>Could not retrieve command index from selection.</value>
-  </data>
-  <data name="DialogCustomShortcut" xml:space="preserve">
-    <value>Assign custom keyboard shortcut</value>
-  </data>
-  <data name="DialogMacroName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="DialogPlayback" xml:space="preserve">
-    <value>Playback</value>
-  </data>
-  <data name="DialogShortcutAlreadyUsed" xml:space="preserve">
-    <value>Shortcut already used. Overwrite?</value>
-  </data>
-  <data name="DialogShortcutSelectionText" xml:space="preserve">
-    <value>Predefined Keyboard Shortcuts</value>
-  </data>
-  <data name="DialogTimesPlural" xml:space="preserve">
-    <value>Times</value>
-  </data>
-  <data name="DialogTimesSingular" xml:space="preserve">
-    <value>Time</value>
-  </data>
-  <data name="ExitCaption" xml:space="preserve">
-    <value>Warning</value>
-  </data>
-  <data name="ExitMessage" xml:space="preserve">
-    <value>Recording in process, are you sure to exit?</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="FolderClosedIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\folderclosed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FolderOpenedIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\folderopened.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MacroNotFound" xml:space="preserve">
-    <value>Macro not found on disk.</value>
-  </data>
-  <data name="MatchCase" xml:space="preserve">
-    <value>Match case</value>
-  </data>
-  <data name="MenuTextNormal" xml:space="preserve">
-    <value>Start Recording</value>
-  </data>
-  <data name="MenuTextRecording" xml:space="preserve">
-    <value>Stop Recording</value>
-  </data>
-  <data name="RecordRound" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\RecordRound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RootIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\macro.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SearchWithinFileContents" xml:space="preserve">
-    <value>Search within file contents</value>
-  </data>
-  <data name="ShortcutIsInvalid" xml:space="preserve">
-    <value>Selected shortcut is invalid.</value>
-  </data>
-  <data name="ShortcutsChanged" xml:space="preserve">
-    <value>The shortcuts have been modified. Do you want to save the changes?</value>
-  </data>
-  <data name="ShortcutsFileNotFound" xml:space="preserve">
-    <value>Shortcuts file was not found.</value>
-  </data>
-  <data name="StatusBarPlayingText" xml:space="preserve">
-    <value>Executing macro</value>
-  </data>
-  <data name="StatusBarReadyText" xml:space="preserve">
-    <value>Ready</value>
-  </data>
-  <data name="StatusBarRecordingText" xml:space="preserve">
-    <value>Recording...</value>
-  </data>
-  <data name="StopIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\stopIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ToolWindowTitle" xml:space="preserve">
-    <value>Macro Explorer</value>
+  <data name="NullDte" xml:space="preserve">
+    <value>Engine.DteObject is null.</value>
   </data>
 </root>

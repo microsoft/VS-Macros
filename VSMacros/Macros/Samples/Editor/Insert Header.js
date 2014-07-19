@@ -5,7 +5,7 @@ var doc = dte.ActiveDocument;
 // Helper function to create a header
 var MakeDivider = function () {
     doc.Selection.Insert("//-----------------------------------------------------------------------", 1);
-    doc.Selection.NewLine(1);
+    doc.Selection.NewLine();
 }
 
 var filename = doc.Name;
@@ -21,7 +21,9 @@ doc.Selection.Insert("// <copyright file=\"", 1);
 doc.Selection.Insert(filename, 1);
 doc.Selection.Insert("\" company=\"Microsoft Corporation\">\n", 1);
 doc.Selection.Insert("//     Copyright Microsoft Corporation. All rights reserved.\n", 1);
-doc.Selection.Insert("// </copyright>\n\n", 1);
+doc.Selection.Insert("// </copyright>\n", 1);
 
 // Close header
 MakeDivider();
+
+doc.Selection.NewLine();

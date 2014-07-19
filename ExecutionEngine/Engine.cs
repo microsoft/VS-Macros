@@ -13,6 +13,7 @@ using ExecutionEngine.Interfaces;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using VSMacros;
 
 namespace ExecutionEngine
 {
@@ -25,12 +26,10 @@ namespace ExecutionEngine
         public static object DteObject { get; private set; }
         public static object CommandHelper { get; private set; }
 
-        private IMoniker GetItemMoniker(int pid)
+        private IMoniker GetItemMoniker(int pid, string version)
         {
             IMoniker moniker;
-
-            // TODO: make it so it works with other versions of VS as well
-            ErrorHandler.ThrowOnFailure(NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker));
+            ErrorHandler.ThrowOnFailure(NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.{0}:{1}", version, pid), out moniker));
 
             return moniker;
         }
@@ -59,9 +58,9 @@ namespace ExecutionEngine
             return dteObject;
         }
 
-        private void InitializeDteObject(int pid)
+        private void InitializeDteObject(int pid, string version)
         {
-            IMoniker moniker = this.GetItemMoniker(pid);
+            IMoniker moniker = this.GetItemMoniker(pid, version);
             IRunningObjectTable rot = this.GetRunningObjectTable();
             Engine.DteObject = this.GetDteObject(rot, moniker);
 
@@ -86,7 +85,7 @@ namespace ExecutionEngine
             return Activator.CreateInstance(engine) as IActiveScript;
         }
 
-        public Engine(int pid)
+        public Engine(int pid, string version)
         {
             const string dte = "dte";
             const string cmdHelper = "cmdHelper";
@@ -96,7 +95,7 @@ namespace ExecutionEngine
             this.parser = new Parser(this.engine);
 
             this.InitializeCommandHelper();
-            this.InitializeDteObject(pid);
+            this.InitializeDteObject(pid, version);
             this.engine.SetScriptSite(this.scriptSite);
             this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
             this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);

@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 
 namespace VSMacros.Engines
 {
-    public sealed class Manager : IManager
+    public sealed class Manager
     {
         private static Manager instance;
         internal Executor executor;
@@ -30,7 +30,7 @@ namespace VSMacros.Engines
                 return (executor ?? (executor = new Executor()));
             }
         }
-        
+
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
 
@@ -40,7 +40,7 @@ namespace VSMacros.Engines
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
         private bool shortcutsDirty;
-       
+
         private string shortcutsFilePath;
 
         private IServiceProvider serviceProvider;
@@ -54,7 +54,7 @@ namespace VSMacros.Engines
             get { return MacrosControl.Current.SelectedNode; }
         }
 
-        private Manager(IServiceProvider provider) 
+        private Manager(IServiceProvider provider)
         {
             this.serviceProvider = provider;
             this.uiShell = (IVsUIShell)provider.GetService(typeof(SVsUIShell));
@@ -78,7 +78,7 @@ namespace VSMacros.Engines
         private static void AttachEvents(Executor executor)
         {
             executor.ResetMessages();
-            executor.Complete += (sender, eventInfo) => 
+            executor.Complete += (sender, eventInfo) =>
                 {
                     if (eventInfo.IsError)
                     {
@@ -95,7 +95,7 @@ namespace VSMacros.Engines
                 {
                     Manager.instance = new Manager(VSMacrosPackage.Current);
                 }
-                
+
                 return Manager.instance;
             }
         }
@@ -112,7 +112,7 @@ namespace VSMacros.Engines
             this.recorder.StopRecording(current);
         }
 
-        public void Playback(string path, int iterations = 1) 
+        public void Playback(string path, int iterations = 1)
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
@@ -133,11 +133,11 @@ namespace VSMacros.Engines
             {
                 int iterations;
                 if (int.TryParse(dlg.IterationsTextbox.Text, out iterations))
-            {
+                {
                     PlayMacro(path, iterations);
                 }
             }
-            }
+        }
 
         private void PlayMacro(string path, int iterations)
         {
@@ -152,30 +152,30 @@ namespace VSMacros.Engines
             if (!this.shortcutsLoaded)
             {
                 this.LoadShortcuts();
-        }
+            }
 
             // Get path to macro bound to the shortcut
             string path = Manager.Shortcuts[cmd];
 
             if (!string.IsNullOrEmpty(path))
-        {
+            {
                 this.Playback(path, 1);
             }
         }
-        
-        public void StopPlayback() 
-            {
-            }
+
+        public void StopPlayback()
+        {
+        }
 
         public void OpenFolder(string path = null)
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
-            
+
             // Open the macro directory and let the user manage the macros
             System.Threading.Tasks.Task.Run(() => System.Diagnostics.Process.Start(path));
         }
 
-        public void SaveCurrent() 
+        public void SaveCurrent()
         {
             SaveCurrentDialog dlg = new SaveCurrentDialog();
             bool? result = dlg.ShowDialog();
@@ -212,9 +212,9 @@ namespace VSMacros.Engines
                 }
                 catch (Exception e)
                 {
-                    if (ErrorHandler.IsCriticalException(e)) 
-                    { 
-                        throw; 
+                    if (ErrorHandler.IsCriticalException(e))
+                    {
+                        throw;
                     }
 
                     this.ShowMessageBox(e.Message);
@@ -222,10 +222,10 @@ namespace VSMacros.Engines
             }
         }
 
-        public void Refresh()
+        public void Refresh(bool reloadShortcut = true)
         {
             // If the shortcuts have been modified, ask to save them
-            if (this.shortcutsDirty)
+            if (this.shortcutsDirty && reloadShortcut)
             {
                 VSConstants.MessageBoxResult result = this.ShowMessageBox(Resources.ShortcutsChanged, OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL);
 
@@ -234,7 +234,7 @@ namespace VSMacros.Engines
                     case VSConstants.MessageBoxResult.IDCANCEL:
                         return;
                     case VSConstants.MessageBoxResult.IDYES:
-            this.SaveShortcuts();
+                        this.SaveShortcuts();
                         break;
                 }
             }
@@ -311,8 +311,8 @@ namespace VSMacros.Engines
             MacroFSNode macro = this.SelectedMacro;
 
             // Don't delete if macro is being edited
-            if (macro.IsEditable) 
-            { 
+            if (macro.IsEditable)
+            {
                 return;
             }
 
@@ -359,7 +359,7 @@ namespace VSMacros.Engines
                 macro.Delete();
             }
         }
-      
+
         public void NewMacro()
         {
             MacroFSNode macro = this.SelectedMacro;
@@ -397,7 +397,7 @@ namespace VSMacros.Engines
 
             string basePath = Path.Combine(macro.FullPath, "New Folder");
             string path = basePath;
-            
+
             int count = 2;
             while (Directory.Exists(path))
             {
@@ -464,7 +464,7 @@ namespace VSMacros.Engines
                 {
                     int shortcutNumber = sourceItem.Shortcut;
                     Manager.Shortcuts[shortcutNumber] = targetPath;
-                }                
+                }
             }
             catch (Exception e)
             {
@@ -478,17 +478,17 @@ namespace VSMacros.Engines
                 Manager.Instance.ShowMessageBox(e.Message);
             }
 
-                // Refresh tree
-            MacroFSNode.RefreshTree();
+            // Refresh tree
+            Manager.instance.Refresh(false);
 
-                // Restore previously selected node
-                selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-                selected.IsSelected = true;
-                selected.IsExpanded = wasExpanded;
+            // Restore previously selected node
+            selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+            selected.IsSelected = true;
+            selected.IsExpanded = wasExpanded;
             selected.Parent.IsExpanded = true;
 
-                // Notify change in shortcut
-                selected.Shortcut = MacroFSNode.ToFetch;
+            // Notify change in shortcut
+            selected.Shortcut = MacroFSNode.ToFetch;
 
             // Make editable if the macro is the current macro
             if (sourceItem.FullPath == Manager.CurrentMacroPath)
@@ -572,15 +572,15 @@ namespace VSMacros.Engines
         {
             if (this.shortcutsDirty)
             {
-            XDocument xmlShortcuts =
-                new XDocument(
-                    new XDeclaration("1.0", "utf-8", "yes"),
-                    new XElement("commands",
-                        from s in Manager.Shortcuts
-                        select new XElement("command",
-                            new XText(s))));
+                XDocument xmlShortcuts =
+                    new XDocument(
+                        new XDeclaration("1.0", "utf-8", "yes"),
+                        new XElement("commands",
+                            from s in Manager.Shortcuts
+                            select new XElement("command",
+                                new XText(s))));
 
-            xmlShortcuts.Save(this.shortcutsFilePath);
+                xmlShortcuts.Save(this.shortcutsFilePath);
 
                 this.shortcutsDirty = false;
             }

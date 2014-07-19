@@ -41,8 +41,8 @@ namespace VSMacros
         }
 
         public string CurrentMacroPath
-        { 
-            get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"); } 
+        {
+            get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"); }
         }
 
         #region Events
@@ -55,17 +55,6 @@ namespace VSMacros
             {
                 oldNode.DisableEdit();
             }
-
-            if (((MacroFSNode)this.MacroTreeView.SelectedItem).IsDirectory)
-            {
-                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, false);
-                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, false);
-            }
-            else
-            {
-                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, true);
-                VSMacrosPackage.Current.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, true);
-            }
         }
 
         private void MacroTreeView_Loaded(object sender, RoutedEventArgs e)
@@ -76,6 +65,9 @@ namespace VSMacros
 
         private void TreeViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Make sure dragging is not initiated
+            this.isDragging = false;
+
             // Make sure that the clicks has selected the item
             TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
 
@@ -143,7 +135,7 @@ namespace VSMacros
             if (e.Key == Key.Enter)
             {
                 TextBox textBox = sender as TextBox;
-                
+
                 // Update source
                 BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty).UpdateSource();
 
@@ -174,12 +166,13 @@ namespace VSMacros
 
         #region Drag & Drop
         private Point startPos;
-        private MacroFSNode targetNode;
-        private MacroFSNode draggedNode;
+        private bool isDragging;
         public static readonly DependencyProperty IsTreeViewItemDropOverProperty = DependencyProperty.RegisterAttached("IsTreeViewItemDropOver", typeof(bool), typeof(MacrosControl), new PropertyMetadata(false));
 
         private void TreeViewItem_PreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
         {
+            this.isDragging = true;
+
             // Save current position so we have a reference to compare against in TreeViewItem_MouseMove
             this.startPos = e.GetPosition(this.MacroTreeView);
         }
@@ -193,17 +186,18 @@ namespace VSMacros
                 var diff = mousePos - this.startPos;
 
                 if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance &&
+                    this.isDragging)
                 {
                     // Get the dragged MacroFSNode
-                    this.draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
+                    MacroFSNode draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
                     // The root node is not draggable
-                    if (this.draggedNode != null  && this.draggedNode != MacroFSNode.RootNode)
+                    if (draggedNode != null && draggedNode != MacroFSNode.RootNode)
                     {
                         // Initialize the drag & drop operation
-                        DragDrop.DoDragDrop(this.MacroTreeView, this.draggedNode, DragDropEffects.Move);
-                    }                   
+                        DragDrop.DoDragDrop(this.MacroTreeView, draggedNode, DragDropEffects.Move);
+                    }
                 }
             }
         }
@@ -213,13 +207,14 @@ namespace VSMacros
             Point currentPosition = e.GetPosition(this.MacroTreeView);
 
             if ((Math.Abs(currentPosition.X - this.startPos.X) > SystemParameters.MinimumHorizontalDragDistance) ||
-                (Math.Abs(currentPosition.Y - this.startPos.Y) > SystemParameters.MinimumVerticalDragDistance))
+                (Math.Abs(currentPosition.Y - this.startPos.Y) > SystemParameters.MinimumVerticalDragDistance) &&
+                this.isDragging &&
+                e.Data.GetDataPresent(typeof(MacroFSNode)))
             {
                 // Verify that this is a valid drop
                 TreeViewItem item = this.GetNearestContainer(e.OriginalSource as UIElement);
-                if (this.ValidDropTarget(this.draggedNode, item.Header as MacroFSNode))
+                if ((item.Header as MacroFSNode) != null)
                 {
-                    this.targetNode = item.Header as MacroFSNode;
                     e.Effects = DragDropEffects.Move;
                 }
                 else
@@ -235,38 +230,52 @@ namespace VSMacros
             e.Effects = DragDropEffects.None;
             e.Handled = true;
 
-            // Verify that this is a valid drop and then store the drop target
-            TreeViewItem targetItem = this.GetNearestContainer(e.OriginalSource as UIElement);
-            if (targetItem != null && this.draggedNode != null)
+            if (e.Data.GetDataPresent(typeof(MacroFSNode)) && this.isDragging)
             {
-                if (!this.targetNode.IsDirectory)
-                {
-                    this.targetNode = this.targetNode.Parent;
-                }
+                // Get dragged node
+                MacroFSNode dragged = e.Data.GetData(typeof(MacroFSNode)) as MacroFSNode;
 
-                if (!this.draggedNode.Equals(this.targetNode) && this.targetNode != null)
+                // Get target node
+                TreeViewItem targetItem = this.GetNearestContainer(e.OriginalSource as UIElement);
+                MacroFSNode target = targetItem.Header as MacroFSNode;
+
+                if (target != null && dragged != null && target != dragged)
                 {
-                    Manager.Instance.MoveItem(this.draggedNode, this.targetNode);
-                    this.targetNode = null;
-                    this.draggedNode = null;
+                    if (!target.IsDirectory)
+                    {
+                        target = target.Parent;
+                    }
+
+                    Manager.Instance.MoveItem(dragged, target);
                 }
             }
+
         }
 
         private void TreeViewItem_DragEnter(object sender, DragEventArgs e)
         {
-            // Highlight item on DragEnter
-            TreeViewItem item = sender as TreeViewItem;
-            MacrosControl.SetIsTreeViewItemDropOver(item, true);
-            e.Handled = true;
+            if (this.isDragging)
+            {
+                // Highlight item on DragEnter
+                TreeViewItem item = sender as TreeViewItem;
+
+                if ((MacroFSNode)item.Header != MacroFSNode.RootNode)
+                {
+                    MacrosControl.SetIsTreeViewItemDropOver(item, true);
+                }
+                e.Handled = true;
+            }
         }
 
         private void TreeViewItem_DragLeave(object sender, DragEventArgs e)
         {
-            // Remove highlight on DragLeave
-            TreeViewItem item = sender as TreeViewItem;
-            MacrosControl.SetIsTreeViewItemDropOver(item, false);
-            e.Handled = true;
+            if (this.isDragging)
+            {
+                // Remove highlight on DragLeave
+                TreeViewItem item = sender as TreeViewItem;
+                MacrosControl.SetIsTreeViewItemDropOver(item, false);
+                e.Handled = true;
+            }
         }
 
         public static bool GetIsTreeViewItemDropOver(TreeViewItem item)

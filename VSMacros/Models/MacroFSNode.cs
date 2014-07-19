@@ -42,7 +42,7 @@ namespace VSMacros.Models
         // Constants
         public const int ToFetch = -1;
         public const int None = 0;
-        public const string ShortcutKeys = "(CTRL+ALT+M, {0})";
+        public const string ShortcutKeys = "(ALT+Q, {0})";
 
         // Static members
         public static MacroFSNode RootNode { get; set; }

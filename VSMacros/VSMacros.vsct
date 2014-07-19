@@ -260,6 +260,11 @@
       <Parent guid="guidVSMacrosCmdSet" id="PlaybackGroup" />
     </CommandPlacement>
 
+    <!-- Playback Multiple Times command in Playback Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" priority="110">
+      <Parent guid="guidVSMacrosCmdSet" id="PlaybackGroup" />
+    </CommandPlacement>
+
     <!-- Playback Group in Current Context Menu -->
     <CommandPlacement guid="guidVSMacrosCmdSet" id="PlaybackGroup" priority="50">
       <Parent guid="guidVSMacrosCmdSet" id="CurrentContextMenu" />

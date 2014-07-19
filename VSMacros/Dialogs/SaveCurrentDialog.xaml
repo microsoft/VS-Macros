@@ -29,15 +29,15 @@
                   IsReadOnly="True" IsEditable="True"
                   DropDownClosed="ShortcutsComboBox_DropDownClosed"
                   Grid.ColumnSpan="3" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0">
-            <ComboBoxItem>CTRL+ALT+M, 1</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 2</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 3</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 4</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 5</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 6</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 7</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 8</ComboBoxItem>
-            <ComboBoxItem>CTRL+ALT+M, 9</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 1</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 2</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 3</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 4</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 5</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 6</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 7</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 8</ComboBoxItem>
+            <ComboBoxItem>ALT+Q, 9</ComboBoxItem>
             <ComboBoxItem>None</ComboBoxItem>
         </ComboBox>
 

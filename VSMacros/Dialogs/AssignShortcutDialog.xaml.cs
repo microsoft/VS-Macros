@@ -37,7 +37,7 @@ namespace VSMacros.Dialogs
             // Set the text to the previous shortcut, if it exists
             if (!string.IsNullOrEmpty(this.oldShortcut) && this.oldShortcut.Length >= 3)
             {
-                // this.oldShortcut has format "(CTRL+ALT+M,#)" -> remove the parentheses
+                // this.oldShortcut has format "(ALT+Q,#)" -> remove the parentheses
                 this.shortcutsComboBox.Text = this.oldShortcut.Substring(1, this.oldShortcut.Length - 2);
                 
                 // last char should be the command number

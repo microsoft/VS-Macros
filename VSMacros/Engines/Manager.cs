@@ -120,7 +120,7 @@ namespace VSMacros.Engines
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
-            this.PlayMacro(path, iterations: 1);
+            this.PlayMacro(path, iterations);
         }
 
         public void PlaybackMultipleTimes(string path)

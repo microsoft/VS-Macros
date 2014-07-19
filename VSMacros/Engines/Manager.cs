@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
-using Microsoft.VisualBasic.FileIO;
 using System.Runtime.InteropServices;
 
 namespace VSMacros.Engines
@@ -343,15 +342,8 @@ namespace VSMacros.Engines
                 {
                     try
                     {
-                        // Delete file from disk
-                        if (macro.IsDirectory)
-                        {
-                            FileSystem.DeleteDirectory(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                        }
-                        else
-                        {
-                            FileSystem.DeleteFile(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                        }
+                        // Delete file or directory from disk
+                        Manager.DeleteFileOrFolder(path);
 
                         // Delete file from collection
                         macro.Delete();

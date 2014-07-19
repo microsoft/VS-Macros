@@ -5,13 +5,14 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Globalization;
 using System.Runtime.InteropServices.ComTypes;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using ExecutionEngine.Interfaces;
-using System.Globalization;
+using Microsoft.Internal.VisualStudio.Shell;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 
 namespace ExecutionEngine
 {
@@ -21,56 +22,90 @@ namespace ExecutionEngine
         private Parser parser;
         private Site scriptSite;
 
-        private static object dteObject;
         public static object DteObject { get; private set; }
+        public static object CommandHelper { get; private set; }
+
+        private IMoniker GetItemMoniker(int pid)
+        {
+            IMoniker moniker;
+
+            // TODO: make it so it works with other versions of VS as well
+            ErrorHandler.ThrowOnFailure(NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker));
+
+            return moniker;
+        }
+
+        private IRunningObjectTable GetRunningObjectTable()
+        {
+            IRunningObjectTable rot;
+            int hr = NativeMethods.GetRunningObjectTable(0, out rot);
+            if (ErrorHandler.Failed(hr))
+            {
+                ErrorHandler.ThrowOnFailure(hr, null);
+            }
+
+            return rot;
+        }
+
+        private object GetDteObject(IRunningObjectTable rot, IMoniker moniker)
+        {
+            object dteObject;
+            int hr = rot.GetObject(moniker, out dteObject);
+            if (ErrorHandler.Failed(hr))
+            {
+                ErrorHandler.ThrowOnFailure(hr, null);
+            }
+
+            return dteObject;
+        }
 
         private void InitializeDteObject(int pid)
         {
-            IMoniker moniker;
-            NativeMethods.CreateItemMoniker("!", string.Format(CultureInfo.InvariantCulture, "VisualStudio.DTE.12.0:{0}", pid), out moniker);
+            IMoniker moniker = this.GetItemMoniker(pid);
+            IRunningObjectTable rot = this.GetRunningObjectTable();
+            Engine.DteObject = this.GetDteObject(rot, moniker);
 
-            IRunningObjectTable rot;
-            NativeMethods.GetRunningObjectTable(0, out rot);
+            if (Engine.DteObject == null)
+            {
+                throw new InvalidOperationException();
+            }
+        }
 
-            object dteObject;
-            rot.GetObject(moniker, out dteObject);
-            Engine.DteObject = dteObject;
+        private void InitializeCommandHelper()
+        {
+            var globalProvider = ServiceProvider.GlobalProvider;
+            Validate.IsNotNull(globalProvider, "globalProvider");
+
+            Engine.CommandHelper = new CommandHelper(globalProvider);
+            Validate.IsNotNull(Engine.CommandHelper, "Engine.CommandHelper");
         }
 
         internal IActiveScript CreateEngine()
         {
-            const string language = "jscript";
-
-            Type engine = Type.GetTypeFromProgID(language, true);
+            Type engine = Type.GetTypeFromProgID("jscript", true);
             return Activator.CreateInstance(engine) as IActiveScript;
         }
 
         public Engine(int pid)
         {
             const string dte = "dte";
+            const string cmdHelper = "cmdHelper";
+
             this.engine = this.CreateEngine();
             this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
 
-            if (Engine.dteObject == null)
-            {
-                this.InitializeDteObject(pid);
-                this.engine.SetScriptSite(this.scriptSite);
-                this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
-            }
+            this.InitializeCommandHelper();
+            this.InitializeDteObject(pid);
+            this.engine.SetScriptSite(this.scriptSite);
+            this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
+            this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);
         }
 
         public void Dispose()
         {
-            if (this.parser != null)
-            {
-                this.parser.Dispose();
-                this.parser = null;
-            }
-
             if (this.engine != null)
             {
-                Marshal.ReleaseComObject(this.engine);
                 this.engine = null;
             }
         }
@@ -84,10 +119,7 @@ namespace ExecutionEngine
 
         internal ParsedScript Parse(string unparsed)
         {
-            if (string.IsNullOrEmpty(unparsed))
-            {
-                throw new ArgumentNullException("unparsed");
-            }
+            Validate.IsNotNullAndNotEmpty(unparsed, "unparsed");
 
             this.engine.SetScriptState(ScriptState.Connected);
             this.parser.Parse(unparsed);

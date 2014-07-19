@@ -5,11 +5,13 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using ExecutionEngine.Enums;
+using ExecutionEngine.Helpers;
+using Microsoft.Internal.VisualStudio.Shell;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -17,131 +19,129 @@ namespace ExecutionEngine
     {
         private static Engine engine;
         private static ParsedScript parsedScript;
-        private static int pid;
-        private static string macroName = "currentScript";
+        internal const string MacroName = "currentScript";
 
-        // Helper methods
-        private static string[] SeparateArgs(string[] args)
+        internal static void RunMacro(string script, int iterations)
         {
-            string[] stringSeparator = new string[] {"[delimiter]"};
-            string[] separatedArgs = args[0].Split(stringSeparator, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < args.Length; i++)
-            {
-                Console.WriteLine(args[i]);
-            }
-
-            return separatedArgs;
-        }
-        private static short DetermineNumberOfIterations(string[] args)
-        {
-            short iterations;
-
-            if (args.Length < 2 || !short.TryParse(args[1], out iterations))
-            {
-                return 1;
-            }
-
-            return iterations;
-        }
-
-        private static string ExtractScript(string[] args)
-        {
-            if (args.Length > 2)
-            {
-                return args[2];
-            }
-            else
-            {
-                MessageBox.Show("You did not provide a script");
-                return string.Empty;
-            }
-        }
-
-        private static string WrapScriptInFunction(string unwrapped)
-        {
-            string wrapped = "function currentScript() {";
-            wrapped += unwrapped;
-            wrapped += "}";
-
-            return wrapped;
-        }
-
-        internal static void RunMacro(string script, int iterations = 1)
-        {
-            if (!string.IsNullOrEmpty(script))
-            {
-                Program.parsedScript = Program.engine.Parse(script);
-            }
-            else
-            {
-                throw new Exception(script);
-            }
+            Validate.IsNotNullAndNotEmpty(script, "script");
+            Program.parsedScript = Program.engine.Parse(script);
 
             for (int i = 0; i < iterations; i++)
             {
-                Program.parsedScript.CallMethod(Program.macroName);
+                if (!Program.parsedScript.CallMethod(Program.MacroName))
+                {
+                    if (Site.RuntimeError)
+                    {
+                        uint activeDocumentModification = 1;
+                        var e = Site.RuntimeException;
+                        uint modifiedLineNumber = e.Line - activeDocumentModification;
+
+                        byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
+                        string message = Encoding.Unicode.GetString(scriptErrorMessage);
+                        Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
+                    }
+                    else
+                    {
+                        var e = Site.InternalVSException;
+                        byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
+                    }
+                    Site.ResetError();
+                    break;
+                }
             }
         }
 
-        internal static void RunFromExtension(string[] args)
+        private static void HandleInput()
         {
-            if (int.TryParse(args[0], out Program.pid))
+            int typeOfMessage = Client.GetInt(Client.ClientStream);
+
+            // I know a switch statement seems useless but just preparing for the possibility of other packets.
+            switch ((Packet)typeOfMessage)
             {
-                Program.engine = new Engine(Program.pid);
-
-                short iterations = DetermineNumberOfIterations(args);
-                string unwrappedScript = ExtractScript(args);
-                string wrappedScript = WrapScriptInFunction(unwrappedScript);
-
-                RunMacro(wrappedScript, iterations);
+                case Packet.FilePath:
+                    HandleFilePath();
+                    break;
             }
-            else
+        }
+
+        private static void HandleFilePath()
+        {
+            int iterations = Client.GetInt(Client.ClientStream);
+            string message = Client.GetFilePath(Client.ClientStream);
+            string unwrappedScript = InputParser.ExtractScript(message);
+            string wrappedScript = InputParser.WrapScript(unwrappedScript);
+            Program.RunMacro(wrappedScript, iterations);
+        }
+
+        internal static Thread CreateReadingThread(int pid)
+        {
+            Thread readThread = new Thread(() =>
             {
-                MessageBox.Show("You did not provide any arguments to the Execution Engine");
-                throw new ArgumentException(args[0]);
-            }
+                try
+                {
+                    Program.engine = new Engine(pid);
+                    while (true)
+                    {
+                        HandleInput();
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (Client.ClientStream.IsConnected)
+                    {
+                        byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        Client.SendMessageToServer(Client.ClientStream, criticalError);
+                    }
+                    else
+                    {
+#if DEBUG
+                        MessageBox.Show("Execution engine's pipe is not connected.");
+#endif
+                    }
+                }
+                finally
+                {
+                    if (Client.ClientStream.IsConnected)
+                    {
+                        Client.ShutDownServer(Client.ClientStream);
+                        Client.ClientStream.Close();
+                    }
+                    else
+                    {
+#if DEBUG
+                        MessageBox.Show("Execution engine's pipe is not connected.");
+#endif
+                    }
+                }
+            });
+
+            readThread.SetApartmentState(ApartmentState.STA);
+            return readThread;
         }
 
-        internal static void RunAsStartupProject(int tempPid)
+        private static void RunFromPipe(string[] separatedArgs)
         {
-            Program.pid = tempPid;
-            Program.engine = new Engine(Program.pid);
-            string script = CreateScriptStub();
-            RunMacro(script, 2);
-        }
+            Guid guid = InputParser.GetGuid(separatedArgs[0]);
+            Client.InitializePipeClientStream(guid);
 
-        private static string CreateScriptStub()
-        {
-            return "function currentScript() { dte.ExecuteCommand('File.NewFile'); } ";
+            int pid = InputParser.GetPid(separatedArgs[1]);
+            Thread readThread = CreateReadingThread(pid);
+            readThread.Start();
         }
 
         internal static void Main(string[] args)
         {
-            Console.WriteLine("Hello there!  Welcome to our macro extension!");
-
-            if (args.Length > 0)
+            try
             {
-                string[] separatedArgs = SeparateArgs(args);
-                RunFromExtension(separatedArgs);
+                string[] separatedArgs = InputParser.SeparateArgs(args);
+                RunFromPipe(separatedArgs);
             }
-            else
+            catch (Exception e)
             {
-                var path = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\dteTest.js";
-                var reader = new StreamReader(path);
-                short pidOfCurrentDevenv = 4300;
-                RunAsStartupProject(pidOfCurrentDevenv);
+                byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                Client.SendMessageToServer(Client.ClientStream, criticalError);
             }
-        }
-
-        private static string GetPathFromArgs(string[] args)
-        {
-            if (args[2] == null)
-            {
-                MessageBox.Show("A path to the macro file was not provided");
-                return string.Empty;
-            }
-
-            return args[2];
         }
     }
 }

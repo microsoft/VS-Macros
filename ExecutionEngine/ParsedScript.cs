@@ -5,46 +5,58 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
+using VSMacros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
     internal sealed class ParsedScript
     {
         private readonly Engine engine;
-        private object dispatch;
+        private readonly object dispatch;
 
         internal ParsedScript(Engine engine, IntPtr dispatch)
         {
             this.engine = engine;
             this.dispatch = Marshal.GetObjectForIUnknown(dispatch);
-        }
 
-        public object CallMethod(string methodName, params object[] arguments)
-        {
             if (this.dispatch == null)
             {
-                throw new InvalidOperationException();
-            }
+                // TODO: Put these in resources
+                // TODO: Check if these messages are correct.
+                string message = "The dispatch object was null.";
+                string source = "Execution engine";
+                string stackTrace = "ParsedScript";
+                string targetSite = "ParsedScript??";
 
-            if (methodName == null)
-            {
-                throw new ArgumentNullException("methodName");
+                byte[] criticalErrorMessage = Client.PackageCriticalError(message, source, stackTrace, targetSite);
+                Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
             }
+        }
 
+        public bool CallMethod(string methodName, params object[] arguments)
+        {
             try
             {
-                return this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+
+                byte[] successMessage = Client.PackageSuccessMessage();
+                string message = Encoding.Unicode.GetString(successMessage);
+                Client.SendMessageToServer(Client.ClientStream, successMessage);
+
+                return true;
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                if (!Site.RuntimeError)
+                {
+                    Site.InternalError = true;
+                    Site.InternalVSException = new InternalVSException(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                }
+                return false;
             }
         }
     }

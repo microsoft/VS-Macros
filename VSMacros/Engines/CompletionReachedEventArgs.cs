@@ -8,8 +8,15 @@ using System.Text;
 
 namespace VSMacros.Engines
 {
-    class CompletionReachedEventArgs : EventArgs
+    public class CompletionReachedEventArgs : EventArgs
     {
-        public bool Success { get; set; }
+        public CompletionReachedEventArgs(bool success, string errorMessage)
+        {
+            this.IsError = success;
+            this.ErrorMessage = errorMessage;
+        }
+
+        public bool IsError { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace ExecutionEngine.Interfaces
             [MarshalAs(UnmanagedType.LPWStr)]string subItemName, 
             [MarshalAs(UnmanagedType.LPWStr)]string eventName, 
             [MarshalAs(UnmanagedType.LPWStr)]string delimiter, 
-            IntPtr sourceContextCookie, 
+            uint sourceContextCookie, 
             uint startingLineNumber, 
             ScriptText flags, 
             out string name, 

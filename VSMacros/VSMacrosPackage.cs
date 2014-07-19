@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
+using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Model;
 using Task = System.Threading.Tasks.Task;
@@ -203,7 +204,7 @@ namespace VSMacros
 
             // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 1);
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
-            this.UpdateButtonsForPlayback(true);
+            //this.UpdateButtonsForPlayback(true);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
@@ -212,7 +213,7 @@ namespace VSMacros
 
             // this.ChangeMenuCommands(Resources.StatusBarPlayingText, 1, this.StopIcon, 2);
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
-            this.UpdateButtonsForPlaybackMultipleTimes(true);
+            //this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)
@@ -421,6 +422,11 @@ namespace VSMacros
 
             // Close manager
             Manager.Instance.Close();
+
+            if (Executor.Job != null)
+            {
+                Executor.Job.Close();
+            }
 
             return (int)VSConstants.S_OK;
         }

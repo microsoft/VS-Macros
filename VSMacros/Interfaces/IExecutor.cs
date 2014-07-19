@@ -1,5 +1,10 @@
-﻿using System;
-using System.IO;
+﻿//-----------------------------------------------------------------------
+// <copyright file="IExecutor.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using VSMacros.Engines;
 
 namespace VSMacros.Interfaces
@@ -16,21 +21,14 @@ namespace VSMacros.Interfaces
 
         /// <summary>
         /// Initializes the engine and then runs the macro script.
-        /// This method will be removed after IPC is implemented.
         /// </summary>
         void InitializeEngine();
 
         /// <summary>
         /// Will run the macro file.
-        /// <param name="macro">Name of macro.</param>
+        /// <param name="path">Path to macro.</param>
         /// <param name="iterations">Times to be executed.</param>
         /// </summary>
-        void StartExecution(StreamReader reader, int iterations);
-
-        /// <summary>
-        /// Will stop the currently executing macro file.
-        /// We are considering removing this.
-        /// </summary>
-        void StopExecution();
+        void RunEngine(int iterations, string path);
     }
 }

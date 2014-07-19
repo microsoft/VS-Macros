@@ -20,12 +20,12 @@ namespace ExecutionEngine.Interfaces
         void GetScriptState(out ScriptState scriptState);
         void Close();
         void AddNamedItem([MarshalAs(UnmanagedType.LPWStr)]string name, Enums.ScriptItem flags);
-        void AddTypeLib(Guid typeLib, uint major, uint minor, uint flags);
+        void AddTypeLib(ref Guid typeLib, uint major, uint minor, uint flags);
         void GetScriptDispatch([MarshalAs(UnmanagedType.LPWStr)]string itemName, out IntPtr dispatch);
         void GetCurrentScriptThreadID(out uint thread);
         void GetScriptThreadID(uint win32ThreadId, out uint thread);
         void GetScriptThreadState(uint thread, out ScriptThreadState state);
-        void InterruptScriptThread(uint thread, out System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo, uint flags);
+        void InterruptScriptThread(uint thread, ref System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo, uint flags);
         void Clone(out IActiveScript script);
     }
 }

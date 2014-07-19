@@ -217,6 +217,12 @@
       <Button guid="guidVSMacrosCmdSet" id="cmdidCommand8" priority="07" type="Button"><Strings><ButtonText>command8</ButtonText></Strings></Button>
       <Button guid="guidVSMacrosCmdSet" id="cmdidCommand9" priority="08" type="Button"><Strings><ButtonText>command9</ButtonText></Strings></Button>
 
+      <Button guid="guidStd2kCmdSet" id="TYPECHAR" priority="0x0000" type="Button">
+        <Strings>
+          <ButtonText>TYPECHAR</ButtonText>
+        </Strings>
+      </Button>
+
     </Buttons>
 
     <!-- BITMAPS -->
@@ -225,6 +231,10 @@
     </Bitmaps>
  
   </Commands>
+
+  <UsedCommands>
+    <UsedCommand guid="guidStd2kCmdSet" id="TYPECHAR"/>
+  </UsedCommands>
 
   <!-- COMMAND PLACEMENTS -->
   <CommandPlacements>
@@ -337,6 +347,11 @@
   </KeyBindings>
   
   <Symbols>
+    
+    <GuidSymbol name="guidStd2kCmdSet" value="{1496a755-94de-11d0-8c3f-00c04fc2aae2}">
+      <IDSymbol name="TYPECHAR" value="0x1"/>
+    </GuidSymbol>
+
     <!-- Package guid. -->
     <GuidSymbol name="guidVSMacrosPkg" value="{17f25bfa-a812-4b6a-a07e-7f73aa975f8b}" />
 

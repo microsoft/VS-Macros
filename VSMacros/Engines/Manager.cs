@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -22,6 +23,14 @@ namespace VSMacros.Engines
     public sealed class Manager : IManager
     {
         private static Manager instance;
+        internal Executor executor;
+        private Executor Executor
+        {
+            get
+            {
+                return (executor ?? (executor = new Executor()));
+            }
+        }
         
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
@@ -67,6 +76,18 @@ namespace VSMacros.Engines
             this.shortcutsDirty = false;
         }
 
+        private static void AttachEvents(Executor executor)
+        {
+            executor.ResetMessages();
+            executor.Complete += (sender, eventInfo) => 
+                {
+                    if (eventInfo.IsError)
+                    {
+                        Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
+                    }
+                };
+        }
+
         public static Manager Instance
         {
             get
@@ -96,48 +117,63 @@ namespace VSMacros.Engines
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
-            Executor executor = new Executor();
-            executor.StartExecution(new StreamReader(path), iterations);
+            PlayMacro(path, iterations: 1);
         }
 
         public void PlaybackMultipleTimes(string path)
         {
+            if (path == string.Empty)
+            {
+                path = this.SelectedMacro.FullPath;
+            }
+
             PlaybackMultipleTimesDialog dlg = new PlaybackMultipleTimesDialog();
             bool? result = dlg.ShowDialog();
 
-            if (result == true)
+            if (result.HasValue && result.Value)
             {
-                int iterations = dlg.Iterations;
+                int iterations;
+                if (int.TryParse(dlg.IterationsTextbox.Text, out iterations))
+            {
+                    PlayMacro(path, iterations);
+                }
             }
+            }
+
+        private void PlayMacro(string path, int iterations)
+        {
+            // TODO: Is this the right place to attach the event??
+            AttachEvents(this.Executor);
+            this.Executor.RunEngine(iterations, path);
         }
-        
+
         public void PlaybackCommand(int cmd)
         {
             // Load shortcuts if not already loaded
             if (!this.shortcutsLoaded)
             {
                 this.LoadShortcuts();
-            }
+        }
 
             // Get path to macro bound to the shortcut
             string path = Manager.Shortcuts[cmd];
 
             if (!string.IsNullOrEmpty(path))
-            {
+        {
                 this.Playback(path, 1);
             }
         }
         
         public void StopPlayback() 
-        {
-        }
+            {
+            }
 
         public void OpenFolder(string path = null)
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
             
             // Open the macro directory and let the user manage the macros
-            System.Threading.Tasks.Task.Run(() => { System.Diagnostics.Process.Start(path); });
+            System.Threading.Tasks.Task.Run(() => System.Diagnostics.Process.Start(path));
         }
 
         public void SaveCurrent() 
@@ -199,7 +235,7 @@ namespace VSMacros.Engines
                     case VSConstants.MessageBoxResult.IDCANCEL:
                         return;
                     case VSConstants.MessageBoxResult.IDYES:
-                        this.SaveShortcuts();
+            this.SaveShortcuts();
                         break;
                 }
             }
@@ -331,7 +367,7 @@ namespace VSMacros.Engines
                 macro.Delete();
             }
         }
-
+      
         public void NewMacro()
         {
             MacroFSNode macro = this.SelectedMacro;
@@ -436,7 +472,7 @@ namespace VSMacros.Engines
                 {
                     int shortcutNumber = sourceItem.Shortcut;
                     Manager.Shortcuts[shortcutNumber] = targetPath;
-                }
+                }                
             }
             catch (Exception e)
             {
@@ -450,17 +486,17 @@ namespace VSMacros.Engines
                 Manager.Instance.ShowMessageBox(e.Message);
             }
 
-            // Refresh tree
+                // Refresh tree
             MacroFSNode.RefreshTree();
 
-            // Restore previously selected node
-            selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-            selected.IsSelected = true;
-            selected.IsExpanded = wasExpanded;
+                // Restore previously selected node
+                selected = MacroFSNode.FindNodeFromFullPath(targetPath);
+                selected.IsSelected = true;
+                selected.IsExpanded = wasExpanded;
             selected.Parent.IsExpanded = true;
 
-            // Notify change in shortcut
-            selected.Shortcut = MacroFSNode.ToFetch;
+                // Notify change in shortcut
+                selected.Shortcut = MacroFSNode.ToFetch;
 
             // Make editable if the macro is the current macro
             if (sourceItem.FullPath == Manager.CurrentMacroPath)
@@ -544,7 +580,7 @@ namespace VSMacros.Engines
         {
             if (this.shortcutsDirty)
             {
-                XDocument xmlShortcuts =
+            XDocument xmlShortcuts =
                 new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     new XElement("commands",
@@ -552,7 +588,7 @@ namespace VSMacros.Engines
                         select new XElement("command",
                             new XText(s))));
 
-                xmlShortcuts.Save(this.shortcutsFilePath);
+            xmlShortcuts.Save(this.shortcutsFilePath);
 
                 this.shortcutsDirty = false;
             }

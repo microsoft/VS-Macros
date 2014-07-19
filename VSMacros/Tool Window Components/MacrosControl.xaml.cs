@@ -158,8 +158,11 @@ namespace VSMacros
 
             if (!node.IsDirectory)
             {
-                VSMacros.Engines.Manager.Instance.Playback(this.SelectedNode.FullPath, 1);
+                // TODO remove this
+                // VSMacros.Engines.Manager.Instance.Playback(string.Empty);
             }
+
+            e.Handled = true;
         }
 
         private void TextBox_Loaded(object sender, RoutedEventArgs e)
@@ -199,7 +202,7 @@ namespace VSMacros
                     this.draggedNode = this.MacroTreeView.SelectedItem as MacroFSNode;
 
                     // The root node is not draggable
-                    if (this.draggedNode != MacroFSNode.RootNode && this.draggedNode != null)
+                    if (this.draggedNode != null  && this.draggedNode != MacroFSNode.RootNode)
                     {
                         // Initialize the drag & drop operation
                         DragDrop.DoDragDrop(this.MacroTreeView, this.draggedNode, DragDropEffects.Move);

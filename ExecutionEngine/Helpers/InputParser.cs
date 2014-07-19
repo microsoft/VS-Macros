@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Internal.VisualStudio.Shell;
+using VisualStudio.Macros.ExecutionEngine;
 
 namespace ExecutionEngine.Helpers
 {
@@ -51,25 +52,6 @@ namespace ExecutionEngine.Helpers
             var guid = Guid.Parse(unparsedGuid);
             Validate.IsNotNullAndNotEmpty(unparsedGuid, "unparsedGuid");
             return guid;
-        }
-
-        internal static string DecodePath(string encodedPath)
-        {
-            return encodedPath.Replace("%20", " ");
-        }
-
-        internal static short GetNumberOfIterations(string iter)
-        {
-            short iterations;
-
-            Validate.IsNotNullAndNotEmpty(iter, "iter");
-
-            if (!short.TryParse(iter, out iterations))
-            {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Resources.InvalidIterationsArgument, iter, "iter"));
-            }
-
-            return iterations;
         }
 
         internal static string ExtractScript(string path)

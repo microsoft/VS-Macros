@@ -41,11 +41,6 @@ namespace ExecutionEngine
             try
             {
                 this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
-
-                byte[] successMessage = Client.PackageSuccessMessage();
-                string message = Encoding.Unicode.GetString(successMessage);
-                Client.SendMessageToServer(Client.ClientStream, successMessage);
-
                 return true;
             }
             catch (Exception e)

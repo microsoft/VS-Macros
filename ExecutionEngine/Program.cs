@@ -50,6 +50,9 @@ namespace ExecutionEngine
                     break;
                 }
             }
+
+            byte[] successMessage = Client.PackageSuccessMessage();
+            Client.SendMessageToServer(Client.ClientStream, successMessage);
         }
 
         private static void HandleInput()

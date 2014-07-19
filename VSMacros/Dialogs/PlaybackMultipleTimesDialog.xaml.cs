@@ -66,7 +66,9 @@ namespace VSMacros.Dialogs
             // Preventing the input event if the input is invalid will only allow the user to enter numeric values
             e.Handled = !this.IsValid(e.Text);
 
-            if (e.Handled || this.ToInt(this.IterationsTextbox.Text + e.Text) == 1)
+            int number = this.ToInt(this.IterationsTextbox.Text + e.Text);
+
+            if (e.Handled ||  number != 1)
             {
                 this.TimesLabel.Content = VSMacros.Resources.DialogTimesPlural;
             }

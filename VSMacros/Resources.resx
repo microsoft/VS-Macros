@@ -197,7 +197,7 @@
     <value>Shortcuts file was not found.</value>
   </data>
   <data name="StatusBarPlayingText" xml:space="preserve">
-    <value>Executing macro</value>
+    <value>Executing...</value>
   </data>
   <data name="StatusBarReadyText" xml:space="preserve">
     <value>Ready</value>

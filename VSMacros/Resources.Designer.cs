@@ -299,7 +299,7 @@ namespace VSMacros {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Executing macro.
+        ///   Looks up a localized string similar to Executing....
         /// </summary>
         public static string StatusBarPlayingText {
             get {

@@ -54,8 +54,9 @@ namespace VSMacros.Pipes
 
         public static void WaitForMessage()
         {
-            bool shouldKeepRunning = true;
+            Server.ServerStream.WaitForConnection();
 
+            bool shouldKeepRunning = true;
             while (shouldKeepRunning)
             {
                 int typeOfMessage = Server.GetIntFromStream(Server.ServerStream);
@@ -63,9 +64,9 @@ namespace VSMacros.Pipes
                 switch ((Packet)typeOfMessage)
                 {
                     case Packet.Close:
-                        #if DEBUG
+#if DEBUG
                         Manager.Instance.ShowMessageBox("Received a close packet in Server.");
-                        #endif
+#endif
                         Executor.IsEngineInitialized = false;
                         shouldKeepRunning = false;
                         break;
@@ -77,33 +78,43 @@ namespace VSMacros.Pipes
 
                     case Packet.ScriptError:
                         executor = Manager.Instance.executor;
-                        string error = Server.HandlePacketScriptError(Server.ServerStream);
+                        string error = Server.GetScriptError(Server.ServerStream);
                         executor.SendCompletionMessage(isError: true, errorMessage: error);
                         break;
 
                     case Packet.CriticalError:
-                        error = Server.HandlePacketCriticalError(Server.ServerStream);
-                        Debug.WriteLine(error);
-                        // TODO: I'm not quite sure what to do here.  Shut down the engine?
+                        error = Server.GetCriticalError(Server.ServerStream);
+#if DEBUG
+                        Manager.Instance.ShowMessageBox(error);
+#endif
+                        Server.ServerStream.Close();
+
+                        if (Executor.Job != null)
+                        {
+                            Executor.Job.Close();
+                        }
+
+                        Executor.IsEngineInitialized = false;
+                        shouldKeepRunning = false;
                         break;
                 }
             }
         }
 
-        private static string HandlePacketScriptError(NamedPipeServerStream serverStream)
+        private static string GetScriptError(NamedPipeServerStream serverStream)
         {
             int lineNumber = GetIntFromStream(serverStream);
-            int characterPos = GetIntFromStream(serverStream);
+            int column = GetIntFromStream(serverStream);
             int sizeOfSource = GetIntFromStream(serverStream);
             string source = GetMessageFromStream(serverStream, sizeOfSource);
             int sizeOfDescription = GetIntFromStream(serverStream);
             string description = GetMessageFromStream(serverStream, sizeOfDescription);
 
-            var exceptionMessage = string.Format("{0}: {1} at line {2}, character position {3}.", source, description, lineNumber, characterPos);
+            var exceptionMessage = string.Format("{0}: {1} at line {2}, column {3}.", source, description, lineNumber, column);
             return exceptionMessage;
         }
 
-        private static string HandlePacketCriticalError(NamedPipeServerStream serverStream)
+        private static string GetCriticalError(NamedPipeServerStream serverStream)
         {
             int messageSize = GetIntFromStream(serverStream);
             string message = GetMessageFromStream(serverStream, messageSize);
@@ -114,7 +125,7 @@ namespace VSMacros.Pipes
             int targetSiteSize = GetIntFromStream(serverStream);
             string targetSite = GetMessageFromStream(serverStream, targetSiteSize);
 
-            var exceptionMessage = string.Format("{0}, {1}, {2}, {3}", message, source, stackTrace, targetSite);
+            var exceptionMessage = string.Format("{0}: {1}", source, message, Environment.NewLine);
             return exceptionMessage;
         }
 
@@ -154,13 +165,17 @@ namespace VSMacros.Pipes
 
         public static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)
         {
-            serverStream.Write(packet, 0, packet.Length);
-        }
-
-        internal static void SendCloseRequest()
-        {
-            byte[] closePacket = PackageCloseMessage();
-            SendMessageToClient(Server.ServerStream, closePacket);
+            try
+            {
+                serverStream.Write(packet, 0, packet.Length);
+            }
+            catch (OperationCanceledException e)
+            {
+#if DEBUG
+                Manager.Instance.ShowMessageBox(string.Format("The server thread was terminated.\n\n{0}: {1}\n{2}{3}", e.Source, e.Message, e.TargetSite.ToString(), e.StackTrace));
+#endif
+            }
+            
         }
 
         internal static void SendFilePath(int iterations, string path)

@@ -17,16 +17,6 @@ namespace ExecutionEngine.Helpers
     {
         private static string[] stringSeparator = new [] { "[delimiter]" };
 
-        internal static bool IsRequestToClose(string s)
-        {
-            return s[0] == '@';
-        }
-
-        internal static bool IsDebuggerStopped(string message)
-        {
-            return string.IsNullOrEmpty(message);
-        }
-
         internal static string[] SeparateArgs(string[] args)
         {
             string[] separatedArgs = args[0].Split(InputParser.stringSeparator, StringSplitOptions.RemoveEmptyEntries);
@@ -62,9 +52,7 @@ namespace ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
-            // TODO review robustness of such a solution
-            // TODO: Line number in parser must be increased by one now.
-            string activateActiveDocument = "dte.ActiveDocument.Activate();";
+            string activateActiveDocument = unwrapped.Contains("ExecuteCommand(\"Edit.") ? "dte.ActiveDocument.Activate()" : string.Empty;
             return string.Format("function {0}() {{{1}{3}{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped, activateActiveDocument);
         }
     }

@@ -255,7 +255,6 @@ namespace VSMacros
         {
             this.statusBar.Clear();
             this.statusBar.SetText(status);
-            this.statusBar.Animation(animation, ref this.iconRecord);
         }
 
         internal List<CommandBarButton> ImageButtons
@@ -346,6 +345,11 @@ namespace VSMacros
                 cmdUpdated = true;
             }
             return cmdUpdated;
+        }
+
+        public void ClearStatusBar()
+        {
+            this.StatusBarChange(Resources.StatusBarReadyText, 0);
         }
 
         private BitmapSource StartIcon

@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
+using VisualStudio.Macros.ExecutionEngine;
 using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
@@ -19,8 +20,8 @@ namespace ExecutionEngine
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
         internal static bool RuntimeError;
         internal static RuntimeException RuntimeException;
-        internal static bool CriticalError;
-        internal static Exception VSException;
+        internal static bool InternalError;
+        internal static InternalVSException InternalVSException;
 
         public void GetLCID(out int lcid)
         {
@@ -35,17 +36,25 @@ namespace ExecutionEngine
             }
 
             if (name.Equals("dte"))
-            {   
+            {
                 if (Engine.DteObject != null)
                 {
                     item = Marshal.GetIUnknownForObject(Engine.DteObject);
                 }
                 else
                 {
-                    Debug.WriteLine("Engine.DteObject is null");
+                    string test = Resources.NullDte;
+                    string message = "Engine.DteObject is null";
+                    string source = "VSMacros.ExecutionEngine";
+                    string stackTrace = string.Empty;
+                    string targetSite = "Site.GetItemInfo";
+                    Site.InternalVSException = new InternalVSException(message, source, stackTrace, targetSite);
+                    Site.InternalError = true;
+                    item = IntPtr.Zero;
 
-                    // TODO: Is this the right thing to do?
-                    throw new Exception();
+#if DEBUG
+                    Debug.WriteLine("Engine.DteObject is null.");
+#endif
                 }
             }
             else if (name.Equals("cmdHelper")) 
@@ -56,10 +65,17 @@ namespace ExecutionEngine
                 }
                 else 
                 {
-                    Debug.WriteLine("Engine.CommandHelper is null");
+                    string message = "Engine.CommandHelper is null";
+                    string source = "VSMacros.ExecutionEngine";
+                    string stackTrace = string.Empty;
+                    string targetSite = "Site.GetItemInfo";
+                    Site.InternalVSException = new InternalVSException(message, source, stackTrace, targetSite);
+                    Site.InternalError = true;
+                    item = IntPtr.Zero;
 
-                    // TODO: Is this the right thing to do?
-                    throw new Exception();
+#if DEBUG
+                    Debug.WriteLine("Engine.CommandHelper is null.");
+#endif
                 }
             }
             else
@@ -70,18 +86,15 @@ namespace ExecutionEngine
 
         public void GetDocVersionString(out string version)
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.GetDocVersionString");
             version = null;
         }
 
         public void OnScriptTerminate(object result, System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo)
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.OnScriptTerminate");
         }
 
         public void OnStateChange(Enums.ScriptState scriptState)
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.OnStateChange");
         }
 
         public static void ResetError()
@@ -89,8 +102,8 @@ namespace ExecutionEngine
             Site.RuntimeError = false;
             Site.RuntimeException = null;
 
-            Site.CriticalError = false;
-            Site.VSException = null;
+            Site.InternalError = false;
+            Site.InternalVSException = null;
         }
 
         public void OnScriptError(IActiveScriptError scriptError)
@@ -112,12 +125,10 @@ namespace ExecutionEngine
 
         public void OnEnterScript()
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.OnEnterScript");
         }
 
         public void OnLeaveScript()
         {
-            // Debug.WriteLine("Site:IActiveScriptSite.OnLeaveScript");
         }
     }
 }

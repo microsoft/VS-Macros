@@ -5,11 +5,10 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
+using VSMacros.ExecutionEngine;
 using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
@@ -54,8 +53,8 @@ namespace ExecutionEngine
             {
                 if (!Site.RuntimeError)
                 {
-                    Site.CriticalError = true;
-                    Site.VSException = new Exception(e.Message, e);
+                    Site.InternalError = true;
+                    Site.InternalVSException = new InternalVSException(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
                 }
                 return false;
             }

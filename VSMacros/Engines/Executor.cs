@@ -7,6 +7,8 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Internal.VisualStudio.Shell;
@@ -152,8 +154,7 @@ namespace VSMacros.Engines
             Server.serverWait.Start();
 
             Executor.executionEngine = new Process();
-            string processName = @"C:\Users\t-grawa\Source\Repos\Macro Extension\ExecutionEngine\bin\Debug\VisualStudio.Macros.ExecutionEngine.exe";
-            //string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
+            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.UseShellExecute = false;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid);

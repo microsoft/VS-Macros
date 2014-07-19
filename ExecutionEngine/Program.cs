@@ -20,7 +20,6 @@ namespace ExecutionEngine
         private static Engine engine;
         private static ParsedScript parsedScript;
         internal const string MacroName = "currentScript";
-        public static bool NeedsActiveDocument;
 
         internal static void RunMacro(string script, int iterations)
         {

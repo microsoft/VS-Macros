@@ -135,11 +135,7 @@ namespace VSMacros.Engines
 
             if (result.HasValue && result.Value)
             {
-                int iterations;
-                if (int.TryParse(dlg.IterationsTextbox.Text, out iterations))
-                {
-                    PlayMacro(path, iterations);
-                }
+                PlayMacro(path, dlg.Iterations);
             }
         }
 

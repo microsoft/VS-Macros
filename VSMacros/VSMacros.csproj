@@ -44,6 +44,10 @@
     </CopyVsixExtensionLocation>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EnvDTE1">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\EnvDTE.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.CoreUtility" />
     <Reference Include="Microsoft.VisualStudio.Editor" />
@@ -83,15 +87,6 @@
     <Reference Include="System.Xaml" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="EnvDTE">
-      <Guid>{80CC9F66-E7D8-4DDD-85B6-D9E6CD0E93E2}</Guid>
-      <VersionMajor>8</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="EnvDTE100">
       <Guid>{26AD1324-4B7C-44BC-84F8-B86AED45729F}</Guid>
       <VersionMajor>10</VersionMajor>
@@ -151,9 +146,7 @@
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
-    <Compile Include="Helpers\ILogger.cs" />
     <Compile Include="Helpers\JobHandle.cs" />
-    <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Interfaces\IManager.cs" />

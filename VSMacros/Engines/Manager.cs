@@ -84,6 +84,10 @@ namespace VSMacros.Engines
                     {
                         Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
                     }
+                    else
+                    {
+                        VSMacrosPackage.Current.ClearStatusBar();
+                    }
                 };
         }
 

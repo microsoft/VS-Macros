@@ -35,7 +35,7 @@ namespace VSMacros.Engines
         private const string ShortcutsFileName = "Shortcuts.xml";
 
         public static string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
-        private static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
+        public static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
 
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;

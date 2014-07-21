@@ -41,6 +41,9 @@ namespace VSMacros.Engines
         {
             using (StreamWriter fs = new StreamWriter(path))
             {
+                // Add reference to DTE for Intellisense
+                fs.WriteLine(string.Format("/// <reference path=\"" + Manager.dteIntellisensePath + "\" />{0}", Environment.NewLine));
+
                 for (int i = 0; i < this.dataModel.Actions.Count; i++)
                 {
                     RecordedActionBase action = this.dataModel.Actions[i];

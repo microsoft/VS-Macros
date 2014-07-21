@@ -14,6 +14,7 @@ using System.Threading;
 using System.Windows;
 using VSMacros.Engines;
 using VSMacros.Enums;
+using VSMacros.Pipes.Packets;
 
 namespace VSMacros.Pipes
 {
@@ -152,10 +153,6 @@ namespace VSMacros.Pipes
 
         private static byte[] PackageFilePathMessage(int it, string line)
         {
-            //MemoryStream stream = new MemoryStream();
-            //BinaryFormatter formatter = new BinaryFormatter();
-            //formatter.Serialize(Server.ServerStream, (int)Packet.Close);
-
 
             byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
             byte[] serializedIterations = BitConverter.GetBytes((int)it);
@@ -202,8 +199,17 @@ namespace VSMacros.Pipes
 
         internal static void SendFilePath(int iterations, string path)
         {
-            byte[] filePathPacket = PackageFilePathMessage(iterations, path);
-            SendMessageToClient(Server.ServerStream, filePathPacket);
+            var type = PacketType.FilePath;
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(Server.ServerStream, type);
+
+            var filePath = new FilePath();
+            filePath.Iterations = iterations;
+            filePath.Path = path;
+            formatter.Serialize(Server.ServerStream, filePath);
+
+            //byte[] filePathPacket = PackageFilePathMessage(iterations, path);
+            //SendMessageToClient(Server.ServerStream, filePathPacket);
         }
     }
 

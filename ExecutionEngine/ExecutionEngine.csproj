@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F73F9E75-10E3-44FC-9A13-7E69A689AD0B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VisualStudio.Macros.ExecutionEngine</RootNamespace>
     <AssemblyName>VisualStudio.Macros.ExecutionEngine</AssemblyName>
@@ -66,6 +66,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\VSMacros\Pipes\Packets\CriticalError.cs">
+      <Link>Pipes\Packets\CriticalError.cs</Link>
+    </Compile>
+    <Compile Include="..\VSMacros\Pipes\Packets\FilePath.cs">
+      <Link>Pipes\Packets\FilePath.cs</Link>
+    </Compile>
+    <Compile Include="..\VSMacros\Pipes\Packets\PacketType.cs">
+      <Link>Pipes\Packets\PacketType.cs</Link>
+    </Compile>
+    <Compile Include="..\VSMacros\Pipes\Packets\ScriptError.cs">
+      <Link>Pipes\Packets\ScriptError.cs</Link>
+    </Compile>
     <Compile Include="ActiveScript Interfaces\IActiveScript.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptError.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptParse32.cs" />

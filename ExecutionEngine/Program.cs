@@ -14,6 +14,7 @@ using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
 using VSMacros.ExecutionEngine.Pipes;
+using VSMacros.Pipes.Packets;
 
 namespace ExecutionEngine
 {
@@ -60,8 +61,8 @@ namespace ExecutionEngine
 
         private static void HandleInput()
         {
-            //BinaryFormatter formatter = new BinaryFormatter();
-            //var stream = new MemoryStream();
+            BinaryFormatter formatter = new BinaryFormatter();
+            var type = (PacketType)formatter.Deserialize(Client.ClientStream);
 
             int typeOfMessage = Client.GetInt(Client.ClientStream);
 

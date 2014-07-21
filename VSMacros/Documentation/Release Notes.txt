@@ -2,13 +2,6 @@
 Date: 7/18/2014
 Version: 1.0
 
-What's New:
-	• More sophisticated command parsing
-	• Engine closes when VS closes
-	• More graceful error handling
-	• Ability to playback a macro multiple times
-	• Various bug fixes and improvements
-
 Installation Instructions:
 	• Install extension
 	• Restart VS
@@ -28,8 +21,7 @@ Suggested Testing:
 	• End to end scenario: http://cockneycoder.wordpress.com/2010/09/04/macros-in-vs2010/
 
 Known issues:
-	• Column numbers in script errors are currently incorrect (always zero)
-	• Sometimes the error "Parameter name not set to instance of string" occurs when executing
+	• Error occurs when trying to execute a macro while another is executing
 	• Toggling recording when the tool window is closed won't change the icon in the tool window
 	• Searching expands all macro after search is done
 	• Opened instance of a macro won't be updated if macro is deleted or moved

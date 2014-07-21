@@ -312,7 +312,7 @@ namespace VSMacros
         private void UpdateButtonsForPlayback(bool isPlaying)
         {
             this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, isPlaying);
             this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
             this.UpdateCommonButtons(!isPlaying);
         }
@@ -321,7 +321,7 @@ namespace VSMacros
         {
             this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
             this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, isPlaying);
             this.UpdateCommonButtons(!isPlaying);
         }
 

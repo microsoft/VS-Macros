@@ -114,6 +114,8 @@ namespace VSMacros.Engines
             string current = Manager.CurrentMacroPath;
 
             this.recorder.StopRecording(current);
+
+            MacroFSNode.SelectNode(CurrentMacroPath);
         }
 
         public void Playback(string path, int iterations = 1)
@@ -207,7 +209,7 @@ namespace VSMacros.Engines
                     }
 
                     this.Refresh();
-                    MacroFSNode.FindNodeFromFullPath(pathToNew).IsSelected = true;
+                    MacroFSNode.SelectNode(pathToNew);
                 }
                 catch (Exception e)
                 {
@@ -383,8 +385,7 @@ namespace VSMacros.Engines
             MacroFSNode.RefreshTree();
 
             // Select new node
-            MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
-            node.IsSelected = true;
+            MacroFSNode node = MacroFSNode.SelectNode(path);
             node.IsExpanded = true;
             node.IsEditable = true;
         }
@@ -406,8 +407,7 @@ namespace VSMacros.Engines
             Directory.CreateDirectory(path);
             MacroFSNode.RefreshTree();
 
-            MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
-            node.IsSelected = true;
+            MacroFSNode node = MacroFSNode.SelectNode(path);
             node.IsEditable = true;
         }
 
@@ -478,11 +478,10 @@ namespace VSMacros.Engines
             }
 
             // Refresh tree
-            Manager.instance.Refresh(false);
+            MacroFSNode.RefreshTree();
 
             // Restore previously selected node
-            selected = MacroFSNode.FindNodeFromFullPath(targetPath);
-            selected.IsSelected = true;
+            selected = MacroFSNode.SelectNode(targetPath);
             selected.IsExpanded = wasExpanded;
             selected.Parent.IsExpanded = true;
 

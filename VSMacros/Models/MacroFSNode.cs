@@ -42,7 +42,7 @@ namespace VSMacros.Models
         // Constants
         public const int ToFetch = -1;
         public const int None = 0;
-        public const string ShortcutKeys = "(ALT+Q, {0})";
+        public const string ShortcutKeys = "(CTRL+M, {0})";
 
         // Static members
         public static MacroFSNode RootNode { get; set; }
@@ -496,6 +496,17 @@ namespace VSMacros.Models
                 // Return default node
                 node = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
             }
+
+            return node;
+        }
+
+        public static MacroFSNode SelectNode(string path)
+        {
+            // Find node
+            MacroFSNode node = FindNodeFromFullPath(path);
+
+            // Select it
+            node.IsSelected = true;
 
             return node;
         }

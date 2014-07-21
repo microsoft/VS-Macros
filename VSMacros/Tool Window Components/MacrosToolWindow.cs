@@ -38,7 +38,7 @@ namespace VSMacros
             // Instantiate Tool Window Toolbar
             this.ToolBar = new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.MacrosToolWindowToolbar);
 
-            Manager.Instance.CreateFileSystem();
+            Manager.Instance.CreateFileSystem(true);
 
             string macroDirectory = VSMacrosPackage.Current.MacroDirectory;
 

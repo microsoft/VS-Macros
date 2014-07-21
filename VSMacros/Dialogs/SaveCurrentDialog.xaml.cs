@@ -45,7 +45,17 @@ namespace VSMacros.Dialogs
                 this.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
             }
 
+            this.ShouldRefreshFileSystem = shouldRefresh;
+            this.WarningTextBlock.Text = warningText;
             this.SelectedShortcutNumber = selectedNumber;
+        }
+
+        private void MacroName_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            textBox.SelectAll();
+            textBox.Focus();
         }
     }
 }

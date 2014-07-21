@@ -6,7 +6,9 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -150,6 +152,11 @@ namespace VSMacros.Pipes
 
         private static byte[] PackageFilePathMessage(int it, string line)
         {
+            //MemoryStream stream = new MemoryStream();
+            //BinaryFormatter formatter = new BinaryFormatter();
+            //formatter.Serialize(Server.ServerStream, (int)Packet.Close);
+
+
             byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
             byte[] serializedIterations = BitConverter.GetBytes((int)it);
             byte[] serializedMessage = Encoding.Unicode.GetBytes(line);

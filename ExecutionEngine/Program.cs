@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -26,7 +28,8 @@ namespace ExecutionEngine
             Validate.IsNotNullAndNotEmpty(script, "script");
             Program.parsedScript = Program.engine.Parse(script);
 
-            for (int i = 0; i < iterations; i++)
+            int i = 0;
+            for (i = 0; i < iterations; i++)
             {
                 if (!Program.parsedScript.CallMethod(Program.MacroName))
                 {
@@ -57,6 +60,9 @@ namespace ExecutionEngine
 
         private static void HandleInput()
         {
+            //BinaryFormatter formatter = new BinaryFormatter();
+            //var stream = new MemoryStream();
+
             int typeOfMessage = Client.GetInt(Client.ClientStream);
 
             // I know a switch statement seems useless but just preparing for the possibility of other packets.
@@ -139,6 +145,7 @@ namespace ExecutionEngine
         {
             try
             {
+                MessageBox.Show("attach debugger here");
                 string[] separatedArgs = InputParser.SeparateArgs(args);
                 RunFromPipe(separatedArgs);
             }

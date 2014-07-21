@@ -45,6 +45,7 @@ namespace ExecutionEngine
             }
             catch (Exception e)
             {
+                var internalException = e.InnerException;
                 if (!Site.RuntimeError)
                 {
                     Site.InternalError = true;

@@ -47,9 +47,16 @@ namespace VSMacros.Pipes
 
         public static int GetIntFromStream(NamedPipeServerStream serverStream)
         {
-            byte[] number = new byte[sizeof(int)];
-            serverStream.Read(number, 0, sizeof(int));
-            return BitConverter.ToInt32(number, 0);
+            if (serverStream.IsConnected)
+            {
+                byte[] number = new byte[sizeof(int)];
+                serverStream.Read(number, 0, sizeof(int));
+                return BitConverter.ToInt32(number, 0);
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         public static void WaitForMessage()
@@ -63,8 +70,16 @@ namespace VSMacros.Pipes
 
                 switch ((Packet)typeOfMessage)
                 {
+                    case Packet.Empty:
+#if Debug
+                        Manager.Instance.ShowMessageBox("Pipes are no longer connected.");
+#endif
+                        Executor.IsEngineInitialized = false;
+                        shouldKeepRunning = false;
+                        break;
+
                     case Packet.Close:
-#if DEBUG
+#if Debug
                         Manager.Instance.ShowMessageBox("Received a close packet in Server.");
 #endif
                         Executor.IsEngineInitialized = false;
@@ -84,7 +99,7 @@ namespace VSMacros.Pipes
 
                     case Packet.CriticalError:
                         error = Server.GetCriticalError(Server.ServerStream);
-#if DEBUG
+#if Debug
                         Manager.Instance.ShowMessageBox(error);
 #endif
                         Server.ServerStream.Close();

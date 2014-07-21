@@ -12,6 +12,11 @@ namespace VSMacros.Enums
     internal enum Packet
     {
         /// <summary>
+        /// Empty file packet.
+        /// </summary>
+        Empty = -1,
+
+        /// <summary>
         /// Contains information on the file path for a file containing a macro to execute.
         /// </summary>
         FilePath = 0,

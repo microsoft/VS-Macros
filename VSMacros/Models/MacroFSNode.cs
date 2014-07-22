@@ -128,6 +128,7 @@ namespace VSMacros.Models
                         if (this.Shortcut >= MacroFSNode.None)
                         {
                             Manager.Shortcuts[this.shortcut] = newFullPath;
+                            Manager.Instance.SaveShortcuts(true);
                         }
                     }
                 }
@@ -425,6 +426,7 @@ namespace VSMacros.Models
             {
                 // Remove shortcut from shortcut list
                 Manager.Shortcuts[this.shortcut] = string.Empty;
+                Manager.Instance.SaveShortcuts(true);
             }
 
             // Remove macro from collection

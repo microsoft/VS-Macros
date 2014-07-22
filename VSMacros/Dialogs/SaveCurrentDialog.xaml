@@ -21,11 +21,11 @@
 
         <Label Content="{x:Static l:Resources.DialogMacroName}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,10,0,0" Grid.Row="0"/>
 
-        <TextBox Name="MacroName" Grid.ColumnSpan="3" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,10,0,0" TextWrapping="Wrap" Text="My Macro" VerticalAlignment="Center" Width="250" VerticalContentAlignment="Center"/>
+        <TextBox Name="MacroName" Grid.ColumnSpan="3" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,10,0,0" TextWrapping="Wrap" Text="My Macro" VerticalAlignment="Center" Width="250" VerticalContentAlignment="Center" Loaded="MacroName_Loaded"/>
 
         <Label Content="{x:Static l:Resources.DialogAssignTo}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,0" Grid.Row="1"/>
 
-        <ComboBox Name="shortcutsComboBox"
+        <ComboBox Name="shortcutsComboBox" Text="{x:Static l:Resources.DialogShortcutSelectionText}"
                   IsReadOnly="True" IsEditable="True"
                   DropDownClosed="ShortcutsComboBox_DropDownClosed"
                   Grid.ColumnSpan="3" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0">

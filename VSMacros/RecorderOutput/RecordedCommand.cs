@@ -53,7 +53,7 @@ namespace VSMacros.RecorderOutput
 
         internal void ConvertToJavascript(StreamWriter outputStream, List<char> input)
         {
-            string escapedInput = string.Join("", input).Replace("\"", "\\\"");
+            string escapedInput = string.Join("", input).Replace("\\", "\\\\").Replace("\"", "\\\"");
             string output = string.Format(this.textSelection + "Text = \"{0}\";", escapedInput);
             outputStream.WriteLine(output);
         }

@@ -40,7 +40,6 @@ namespace VSMacros
         {
             get
             {
-                // This is mainly for the unit tests
                 if (current == null)
                 {
                     current = new VSMacrosPackage();
@@ -75,7 +74,7 @@ namespace VSMacros
             {
                 if (this.macroDirectory == default(string))
                 {
-                    this.macroDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
+                    this.macroDirectory = Path.Combine(UserLocalDataPath, "Macros");
                 }
                 return this.macroDirectory;
             }

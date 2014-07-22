@@ -40,7 +40,6 @@ namespace VSMacros
         {
             get
             {
-                // This is mainly for the unit tests
                 if (current == null)
                 {
                     current = new VSMacrosPackage();
@@ -75,7 +74,7 @@ namespace VSMacros
             {
                 if (this.macroDirectory == default(string))
                 {
-                    this.macroDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Macros");
+                    this.macroDirectory = Path.Combine(UserLocalDataPath, "Macros");
                 }
                 return this.macroDirectory;
             }
@@ -312,7 +311,7 @@ namespace VSMacros
         private void UpdateButtonsForPlayback(bool isPlaying)
         {
             this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, isPlaying);
             this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
             this.UpdateCommonButtons(!isPlaying);
         }
@@ -321,7 +320,7 @@ namespace VSMacros
         {
             this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
             this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, isPlaying);
             this.UpdateCommonButtons(!isPlaying);
         }
 

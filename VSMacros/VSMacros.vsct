@@ -218,6 +218,7 @@
       <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" priority="07" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand8</ButtonText></Strings></Button>
       <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" priority="08" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand9</ButtonText></Strings></Button>
 
+      <!-- Enable TYPECHAR command -->
       <Button guid="guidStd2kCmdSet" id="TYPECHAR" priority="0x0000" type="Button">
         <Strings>
           <ButtonText>TYPECHAR</ButtonText>
@@ -233,6 +234,7 @@
  
   </Commands>
 
+  <!-- USED COMMANDS -->
   <UsedCommands>
     <UsedCommand guid="guidStd2kCmdSet" id="TYPECHAR"/>
   </UsedCommands>
@@ -324,25 +326,36 @@
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="R"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="P" />
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" mod2="Control" key2="O"/>
+
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" editor="guidVSStd97" key1="M" mod1="Control" key2="3" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" editor="guidVSStd97" key1="M" mod1="Control" key2="4" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" editor="guidVSStd97" key1="M" mod1="Control" key2="5" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" editor="guidVSStd97" key1="M" mod1="Control" key2="6" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" editor="guidVSStd97" key1="M" mod1="Control" key2="7" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" editor="guidVSStd97" key1="M" mod1="Control" key2="8" mod2="Control"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" editor="guidVSStd97" key1="M" mod1="Control" key2="9" mod2="Control"/>
     
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Control" key1="M" key2="R"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" key2="P" />
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" key2="O"/>
 
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="Q" mod1="Alt" key2="1"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="Q" mod1="Alt" key2="2"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" editor="guidVSStd97" key1="Q" mod1="Alt" key2="3"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" editor="guidVSStd97" key1="Q" mod1="Alt" key2="4"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" editor="guidVSStd97" key1="Q" mod1="Alt" key2="5"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" editor="guidVSStd97" key1="Q" mod1="Alt" key2="6"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" editor="guidVSStd97" key1="Q" mod1="Alt" key2="7"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" editor="guidVSStd97" key1="Q" mod1="Alt" key2="8"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" editor="guidVSStd97" key1="Q" mod1="Alt" key2="9"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" editor="guidVSStd97" key1="M" mod1="Control" key2="3"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" editor="guidVSStd97" key1="M" mod1="Control" key2="4"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" editor="guidVSStd97" key1="M" mod1="Control" key2="5"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" editor="guidVSStd97" key1="M" mod1="Control" key2="6"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" editor="guidVSStd97" key1="M" mod1="Control" key2="7"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" editor="guidVSStd97" key1="M" mod1="Control" key2="8"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" editor="guidVSStd97" key1="M" mod1="Control" key2="9"/>
     
   </KeyBindings>
   
   <Symbols>
-    
+
+    <!-- Enable TYPECHAR command -->
     <GuidSymbol name="guidStd2kCmdSet" value="{1496a755-94de-11d0-8c3f-00c04fc2aae2}">
       <IDSymbol name="TYPECHAR" value="0x1"/>
     </GuidSymbol>

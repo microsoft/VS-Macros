@@ -192,6 +192,7 @@ namespace VSMacros.Pipes
 #if DEBUG
                 Manager.Instance.ShowMessageBox(string.Format("The server thread was terminated.\n\n{0}: {1}\n{2}{3}", e.Source, e.Message, e.TargetSite.ToString(), e.StackTrace));
 #endif
+                VSMacrosPackage.Current.ClearStatusBar();
             }
             
         }

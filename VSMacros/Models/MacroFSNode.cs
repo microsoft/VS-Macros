@@ -42,7 +42,7 @@ namespace VSMacros.Models
         // Constants
         public const int ToFetch = -1;
         public const int None = 0;
-        public const string ShortcutKeys = "(ALT+Q, {0})";
+        public const string ShortcutKeys = "(CTRL+M, {0})";
 
         // Static members
         public static MacroFSNode RootNode { get; set; }
@@ -128,6 +128,7 @@ namespace VSMacros.Models
                         if (this.Shortcut >= MacroFSNode.None)
                         {
                             Manager.Shortcuts[this.shortcut] = newFullPath;
+                            Manager.Instance.SaveShortcuts(true);
                         }
                     }
                 }
@@ -425,6 +426,7 @@ namespace VSMacros.Models
             {
                 // Remove shortcut from shortcut list
                 Manager.Shortcuts[this.shortcut] = string.Empty;
+                Manager.Instance.SaveShortcuts(true);
             }
 
             // Remove macro from collection
@@ -496,6 +498,17 @@ namespace VSMacros.Models
                 // Return default node
                 node = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
             }
+
+            return node;
+        }
+
+        public static MacroFSNode SelectNode(string path)
+        {
+            // Find node
+            MacroFSNode node = FindNodeFromFullPath(path);
+
+            // Select it
+            node.IsSelected = true;
 
             return node;
         }

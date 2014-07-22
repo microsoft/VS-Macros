@@ -34,15 +34,15 @@
                     </Binding.ValidationRules>
                 </Binding>
             </ComboBox.SelectedItem>
-            <ComboBoxItem Tag="1">ALT+Q, 1</ComboBoxItem>
-            <ComboBoxItem Tag="2">ALT+Q, 2</ComboBoxItem>
-            <ComboBoxItem Tag="3">ALT+Q, 3</ComboBoxItem>
-            <ComboBoxItem Tag="4">ALT+Q, 4</ComboBoxItem>
-            <ComboBoxItem Tag="5">ALT+Q, 5</ComboBoxItem>
-            <ComboBoxItem Tag="6">ALT+Q, 6</ComboBoxItem>
-            <ComboBoxItem Tag="7">ALT+Q, 7</ComboBoxItem>
-            <ComboBoxItem Tag="8">ALT+Q, 8</ComboBoxItem>
-            <ComboBoxItem Tag="9">ALT+Q, 9</ComboBoxItem>
+            <ComboBoxItem Tag="1">CTRL+M, 1</ComboBoxItem>
+            <ComboBoxItem Tag="2">CTRL+M, 2</ComboBoxItem>
+            <ComboBoxItem Tag="3">CTRL+M, 3</ComboBoxItem>
+            <ComboBoxItem Tag="4">CTRL+M, 4</ComboBoxItem>
+            <ComboBoxItem Tag="5">CTRL+M, 5</ComboBoxItem>
+            <ComboBoxItem Tag="6">CTRL+M, 6</ComboBoxItem>
+            <ComboBoxItem Tag="7">CTRL+M, 7</ComboBoxItem>
+            <ComboBoxItem Tag="8">CTRL+M, 8</ComboBoxItem>
+            <ComboBoxItem Tag="9">CTRL+M, 9</ComboBoxItem>
             <ComboBoxItem Tag="0">None</ComboBoxItem>
         </ComboBox>
 

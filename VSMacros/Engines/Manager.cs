@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -15,7 +15,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Dialogs;
 using VSMacros.Interfaces;
 using VSMacros.Models;
-using System.Runtime.InteropServices;
+using Task = System.Threading.Tasks.Task;
 
 namespace VSMacros.Engines
 {
@@ -179,9 +179,9 @@ namespace VSMacros.Engines
         public void SaveCurrent()
         {
             SaveCurrentDialog dlg = new SaveCurrentDialog();
-            bool? result = dlg.ShowDialog();
+            dlg.ShowDialog();
 
-            if (result == true)
+            if (dlg.DialogResult == true)
             {
                 try
                 {
@@ -190,25 +190,23 @@ namespace VSMacros.Engines
 
                     int newShortcutNumber = dlg.SelectedShortcutNumber;
 
-                    File.Copy(pathToCurrent, pathToNew);
+                    // Move Current to new file and create a new Current
+                    File.Move(pathToCurrent, pathToNew);
+                    this.CreateCurrentMacro();
 
                     MacroFSNode macro = new MacroFSNode(pathToNew, MacroFSNode.RootNode);
 
-                    if (newShortcutNumber != 0)
+                    if (newShortcutNumber != MacroFSNode.None)
                     {
                         // Update dictionary
                         Manager.Shortcuts[newShortcutNumber] = macro.FullPath;
                     }
 
-                    // Notify the change
-                    if (dlg.ShouldRefreshFileSystem)
-                    {
-                        // Notify all node that their shortcut property might have changed
-                        this.SaveShortcuts();
-                        MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "Shortcut");
-                    }
+                    this.SaveShortcuts(true);
 
                     this.Refresh();
+
+                    // Select new node
                     MacroFSNode.SelectNode(pathToNew);
                 }
                 catch (Exception e)
@@ -241,7 +239,7 @@ namespace VSMacros.Engines
             }
 
             // Recreate file system to ensure that the required files exist
-            this.CreateFileSystem();
+            this.CreateFileSystem(false);
 
             MacroFSNode.RefreshTree();
 
@@ -293,18 +291,23 @@ namespace VSMacros.Engines
                 if (dlg.ShouldRefreshFileSystem)
                 {
                     // Notify all node that their shortcut property might have changed
-                    this.SaveShortcuts();
-                    this.Refresh();
+                    this.SaveShortcuts(true);
+                    MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "Shortcut");
                 }
                 else
                 {
-                    // Refresh selected macro
+                    // Update UI with new macro's shortcut
                     macro.Shortcut = MacroFSNode.ToFetch;
                 }
 
                 // Mark the shortcuts in memory as dirty
                 this.shortcutsDirty = true;
             }
+        }
+
+        public void SetShortcutsDirty()
+        {
+            this.shortcutsDirty = true;
         }
 
         public void Delete()
@@ -411,7 +414,7 @@ namespace VSMacros.Engines
             node.IsEditable = true;
         }
 
-        public void CreateFileSystem()
+        public void CreateFileSystem(bool initial)
         {
             // Create macro directory
             if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
@@ -420,13 +423,25 @@ namespace VSMacros.Engines
             }
 
             // Create current macro file
-            if (!File.Exists(Manager.CurrentMacroPath))
-            {
-                File.WriteAllText(Manager.CurrentMacroPath, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
-            }
+            this.CreateCurrentMacro();
 
-            // Create shortcuts file
-            this.CreateShortcutFile();
+            // Create the rest of the file system in a background thread
+            //Task.Run(() =>
+            //{
+                // Create shortcuts file
+                this.CreateShortcutFile();
+
+                // Copy Sample macros folder if initialization
+                if (initial)
+                {
+                    string source = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Macros", "Samples");
+                    string target = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Samples");
+
+                    // Copy the Samples folder in the background
+                    Manager.DirectoryCopy(source, target, true);
+                }
+           // }
+           //);
         }
 
         public void Close()
@@ -476,6 +491,8 @@ namespace VSMacros.Engines
 
                 Manager.Instance.ShowMessageBox(e.Message);
             }
+
+            this.CreateCurrentMacro();
 
             // Refresh tree
             MacroFSNode.RefreshTree();
@@ -566,9 +583,9 @@ namespace VSMacros.Engines
             }
         }
 
-        private void SaveShortcuts()
+        public void SaveShortcuts(bool overwrite = false)
         {
-            if (this.shortcutsDirty)
+            if (this.shortcutsDirty || overwrite)
             {
                 XDocument xmlShortcuts =
                     new XDocument(
@@ -581,6 +598,20 @@ namespace VSMacros.Engines
                 xmlShortcuts.Save(this.shortcutsFilePath);
 
                 this.shortcutsDirty = false;
+            }
+        }
+
+        private void CreateCurrentMacro()
+        {
+            if (!File.Exists(Manager.CurrentMacroPath))
+            {
+                File.Create(Manager.CurrentMacroPath).Close();
+
+                Task.Run(() =>
+                {
+                    // Write to current macro file
+                    File.WriteAllText(Manager.CurrentMacroPath, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
+                });
             }
         }
 
@@ -623,7 +654,7 @@ namespace VSMacros.Engines
 
         #endregion
 
-        #region
+        #region Disk Operations
 
         private const int FO_DELETE = 0x0003;
         private const int FOF_ALLOWUNDO = 0x0040;           // Preserve undo information, if possible. 
@@ -655,6 +686,48 @@ namespace VSMacros.Engines
             fileop.pFrom = path + '\0' + '\0';
             fileop.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION;
             SHFileOperation(ref fileop);
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            // If the destination directory doesn't exist, create it. 
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+
+                if (!File.Exists(temppath))
+                {
+                    file.CopyTo(temppath, false);
+                }
+            }
+
+            // If copying subdirectories, copy them and their contents to new location. 
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
         }
 
         #endregion

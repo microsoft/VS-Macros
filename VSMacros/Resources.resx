@@ -153,6 +153,9 @@
   <data name="DialogTimesSingular" xml:space="preserve">
     <value>Time</value>
   </data>
+  <data name="DragDropFileExists" xml:space="preserve">
+    <value>{0} already exists. Do you want to overwrite it?</value>
+  </data>
   <data name="ExitCaption" xml:space="preserve">
     <value>Warning</value>
   </data>

@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Models;
@@ -209,7 +210,7 @@ namespace VSMacros
             if ((Math.Abs(currentPosition.X - this.startPos.X) > SystemParameters.MinimumHorizontalDragDistance) ||
                 (Math.Abs(currentPosition.Y - this.startPos.Y) > SystemParameters.MinimumVerticalDragDistance) &&
                 this.isDragging &&
-                e.Data.GetDataPresent(typeof(MacroFSNode)))
+                e.Data.GetDataPresent(typeof(MacroFSNode)) || e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 // Verify that this is a valid drop
                 TreeViewItem item = this.GetNearestContainer(e.OriginalSource as UIElement);
@@ -230,14 +231,14 @@ namespace VSMacros
             e.Effects = DragDropEffects.None;
             e.Handled = true;
 
+            // Get target node
+            TreeViewItem targetItem = this.GetNearestContainer(e.OriginalSource as UIElement);
+            MacroFSNode target = targetItem.Header as MacroFSNode;
+
             if (e.Data.GetDataPresent(typeof(MacroFSNode)) && this.isDragging)
             {
                 // Get dragged node
                 MacroFSNode dragged = e.Data.GetData(typeof(MacroFSNode)) as MacroFSNode;
-
-                // Get target node
-                TreeViewItem targetItem = this.GetNearestContainer(e.OriginalSource as UIElement);
-                MacroFSNode target = targetItem.Header as MacroFSNode;
 
                 if (target != null && dragged != null && target != dragged)
                 {
@@ -249,12 +250,46 @@ namespace VSMacros
                     Manager.Instance.MoveItem(dragged, target);
                 }
             }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] droppedFiles = e.Data.GetData(DataFormats.FileDrop, true) as string[];
 
+                if (!target.IsDirectory)
+                {
+                    target = target.Parent;
+                }
+
+                foreach (string s in droppedFiles)
+                {
+                    string filename = Path.GetFileNameWithoutExtension(s);
+
+                    // If the file is a macro file
+                    if (Path.GetExtension(s) == ".js")
+                    {
+                        string draggedPath = Path.Combine(target.FullPath, filename + ".js");
+                        VSConstants.MessageBoxResult result = VSConstants.MessageBoxResult.IDYES;
+
+                        if (File.Exists(draggedPath))
+                        {
+                            string message = string.Format(VSMacros.Resources.DragDropFileExists, filename);
+                            result = Manager.Instance.ShowMessageBox(message, OLEMSGBUTTON.OLEMSGBUTTON_YESNO);
+                        }
+
+                        if (result == VSConstants.MessageBoxResult.IDYES)
+                        {
+                            File.Copy(s, draggedPath, true);
+                        }
+                    }
+                    
+                }
+
+                MacroFSNode.RefreshTree(target);
+            }
         }
 
         private void TreeViewItem_DragEnter(object sender, DragEventArgs e)
         {
-            if (this.isDragging)
+            if (this.isDragging || e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 // Highlight item on DragEnter
                 TreeViewItem item = sender as TreeViewItem;
@@ -269,7 +304,7 @@ namespace VSMacros
 
         private void TreeViewItem_DragLeave(object sender, DragEventArgs e)
         {
-            if (this.isDragging)
+            if (this.isDragging || e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 // Remove highlight on DragLeave
                 TreeViewItem item = sender as TreeViewItem;

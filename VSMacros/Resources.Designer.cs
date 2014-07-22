@@ -169,6 +169,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} already exists. Do you want to overwrite it?.
+        /// </summary>
+        public static string DragDropFileExists {
+            get {
+                return ResourceManager.GetString("DragDropFileExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         public static string ExitCaption {

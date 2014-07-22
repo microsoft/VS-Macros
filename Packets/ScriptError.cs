@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VSMacros.Pipes.Packets
+namespace Packets
 {
     [Serializable]
     class ScriptError

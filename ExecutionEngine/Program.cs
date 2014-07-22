@@ -14,7 +14,6 @@ using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
 using VSMacros.ExecutionEngine.Pipes;
-using VSMacros.Pipes.Packets;
 
 namespace ExecutionEngine
 {
@@ -61,12 +60,13 @@ namespace ExecutionEngine
 
         private static void HandleInput()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            var type = (PacketType)formatter.Deserialize(Client.ClientStream);
+            //BinaryFormatter formatter = new BinaryFormatter();
+            //var type = (PacketType)formatter.Deserialize(Client.ClientStream);
 
             int typeOfMessage = Client.GetInt(Client.ClientStream);
 
             // I know a switch statement seems useless but just preparing for the possibility of other packets.
+            //switch ((Packet)typeOfMessage)
             switch ((Packet)typeOfMessage)
             {
                 case Packet.FilePath:
@@ -77,8 +77,16 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
+            // Just make one static formatter
+            //var formatter = new BinaryFormatter();
+            //var filePath = formatter.Deserialize(Client.ClientStream);
+            //FilePath file = (FilePath)filePath;
+            //Console.WriteLine(file.Iterations);
+
             int iterations = Client.GetInt(Client.ClientStream);
+            //int iterations = filePath.Iterations;
             string message = Client.GetFilePath(Client.ClientStream);
+            //string message = filePath.Path;
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
             Program.RunMacro(wrappedScript, iterations);
@@ -146,7 +154,6 @@ namespace ExecutionEngine
         {
             try
             {
-                MessageBox.Show("attach debugger here");
                 string[] separatedArgs = InputParser.SeparateArgs(args);
                 RunFromPipe(separatedArgs);
             }

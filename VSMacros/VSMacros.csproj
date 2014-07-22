@@ -160,10 +160,6 @@
     <Compile Include="Interfaces\IRecorder.cs" />
     <Compile Include="Interfaces\IRecorderPrivate.cs" />
     <Compile Include="Pipes\Packet.cs" />
-    <Compile Include="Pipes\Packets\CriticalError.cs" />
-    <Compile Include="Pipes\Packets\FilePath.cs" />
-    <Compile Include="Pipes\Packets\PacketType.cs" />
-    <Compile Include="Pipes\Packets\ScriptError.cs" />
     <Compile Include="Pipes\Server.cs" />
     <Compile Include="RecorderListeners\EditorCommandFilter.cs" />
     <Compile Include="RecorderListeners\CommandExecutionWatcher.cs" />

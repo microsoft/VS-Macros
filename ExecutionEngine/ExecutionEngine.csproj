@@ -66,18 +66,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\VSMacros\Pipes\Packets\CriticalError.cs">
-      <Link>Pipes\Packets\CriticalError.cs</Link>
-    </Compile>
-    <Compile Include="..\VSMacros\Pipes\Packets\FilePath.cs">
-      <Link>Pipes\Packets\FilePath.cs</Link>
-    </Compile>
-    <Compile Include="..\VSMacros\Pipes\Packets\PacketType.cs">
-      <Link>Pipes\Packets\PacketType.cs</Link>
-    </Compile>
-    <Compile Include="..\VSMacros\Pipes\Packets\ScriptError.cs">
-      <Link>Pipes\Packets\ScriptError.cs</Link>
-    </Compile>
     <Compile Include="ActiveScript Interfaces\IActiveScript.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptError.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptParse32.cs" />

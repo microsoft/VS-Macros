@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicrosoftCorporation.VSMacros.Pipes.Packets
+namespace Packets
 {
     [Serializable]
     public class CriticalError

@@ -72,8 +72,19 @@ namespace VSMacros.Engines
                                 next = this.dataModel.Actions[++i] as RecordedCommand;
                             } while (next.IsInsertAction() && i + 1 < this.dataModel.Actions.Count);
 
-                            // The loop has incremented i an extra time, backtrack
-                            i--;
+                            // Process last character
+                            if (next.IsInsertAction())
+                            {
+                                if (next.Input != '\0')
+                                {
+                                    buffer.Add(next.Input);
+                                }
+                            }
+                            else
+                            {
+                                // The loop has incremented i an extra time, backtrack
+                                i--;
+                            }
 
                             // Output insert
                             current.ConvertToJavascript(fs, buffer);

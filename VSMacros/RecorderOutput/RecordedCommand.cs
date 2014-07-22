@@ -40,7 +40,11 @@ namespace VSMacros.RecorderOutput
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(output);
             }
-            else if (this.commandName != "keyboard")
+            if (this.commandName == "keyboard")
+            {
+                this.ConvertToJavascript(outputStream, new List<char>() { this.input });
+            }
+            else
             {
                 outputStream.WriteLine(Convert(commandName, 1));
             }

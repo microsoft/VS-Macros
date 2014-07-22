@@ -218,6 +218,7 @@
       <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" priority="07" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand8</ButtonText></Strings></Button>
       <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" priority="08" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand9</ButtonText></Strings></Button>
 
+      <!-- Enable TYPECHAR command -->
       <Button guid="guidStd2kCmdSet" id="TYPECHAR" priority="0x0000" type="Button">
         <Strings>
           <ButtonText>TYPECHAR</ButtonText>
@@ -233,6 +234,7 @@
  
   </Commands>
 
+  <!-- USED COMMANDS -->
   <UsedCommands>
     <UsedCommand guid="guidStd2kCmdSet" id="TYPECHAR"/>
   </UsedCommands>
@@ -352,7 +354,8 @@
   </KeyBindings>
   
   <Symbols>
-    
+
+    <!-- Enable TYPECHAR command -->
     <GuidSymbol name="guidStd2kCmdSet" value="{1496a755-94de-11d0-8c3f-00c04fc2aae2}">
       <IDSymbol name="TYPECHAR" value="0x1"/>
     </GuidSymbol>

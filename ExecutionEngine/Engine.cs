@@ -13,7 +13,6 @@ using ExecutionEngine.Interfaces;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using VSMacros;
 
 namespace ExecutionEngine
 {
@@ -68,6 +67,19 @@ namespace ExecutionEngine
             {
                 throw new InvalidOperationException();
             }
+
+            //var serviceprovider = (microsoft.visualstudio.ole.interop.iserviceprovider)engine.dteobject;
+            
+            //guid cmdnameguid = marshal.generateguidfortype(typeof(svscmdnamemapping));
+            //guid suihostguid = marshal.generateguidfortype(typeof(suihostcommanddispatcher));
+
+            //intptr cmdnameptr, suihostptr;
+            //guid dummy = guid.empty;
+            //serviceprovider.queryservice(ref cmdnameguid, ref dummy, out cmdnameptr);
+            //serviceprovider.queryservice(ref suihostguid, ref dummy, out suihostptr);
+
+            //console.writeline(cmdnameptr.tostring());
+            //console.writeline(suihostptr.tostring());
         }
 
         private void InitializeCommandHelper()

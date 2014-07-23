@@ -7,7 +7,6 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using VisualStudio.Macros.ExecutionEngine;
 using VSMacros.ExecutionEngine;
 using VSMacros.ExecutionEngine.Pipes;
@@ -31,8 +30,9 @@ namespace ExecutionEngine
                 string stackTrace = string.Empty;
                 string targetSite = string.Empty;
 
-                byte[] criticalErrorMessage = Client.PackageCriticalError(message, source, stackTrace, targetSite);
-                Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
+                Client.SendCriticalError(message, source, stackTrace, targetSite);
+                //byte[] criticalErrorMessage = Client.PackageCriticalError(message, source, stackTrace, targetSite);
+                //Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
             }
         }
 

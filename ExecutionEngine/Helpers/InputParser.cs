@@ -7,7 +7,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Windows.Forms;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine;
 
@@ -52,7 +51,10 @@ namespace ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
+            //string s = "if (typeof(dte.ActiveDocument) != null) { dte.ActiveDocument.Activate(); }";
+
             string activateActiveDocument = unwrapped.Contains("ExecuteCommand(\"Edit.") ? "dte.ActiveDocument.Activate()" : string.Empty;
+            //string activateActiveDocument = Regex.IsMatch(unwrapped, "//.[^$]*ExecuteCommand(\"Edit.") ? "dte.ActiveDocument.Activate()" : string.Empty;
             return string.Format("function {0}() {{{1}{3}{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped, activateActiveDocument);
         }
     }

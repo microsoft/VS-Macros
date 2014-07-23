@@ -6,8 +6,8 @@
 
 using System;
 using System.IO.Pipes;
-using System.Text;
-using ExecutionEngine.Enums;
+using System.Runtime.Serialization.Formatters.Binary;
+using VisualStudio.Macros.ExecutionEngine.Pipes;
 
 namespace VSMacros.ExecutionEngine.Pipes
 {
@@ -24,145 +24,195 @@ namespace VSMacros.ExecutionEngine.Pipes
         #region Sending
         public static void ShutDownServer(NamedPipeClientStream clientStream)
         {
-            byte[] close = PackageCloseMessage();
-            SendMessageToServer(clientStream, close);
+            var packetType = PacketType.Close;
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(Client.ClientStream, packetType);
+
+            //byte[] close = PackageCloseMessage();
+            //SendMessageToServer(clientStream, close);
         }
 
-        public static void SendMessageToServer(NamedPipeClientStream clientStream, byte[] packet)
-        {
-            clientStream.Write(packet, 0, packet.Length);
-        }
+        //public static void SendMessageToServer(NamedPipeClientStream clientStream, byte[] packet)
+        //{
+        //    clientStream.Write(packet, 0, packet.Length);
+        //}
 
-        public static byte[] PackageCloseMessage()
-        {
-            return BitConverter.GetBytes((int)Packet.Close);
-        }
+        //public static byte[] PackageCloseMessage()
+        //{
+        //    return BitConverter.GetBytes((int)Packet.Close);
+        //}
 
-        internal static byte[] PackageCriticalError(string message, string source, string stackTrace, string targetSite)
-        {
-            byte[] serializedType = BitConverter.GetBytes((int)Packet.CriticalError);
+        //internal static byte[] PackageCriticalError(string message, string source, string stackTrace, string targetSite)
+        //{
+        //    //var packetType = PacketType.FilePath;
+        //    //BinaryFormatter formatter = new BinaryFormatter();
+        //    //formatter.Serialize(Client.ClientStream, packetType);
 
-            byte[] serializedMessage = Encoding.Unicode.GetBytes(message);
-            byte[] serializedSource = Encoding.Unicode.GetBytes(source);
-            byte[] serializedStackTrace = Encoding.Unicode.GetBytes(stackTrace);
-            byte[] serializedTargetSite = Encoding.Unicode.GetBytes(targetSite);
+        //    //var criticalError = new CriticalError();
+        //    //criticalError.Message = message;
+        //    //criticalError.Source = source;
+        //    //criticalError.StackTrace = stackTrace;
+        //    //criticalError.TargetSite = targetSite;
+        //    //formatter.Serialize(Client.ClientStream, criticalError);
 
-            byte[] serializedSizeOfMessage = BitConverter.GetBytes(serializedMessage.Length);
-            byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
-            byte[] serializedSizeOfStackTrace = BitConverter.GetBytes(serializedStackTrace.Length);
-            byte[] serializedSizeOfTargetSite = BitConverter.GetBytes(serializedTargetSite.Length);
+        //    byte[] serializedType = BitConverter.GetBytes((int)Packet.CriticalError);
 
-            int type = sizeof(int);
-            int messageSize = sizeof(int);
-            int sourceSize = sizeof(int);
-            int stackTraceSize = sizeof(int);
-            int targetSiteSize = sizeof(int);
+        //    byte[] serializedMessage = Encoding.Unicode.GetBytes(message);
+        //    byte[] serializedSource = Encoding.Unicode.GetBytes(source);
+        //    byte[] serializedStackTrace = Encoding.Unicode.GetBytes(stackTrace);
+        //    byte[] serializedTargetSite = Encoding.Unicode.GetBytes(targetSite);
 
-            byte[] packet = new byte[type + messageSize + serializedMessage.Length + sourceSize + serializedSource.Length + 
-                stackTraceSize + serializedStackTrace.Length + targetSiteSize + serializedTargetSite.Length];
+        //    byte[] serializedSizeOfMessage = BitConverter.GetBytes(serializedMessage.Length);
+        //    byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
+        //    byte[] serializedSizeOfStackTrace = BitConverter.GetBytes(serializedStackTrace.Length);
+        //    byte[] serializedSizeOfTargetSite = BitConverter.GetBytes(serializedTargetSite.Length);
 
-            int offset = 0;
-            serializedType.CopyTo(packet, offset);
+        //    int type = sizeof(int);
+        //    int messageSize = sizeof(int);
+        //    int sourceSize = sizeof(int);
+        //    int stackTraceSize = sizeof(int);
+        //    int targetSiteSize = sizeof(int);
 
-            offset += serializedType.Length;
-            serializedSizeOfMessage.CopyTo(packet, offset);
+        //    byte[] packet = new byte[type + messageSize + serializedMessage.Length + sourceSize + serializedSource.Length + 
+        //        stackTraceSize + serializedStackTrace.Length + targetSiteSize + serializedTargetSite.Length];
 
-            offset += serializedSizeOfMessage.Length;
-            serializedMessage.CopyTo(packet, offset);
+        //    int offset = 0;
+        //    serializedType.CopyTo(packet, offset);
 
-            offset += serializedMessage.Length;
-            serializedSizeOfSource.CopyTo(packet, offset);
+        //    offset += serializedType.Length;
+        //    serializedSizeOfMessage.CopyTo(packet, offset);
 
-            offset += serializedSizeOfSource.Length;
-            serializedSource.CopyTo(packet, offset);
+        //    offset += serializedSizeOfMessage.Length;
+        //    serializedMessage.CopyTo(packet, offset);
 
-            offset += serializedSource.Length;
-            serializedSizeOfStackTrace.CopyTo(packet, offset);
+        //    offset += serializedMessage.Length;
+        //    serializedSizeOfSource.CopyTo(packet, offset);
 
-            offset += serializedSizeOfStackTrace.Length;
-            serializedStackTrace.CopyTo(packet, offset);
+        //    offset += serializedSizeOfSource.Length;
+        //    serializedSource.CopyTo(packet, offset);
 
-            offset += serializedStackTrace.Length;
-            serializedSizeOfTargetSite.CopyTo(packet, offset);
+        //    offset += serializedSource.Length;
+        //    serializedSizeOfStackTrace.CopyTo(packet, offset);
 
-            offset += serializedSizeOfTargetSite.Length;
-            serializedTargetSite.CopyTo(packet, offset);
+        //    offset += serializedSizeOfStackTrace.Length;
+        //    serializedStackTrace.CopyTo(packet, offset);
 
-            return packet;
-        }
+        //    offset += serializedStackTrace.Length;
+        //    serializedSizeOfTargetSite.CopyTo(packet, offset);
 
-        internal static byte[] PackageScriptError(uint errorLineNumber, int errorColumn, string errorSource, string errorDescription)
-        {
-            byte[] serializedType = BitConverter.GetBytes((int)Packet.ScriptError);
-            byte[] serializedLineNumber = BitConverter.GetBytes((int)errorLineNumber);
-            byte[] serializedCharacterPos = BitConverter.GetBytes((int)errorColumn);
-            byte[] serializedSource = Encoding.Unicode.GetBytes(errorSource);
-            byte[] serializedDescription = Encoding.Unicode.GetBytes(errorDescription);
-            byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
-            byte[] serializedSizeOfDescription = BitConverter.GetBytes(serializedDescription.Length);
+        //    offset += serializedSizeOfTargetSite.Length;
+        //    serializedTargetSite.CopyTo(packet, offset);
 
-            int type = sizeof(int);
-            int lineNumber = sizeof(int);
-            int column = sizeof(int), sourceSize = sizeof(int), descriptionSize = sizeof(int);
+        //    return packet;
+        //}
 
-            byte[] packet = new byte[type + lineNumber + column + sourceSize + serializedSource.Length + descriptionSize + serializedDescription.Length];
+        //internal static byte[] PackageScriptError(uint errorLineNumber, int errorColumn, string errorSource, string errorDescription)
+        //{
+        //    byte[] serializedType = BitConverter.GetBytes((int)Packet.ScriptError);
+        //    byte[] serializedLineNumber = BitConverter.GetBytes((int)errorLineNumber);
+        //    byte[] serializedCharacterPos = BitConverter.GetBytes((int)errorColumn);
+        //    byte[] serializedSource = Encoding.Unicode.GetBytes(errorSource);
+        //    byte[] serializedDescription = Encoding.Unicode.GetBytes(errorDescription);
+        //    byte[] serializedSizeOfSource = BitConverter.GetBytes(serializedSource.Length);
+        //    byte[] serializedSizeOfDescription = BitConverter.GetBytes(serializedDescription.Length);
 
-            int offset = 0;
-            serializedType.CopyTo(packet, offset);
+        //    int type = sizeof(int);
+        //    int lineNumber = sizeof(int);
+        //    int column = sizeof(int), sourceSize = sizeof(int), descriptionSize = sizeof(int);
 
-            offset += serializedType.Length;
-            serializedLineNumber.CopyTo(packet, offset);
+        //    byte[] packet = new byte[type + lineNumber + column + sourceSize + serializedSource.Length + descriptionSize + serializedDescription.Length];
 
-            offset += serializedLineNumber.Length;
-            serializedCharacterPos.CopyTo(packet, offset);
+        //    int offset = 0;
+        //    serializedType.CopyTo(packet, offset);
 
-            offset += serializedCharacterPos.Length;
-            serializedSizeOfSource.CopyTo(packet, offset);
+        //    offset += serializedType.Length;
+        //    serializedLineNumber.CopyTo(packet, offset);
 
-            offset += serializedSizeOfSource.Length;
-            serializedSource.CopyTo(packet, offset);
+        //    offset += serializedLineNumber.Length;
+        //    serializedCharacterPos.CopyTo(packet, offset);
 
-            offset += serializedSource.Length;
-            serializedSizeOfDescription.CopyTo(packet, offset);
+        //    offset += serializedCharacterPos.Length;
+        //    serializedSizeOfSource.CopyTo(packet, offset);
 
-            offset += serializedSizeOfDescription.Length;
-            serializedDescription.CopyTo(packet, offset);
+        //    offset += serializedSizeOfSource.Length;
+        //    serializedSource.CopyTo(packet, offset);
 
-            return packet;
-        }
+        //    offset += serializedSource.Length;
+        //    serializedSizeOfDescription.CopyTo(packet, offset);
 
-        internal static byte[] PackageSuccessMessage()
-        {
-            return BitConverter.GetBytes((int)Packet.Success);
-        }
+        //    offset += serializedSizeOfDescription.Length;
+        //    serializedDescription.CopyTo(packet, offset);
+
+        //    return packet;
+        //}
+
+        //internal static byte[] PackageSuccessMessage()
+        //{
+        //    return BitConverter.GetBytes((int)Packet.Success);
+        //}
 
         #endregion
 
         #region Getting
 
-        public static int GetInt(NamedPipeClientStream clientStream)
-        {
-            byte[] number = new byte[sizeof(int)];
-            clientStream.Read(number, 0, number.Length);
+        //public static int GetInt(NamedPipeClientStream clientStream)
+        //{
+        //    byte[] number = new byte[sizeof(int)];
+        //    clientStream.Read(number, 0, number.Length);
 
-            var intFromStream = BitConverter.ToInt32(number, 0);
-            return intFromStream;
-        }
+        //    var intFromStream = BitConverter.ToInt32(number, 0);
+        //    return intFromStream;
+        //}
 
-        public static string GetMessage(NamedPipeClientStream clientStream, int sizeOfMessage)
-        {
-            byte[] messageBuffer = new byte[sizeOfMessage];
-            clientStream.Read(messageBuffer, 0, sizeOfMessage);
-            return Encoding.Unicode.GetString(messageBuffer);
-        }
+        //public static string GetMessage(NamedPipeClientStream clientStream, int sizeOfMessage)
+        //{
+        //    byte[] messageBuffer = new byte[sizeOfMessage];
+        //    clientStream.Read(messageBuffer, 0, sizeOfMessage);
+        //    return Encoding.Unicode.GetString(messageBuffer);
+        //}
 
-        public static string GetFilePath(NamedPipeClientStream clientStream)
-        {
-            int sizeOfMessage = Client.GetInt(Client.ClientStream);
-            string message = Client.GetMessage(Client.ClientStream, sizeOfMessage);
-            return message;
-        }
+        //public static string GetFilePath(NamedPipeClientStream clientStream)
+        //{
+        //    int sizeOfMessage = Client.GetInt(Client.ClientStream);
+        //    string message = Client.GetMessage(Client.ClientStream, sizeOfMessage);
+        //    return message;
+        //}
 
         #endregion
+
+        internal static void SendScriptError(uint modifiedLineNumber, int column, string source, string description)
+        {
+            var type = PacketType.ScriptError;
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(Client.ClientStream, type);
+
+            var scriptError = new ScriptError();
+            scriptError.LineNumber = (int)modifiedLineNumber;
+            scriptError.Column = column;
+            scriptError.Source = source;
+            scriptError.Description = description;
+            formatter.Serialize(Client.ClientStream, scriptError);
+        }
+
+        internal static void SendCriticalError(string message, string source, string stackTrace, string targetSite)
+        {
+            var type = PacketType.CriticalError;
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(Client.ClientStream, type);
+
+            var criticalError = new CriticalError();
+            criticalError.Message = message;
+            criticalError.Source = source;
+            criticalError.StackTrace = stackTrace;
+            criticalError.TargetSite = targetSite;
+            formatter.Serialize(Client.ClientStream, criticalError);
+        }
+
+        internal static void SendSuccessMessage()
+        {
+            var packetType = PacketType.Success;
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(Client.ClientStream, packetType);
+        }
     }
 }

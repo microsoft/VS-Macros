@@ -5,14 +5,12 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
+using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
@@ -39,37 +37,43 @@ namespace ExecutionEngine
                         var e = Site.RuntimeException;
                         uint modifiedLineNumber = e.Line - activeDocumentModification;
 
-                        byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
-                        string message = Encoding.Unicode.GetString(scriptErrorMessage);
-                        Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
+                        Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
+                        //byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
+                        //string message = Encoding.Unicode.GetString(scriptErrorMessage);
+                        //Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
                     }
                     else
                     {
                         var e = Site.InternalVSException;
-                        byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
+                        Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        //byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        //Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
                     }
                     Site.ResetError();
                     break;
                 }
             }
 
-            byte[] successMessage = Client.PackageSuccessMessage();
-            Client.SendMessageToServer(Client.ClientStream, successMessage);
+            Client.SendSuccessMessage();
+            //byte[] successMessage = Client.PackageSuccessMessage();
+            //Client.SendMessageToServer(Client.ClientStream, successMessage);
         }
 
         private static void HandleInput()
         {
-            //BinaryFormatter formatter = new BinaryFormatter();
-            //var type = (PacketType)formatter.Deserialize(Client.ClientStream);
+            BinaryFormatter formatter = new BinaryFormatter();
+            var binder = new BinderHelper();
+            formatter.Binder = binder;
+            var type = (PacketType)formatter.Deserialize(Client.ClientStream);
 
-            int typeOfMessage = Client.GetInt(Client.ClientStream);
+            //int typeOfMessage = Client.GetInt(Client.ClientStream);
 
             // I know a switch statement seems useless but just preparing for the possibility of other packets.
+            switch (type)
             //switch ((Packet)typeOfMessage)
-            switch ((Packet)typeOfMessage)
             {
-                case Packet.FilePath:
+                case PacketType.FilePath:
+                //case Packet.FilePath:
                     HandleFilePath();
                     break;
             }
@@ -78,15 +82,14 @@ namespace ExecutionEngine
         private static void HandleFilePath()
         {
             // Just make one static formatter
-            //var formatter = new BinaryFormatter();
-            //var filePath = formatter.Deserialize(Client.ClientStream);
-            //FilePath file = (FilePath)filePath;
-            //Console.WriteLine(file.Iterations);
+            var formatter = new BinaryFormatter();
+            //var binder = 
+            var filePath = (FilePath)formatter.Deserialize(Client.ClientStream);
 
-            int iterations = Client.GetInt(Client.ClientStream);
-            //int iterations = filePath.Iterations;
-            string message = Client.GetFilePath(Client.ClientStream);
-            //string message = filePath.Path;
+            //int iterations = Client.GetInt(Client.ClientStream);
+            int iterations = filePath.Iterations;
+            //string message = Client.GetFilePath(Client.ClientStream);
+            string message = filePath.Path;
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
             Program.RunMacro(wrappedScript, iterations);
@@ -108,8 +111,9 @@ namespace ExecutionEngine
                 {
                     if (Client.ClientStream.IsConnected)
                     {
-                        byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        Client.SendMessageToServer(Client.ClientStream, criticalError);
+                        Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        //byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                        //Client.SendMessageToServer(Client.ClientStream, criticalError);
                     }
                     else
                     {
@@ -154,13 +158,15 @@ namespace ExecutionEngine
         {
             try
             {
+                //MessageBox.Show("hello");
                 string[] separatedArgs = InputParser.SeparateArgs(args);
                 RunFromPipe(separatedArgs);
             }
             catch (Exception e)
             {
-                byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                Client.SendMessageToServer(Client.ClientStream, criticalError);
+                Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                //byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                //Client.SendMessageToServer(Client.ClientStream, criticalError);
             }
         }
     }

@@ -283,22 +283,18 @@ namespace VSMacros.Engines
                 // Assign a new one only if the user selected a key binding
                 if (newShortcutNumber != MacroFSNode.None)
                 {
+                    // Get the node that previously owned that shortcut
+                    MacroFSNode previousNode = MacroFSNode.FindNodeFromFullPath(Manager.Shortcuts[newShortcutNumber]);
+
                     // Update dictionary
                     Manager.Shortcuts[newShortcutNumber] = macro.FullPath;
+
+                    // Update the UI binding for the old node
+                    previousNode.Shortcut = MacroFSNode.ToFetch;
                 }
 
-                // Notify the change
-                if (dlg.ShouldRefreshFileSystem)
-                {
-                    // Notify all node that their shortcut property might have changed
-                    this.SaveShortcuts(true);
-                    MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "Shortcut");
-                }
-                else
-                {
-                    // Update UI with new macro's shortcut
-                    macro.Shortcut = MacroFSNode.ToFetch;
-                }
+                // Update UI with new macro's shortcut
+                macro.Shortcut = MacroFSNode.ToFetch;
 
                 // Mark the shortcuts in memory as dirty
                 this.shortcutsDirty = true;
@@ -404,7 +400,7 @@ namespace VSMacros.Engines
             int count = 2;
             while (Directory.Exists(path))
             {
-                path = path.Substring(0, path.Length - 4) + " (" + count++ + ")";
+                path = basePath + " (" + count++ + ")";
             }
 
             Directory.CreateDirectory(path);

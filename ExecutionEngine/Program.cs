@@ -38,16 +38,11 @@ namespace ExecutionEngine
                         uint modifiedLineNumber = e.Line - activeDocumentModification;
 
                         Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
-                        //byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
-                        //string message = Encoding.Unicode.GetString(scriptErrorMessage);
-                        //Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
                     }
                     else
                     {
                         var e = Site.InternalVSException;
                         Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        //byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        //Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
                     }
                     Site.ResetError();
                     break;
@@ -55,25 +50,18 @@ namespace ExecutionEngine
             }
 
             Client.SendSuccessMessage();
-            //byte[] successMessage = Client.PackageSuccessMessage();
-            //Client.SendMessageToServer(Client.ClientStream, successMessage);
         }
 
         private static void HandleInput()
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            var binder = new BinderHelper();
-            formatter.Binder = binder;
+            formatter.Binder = new BinderHelper();
             var type = (PacketType)formatter.Deserialize(Client.ClientStream);
-
-            //int typeOfMessage = Client.GetInt(Client.ClientStream);
 
             // I know a switch statement seems useless but just preparing for the possibility of other packets.
             switch (type)
-            //switch ((Packet)typeOfMessage)
             {
                 case PacketType.FilePath:
-                //case Packet.FilePath:
                     HandleFilePath();
                     break;
             }
@@ -83,12 +71,9 @@ namespace ExecutionEngine
         {
             // Just make one static formatter
             var formatter = new BinaryFormatter();
-            //var binder = 
             var filePath = (FilePath)formatter.Deserialize(Client.ClientStream);
 
-            //int iterations = Client.GetInt(Client.ClientStream);
             int iterations = filePath.Iterations;
-            //string message = Client.GetFilePath(Client.ClientStream);
             string message = filePath.Path;
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
@@ -112,8 +97,6 @@ namespace ExecutionEngine
                     if (Client.ClientStream.IsConnected)
                     {
                         Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        //byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        //Client.SendMessageToServer(Client.ClientStream, criticalError);
                     }
                     else
                     {
@@ -165,8 +148,6 @@ namespace ExecutionEngine
             catch (Exception e)
             {
                 Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                //byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                //Client.SendMessageToServer(Client.ClientStream, criticalError);
             }
         }
     }

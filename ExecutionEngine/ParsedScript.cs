@@ -31,8 +31,6 @@ namespace ExecutionEngine
                 string targetSite = string.Empty;
 
                 Client.SendCriticalError(message, source, stackTrace, targetSite);
-                //byte[] criticalErrorMessage = Client.PackageCriticalError(message, source, stackTrace, targetSite);
-                //Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
             }
         }
 

@@ -225,6 +225,15 @@ namespace VSMacros {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save the changes to {0} before executing it?.
+        /// </summary>
+        public static string MacroNotSavedBeforePlayback {
+            get {
+                return ResourceManager.GetString("MacroNotSavedBeforePlayback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Match case.
         /// </summary>
         public static string MatchCase {

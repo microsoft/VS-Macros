@@ -172,6 +172,9 @@
   <data name="MacroNotFound" xml:space="preserve">
     <value>Macro not found on disk.</value>
   </data>
+  <data name="MacroNotSavedBeforePlayback" xml:space="preserve">
+    <value>Save the changes to {0} before executing it?</value>
+  </data>
   <data name="MatchCase" xml:space="preserve">
     <value>Match case</value>
   </data>

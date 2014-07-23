@@ -122,6 +122,20 @@ namespace VSMacros.Engines
         {
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
+            // Before playing back, save the macro file
+            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
+            EnvDTE.Document doc = dte.Documents.Item(Path.GetFileName(path));
+            
+            if (!doc.Saved)
+            {
+                if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
+                    string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
+                    OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
+                {
+                    doc.Save();
+                }
+            }
+
             this.PlayMacro(path, iterations);
         }
 

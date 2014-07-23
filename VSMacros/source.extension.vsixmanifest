@@ -5,6 +5,7 @@
     <DisplayName>Macros for Visual Studio</DisplayName>
     <Description xml:space="preserve">An extension for Visual Studio 2013 that enables the use of macros in the IDE.</Description>
     <ReleaseNotes>Documentation\Release Notes.txt</ReleaseNotes>
+    <PreviewImage>Documentation\PreviewImage.png</PreviewImage>
     <Tags>Productivity, Macros, Automation</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">

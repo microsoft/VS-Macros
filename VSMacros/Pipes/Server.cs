@@ -118,8 +118,7 @@ namespace VSMacros.Pipes
         private static string GetScriptError(NamedPipeServerStream serverStream)
         {
             var formatter = new BinaryFormatter();
-            var binder = new BinderHelper();
-            formatter.Binder = binder;
+            formatter.Binder = new BinderHelper();
             var scriptError = (ScriptError)formatter.Deserialize(Server.ServerStream);
 
             int lineNumber = scriptError.LineNumber;
@@ -127,7 +126,7 @@ namespace VSMacros.Pipes
             string source = scriptError.Source;
             string description = scriptError.Description;
 
-            var exceptionMessage = string.Format("{0}: {1} at line {2}, column {3}.", source, description, lineNumber, column);
+            var exceptionMessage = string.Format("{0}{3}{3}Line Number: {1}{3}Cause: {2}.", source, lineNumber, description, Environment.NewLine);
             return exceptionMessage;
         }
 

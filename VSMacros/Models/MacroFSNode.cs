@@ -136,8 +136,8 @@ namespace VSMacros.Models
                 {
                     if (e.Message != null)
                     {
-                        // TODO export VSMacros.Engines.Manager.Instance.ShowMessageBox to a helper class?
-                        VSMacros.Engines.Manager.Instance.ShowMessageBox(e.Message);
+                        Manager.Instance.ShowMessageBox(e.Message);
+                        MacroFSNode.RefreshTree();
                     }
                 }
             }

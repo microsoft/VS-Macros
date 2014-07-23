@@ -40,7 +40,7 @@ namespace VSMacros.RecorderOutput
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(output);
             }
-            else if (this.commandName == "keyboard")
+            else if (this.commandName != "keyboard")
             {
                 outputStream.WriteLine(Convert(commandName, 1));
             }
@@ -51,10 +51,26 @@ namespace VSMacros.RecorderOutput
             outputStream.WriteLine(Convert(commandName, iterations));
         }
 
-        internal void ConvertToJavascript(StreamWriter outputStream, List<char> input)
+        internal void ConvertToJavascript(StreamWriter outputStream, List<char> input, bool isIntellisense)
         {
-            string escapedInput = string.Join("", input).Replace("\\", "\\\\").Replace("\"", "\\\"");
-            string output = string.Format(this.textSelection + "Text = \"{0}\";", escapedInput);
+            string output = string.Empty;
+
+            // If the string is not completed by intellisense, output using Selection.Text
+            if (!isIntellisense)
+            {
+                string escapedInput = string.Join("", input).Replace("\\", "\\\\").Replace("\"", "\\\"");
+                output = string.Format(this.textSelection + "Text = \"{0}\";", escapedInput);
+            }
+            else
+            {
+                foreach (var c in input)
+                {
+                    output += "cmdHelper.DispatchCommandWithArgs(\"{1496a755-94de-11d0-8c3f-00c04fc2aae2}\", 1, \"" + c + "\");\n";
+                }
+
+                output += "dte.ExecuteCommand(\"Edit.InsertTab\");";
+            }
+            
             outputStream.WriteLine(output);
         }
 
@@ -197,9 +213,14 @@ namespace VSMacros.RecorderOutput
 
         #endregion
 
-        internal bool IsInsertAction()
+        internal bool IsInsert()
         {
             return this.commandName == "keyboard";
+        }
+
+        internal bool IsIntellisenseComplete()
+        {
+            return this.commandName == "Edit.InsertTab";
         }
 
         internal char Input

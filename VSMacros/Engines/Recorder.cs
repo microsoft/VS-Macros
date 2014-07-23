@@ -54,7 +54,7 @@ namespace VSMacros.Engines
                         RecordedCommand current = action as RecordedCommand;
                         RecordedCommand next = this.dataModel.Actions[i + 1] as RecordedCommand;                        
 
-                        if (current.IsInsertAction())
+                        if (current.IsInsert())
                         {
                             List<char> buffer = new List<char>();
 
@@ -70,10 +70,10 @@ namespace VSMacros.Engines
                                 }
 
                                 next = this.dataModel.Actions[++i] as RecordedCommand;
-                            } while (next.IsInsertAction() && i + 1 < this.dataModel.Actions.Count);
+                            } while (next.IsInsert() && i + 1 < this.dataModel.Actions.Count);
 
                             // Process last character
-                            if (next.IsInsertAction())
+                            if (next.IsInsert())
                             {
                                 if (next.Input != '\0')
                                 {
@@ -86,8 +86,9 @@ namespace VSMacros.Engines
                                 i--;
                             }
 
-                            // Output insert
-                            current.ConvertToJavascript(fs, buffer);
+                            // Output the text
+                            current.ConvertToJavascript(fs, buffer, next.IsIntellisenseComplete());
+
                             buffer = new List<char>();
                         }
                         else

@@ -36,7 +36,7 @@ namespace VSMacros.RecorderOutput
             string output;
             if (this.commandName == null)
             {
-                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2})";
+                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(output);
             }

@@ -19,7 +19,7 @@ namespace VSMacros.RecorderOutput
         internal override void ConvertToJavascript(StreamWriter outputStream)
         {
             string escapedInput = this.docPath.Replace("\\", "\\\\");
-            outputStream.WriteLine("dte.Documents.Item(\"" + escapedInput + "\").Activate()");
+            outputStream.WriteLine("dte.Documents.Item(\"" + escapedInput + "\").Activate();");
         }
     }
 }

@@ -124,17 +124,26 @@ namespace VSMacros.Engines
 
             // Before playing back, save the macro file
             EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
-            EnvDTE.Document doc = dte.Documents.Item(Path.GetFileName(path));
-            
-            if (!doc.Saved)
+
+            try
             {
-                if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
-                    string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
-                    OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
+                EnvDTE.Document doc = dte.Documents.Item(Path.GetFileName(path));
+
+                if (!doc.Saved)
                 {
-                    doc.Save();
+                    if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
+                        string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
+                        OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
+                    {
+                        doc.Save();
+                    }
                 }
             }
+            catch(Exception e)
+            {
+                if (ErrorHandler.IsCriticalException(e)) { throw; }
+            }
+
 
             this.PlayMacro(path, iterations);
         }

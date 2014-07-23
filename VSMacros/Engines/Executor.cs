@@ -15,6 +15,7 @@ using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.ExecutionEngine.Pipes.Shared;
 using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Pipes;
@@ -32,7 +33,6 @@ namespace VSMacros.Engines
         internal static Process executionEngine;
         internal static bool IsEngineInitialized;
         internal static JobHandle Job;
-        private const string Delimiter = "[delimiter]";
 
         /// <summary>
         /// Informs subscribers of success or error during execution.
@@ -57,7 +57,7 @@ namespace VSMacros.Engines
         private string ProvidePipeArguments(Guid guid, string version)
         {
             int pid = Process.GetCurrentProcess().Id;
-            return string.Format("{0}{1}{2}{1}{3}", guid, Executor.Delimiter, pid, version);
+            return string.Format("{0}{1}{2}{1}{3}", guid, SharedVariables.Delimiter, pid, version);
         }
 
         private System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()

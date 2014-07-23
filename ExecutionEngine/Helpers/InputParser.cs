@@ -9,12 +9,13 @@ using System.Globalization;
 using System.IO;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Pipes.Shared;
 
 namespace ExecutionEngine.Helpers
 {
     public static class InputParser
     {
-        private static string[] stringSeparator = new [] { "[delimiter]" };
+        private static string[] stringSeparator = new [] { SharedVariables.Delimiter };
 
         internal static string[] SeparateArgs(string[] args)
         {

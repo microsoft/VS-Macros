@@ -5,21 +5,10 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace VSMacros.Dialogs
 {
@@ -33,6 +22,8 @@ namespace VSMacros.Dialogs
         public PlaybackMultipleTimesDialog()
         {
             this.InitializeComponent();
+
+            this.Owner = Application.Current.MainWindow;
 
             this.IterationsTextbox.Focus();
             this.IterationsTextbox.SelectAll();

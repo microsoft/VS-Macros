@@ -5,21 +5,17 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.VisualStudio;
-using VSMacros;
+using Microsoft.VisualStudio.PlatformUI;
 using VSMacros.Engines;
 
 namespace VSMacros.Dialogs
 {
-    public class MacroDialog : Window
+    public class MacroDialog : DialogWindow
     {
         public int SelectedShortcutNumber { get; set; }
 
@@ -30,6 +26,8 @@ namespace VSMacros.Dialogs
             // Set default values for public members
             this.SelectedShortcutNumber = 0;
             this.ShouldRefreshFileSystem = false;
+
+            this.Owner = Application.Current.MainWindow;
         }
 
         protected int GetSelectedNumber(ComboBoxItem item)
@@ -38,7 +36,7 @@ namespace VSMacros.Dialogs
             {
                 return 0;
             }
-
+            
             return item.Tag.ToString()[0] - '0';
         }
 

@@ -34,6 +34,11 @@ namespace VSMacros.Dialogs
 
         protected int GetSelectedNumber(ComboBoxItem item)
         {
+            if (item == null)
+            {
+                return 0;
+            }
+
             return item.Tag.ToString()[0] - '0';
         }
 

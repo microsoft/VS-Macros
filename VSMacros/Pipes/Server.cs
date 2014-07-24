@@ -123,10 +123,11 @@ namespace VSMacros.Pipes
 
             int lineNumber = scriptError.LineNumber;
             int column = scriptError.Column;
-            string source = scriptError.Source;
-            string description = scriptError.Description;
+            string source = scriptError.Source ?? "Script Error";
+            string description = scriptError.Description ?? "Command not valid in this context";
+            string period = description[description.Length - 1] == '.' ? string.Empty : ".";
 
-            var exceptionMessage = string.Format("{0}{3}{3}Line Number: {1}{3}Cause: {2}.", source, lineNumber, description, Environment.NewLine);
+            var exceptionMessage = string.Format("{0}{3}{3}Line Number: {1}{3}Cause: {2}{4}", source, lineNumber, description, Environment.NewLine, period);
             return exceptionMessage;
         }
 
@@ -170,11 +171,13 @@ namespace VSMacros.Pipes
             var type = PacketType.FilePath;
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(Server.ServerStream, type);
+            Debug.WriteLine("sent type at: " + DateTime.Now);
 
             var filePath = new FilePath();
             filePath.Iterations = iterations;
             filePath.Path = path;
             formatter.Serialize(Server.ServerStream, filePath);
+            Debug.WriteLine("sent file path at: " + DateTime.Now);
         }
     }
         #endregion

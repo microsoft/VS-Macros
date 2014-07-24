@@ -194,7 +194,7 @@ var _dte2 = new function () {
         /// text. The default is 1.
         this.Indent = function (Count) { }
 
-        /// <summary>Inserts the given at the current insertion po.</summary>
+        /// <summary>Inserts the given at the current insertion point.</summary>
         /// Parameters:
         ///   Text:
         /// The text to insert.
@@ -206,7 +206,7 @@ var _dte2 = new function () {
         /// <summary>Inserts the contents of the specified file at the current location in the buffer.</summary>
         /// Parameters:
         ///   File:
-        /// Required. The name of the file to insert o the text buffer.
+        /// Required. The name of the file to insert into the text buffer.
         this.InsertFromFile = function (File) { }
 
         /// <summary>Moves the insertion poof the text selection down the specified number of lines.</summary>     
@@ -728,3 +728,11 @@ var dte = new function () {
         /// <param name="CommandArgs" type="String">Optional. A string containing the same arguments you would supply if you were invoking the command from the Command window. If a string is supplied, it is passed to the command line as the command's first argument and is parsed to form the various arguments for the command. This is similar to how commands are invoked in the Command window.</param>
     }
 }
+
+/// The top-level object in the Macros object model
+var Macro = new function () {
+    this.InsertText = function (text) {
+        /// <summary>Inserts the given at the current insertion point.</summary>
+        /// <param name="text" type="String">Required. The text to insert</param>
+    };
+};

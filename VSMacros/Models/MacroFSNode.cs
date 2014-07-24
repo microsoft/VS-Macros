@@ -27,6 +27,18 @@ namespace VSMacros.Models
     {
         // HashSet containing the enabled directories
         private static HashSet<string> enabledDirectories = new HashSet<string>();
+        public static HashSet<string> EnabledDirectories { 
+            get 
+            { 
+                return MacroFSNode.enabledDirectories; 
+            } 
+
+            set
+            {
+                MacroFSNode.enabledDirectories = value;
+                MacroFSNode.RootNode.SetIsExpanded(MacroFSNode.RootNode, MacroFSNode.enabledDirectories);
+            }
+        }
 
         // Properties the binding client watches
         private string fullPath;

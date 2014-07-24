@@ -52,6 +52,8 @@ namespace VSMacros
             var macroControl = new MacrosControl(root);
             macroControl.Loaded += this.OnLoaded;
             this.Content = macroControl;
+
+            Manager.Instance.LoadFolderExpansion();
         }
 
         public void OnLoaded(object sender, System.Windows.RoutedEventArgs e)

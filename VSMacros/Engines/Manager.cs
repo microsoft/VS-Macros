@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -33,6 +34,7 @@ namespace VSMacros.Engines
 
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
+        private const string FolderExpansionFileName = "FolderExpansion.xml";
 
         public static string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
         public static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
@@ -41,7 +43,6 @@ namespace VSMacros.Engines
         private bool shortcutsLoaded;
         private bool shortcutsDirty;
 
-        private string shortcutsFilePath;
 
         private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
@@ -69,7 +70,6 @@ namespace VSMacros.Engines
 
             this.recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
 
-            this.shortcutsFilePath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName);
             this.LoadShortcuts();
             this.shortcutsLoaded = true;
             this.shortcutsDirty = false;
@@ -106,7 +106,8 @@ namespace VSMacros.Engines
 
         public void StartRecording()
         {
-            this.recorder.StartRecording();
+            this.SaveFolderExpansion();
+            //this.recorder.StartRecording();
         }
 
         public void StopRecording()
@@ -465,6 +466,7 @@ namespace VSMacros.Engines
 
         public void Close()
         {
+            this.SaveFolderExpansion();
             this.SaveShortcuts();
         }
 
@@ -570,6 +572,32 @@ namespace VSMacros.Engines
             }
         }
 
+        public void LoadFolderExpansion()
+        {
+            string path = Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.FolderExpansionFileName);
+
+            if (File.Exists(path))
+            {
+                HashSet<string> enabledDirs = new HashSet<string>();
+
+                string[] folders = File.ReadAllText(path).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var s in folders)
+                {
+                    enabledDirs.Add(s);
+                }
+
+                MacroFSNode.EnabledDirectories = enabledDirs;
+            }
+        }
+
+        private void SaveFolderExpansion()
+        {
+            var folders = string.Join(Environment.NewLine, MacroFSNode.EnabledDirectories);
+
+            File.WriteAllText(Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.FolderExpansionFileName), folders);
+        }
+
         private void LoadShortcuts()
         {
             this.shortcutsLoaded = true;
@@ -577,7 +605,7 @@ namespace VSMacros.Engines
             try
             {
                 // Get the path to the shortcut file
-                string path = Path.Combine(VSMacrosPackage.Current.MacroDirectory, this.shortcutsFilePath);
+                string path = Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.ShortcutsFileName);
 
                 // If the file doesn't exist, initialize the Shortcuts array with empty strings
                 if (!File.Exists(path))
@@ -614,7 +642,7 @@ namespace VSMacros.Engines
                             select new XElement("command",
                                 new XText(s))));
 
-                xmlShortcuts.Save(this.shortcutsFilePath);
+                xmlShortcuts.Save(Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.ShortcutsFileName));
 
                 this.shortcutsDirty = false;
             }
@@ -636,7 +664,7 @@ namespace VSMacros.Engines
 
         private void CreateShortcutFile()
         {
-            string shortcutsPath = Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName);
+            string shortcutsPath = Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.ShortcutsFileName);
             if (!File.Exists(shortcutsPath))
             {
                 // Create file for writing UTF-8 encoded text

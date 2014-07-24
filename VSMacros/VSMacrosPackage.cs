@@ -74,7 +74,7 @@ namespace VSMacros
             {
                 if (this.macroDirectory == default(string))
                 {
-                    this.macroDirectory = Path.Combine(UserLocalDataPath, "Macros");
+                    this.macroDirectory = Path.Combine(this.UserLocalDataPath, "Macros");
                 }
                 return this.macroDirectory;
             }

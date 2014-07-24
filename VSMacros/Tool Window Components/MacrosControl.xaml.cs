@@ -296,11 +296,16 @@ namespace VSMacros
                             Manager.DirectoryCopy(s, destPath, true);
                         }
                     }
-                    
+
                 }
+
+                // Unset IsTreeViewItemDropOver for target
+                MacrosControl.SetIsTreeViewItemDropOver(targetItem, false);
 
                 MacroFSNode.RefreshTree(target);
             }
+
+            this.isDragging = false;
         }
 
         private void TreeViewItem_DragEnter(object sender, DragEventArgs e)

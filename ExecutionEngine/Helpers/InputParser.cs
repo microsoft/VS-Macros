@@ -7,6 +7,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine;
@@ -52,8 +53,10 @@ namespace ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
-            string activateActiveDocument = unwrapped.Contains("ExecuteCommand(\"Edit.") ? "dte.ActiveDocument.Activate()" : string.Empty;
-            return string.Format("function {0}() {{{1}{3}{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped, activateActiveDocument);
+            string activateActiveDocument = (unwrapped.Contains("ExecuteCommand(\"Edit.") || unwrapped.Contains("Macro.InsertText")) ? "dte.ActiveDocument.Activate()" : string.Empty;
+            string insertFunction = "var Macro = new function() { this.InsertText=function(str){for(var i=0,len=str.length;i<len;i++){cmdHelper.DispatchCommandWithArgs(\"{1496a755-94de-11d0-8c3f-00c04fc2aae2}\",1,str.charAt(i));}};};";
+
+            return string.Format("function {0}() {{{1}{4}{1}{3}{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped, activateActiveDocument, insertFunction);
         }
     }
 }

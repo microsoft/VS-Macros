@@ -87,7 +87,7 @@ namespace VSMacros.Engines
                             }
 
                             // Output the text
-                            current.ConvertToJavascript(fs, buffer, next.IsIntellisenseComplete());
+                            current.ConvertToJavascript(fs, buffer);
 
                             buffer = new List<char>();
                         }

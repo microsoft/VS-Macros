@@ -183,7 +183,7 @@ namespace VSMacros
                 Manager.Instance.StartRecording();
 
                 this.StatusBarChange(Resources.StatusBarRecordingText, 1);
-                this.ChangeMenuCommands(this.StopIcon, 0);
+                this.ChangeMenuIcons(this.StopIcon, 0);
                 this.UpdateButtonsForRecording(true);
             }
             else
@@ -191,7 +191,7 @@ namespace VSMacros
                 Manager.Instance.StopRecording();
 
                 this.StatusBarChange(Resources.StatusBarReadyText, 0);
-                this.ChangeMenuCommands(this.StartIcon, 0);
+                this.ChangeMenuIcons(this.StartIcon, 0);
                 this.UpdateButtonsForRecording(false);
             }
         }
@@ -230,7 +230,7 @@ namespace VSMacros
         #endregion
 
         #region Status Bar
-        private void ChangeMenuCommands(BitmapSource icon, int commandNumber)
+        public void ChangeMenuIcons(BitmapSource icon, int commandNumber)
         {
             // commandNumber is 0 for Recording, 1 for Playback and 2 for Playback Multiple Times         
             try
@@ -240,8 +240,11 @@ namespace VSMacros
                     // Change icon in menu
                     this.ImageButtons[commandNumber].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
 
-                    // Change icon in toolbar
-                    this.ImageButtons[commandNumber + 3].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                    if (this.ImageButtons.Count > 3)
+                    {
+                        // Change icon in toolbar
+                        this.ImageButtons[commandNumber + 3].Picture = (stdole.StdPicture)ImageHelper.IPictureFromBitmapSource(icon);
+                    }
                 }
             }
             catch (ObjectDisposedException)
@@ -331,7 +334,7 @@ namespace VSMacros
             this.EnableMyCommand(PkgCmdIDList.CmdIdOpenDirectory, enable);
         }
 
-        public bool EnableMyCommand(int cmdID, bool enableCmd)
+        internal bool EnableMyCommand(int cmdID, bool enableCmd)
         {
             bool cmdUpdated = false;
             var mcs = this.GetService(typeof(IMenuCommandService))
@@ -346,7 +349,7 @@ namespace VSMacros
             return cmdUpdated;
         }
 
-        public void ClearStatusBar()
+        internal void ClearStatusBar()
         {
             this.StatusBarChange(Resources.StatusBarReadyText, 0);
         }
@@ -375,7 +378,7 @@ namespace VSMacros
             }
         }
 
-        private BitmapSource StopIcon
+        internal BitmapSource StopIcon
         {
             get
             {

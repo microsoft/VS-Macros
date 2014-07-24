@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
+using VSMacros.Interfaces;
 using VSMacros.Models;
 
 namespace VSMacros
@@ -72,6 +73,12 @@ namespace VSMacros
                 this.owningPackage.ImageButtons.Add((CommandBarButton)((CommandBars)window.CommandBars)[1].Controls[3]);
 
                 this.addedToolbarButton = true;
+            }
+
+            IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
+            if (macroRecorder.IsRecording)
+            {
+                this.owningPackage.ChangeMenuIcons(this.owningPackage.StopIcon, 0);
             }
         }
 

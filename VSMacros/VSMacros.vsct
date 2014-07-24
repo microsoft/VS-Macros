@@ -116,7 +116,7 @@
         <Icon guid="guidIcons" id="iconRecord" />
         <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <ButtonText>Start/Stop Recording</ButtonText>
+          <ButtonText>Start Recording</ButtonText>
         </Strings>
       </Button>
 

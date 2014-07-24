@@ -1,8 +1,12 @@
 ﻿Macros for Visual Studio 2013
-Date: 7/18/2014
-Version: 1.0.1
+Date: 6/23/2014
+Version: 1.1.0
 
 What's New:
+	- Drag and Drop from Windows File Explorer to Macro Explorer
+	- Restore folder expansion in next session
+	- Better Intellisense handling by the recorder
+	- Improved execution engine and better error handling
 	- Various bug fixes and improvements
 
 Installation Instructions:
@@ -17,7 +21,6 @@ Suggested Testing:
 		- Increase Font Size
 		- Beginning of Function
 		- Insert {Date & Time, Date, Header, Time}
-		- Find Case
 		- Find Line
 		- Toggle Line Numbers
 		- Toggle Word Wrap

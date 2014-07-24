@@ -106,8 +106,7 @@ namespace VSMacros.Engines
 
         public void StartRecording()
         {
-            this.SaveFolderExpansion();
-            //this.recorder.StartRecording();
+            this.recorder.StartRecording();
         }
 
         public void StopRecording()

@@ -734,7 +734,7 @@ namespace VSMacros.Engines
             SHFileOperation(ref fileop);
         }
 
-        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
             // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);

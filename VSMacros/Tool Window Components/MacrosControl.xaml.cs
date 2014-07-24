@@ -266,10 +266,10 @@ namespace VSMacros
                     // If the file is a macro file
                     if (Path.GetExtension(s) == ".js")
                     {
-                        string draggedPath = Path.Combine(target.FullPath, filename + ".js");
+                        string destPath = Path.Combine(target.FullPath, filename + ".js");
                         VSConstants.MessageBoxResult result = VSConstants.MessageBoxResult.IDYES;
 
-                        if (File.Exists(draggedPath))
+                        if (File.Exists(destPath))
                         {
                             string message = string.Format(VSMacros.Resources.DragDropFileExists, filename);
                             result = Manager.Instance.ShowMessageBox(message, OLEMSGBUTTON.OLEMSGBUTTON_YESNO);
@@ -277,7 +277,23 @@ namespace VSMacros
 
                         if (result == VSConstants.MessageBoxResult.IDYES)
                         {
-                            File.Copy(s, draggedPath, true);
+                            File.Copy(s, destPath, true);
+                        }
+                    }
+                    else if (Path.GetExtension(s) == "")
+                    {
+                        string destPath = Path.Combine(target.FullPath, filename);
+                        VSConstants.MessageBoxResult result = VSConstants.MessageBoxResult.IDYES;
+
+                        if (Directory.Exists(destPath))
+                        {
+                            string message = string.Format(VSMacros.Resources.DragDropFileExists, filename);
+                            result = Manager.Instance.ShowMessageBox(message, OLEMSGBUTTON.OLEMSGBUTTON_YESNO);
+                        }
+
+                        if (result == VSConstants.MessageBoxResult.IDYES)
+                        {
+                            Manager.DirectoryCopy(s, destPath, true);
                         }
                     }
                     

@@ -483,9 +483,17 @@ namespace VSMacros.Models
         /// <returns>MacroFSNode  whose FullPath is path</returns>
         public static MacroFSNode FindNodeFromFullPath(string path)
         {
-            // shortenPath is the path relative to the Macros folder
-            string shortenPath = path.Substring(path.IndexOf(@"\Macros"));
+            // Default node if search fails
+            MacroFSNode defaultNode = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
 
+            // Make sure path is a valid string
+            if (string.IsNullOrEmpty(path))
+            {
+                return defaultNode;
+            }
+
+            // Split the string at '\'
+            string shortenPath = path.Substring(path.IndexOf(@"\Macros"));
             string[] substrings = shortenPath.Split(new char[] { '\\' });
 
             // Starting from the root,
@@ -508,7 +516,7 @@ namespace VSMacros.Models
                 }
 
                 // Return default node
-                node = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
+                node = defaultNode;
             }
 
             return node;

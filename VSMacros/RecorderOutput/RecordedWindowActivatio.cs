@@ -23,7 +23,7 @@ namespace VSMacros.RecorderOutput
         }
         internal override void ConvertToJavascript(StreamWriter outputStream)
         {
-            outputStream.WriteLine("dte.Windows.Item(\"{" + this.activatedWindow.ToString() + "}\").Activate()");
+            outputStream.WriteLine("dte.Windows.Item(\"{" + this.activatedWindow.ToString() + "}\").Activate();");
         }
     }
 }

@@ -35,7 +35,7 @@ namespace VSMacros.RecorderOutput
             string output;
             if (this.commandName == null)
             {
-                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2})";
+                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(output);
             }
@@ -214,3 +214,8 @@ namespace VSMacros.RecorderOutput
     }
 }
 
+//var insertKeyboardInput = function (str) {
+//    for (var i = 0, len = str.length; i < len; i++) {
+//        cmdHelper.DispatchCommandWithArgs("{1496a755-94de-11d0-8c3f-00c04fc2aae2}", 1, str.charAt(i));
+//    }
+//}

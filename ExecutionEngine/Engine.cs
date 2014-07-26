@@ -113,6 +113,14 @@ namespace ExecutionEngine
             this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);
         }
 
+        public void InterruptScript(int threadId)
+        {
+            System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo = new System.Runtime.InteropServices.ComTypes.EXCEPINFO();
+            uint flag = 2;
+
+            this.engine.InterruptScriptThread((uint)threadId, ref exceptionInfo, flag);
+        }
+
         public void Dispose()
         {
             if (this.engine != null)

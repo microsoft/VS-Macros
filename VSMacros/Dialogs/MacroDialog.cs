@@ -19,13 +19,10 @@ namespace VSMacros.Dialogs
     {
         public int SelectedShortcutNumber { get; set; }
 
-        public bool ShouldRefreshFileSystem { get; set; }
-
         public MacroDialog()
         {
             // Set default values for public members
             this.SelectedShortcutNumber = 0;
-            this.ShouldRefreshFileSystem = false;
 
             this.Owner = Application.Current.MainWindow;
         }
@@ -40,20 +37,29 @@ namespace VSMacros.Dialogs
             return item.Tag.ToString()[0] - '0';
         }
 
-        protected void CheckOverwrite(int selectedNumber, out bool shouldRefresh, out string warningText)
+
+        protected void AddItems(ComboBox comboBox)
+        {
+            for (int i = 1; i <= 10; i++)
+            {
+                ComboBoxItem newItem = new ComboBoxItem();
+                newItem.Content = "CTRL+M, " + i;
+                newItem.Tag = i;
+                comboBox.Items.Add(newItem);
+            }
+
+            ComboBoxItem noneItem = new ComboBoxItem();
+            noneItem.Content = "None";
+            noneItem.Tag = 0;
+            comboBox.Items.Add(noneItem);
+        }
+
+        protected string SetWarningForOverwrite(int selectedNumber)
         {
             bool willOverwrite = Manager.Shortcuts[selectedNumber] != string.Empty;
 
-            if (willOverwrite)
-            {
-               shouldRefresh = true;
-               warningText = VSMacros.Resources.DialogShortcutAlreadyUsed;
-            }
-            else
-            {
-                shouldRefresh = false;
-                warningText = string.Empty;
-            }
+            return willOverwrite ? VSMacros.Resources.DialogShortcutAlreadyUsed : string.Empty;
+
         }
         protected void OkButton_Click(object sender, RoutedEventArgs e)
         {

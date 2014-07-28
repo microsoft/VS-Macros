@@ -43,10 +43,8 @@ namespace VSMacros.Engines
         private bool shortcutsLoaded;
         private bool shortcutsDirty;
 
-
         private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
-        private bool uiShellLoaded;
 
         private IRecorder recorder;
 
@@ -59,14 +57,6 @@ namespace VSMacros.Engines
         {
             this.serviceProvider = provider;
             this.uiShell = (IVsUIShell)provider.GetService(typeof(SVsUIShell));
-            if (this.uiShell != null)
-            {
-                this.uiShellLoaded = true;
-            }
-            else
-            {
-                this.uiShellLoaded = false;
-            }
 
             this.recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
 
@@ -104,8 +94,16 @@ namespace VSMacros.Engines
             }
         }
 
+        public IVsWindowFrame PreviousWindow { get; set; }
+
         public void StartRecording()
         {
+            // Move focus back to previous window
+            if (PreviousWindow != null)
+            {
+                PreviousWindow.Show();
+            }
+
             this.recorder.StartRecording();
         }
 
@@ -673,7 +671,7 @@ namespace VSMacros.Engines
 
         public VSConstants.MessageBoxResult ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
-            if (!this.uiShellLoaded)
+            if (this.uiShell != null)
             {
                 return VSConstants.MessageBoxResult.IDABORT;
             }

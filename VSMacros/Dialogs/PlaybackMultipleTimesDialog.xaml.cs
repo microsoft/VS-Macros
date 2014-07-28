@@ -8,7 +8,6 @@ using System;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.VisualStudio.PlatformUI;
 
 namespace VSMacros.Dialogs
 {

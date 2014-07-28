@@ -3,7 +3,6 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:src="clr-namespace:VSMacros.Dialogs"
-                 xmlns:local="clr-namespace:VSMacros.Dialogs.Validation_Rules"
                  xmlns:l="clr-namespace:VSMacros"
                  Title="Set Keyboard Shortcut" Height="120" Width="220"
                  ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
@@ -17,13 +16,13 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label Content="{x:Static l:Resources.DialogPlayback}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Label Content="{x:Static l:Resources.DialogPlayback}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="31,10,20,10" />
 
         <TextBox Name="IterationsTextbox" 
-                 Grid.ColumnSpan="2" HorizontalAlignment="Center" TextWrapping="NoWrap" Text="1" VerticalAlignment="Center" Width="45" TextAlignment="Center"
-                 PreviewTextInput="IterationsTextbox_PreviewTextInput" />
+                 Grid.ColumnSpan="2" HorizontalAlignment="Center" TextWrapping="NoWrap" Text="1" VerticalAlignment="Center" Width="30" TextAlignment="Center"
+                 PreviewTextInput="IterationsTextbox_PreviewTextInput" Margin="92,14" />
 
-        <Label Content="{x:Static l:Resources.DialogTimesSingular}" Name="TimesLabel" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="25,0,0,0" Width="40"/>
+        <Label Content="{x:Static l:Resources.DialogTimesSingular}" Name="TimesLabel" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,10,0,10" Width="40"/>
 
         <!-- Accept or Cancel -->
         <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="1" VerticalAlignment="Center">

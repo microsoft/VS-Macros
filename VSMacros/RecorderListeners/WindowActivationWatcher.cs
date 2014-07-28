@@ -8,6 +8,7 @@ using System;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.Engines;
 using VSMacros.Interfaces;
 
 namespace VSMacros.RecorderListeners
@@ -57,10 +58,21 @@ namespace VSMacros.RecorderListeners
                     // NOTE: We have a selection change to a non-null value, this means someone has switched the active document / toolwindow (or the shell has done
                     // so automatically since they closed the previously active one).
                     var windowFrame = (IVsWindowFrame)varValueNew;
+                    var windowFrameOld = (IVsWindowFrame)varValueOld;
+
                     object untypedProperty;
+                    object untypedPropertyOld;
+                    
                     if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedProperty)))
                     {
                         FrameType typedProperty = (FrameType)(int)untypedProperty;
+
+                        if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
+                        {
+                            FrameType typedPropertyOld = (FrameType)(int)untypedPropertyOld;
+                            Manager.Instance.PreviousWindow = (IVsWindowFrame)varValueOld;
+                        }
+
                         if (typedProperty == FrameType.Document)
                         {
                             if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out untypedProperty)))

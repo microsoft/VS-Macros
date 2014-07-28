@@ -145,7 +145,6 @@
     <Compile Include="Dialogs\SaveCurrentDialog.xaml.cs">
       <DependentUpon>SaveCurrentDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Validation Rules\ShortcutValidationRule.cs" />
     <Compile Include="FileChangeMonitor.cs" />
     <Compile Include="Helpers\JobHandle.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />

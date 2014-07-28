@@ -3,7 +3,6 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:src="clr-namespace:VSMacros.Dialogs"
-                 xmlns:local="clr-namespace:VSMacros.Dialogs.Validation_Rules"
                  xmlns:l="clr-namespace:VSMacros"
                  Title="Set Keyboard Shortcut" Height="150" Width="400"
                  ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
@@ -26,24 +25,6 @@
                   IsReadOnly="True" IsEditable="True"
                   DropDownClosed="ShortcutsComboBox_DropDownClosed"
                   Grid.ColumnSpan="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0">
-            <ComboBox.SelectedItem>
-                <!-- Apparently not working -->
-                <Binding Path="SelectedShortcut" Mode="TwoWay">
-                    <Binding.ValidationRules>
-                        <local:ShortcutValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </ComboBox.SelectedItem>
-            <ComboBoxItem Tag="1">CTRL+M, 1</ComboBoxItem>
-            <ComboBoxItem Tag="2">CTRL+M, 2</ComboBoxItem>
-            <ComboBoxItem Tag="3">CTRL+M, 3</ComboBoxItem>
-            <ComboBoxItem Tag="4">CTRL+M, 4</ComboBoxItem>
-            <ComboBoxItem Tag="5">CTRL+M, 5</ComboBoxItem>
-            <ComboBoxItem Tag="6">CTRL+M, 6</ComboBoxItem>
-            <ComboBoxItem Tag="7">CTRL+M, 7</ComboBoxItem>
-            <ComboBoxItem Tag="8">CTRL+M, 8</ComboBoxItem>
-            <ComboBoxItem Tag="9">CTRL+M, 9</ComboBoxItem>
-            <ComboBoxItem Tag="0">None</ComboBoxItem>
         </ComboBox>
 
         <Button Content="{x:Static l:Resources.DialogCustomShortcut}" Click="CustomAssignButton_Click"

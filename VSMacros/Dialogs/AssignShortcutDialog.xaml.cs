@@ -4,13 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.ComponentModel.Design;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using Microsoft.VisualStudio;
-using VSMacros.Engines;
 
 namespace VSMacros.Dialogs
 {
@@ -26,9 +20,10 @@ namespace VSMacros.Dialogs
         {
             this.InitializeComponent();
 
+            this.AddItems(this.shortcutsComboBox);
+
             // Set default values for public members
             this.SelectedShortcutNumber = 0;
-            this.ShouldRefreshFileSystem = false;
 
             // Retrieve old shortcut
             this.oldShortcut = (MacrosControl.Current.SelectedNode).FormattedShortcut;
@@ -38,7 +33,7 @@ namespace VSMacros.Dialogs
             if (!string.IsNullOrEmpty(this.oldShortcut) && this.oldShortcut.Length >= 3)
             {
                 // this.oldShortcut has format "(CTRL+M,#)" -> remove the parentheses
-                this.shortcutsComboBox.Text = this.oldShortcut.Substring(1, this.oldShortcut.Length - 2);
+                this.shortcutsComboBox.SelectedIndex = oldShortcutNumber - 1;
                 
                 // last char should be the command number
                 this.SelectedShortcutNumber = this.oldShortcutNumber;
@@ -49,10 +44,6 @@ namespace VSMacros.Dialogs
         {
             // Get selected number as an integer
             int selectedNumber = this.GetSelectedNumber((ComboBoxItem)this.shortcutsComboBox.SelectedItem);
-            
-            // Temporary variables
-            bool shouldRefresh = false;
-            string warningText = string.Empty;
 
             // If selected number is between 1 and 9
             if (selectedNumber > 0 && selectedNumber <= 9)
@@ -60,12 +51,10 @@ namespace VSMacros.Dialogs
                 // Show overwrite message if needed
                 if (selectedNumber != this.oldShortcutNumber)
                 {
-                    this.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
+                    this.WarningTextBlock.Text = this.SetWarningForOverwrite(selectedNumber);
                 }
             }
 
-            this.ShouldRefreshFileSystem = shouldRefresh;
-            this.WarningTextBlock.Text = warningText;
             this.SelectedShortcutNumber = selectedNumber;
         }
     }

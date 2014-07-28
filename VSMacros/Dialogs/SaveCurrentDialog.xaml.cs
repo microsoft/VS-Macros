@@ -4,20 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using VSMacros.Engines;
 
 namespace VSMacros.Dialogs
 {
@@ -29,6 +17,8 @@ namespace VSMacros.Dialogs
         public SaveCurrentDialog()
         {
             this.InitializeComponent();
+
+            this.AddItems(this.shortcutsComboBox);
         }
 
         private void ShortcutsComboBox_DropDownClosed(object sender, System.EventArgs e)
@@ -36,17 +26,11 @@ namespace VSMacros.Dialogs
             // Get selected number as an integer
             int selectedNumber = this.GetSelectedNumber((ComboBoxItem)this.shortcutsComboBox.SelectedItem);
 
-            // Temporary variables
-            bool shouldRefresh = false;
-            string warningText = string.Empty;
-
             if (selectedNumber > 0 && selectedNumber <= 9)
             {
-                this.CheckOverwrite(selectedNumber, out shouldRefresh, out warningText);
+               this.WarningTextBlock.Text = this.SetWarningForOverwrite(selectedNumber);
             }
 
-            this.ShouldRefreshFileSystem = shouldRefresh;
-            this.WarningTextBlock.Text = warningText;
             this.SelectedShortcutNumber = selectedNumber;
         }
 

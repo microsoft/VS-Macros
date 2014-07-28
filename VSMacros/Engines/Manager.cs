@@ -94,8 +94,16 @@ namespace VSMacros.Engines
             }
         }
 
+        public IVsWindowFrame PreviousWindow { get; set; }
+
         public void StartRecording()
         {
+            // Move focus back to previous window
+            if (PreviousWindow != null)
+            {
+                PreviousWindow.Show();
+            }
+
             this.recorder.StartRecording();
         }
 
@@ -663,7 +671,7 @@ namespace VSMacros.Engines
 
         public VSConstants.MessageBoxResult ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
-            if (!this.uiShell != null)
+            if (this.uiShell != null)
             {
                 return VSConstants.MessageBoxResult.IDABORT;
             }

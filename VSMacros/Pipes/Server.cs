@@ -105,10 +105,9 @@ namespace VSMacros.Pipes
                 catch (System.Runtime.Serialization.SerializationException e)
                 {
 #if DEBUG
-                    MessageBox.Show(e.Message);
-#endif
+                    Debug.WriteLine("Server has shut down: " + e.Message);
                     // TODO: What else do I need to do here?
-                    // It lags when VS is shut down
+#endif
                 }
             } 
         }

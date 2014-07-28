@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.Shell;
 
 namespace ExecutionEngine
 {
-    internal sealed class Engine : IDisposable
+    public sealed class Engine : IDisposable
     {
         private IActiveScript engine;
         private Parser parser;
@@ -138,13 +138,19 @@ namespace ExecutionEngine
 
         internal ParsedScript Parse(string unparsed)
         {
-            Validate.IsNotNullAndNotEmpty(unparsed, "unparsed");
-
-            this.engine.SetScriptState(ScriptState.Connected);
-            this.parser.Parse(unparsed);
-            var parsedScript = this.GenerateParsedScript();
-
-            return parsedScript;
+            try
+            {
+                this.engine.SetScriptState(ScriptState.Connected);
+                this.parser.Parse(unparsed);
+                var parsedScript = this.GenerateParsedScript();
+                return parsedScript;
+            }
+            catch (Exception e)
+            {
+                // TODO: Package into internal error
+                Console.WriteLine("oops:" + e.Message + e.Source + e.StackTrace + e.TargetSite.ToString());
+                return null;
+            }
         }
     }
 }

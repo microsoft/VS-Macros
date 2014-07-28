@@ -39,6 +39,8 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
 
+        public bool IsEngineRunning { get; set; }
+
         internal void SendCompletionMessage(bool isError, string errorMessage)
         {
             if (this.Complete != null)

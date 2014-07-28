@@ -89,6 +89,8 @@ namespace VSMacros.Engines
                         VSMacrosPackage.Current.ClearStatusBar();
                     }
                 };
+
+            Manager.instance.Executor.IsEngineRunning = false;
         }
 
         public static Manager Instance
@@ -144,7 +146,21 @@ namespace VSMacros.Engines
         {
             // TODO: Is this the right place to attach the event??
             AttachEvents(this.Executor);
-            this.Executor.RunEngine(iterations, path);
+
+            if (this.Executor.IsEngineRunning)
+            {
+                // TODO: FOr now this will cause an exception and stop execution.
+                // (Right now doing it the right way is lower on my list of priorities).
+
+                this.Executor.RunEngine(iterations, path);
+                Manager.instance.Executor.IsEngineRunning = false;
+                // CHange status bar?
+            }
+            else
+            {
+                this.Executor.RunEngine(iterations, path);
+                Manager.instance.Executor.IsEngineRunning = true;
+            }
         }
 
         public void PlaybackCommand(int cmd)

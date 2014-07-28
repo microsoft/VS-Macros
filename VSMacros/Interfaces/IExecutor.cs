@@ -19,6 +19,8 @@ namespace VSMacros.Interfaces
         /// </summary>
         event EventHandler<CompletionReachedEventArgs> Complete;
 
+        bool IsEngineRunning { get; set; }
+
         /// <summary>
         /// Initializes the engine and then runs the macro script.
         /// </summary>

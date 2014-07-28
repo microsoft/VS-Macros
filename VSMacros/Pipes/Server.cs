@@ -13,7 +13,6 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
-//using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.Engines;
 using VSMacros.Enums;
 using VSMacros.ExecutionEngine.Pipes;
@@ -48,11 +47,10 @@ namespace VSMacros.Pipes
             Server.ServerStream.WaitForConnection();
 
             var formatter = new BinaryFormatter();
-            var binder = new BinderHelper();
-            formatter.Binder = binder;
+            formatter.Binder = new BinderHelper();
 
             bool shouldKeepRunning = true;
-            while (shouldKeepRunning)
+            while (shouldKeepRunning && Server.ServerStream.IsConnected)
             {
                 try
                 {

@@ -34,8 +34,9 @@ namespace ExecutionEngine
                     if (Site.RuntimeError)
                     {
                         uint activeDocumentModification = 1;
+                        uint macroInsertTextModification = 0;
                         var e = Site.RuntimeException;
-                        uint modifiedLineNumber = e.Line - activeDocumentModification;
+                        uint modifiedLineNumber = e.Line - activeDocumentModification + macroInsertTextModification;
 
                         Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
@@ -80,9 +81,9 @@ namespace ExecutionEngine
             Program.RunMacro(wrappedScript, iterations);
         }
 
-        internal static Thread CreateReadingThread(int pid, string version)
+        internal static Thread CreateReadingExecutingThread(int pid, string version)
         {
-            Thread readThread = new Thread(() =>
+            Thread readAndExecuteThread = new Thread(() =>
             {
                 try
                 {
@@ -121,8 +122,8 @@ namespace ExecutionEngine
                 }
             });
 
-            readThread.SetApartmentState(ApartmentState.STA);
-            return readThread;
+            readAndExecuteThread.SetApartmentState(ApartmentState.STA);
+            return readAndExecuteThread;
         }
 
         private static void RunFromPipe(string[] separatedArgs)
@@ -133,15 +134,15 @@ namespace ExecutionEngine
             int pid = InputParser.GetPid(separatedArgs[1]);
             string version = separatedArgs[2];
 
-            Thread readThread = CreateReadingThread(pid, version);
-            readThread.Start();
+            Thread readAndExecuteThread = CreateReadingExecutingThread(pid, version);
+            readAndExecuteThread.Start();
         }
 
         internal static void Main(string[] args)
         {
             try
             {
-                //MessageBox.Show("hello");
+                MessageBox.Show("hello");
                 string[] separatedArgs = InputParser.SeparateArgs(args);
                 RunFromPipe(separatedArgs);
             }

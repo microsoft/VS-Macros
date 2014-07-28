@@ -148,10 +148,10 @@
     <value>Predefined Keyboard Shortcuts</value>
   </data>
   <data name="DialogTimesPlural" xml:space="preserve">
-    <value>Times</value>
+    <value>times</value>
   </data>
   <data name="DialogTimesSingular" xml:space="preserve">
-    <value>Time</value>
+    <value>time</value>
   </data>
   <data name="DragDropFileExists" xml:space="preserve">
     <value>{0} already exists. Do you want to overwrite it?</value>

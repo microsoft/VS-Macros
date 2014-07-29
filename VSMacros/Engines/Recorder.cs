@@ -45,7 +45,7 @@ namespace VSMacros.Engines
                 // Add reference to DTE for Intellisense
                 fs.WriteLine(string.Format("/// <reference path=\"" + Manager.dteIntellisensePath + "\" />{0}", Environment.NewLine));
 
-                bool inDocument = true;
+                bool inDocument = Manager.Instance.FirstWindowIsDocument;
 
                 for (int i = 0; i < this.dataModel.Actions.Count; i++)
                 {
@@ -108,6 +108,12 @@ namespace VSMacros.Engines
                                     iterations++;
                                     current = next;
                                     next = this.dataModel.Actions[++i + 1] as RecordedCommand ?? empty;
+                                }
+
+                                if (current.CommandName == next.CommandName)
+                                {
+                                    iterations++;
+                                    i++;
                                 }
 
                                 current.ConvertToJavascript(fs, iterations, inDocument);

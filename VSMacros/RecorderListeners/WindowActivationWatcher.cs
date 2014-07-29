@@ -64,10 +64,7 @@ namespace VSMacros.RecorderListeners
                     if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedProperty)))
                     {
                         FrameType typedProperty = (FrameType)(int)untypedProperty;
-                        if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
-                        {
-                            FrameType typedPropertyOld = (FrameType)(int)untypedPropertyOld;
-                        }
+
                         if (windowFrameOld != null)
                         {
                             if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Caption, out untypedPropertyOld)))

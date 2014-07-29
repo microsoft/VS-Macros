@@ -94,6 +94,7 @@ namespace VSMacros.Engines
         }
 
         public IVsWindowFrame PreviousWindow { get; set; }
+        public bool FirstWindowIsDocument { get; set; }
 
         public void StartRecording()
         {
@@ -103,6 +104,9 @@ namespace VSMacros.Engines
             {
                 PreviousWindow.Show();
             }
+
+            // Is the first window a document?
+            Manager.Instance.FirstWindowIsDocument = dte.ActiveWindow.Kind == "Document";
 
             this.recording = true;
             this.recorder.StartRecording();

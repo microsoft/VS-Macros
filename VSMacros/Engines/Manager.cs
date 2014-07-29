@@ -70,13 +70,11 @@ namespace VSMacros.Engines
             executor.ResetMessages();
             executor.Complete += (sender, eventInfo) =>
                 {
+                    VSMacrosPackage.Current.ClearStatusBar();
+
                     if (eventInfo.IsError)
                     {
                         Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
-                    }
-                    else
-                    {
-                        VSMacrosPackage.Current.ClearStatusBar();
                     }
                 };
         }
@@ -142,6 +140,7 @@ namespace VSMacros.Engines
                 if (ErrorHandler.IsCriticalException(e)) { throw; }
             }
 
+            VSMacrosPackage.Current.StatusBarChange(Resources.StatusBarPlayingText, 1);
 
             this.PlayMacro(path, iterations);
         }
@@ -671,7 +670,7 @@ namespace VSMacros.Engines
 
         public VSConstants.MessageBoxResult ShowMessageBox(string message, OLEMSGBUTTON btn = OLEMSGBUTTON.OLEMSGBUTTON_OK)
         {
-            if (this.uiShell != null)
+            if (this.uiShell == null)
             {
                 return VSConstants.MessageBoxResult.IDABORT;
             }

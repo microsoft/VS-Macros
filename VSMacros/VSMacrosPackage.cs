@@ -200,7 +200,6 @@ namespace VSMacros
         {
             Manager.Instance.Playback(string.Empty);
 
-            this.StatusBarChange(Resources.StatusBarPlayingText, 1);
             //this.UpdateButtonsForPlayback(true);
         }
 
@@ -208,7 +207,6 @@ namespace VSMacros
         {
             Manager.Instance.PlaybackMultipleTimes(string.Empty);
 
-            this.StatusBarChange(Resources.StatusBarPlayingText, 1);
             //this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
 
@@ -253,7 +251,7 @@ namespace VSMacros
             }
         }
 
-        private void StatusBarChange(string status, int animation)
+        internal void StatusBarChange(string status, int animation)
         {
             this.statusBar.Clear();
             this.statusBar.SetText(status);

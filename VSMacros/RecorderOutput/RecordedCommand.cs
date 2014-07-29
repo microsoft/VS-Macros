@@ -32,22 +32,27 @@ namespace VSMacros.RecorderOutput
 
         internal override void ConvertToJavascript(StreamWriter outputStream)
         {
+            this.ConvertToJavascript(outputStream, 1, false);
+        }
+
+        internal void ConvertToJavascript(StreamWriter outputStream, int iterations, bool inDocument)
+        {
             string output;
-            if (this.commandName == null)
+
+            if (inDocument)
+            {
+                outputStream.WriteLine(this.Convert(commandName, iterations));
+            }
+            else if (this.commandName == null || this.commandName == "<Unknown>") // TODO remove Unknown
             {
                 string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
-                outputStream.WriteLine(output);
+                outputStream.WriteLine(this.DuplicateStrings(output, iterations));
             }
-            else if (this.commandName != "keyboard")
+            else
             {
-                outputStream.WriteLine(Convert(commandName, 1));
+                outputStream.WriteLine(this.DuplicateStrings("dte.ExecuteCommand(\"" + this.commandName + "\");", iterations));
             }
-        }
-
-        internal void ConvertToJavascript(StreamWriter outputStream, int iterations)
-        {
-            outputStream.WriteLine(Convert(commandName, iterations));
         }
 
         internal void ConvertToJavascript(StreamWriter outputStream, List<char> input)
@@ -60,15 +65,6 @@ namespace VSMacros.RecorderOutput
 
         #region Converter
 
-        internal bool IsHandledByConverter()
-        {
-            HashSet<string> handledCommands = new HashSet<string>() {
-                "Edit.CharRight", "Edit.CharRightExtend", "Edit.CharLeft", "Edit.CharLeftExtend",
-                "Edit.WordRight", "Edit.WordRightExtend", "Edit.WordLeft", "Edit.WordLeftExtend"
-            };
-
-            return handledCommands.Contains(this.commandName);
-        }
         private string Convert(string command, int iterations)
         {
             // Handled commands: "Edit.Char*", "Edit.Word*", "Edit.Line*", "Edit.BreakLine", "Edit.EndOf*", "Edit.Delete*" \ {*Column}
@@ -164,18 +160,25 @@ namespace VSMacros.RecorderOutput
 
             if (ret == string.Empty)
             {
-                ret = this.DuplicateStrings("dte.ExecuteCommand(\"" + command + "\")", iterations);
+                ret = this.DuplicateStrings("dte.ExecuteCommand(\"" + command + "\");", iterations, true);
             }
 
             return ret + ";";
         }
 
-        private string DuplicateStrings(string str, int iterations)
+        private string DuplicateStrings(string str, int iterations, bool removeExtraSemiColon = false)
         {
-            string ret = string.Concat(Enumerable.Repeat(str + ";\n", iterations));
+            string ret = string.Concat(Enumerable.Repeat(str + Environment.NewLine, iterations));
 
-            // Remove the extra ";\n"
-            return ret.Substring(0, ret.Length - 2);
+            ret = ret.Substring(0, ret.Length - 2);
+
+            // Remove the extra semicolon
+            if (removeExtraSemiColon)
+            {
+                ret = ret.Substring(0, ret.Length - 1);
+            }
+
+            return ret;
         }
 
         private string FormatEditWithExtend(string commandName, string direction, bool extend, int iterations)
@@ -200,6 +203,11 @@ namespace VSMacros.RecorderOutput
         internal bool IsInsert()
         {
             return this.commandName == "keyboard";
+        }
+
+        internal bool IsValidCharacter()
+        {
+            return this.input != '\0';
         }
 
         internal char Input

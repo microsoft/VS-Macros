@@ -98,7 +98,8 @@ namespace VSMacros.Engines
         public void StartRecording()
         {
             // Move focus back to previous window
-            if (PreviousWindow != null)
+            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
+            if (dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
             {
                 PreviousWindow.Show();
             }

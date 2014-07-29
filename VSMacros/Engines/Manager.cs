@@ -42,6 +42,7 @@ namespace VSMacros.Engines
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
         private bool shortcutsDirty;
+        private bool recording;
 
         private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
@@ -104,7 +105,13 @@ namespace VSMacros.Engines
                 PreviousWindow.Show();
             }
 
+            this.recording = true;
             this.recorder.StartRecording();
+        }
+
+        public bool IsRecording
+        {
+            get { return this.recording; }
         }
 
         public void StopRecording()
@@ -112,6 +119,7 @@ namespace VSMacros.Engines
             string current = Manager.CurrentMacroPath;
 
             this.recorder.StopRecording(current);
+            this.recording = false;
 
             MacroFSNode.SelectNode(CurrentMacroPath);
         }

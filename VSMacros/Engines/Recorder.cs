@@ -28,11 +28,12 @@ namespace VSMacros.Engines
             Validate.IsNotNull(serviceProvider, "serviceProvider");
             this.serviceProvider = serviceProvider;
             dataModel = new RecorderDataModel();
+            this.activationWatcher = this.activationWatcher ?? new WindowActivationWatcher(serviceProvider: this.serviceProvider, dataModel: this.dataModel);
         }
+
         public void StartRecording()
         {
             this.ClearData();
-            this.activationWatcher = this.activationWatcher ?? new WindowActivationWatcher(this.serviceProvider);
             this.commandWatcher = this.commandWatcher ?? new CommandExecutionWatcher(this.serviceProvider);
             this.recording = true;
         }

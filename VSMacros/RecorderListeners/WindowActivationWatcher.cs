@@ -10,6 +10,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using VSMacros.Interfaces;
+using VSMacros.Model;
 
 namespace VSMacros.RecorderListeners
 {
@@ -19,6 +20,7 @@ namespace VSMacros.RecorderListeners
         private IServiceProvider serviceProvider;
         private uint monSelCookie;
         private IRecorderPrivate macroRecorder;
+        private RecorderDataModel dataModel;
 
         // NOTE: Values obtained from http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.__vsfpropid.aspx, specifically the part for VSFPROPID_Type.
         enum FrameType
@@ -27,11 +29,13 @@ namespace VSMacros.RecorderListeners
             ToolWindow
         }
 
-        internal WindowActivationWatcher(IServiceProvider serviceProvider)
+        internal WindowActivationWatcher(IServiceProvider serviceProvider, RecorderDataModel dataModel)
         {
             Validate.IsNotNull(serviceProvider, "serviceProvider");
+            Validate.IsNotNull(dataModel, "dataModel");
 
             this.serviceProvider = serviceProvider;
+            this.dataModel = dataModel;
 
             var monSel = (IVsMonitorSelection)this.serviceProvider.GetService(typeof(SVsShellMonitorSelection));
             if (monSel != null)
@@ -45,11 +49,6 @@ namespace VSMacros.RecorderListeners
 
         public int OnElementValueChanged(uint elementid, object varValueOld, object varValueNew)
         {
-            if (!this.macroRecorder.IsRecording)
-            {
-                return VSConstants.S_OK;
-            }
-
             var elementId = (VSConstants.VSSELELEMID)elementid;
             if (elementId == VSConstants.VSSELELEMID.SEID_WindowFrame)
             {
@@ -59,42 +58,57 @@ namespace VSMacros.RecorderListeners
                     // so automatically since they closed the previously active one).
                     var windowFrame = (IVsWindowFrame)varValueNew;
                     var windowFrameOld = (IVsWindowFrame)varValueOld;
-
                     object untypedProperty;
                     object untypedPropertyOld;
                     
                     if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedProperty)))
                     {
                         FrameType typedProperty = (FrameType)(int)untypedProperty;
-
-                        if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
+                        if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
                         {
                             FrameType typedPropertyOld = (FrameType)(int)untypedPropertyOld;
-                            Manager.Instance.PreviousWindow = (IVsWindowFrame)varValueOld;
                         }
-
-                        if (typedProperty == FrameType.Document)
+                        if (windowFrameOld != null)
                         {
-                            if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out untypedProperty)))
+                            if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Caption, out untypedPropertyOld)))
                             {
-                                string docPath = (string)untypedProperty;
-                                this.macroRecorder.AddWindowActivation(docPath);
-                            }
-                        }
-                        else if (typedProperty == FrameType.ToolWindow)
-                        {
-                            if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Caption, out untypedProperty)))
-                            {
-                                string caption = (string)untypedProperty;
-                                Guid windowID;
-                                if (ErrorHandler.Succeeded(windowFrame.GetGuidProperty((int)__VSFPROPID.VSFPROPID_GuidPersistenceSlot, out windowID)))
+                                string captionOld = (string)untypedPropertyOld;
+                                if (captionOld != "Macro Explorer")
                                 {
-                                    if (caption != "Macro Explorer")
+                                    Manager.Instance.PreviousWindow = (IVsWindowFrame)varValueOld;
+                                }
+                            }
+
+                            if (Manager.Instance.IsRecording)
+                            {
+                                if (typedProperty == FrameType.Document)
+                                {
+                                    if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out untypedProperty)))
                                     {
-                                        this.macroRecorder.AddWindowActivation(windowID, caption);
+                                        string docPath = (string)untypedProperty;
+                                        this.dataModel.AddWindow(docPath);
+                                    }
+                                }
+                                else if (typedProperty == FrameType.ToolWindow)
+                                {
+                                    if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Caption, out untypedProperty)))
+                                    {
+                                        string caption = (string)untypedProperty;
+                                        Guid windowID;
+                                        if (ErrorHandler.Succeeded(windowFrame.GetGuidProperty((int)__VSFPROPID.VSFPROPID_GuidPersistenceSlot, out windowID)))
+                                        {
+                                            if (caption != "Macro Explorer")
+                                            {
+                                                this.dataModel.AddWindow(windowID, caption);
+                                            }
+                                        }
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            return VSConstants.S_OK;
                         }
                     }
                 }

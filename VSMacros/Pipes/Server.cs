@@ -27,6 +27,7 @@ namespace VSMacros.Pipes
         public static NamedPipeServerStream ServerStream;
         public static Guid Guid;
         public static Thread serverWait;
+        private static Executor executor = Manager.Instance.executor;
 
         public static void InitializeServer()
         {
@@ -62,7 +63,7 @@ namespace VSMacros.Pipes
 #if DEBUG
                         Manager.Instance.ShowMessageBox("Pipes are no longer connected.");
 #endif
-                            Executor.IsEngineInitialized = false;
+                            Server.executor.IsEngineRunning = false;
                             shouldKeepRunning = false;
                             break;
 
@@ -75,14 +76,12 @@ namespace VSMacros.Pipes
                             break;
 
                         case PacketType.Success:
-                            var executor = Manager.Instance.executor;
-                            executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
+                            Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
                             break;
 
                         case PacketType.ScriptError:
-                            executor = Manager.Instance.executor;
                             string error = Server.GetScriptError(Server.ServerStream);
-                            executor.SendCompletionMessage(isError: true, errorMessage: error);
+                            Server.executor.SendCompletionMessage(isError: true, errorMessage: error);
                             break;
 
                         case PacketType.CriticalError:
@@ -120,7 +119,8 @@ namespace VSMacros.Pipes
 
             int lineNumber = scriptError.LineNumber;
             int column = scriptError.Column;
-            string source = scriptError.Source ?? "Script Error";
+            // TODO: String.format
+            string source = "\'" + Server.executor.CurrentlyExecutingMacro + ".js\' error";
             string description = scriptError.Description ?? "Command not valid in this context";
             string period = description[description.Length - 1] == '.' ? string.Empty : ".";
 

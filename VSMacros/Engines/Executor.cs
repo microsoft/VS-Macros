@@ -38,6 +38,7 @@ namespace VSMacros.Engines
         /// Informs subscribers of success or error during execution.
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
+        public string CurrentlyExecutingMacro { get; set; }
 
         public bool IsEngineRunning { get; set; }
 

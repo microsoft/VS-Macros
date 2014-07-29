@@ -161,6 +161,8 @@ namespace VSMacros.Engines
                 this.Executor.RunEngine(iterations, path);
                 Manager.instance.Executor.IsEngineRunning = true;
             }
+
+            Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
         }
 
         public void PlaybackCommand(int cmd)

@@ -19,6 +19,11 @@ namespace VSMacros.Interfaces
         /// </summary>
         event EventHandler<CompletionReachedEventArgs> Complete;
 
+        /// <summary>
+        /// Provides name of the currently executing macro.
+        /// </summary>
+        string CurrentlyExecutingMacro { get; set; }
+
         bool IsEngineRunning { get; set; }
 
         /// <summary>

@@ -281,7 +281,6 @@ namespace VSMacros.Engines
             MacroFSNode macro = this.SelectedMacro;
             string path = macro.FullPath;
 
-            // QUESTION Do I need to use the method 'OpenDocument(IServiceProvider, String, Guid, IVsUIHierarchy, UInt32, IVsWindowFrame)' instead? 
             VsShellUtilities.OpenDocument(VSMacrosPackage.Current, path);
         }
 

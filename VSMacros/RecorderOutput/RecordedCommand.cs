@@ -43,7 +43,7 @@ namespace VSMacros.RecorderOutput
             {
                 outputStream.WriteLine(this.Convert(commandName, iterations));
             }
-            else if (this.commandName == null || this.commandName == "<Unknown>") // TODO remove Unknown
+            else if (this.commandName == null)
             {
                 string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
@@ -136,7 +136,6 @@ namespace VSMacros.RecorderOutput
                 }
                 else if (command.Contains(".Make"))
                 {
-                    // TODO test the valuees
                     int newCase = command.Contains("Lower") ? 1 : 2;
                     ret = this.textSelection + "ChangeCase(" + newCase + ")";
                 }

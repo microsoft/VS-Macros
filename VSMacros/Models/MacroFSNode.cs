@@ -182,7 +182,7 @@ namespace VSMacros.Models
                     
                     this.shortcut = MacroFSNode.None;
 
-                    // TODO can probably be optimized
+                    // Find shortcut, if it exists
                     for (int i = 1; i < 10; i++)
                     {
                         if (string.Compare(Manager.Shortcuts[i], this.FullPath, StringComparison.OrdinalIgnoreCase) == 0)

@@ -232,6 +232,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Macros\Samples\Documents\Remove and Sort All.js" />
     <Content Include="Macros\Samples\Editor\Beginning of Function.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -264,10 +265,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Macros\Samples\Other\Close Except Active.js">
+    <Content Include="Macros\Samples\Documents\Close Except Active.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Macros\Samples\Snippets\For Each Document.js" />
+    <Content Include="Macros\Samples\Snippets\For Each Window.js" />
+    <Content Include="Macros\Samples\Snippets\Properties.js" />
+    <Content Include="Macros\Samples\Snippets\Undo Context.js" />
     <Content Include="Macros\Samples\Utilities\Find Line.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+﻿ //-----------------------------------------------------------------------
 // <copyright file="Recorder.cs" company="Microsoft Corporation">
 //     Copyright Microsoft Corporation. All rights reserved.
 // </copyright>
@@ -44,70 +44,99 @@ namespace VSMacros.Engines
                 // Add reference to DTE for Intellisense
                 fs.WriteLine(string.Format("/// <reference path=\"" + Manager.dteIntellisensePath + "\" />{0}", Environment.NewLine));
 
+                bool inDocument = true;
+
                 for (int i = 0; i < this.dataModel.Actions.Count; i++)
                 {
                     RecordedActionBase action = this.dataModel.Actions[i];
 
                     // If both current and next commands are RecordedCommand and if the next command exists
-                    if (action is RecordedCommand && i < this.dataModel.Actions.Count - 1 && this.dataModel.Actions[i + 1] is RecordedCommand)
+                    if (action is RecordedCommand)
                     {
                         RecordedCommand current = action as RecordedCommand;
-                        RecordedCommand next = this.dataModel.Actions[i + 1] as RecordedCommand;                        
+                        RecordedCommand empty = new RecordedCommand(Guid.Empty, 0, string.Empty, '\0');
 
-                        if (current.IsInsert())
+                        if (inDocument)
                         {
-                            List<char> buffer = new List<char>();
-
-                            // Setup for the loop
-                            next = current;
-
-                            // Get all the characters that forms the input string
-                            do
+                            if (i < this.dataModel.Actions.Count - 1 &&
+                            this.dataModel.Actions[i + 1] is RecordedCommand)
                             {
-                                if (next.Input != '\0')
+                                RecordedCommand next = this.dataModel.Actions[i + 1] as RecordedCommand;
+
+                                if (current.IsInsert())
                                 {
-                                    buffer.Add(next.Input);
+                                    List<char> buffer = new List<char>();
+
+                                    // Setup for the loop
+                                    next = current;
+
+                                    // Get all the characters that forms the input string
+                                    do
+                                    {
+                                        if (next.IsValidCharacter())
+                                        {
+                                            buffer.Add(next.Input);
+                                        }
+
+                                        next = this.dataModel.Actions[++i] as RecordedCommand ?? empty;
+                                    } while (next.IsInsert() && i + 1 < this.dataModel.Actions.Count);
+
+                                    // Process last character
+                                    if (next.IsInsert())
+                                    {
+                                        if (next.IsValidCharacter())
+                                        {
+                                            buffer.Add(next.Input);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // The loop has incremented i an extra time, backtrack
+                                        i--;
+                                    }
+
+                                    // Output the text
+                                    current.ConvertToJavascript(fs, buffer);
+
+                                    buffer = new List<char>();
                                 }
-
-                                next = this.dataModel.Actions[++i] as RecordedCommand;
-                            } while (next.IsInsert() && i + 1 < this.dataModel.Actions.Count);
-
-                            // Process last character
-                            if (next.IsInsert())
-                            {
-                                if (next.Input != '\0')
+                                else
                                 {
-                                    buffer.Add(next.Input);
+                                    // Compute the number of iterations of the same command
+                                    int iterations = 1;
+                                    while (current.CommandName == next.CommandName && (i + 2 < this.dataModel.Actions.Count || i + 1 == this.dataModel.Actions.Count))
+                                    {
+                                        iterations++;
+                                        current = next;
+                                        next = this.dataModel.Actions[++i + 1] as RecordedCommand ?? empty;
+                                    }
+
+                                    current.ConvertToJavascript(fs, iterations);
                                 }
                             }
                             else
                             {
-                                // The loop has incremented i an extra time, backtrack
-                                i--;
+                                current.ConvertToJavascript(fs, 1);
                             }
-
-                            // Output the text
-                            current.ConvertToJavascript(fs, buffer);
-
-                            buffer = new List<char>();
                         }
                         else
                         {
-                            // Compute the number of iterations of the same command
-                            int iterations = 1;
-                            while (current.CommandName == next.CommandName && i + 2 < this.dataModel.Actions.Count)
-                            {
-                                iterations++;
-                                current = next;
-                                next = this.dataModel.Actions[++i + 1] as RecordedCommand;
-                            }
-
-                            current.ConvertToJavascript(fs, iterations);
+                            current.ConvertToJavascript(fs);
                         }
+                    }
+                    else if (action is RecordedDocumentActivation)
+                    {
+                        inDocument = true;
+                        action.ConvertToJavascript(fs);
+                    }
+                    else if (action is RecordedWindowActivation)
+                    {
+                        inDocument = false;
+                        action.ConvertToJavascript(fs);
                     }
                     else
                     {
-                        action.ConvertToJavascript(fs);
+                        Manager.Instance.ShowMessageBox("Other command O_O.");
                     }
                 }
             }

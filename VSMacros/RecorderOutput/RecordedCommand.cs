@@ -33,15 +33,21 @@ namespace VSMacros.RecorderOutput
         internal override void ConvertToJavascript(StreamWriter outputStream)
         {
             string output;
-            if (this.commandName == null)
+            if (this.commandName == null || this.commandName == "<Unknown>")
             {
                 string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(output);
             }
-            else if (this.commandName != "keyboard")
+            else if (this.commandName == "keyboard")
             {
-                outputStream.WriteLine(Convert(commandName, 1));
+                string formatString = "cmdHelper.DispatchCommandWithArgs(\"{0}\", {1}{2})";
+                output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null" : ", \"" + this.input.ToString() + "\""));
+                outputStream.WriteLine(output);
+            }
+            else
+            {
+                outputStream.WriteLine("dte.ExecuteCommand(\"" + this.commandName + "\");");
             }
         }
 
@@ -200,6 +206,11 @@ namespace VSMacros.RecorderOutput
         internal bool IsInsert()
         {
             return this.commandName == "keyboard";
+        }
+
+        internal bool IsValidCharacter()
+        {
+            return this.input != '\0';
         }
 
         internal char Input

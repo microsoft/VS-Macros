@@ -26,8 +26,7 @@ namespace ExecutionEngine
             Validate.IsNotNullAndNotEmpty(script, "script");
             Program.engine.Parse(script);
 
-            int i = 0;
-            for (i = 0; i < iterations; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 if (!Program.engine.CallMethod(Program.MacroName))
                 {

@@ -49,6 +49,10 @@ namespace VSMacros.RecorderOutput
                 output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
                 outputStream.WriteLine(this.DuplicateStrings(output, iterations));
             }
+            else if (this.commandName == "<Unknown>")
+            {
+                return;
+            }
             else
             {
                 outputStream.WriteLine(this.DuplicateStrings("dte.ExecuteCommand(\"" + this.commandName + "\");", iterations));

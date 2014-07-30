@@ -78,7 +78,6 @@
     <Compile Include="ActiveScript Interfaces\IActiveScriptParse64.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptSite.cs" />
     <Compile Include="Engine Components\Engine.cs" />
-    <Compile Include="Enums\Packet.cs" />
     <Compile Include="Enums\ScriptInfo.cs" />
     <Compile Include="Enums\ScriptItem.cs" />
     <Compile Include="Enums\ScriptState.cs" />

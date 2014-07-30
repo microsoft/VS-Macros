@@ -80,13 +80,13 @@ namespace VSMacros.Engines
             executor.ResetMessages();
             executor.Complete += (sender, eventInfo) =>
                 {
-                    if (eventInfo.IsError)
+                    if (!eventInfo.IsError || Manager.instance.executor.IsEngineRunning)
                     {
-                        Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
+                        VSMacrosPackage.Current.ClearStatusBar();
                     }
                     else
                     {
-                        VSMacrosPackage.Current.ClearStatusBar();
+                        Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
                     }
                     Manager.instance.Executor.IsEngineRunning = false;
                 };
@@ -144,8 +144,16 @@ namespace VSMacros.Engines
         private void PlayMacro(string path, int iterations)
         {
             AttachEvents(this.Executor);
-            this.Executor.RunEngine(iterations, path);
-            Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
+
+            if (Manager.Instance.executor.IsEngineRunning)
+            {
+                Manager.Instance.executor.StopEngine();
+            }
+            else
+            {
+                this.Executor.RunEngine(iterations, path);
+                Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
+            }
         }
 
         public void PlaybackCommand(int cmd)

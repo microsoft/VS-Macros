@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -185,18 +186,23 @@ namespace VSMacros.Engines
                 this.InitializeEngine();
                 Thread waitsUntilClientIsConnected = new Thread(() =>
                     {
-                        while (true) 
-                        {
-                            if (Server.ServerStream.IsConnected)
-                            {
-                                Server.SendFilePath(iterations, path);
-                                break;
-                            }
-                        }
+                        while (!Server.ServerStream.IsConnected) { }
+                        Server.SendFilePath(iterations, path);
+                          
+                        //}
                     }
                 );
                 waitsUntilClientIsConnected.Start();
             }
+
+            this.IsEngineRunning = true;
+        }
+
+        public void StopEngine()
+        {
+            Executor.Job.Close();   
+            Executor.IsEngineInitialized = false;
+            this.IsEngineRunning = false;
         }
     }
 }

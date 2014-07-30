@@ -37,5 +37,10 @@ namespace VSMacros.Interfaces
         /// <param name="iterations">Times to be executed.</param>
         /// </summary>
         void RunEngine(int iterations, string path);
+
+        /// <summary>
+        /// Will stop engine from running.
+        /// </summary>
+        void StopEngine();
     }
 }

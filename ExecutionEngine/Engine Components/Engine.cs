@@ -90,17 +90,22 @@ namespace ExecutionEngine
 
         public Engine(int pid, string version)
         {
-            const string dte = "dte";
-            const string cmdHelper = "cmdHelper";
-
             this.engine = this.CreateEngine();
             this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
-
-            this.InitializeCommandHelper();
-            this.InitializeDteObject(pid, version);
             this.engine.SetScriptSite(this.scriptSite);
+
+            InformEngineOfNewObjects(pid, version);
+        }
+
+        private void InformEngineOfNewObjects(int pid, string version)
+        {
+            const string dte = "dte";
+            this.InitializeDteObject(pid, version);
             this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
+
+            const string cmdHelper = "cmdHelper";
+            this.InitializeCommandHelper();
             this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);
         }
 

@@ -39,9 +39,9 @@ namespace VSMacros.Engines
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
         public string CurrentlyExecutingMacro { get; set; }
-
         public bool IsEngineRunning { get; set; }
 
+        #region Helpers
         internal void SendCompletionMessage(bool isError, string errorMessage)
         {
             if (this.Complete != null)
@@ -56,7 +56,6 @@ namespace VSMacros.Engines
             this.Complete = null;
         }
 
-        #region Helpers
         private string ProvidePipeArguments(Guid guid, string version)
         {
             int pid = Process.GetCurrentProcess().Id;

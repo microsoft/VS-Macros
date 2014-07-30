@@ -67,9 +67,7 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
-            // Just make one static formatter
             var filePath = (FilePath)Program.serializer.Deserialize(Client.ClientStream);
-
             int iterations = filePath.Iterations;
             string message = filePath.Path;
             string unwrappedScript = InputParser.ExtractScript(message);
@@ -141,7 +139,7 @@ namespace ExecutionEngine
         {
             try
             {
-                MessageBox.Show("hello");
+                //MessageBox.Show("hello");
                 string[] separatedArgs = InputParser.SeparateArgs(args);
                 RunFromPipe(separatedArgs);
             }

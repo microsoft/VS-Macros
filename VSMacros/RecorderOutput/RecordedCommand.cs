@@ -45,17 +45,13 @@ namespace VSMacros.RecorderOutput
             }
             else if (this.commandName == null)
             {
-                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
-                output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
-                outputStream.WriteLine(this.DuplicateStrings(output, iterations));
-            }
-            else if (this.commandName == "<Unknown>")
-            {
-                return;
+                outputStream.WriteLine(this.DuplicateStrings("dte.ExecuteCommand(\"" + this.commandName + "\");", iterations));
             }
             else
             {
-                outputStream.WriteLine(this.DuplicateStrings("dte.ExecuteCommand(\"" + this.commandName + "\");", iterations));
+                string formatString = "dte.Commands.Raise(\"{0}\", {1}{2});";
+                output = string.Format(formatString, "{" + this.commandSetGuid + "}", this.commandId, (this.input == 0 ? ", null, null" : ", '" + this.input.ToString() + "', null"));
+                outputStream.WriteLine(this.DuplicateStrings(output, iterations));
             }
         }
 

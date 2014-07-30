@@ -70,13 +70,16 @@ namespace VSMacros.RecorderListeners
                             if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Caption, out untypedPropertyOld)))
                             {
                                 string captionOld = (string)untypedPropertyOld;
-                                Manager.Instance.PreviousWindow = windowFrameOld;
-
-                                if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
+                                if (captionOld != "Macro Explorer")
                                 {
-                                    FrameType typedPropertyOld = (FrameType)(int)untypedProperty;
-                                    Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
+                                    Manager.Instance.PreviousWindow = windowFrameOld;
+
+                                    if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
+                                    {
+                                        FrameType typedPropertyOld = (FrameType)(int)untypedPropertyOld;
+                                        Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
                                     }
+                                }
                             }
 
                             if (Manager.Instance.IsRecording)
@@ -97,7 +100,10 @@ namespace VSMacros.RecorderListeners
                                         Guid windowID;
                                         if (ErrorHandler.Succeeded(windowFrame.GetGuidProperty((int)__VSFPROPID.VSFPROPID_GuidPersistenceSlot, out windowID)))
                                         {
-                                            this.dataModel.AddWindow(windowID, caption);
+                                            if (caption != "Macro Explorer")
+                                            {
+                                                this.dataModel.AddWindow(windowID, caption);
+                                            }
                                         }
                                     }
                                 }

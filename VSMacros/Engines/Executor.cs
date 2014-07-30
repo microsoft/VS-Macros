@@ -102,10 +102,6 @@ namespace VSMacros.Engines
 
                     var suiHost = serviceProvider.GetService(typeof(SUIHostCommandDispatcher));
                     hResult = rot.Register(NativeMethods.ROTFLAGS_REGISTRATIONKEEPSALIVE, suiHost, moniker);
-                    if (hResult != NativeMethods.S_OK)
-                    {
-                        // Todo: logging an error
-                    }
                 }
             }
         }
@@ -134,10 +130,6 @@ namespace VSMacros.Engines
 
                     var svsCmdName = serviceProvider.GetService(typeof(SVsCmdNameMapping));
                     hResult = rot.Register(NativeMethods.ROTFLAGS_REGISTRATIONKEEPSALIVE, svsCmdName, moniker);
-                    if (hResult != NativeMethods.S_OK)
-                    {
-                        // Todo: logging an error
-                    }
                 }
             }
         }
@@ -184,18 +176,21 @@ namespace VSMacros.Engines
             else
             {
                 this.InitializeEngine();
-                Thread waitsUntilClientIsConnected = new Thread(() =>
+                Thread waitsUntilConnection = new Thread(() =>
                     {
-                        while (!Server.ServerStream.IsConnected) { }
+                        WaitForConnection();
                         Server.SendFilePath(iterations, path);
-                          
-                        //}
                     }
                 );
-                waitsUntilClientIsConnected.Start();
+                waitsUntilConnection.Start();
             }
 
             this.IsEngineRunning = true;
+        }
+
+        private static void WaitForConnection()
+        {
+            while (!Server.ServerStream.IsConnected) { }
         }
 
         public void StopEngine()

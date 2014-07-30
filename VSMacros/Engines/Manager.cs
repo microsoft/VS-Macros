@@ -376,6 +376,12 @@ namespace VSMacros.Engines
         public void NewMacro()
         {
             MacroFSNode macro = this.SelectedMacro;
+
+            if (!macro.IsDirectory)
+            {
+                return;
+            }
+
             macro.IsExpanded = true;
 
             string basePath = Path.Combine(macro.FullPath, "New Macro");
@@ -405,6 +411,12 @@ namespace VSMacros.Engines
         public void NewFolder()
         {
             MacroFSNode macro = this.SelectedMacro;
+
+            if (!macro.IsDirectory)
+            {
+                return;
+            }
+
             macro.IsExpanded = true;
 
             string basePath = Path.Combine(macro.FullPath, "New Folder");

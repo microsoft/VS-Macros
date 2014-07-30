@@ -60,7 +60,7 @@ namespace VSMacros.RecorderListeners
                     var windowFrameOld = (IVsWindowFrame)varValueOld;
                     object untypedProperty;
                     object untypedPropertyOld;
-                    
+
                     if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedProperty)))
                     {
                         FrameType typedProperty = (FrameType)(int)untypedProperty;
@@ -70,16 +70,13 @@ namespace VSMacros.RecorderListeners
                             if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Caption, out untypedPropertyOld)))
                             {
                                 string captionOld = (string)untypedPropertyOld;
-                                if (captionOld != "Macro Explorer")
-                                {
-                                    Manager.Instance.PreviousWindow = windowFrameOld;
+                                Manager.Instance.PreviousWindow = windowFrameOld;
 
-                                    if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
-                                    {
-                                        FrameType typedPropertyOld = (FrameType)(int)untypedProperty;
-                                        Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
+                                if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
+                                {
+                                    FrameType typedPropertyOld = (FrameType)(int)untypedProperty;
+                                    Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
                                     }
-                                }
                             }
 
                             if (Manager.Instance.IsRecording)
@@ -100,10 +97,7 @@ namespace VSMacros.RecorderListeners
                                         Guid windowID;
                                         if (ErrorHandler.Succeeded(windowFrame.GetGuidProperty((int)__VSFPROPID.VSFPROPID_GuidPersistenceSlot, out windowID)))
                                         {
-                                            if (caption != "Macro Explorer")
-                                            {
-                                                this.dataModel.AddWindow(windowID, caption);
-                                            }
+                                            this.dataModel.AddWindow(windowID, caption);
                                         }
                                     }
                                 }

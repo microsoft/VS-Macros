@@ -15,9 +15,7 @@ using ExecutionEngine.Interfaces;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using VisualStudio.Macros.ExecutionEngine;
 using VSMacros.ExecutionEngine;
-using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -73,19 +71,6 @@ namespace ExecutionEngine
             {
                 throw new InvalidOperationException();
             }
-
-            //var serviceprovider = (microsoft.visualstudio.ole.interop.iserviceprovider)engine.dteobject;
-            
-            //guid cmdnameguid = marshal.generateguidfortype(typeof(svscmdnamemapping));
-            //guid suihostguid = marshal.generateguidfortype(typeof(suihostcommanddispatcher));
-
-            //intptr cmdnameptr, suihostptr;
-            //guid dummy = guid.empty;
-            //serviceprovider.queryservice(ref cmdnameguid, ref dummy, out cmdnameptr);
-            //serviceprovider.queryservice(ref suihostguid, ref dummy, out suihostptr);
-
-            //console.writeline(cmdnameptr.tostring());
-            //console.writeline(suihostptr.tostring());
         }
 
         private void InitializeCommandHelper()
@@ -167,8 +152,8 @@ namespace ExecutionEngine
             }
             catch (Exception e)
             {
-                // TODO: Package into internal error
-                Console.WriteLine("oops:" + e.Message + e.Source + e.StackTrace + e.TargetSite.ToString());
+                Site.InternalError = true;
+                Site.InternalVSException = new InternalVSException(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
             }
         }
     }

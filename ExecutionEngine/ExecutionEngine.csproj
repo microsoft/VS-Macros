@@ -77,7 +77,7 @@
     <Compile Include="ActiveScript Interfaces\IActiveScriptParse32.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptParse64.cs" />
     <Compile Include="ActiveScript Interfaces\IActiveScriptSite.cs" />
-    <Compile Include="Engine.cs" />
+    <Compile Include="Engine Components\Engine.cs" />
     <Compile Include="Enums\Packet.cs" />
     <Compile Include="Enums\ScriptInfo.cs" />
     <Compile Include="Enums\ScriptItem.cs" />
@@ -88,8 +88,8 @@
     <Compile Include="Helpers\Interfaces\ICommandHelper.cs" />
     <Compile Include="Helpers\InputParser.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
-    <Compile Include="InternalVSException.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Custom Exceptions\InternalVSException.cs" />
+    <Compile Include="Engine Components\Parser.cs" />
     <Compile Include="Pipes\Shared\BinderHelper.cs" />
     <Compile Include="Pipes\Client.cs" />
     <Compile Include="Pipes\Shared\CriticalError.cs" />
@@ -104,8 +104,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RuntimeException.cs" />
-    <Compile Include="Site.cs" />
+    <Compile Include="Custom Exceptions\RuntimeException.cs" />
+    <Compile Include="Engine Components\Site.cs" />
     <Compile Include="Stubs\Script.cs" />
   </ItemGroup>
   <ItemGroup>

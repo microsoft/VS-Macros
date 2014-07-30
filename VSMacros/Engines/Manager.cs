@@ -80,15 +80,13 @@ namespace VSMacros.Engines
             executor.ResetMessages();
             executor.Complete += (sender, eventInfo) =>
                 {
-                    if (!eventInfo.IsError || Manager.instance.executor.IsEngineRunning)
-                    {
-                        VSMacrosPackage.Current.ClearStatusBar();
-                    }
-                    else
+                    if (eventInfo.IsError)
                     {
                         Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
                     }
+                    
                     Manager.instance.Executor.IsEngineRunning = false;
+                    VSMacrosPackage.Current.ClearStatusBar();
                 };
         }
 
@@ -147,6 +145,7 @@ namespace VSMacros.Engines
 
             if (Manager.Instance.executor.IsEngineRunning)
             {
+                VSMacrosPackage.Current.ClearStatusBar();
                 Manager.Instance.executor.StopEngine();
             }
             else

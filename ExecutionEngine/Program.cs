@@ -7,7 +7,6 @@
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using System.Windows.Forms;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
@@ -32,11 +31,10 @@ namespace ExecutionEngine
                 {
                     if (Site.RuntimeError)
                     {
-                        uint activeDocumentModification = 1;
+                        uint activeDocumentModification = 0;
                         uint macroInsertTextModification = 0;
                         var e = Site.RuntimeException;
                         uint modifiedLineNumber = e.Line - activeDocumentModification + macroInsertTextModification;
-
                         Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
                     else
@@ -96,12 +94,6 @@ namespace ExecutionEngine
                     {
                         Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
                     }
-                    else
-                    {
-#if DEBUG
-                        MessageBox.Show("Execution engine's pipe is not connected.");
-#endif
-                    }
                 }
                 finally
                 {
@@ -109,12 +101,6 @@ namespace ExecutionEngine
                     {
                         Client.ShutDownServer(Client.ClientStream);
                         Client.ClientStream.Close();
-                    }
-                    else
-                    {
-#if DEBUG
-                        MessageBox.Show("Execution engine's pipe is not connected.");
-#endif
                     }
                 }
             });
@@ -139,7 +125,6 @@ namespace ExecutionEngine
         {
             try
             {
-                //MessageBox.Show("hello");
                 string[] separatedArgs = InputParser.SeparateArgs(args);
                 RunFromPipe(separatedArgs);
             }

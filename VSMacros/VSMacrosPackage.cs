@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -20,10 +19,8 @@ using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
-using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Model;
-using Task = System.Threading.Tasks.Task;
 
 namespace VSMacros
 {
@@ -198,17 +195,15 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback(string.Empty);
-
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
+            Manager.Instance.Playback(string.Empty);
             //this.UpdateButtonsForPlayback(true);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            Manager.Instance.PlaybackMultipleTimes(string.Empty);
-
             this.StatusBarChange(Resources.StatusBarPlayingText, 1);
+            Manager.Instance.PlaybackMultipleTimes(string.Empty);
             //this.UpdateButtonsForPlaybackMultipleTimes(true);
         }
 

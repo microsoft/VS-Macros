@@ -43,7 +43,7 @@ namespace VSMacros.RecorderOutput
             {
                 outputStream.WriteLine(this.Convert(commandName, iterations));
             }
-            else if (this.commandName == null)
+            else if (this.commandName != null)
             {
                 outputStream.WriteLine(this.DuplicateStrings("dte.ExecuteCommand(\"" + this.commandName + "\");", iterations));
             }

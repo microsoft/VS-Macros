@@ -45,7 +45,7 @@ namespace VSMacros.Engines
                 // Add reference to DTE for Intellisense
                 fs.WriteLine(string.Format("/// <reference path=\"" + Manager.dteIntellisensePath + "\" />{0}", Environment.NewLine));
 
-                bool inDocument = Manager.Instance.FirstWindowIsDocument;
+                bool inDocument = Manager.Instance.PreviousWindowIsDocument;
 
                 for (int i = 0; i < this.dataModel.Actions.Count; i++)
                 {

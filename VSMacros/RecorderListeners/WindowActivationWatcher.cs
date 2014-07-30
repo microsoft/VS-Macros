@@ -72,7 +72,13 @@ namespace VSMacros.RecorderListeners
                                 string captionOld = (string)untypedPropertyOld;
                                 if (captionOld != "Macro Explorer")
                                 {
-                                    Manager.Instance.PreviousWindow = (IVsWindowFrame)varValueOld;
+                                    Manager.Instance.PreviousWindow = windowFrameOld;
+
+                                    if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
+                                    {
+                                        FrameType typedPropertyOld = (FrameType)(int)untypedProperty;
+                                        Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
+                                    }
                                 }
                             }
 

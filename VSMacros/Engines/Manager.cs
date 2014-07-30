@@ -42,10 +42,10 @@ namespace VSMacros.Engines
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
         private bool shortcutsDirty;
-        private bool recording;
 
         private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
+        private EnvDTE.DTE dte;
 
         private IRecorder recorder;
 
@@ -58,7 +58,7 @@ namespace VSMacros.Engines
         {
             this.serviceProvider = provider;
             this.uiShell = (IVsUIShell)provider.GetService(typeof(SVsUIShell));
-
+            this.dte = (EnvDTE.DTE)provider.GetService(typeof(SDTE));
             this.recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
 
             this.LoadShortcuts();
@@ -94,35 +94,29 @@ namespace VSMacros.Engines
         }
 
         public IVsWindowFrame PreviousWindow { get; set; }
-        public bool FirstWindowIsDocument { get; set; }
+        public bool PreviousWindowIsDocument { get; set; }
+
+        public bool IsRecording { get; private set; }
 
         public void StartRecording()
         {
             // Move focus back to previous window
-            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
-            if (dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
+            if (this.dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
             {
                 PreviousWindow.Show();
             }
 
-            // Is the first window a document?
-            Manager.Instance.FirstWindowIsDocument = dte.ActiveWindow.Kind == "Document";
-
-            this.recording = true;
+            this.IsRecording = true;
             this.recorder.StartRecording();
         }
 
-        public bool IsRecording
-        {
-            get { return this.recording; }
-        }
 
         public void StopRecording()
         {
             string current = Manager.CurrentMacroPath;
 
             this.recorder.StopRecording(current);
-            this.recording = false;
+            this.IsRecording = false;
 
             MacroFSNode.SelectNode(CurrentMacroPath);
         }
@@ -132,25 +126,12 @@ namespace VSMacros.Engines
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
             // Before playing back, save the macro file
-            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
+            this.SaveMacroIfDirty(path);
 
-            try
+            // Move focus to first window
+            if (this.dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
             {
-                EnvDTE.Document doc = dte.Documents.Item(Path.GetFileName(path));
-
-                if (!doc.Saved)
-                {
-                    if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
-                        string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
-                        OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
-                    {
-                        doc.Save();
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                if (ErrorHandler.IsCriticalException(e)) { throw; }
+                PreviousWindow.Show();
             }
 
             VSMacrosPackage.Current.StatusBarChange(Resources.StatusBarPlayingText, 1);
@@ -677,6 +658,28 @@ namespace VSMacros.Engines
             {
                 // Create file for writing UTF-8 encoded text
                 File.WriteAllText(shortcutsPath, "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?><commands><command>Command not bound. Do not use.</command><command/><command/><command/><command/><command/><command/><command/><command/><command/></commands>");
+            }
+        }
+
+        private void SaveMacroIfDirty(string path)
+        {
+            try
+            {
+                EnvDTE.Document doc = this.dte.Documents.Item(Path.GetFileName(path));
+
+                if (!doc.Saved)
+                {
+                    if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
+                        string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
+                        OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
+                    {
+                        doc.Save();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (ErrorHandler.IsCriticalException(e)) { throw; }
             }
         }
 

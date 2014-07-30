@@ -89,7 +89,6 @@
     <Compile Include="Helpers\InputParser.cs" />
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="InternalVSException.cs" />
-    <Compile Include="ParsedScript.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Pipes\Shared\BinderHelper.cs" />
     <Compile Include="Pipes\Client.cs" />

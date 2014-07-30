@@ -18,18 +18,18 @@ namespace ExecutionEngine
     internal class Program
     {
         private static Engine engine;
-        private static ParsedScript parsedScript;
+        private static BinaryFormatter serializer;
         internal const string MacroName = "currentScript";
 
         internal static void RunMacro(string script, int iterations)
         {
             Validate.IsNotNullAndNotEmpty(script, "script");
-            Program.parsedScript = Program.engine.Parse(script);
+            Program.engine.Parse(script);
 
             int i = 0;
             for (i = 0; i < iterations; i++)
             {
-                if (!Program.parsedScript.CallMethod(Program.MacroName))
+                if (!Program.engine.CallMethod(Program.MacroName))
                 {
                     if (Site.RuntimeError)
                     {
@@ -55,9 +55,7 @@ namespace ExecutionEngine
 
         private static void HandleInput()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Binder = new BinderHelper();
-            var type = (PacketType)formatter.Deserialize(Client.ClientStream);
+            var type = (PacketType)Program.serializer.Deserialize(Client.ClientStream);
 
             // I know a switch statement seems useless but just preparing for the possibility of other packets.
             switch (type)
@@ -71,8 +69,7 @@ namespace ExecutionEngine
         private static void HandleFilePath()
         {
             // Just make one static formatter
-            var formatter = new BinaryFormatter();
-            var filePath = (FilePath)formatter.Deserialize(Client.ClientStream);
+            var filePath = (FilePath)Program.serializer.Deserialize(Client.ClientStream);
 
             int iterations = filePath.Iterations;
             string message = filePath.Path;
@@ -87,7 +84,10 @@ namespace ExecutionEngine
             {
                 try
                 {
+                    Program.serializer = new BinaryFormatter();
+                    Program.serializer.Binder = new BinderHelper();
                     Program.engine = new Engine(pid, version);
+
                     while (true)
                     {
                         HandleInput();

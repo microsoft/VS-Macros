@@ -6,6 +6,8 @@
 
 using System;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
@@ -13,6 +15,9 @@ using ExecutionEngine.Interfaces;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using VisualStudio.Macros.ExecutionEngine;
+using VSMacros.ExecutionEngine;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
 {
@@ -21,6 +26,7 @@ namespace ExecutionEngine
         private IActiveScript engine;
         private Parser parser;
         private Site scriptSite;
+        private object dispatch;
 
         public static object DteObject { get; private set; }
         public static object CommandHelper { get; private set; }
@@ -113,13 +119,13 @@ namespace ExecutionEngine
             this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);
         }
 
-        public void InterruptScript(int threadId)
-        {
-            System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo = new System.Runtime.InteropServices.ComTypes.EXCEPINFO();
-            uint flag = 2;
+        //public void InterruptScript(int threadId)
+        //{
+        //    System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo = new System.Runtime.InteropServices.ComTypes.EXCEPINFO();
+        //    uint flag = 2;
 
-            this.engine.InterruptScriptThread((uint)threadId, ref exceptionInfo, flag);
-        }
+        //    this.engine.InterruptScriptThread((uint)threadId, ref exceptionInfo, flag);
+        //}
 
         public void Dispose()
         {
@@ -129,27 +135,40 @@ namespace ExecutionEngine
             }
         }
 
-        internal ParsedScript GenerateParsedScript()
+        public bool CallMethod(string methodName, params object[] arguments)
         {
-            IntPtr dispatch;
-            this.engine.GetScriptDispatch(null, out dispatch);
-            return new ParsedScript(this, dispatch);
+            try
+            {
+                this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                return true;
+            }
+            catch (Exception e)
+            {
+                var internalException = e.InnerException;
+                if (!Site.RuntimeError)
+                {
+                    Site.InternalError = true;
+                    Site.InternalVSException = new InternalVSException(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                }
+                return false;
+            }
         }
 
-        internal ParsedScript Parse(string unparsed)
+        internal void Parse(string unparsed)
         {
             try
             {
                 this.engine.SetScriptState(ScriptState.Connected);
                 this.parser.Parse(unparsed);
-                var parsedScript = this.GenerateParsedScript();
-                return parsedScript;
+
+                IntPtr dispatch;
+                this.engine.GetScriptDispatch(null, out dispatch);
+                this.dispatch = Marshal.GetObjectForIUnknown(dispatch);
             }
             catch (Exception e)
             {
                 // TODO: Package into internal error
                 Console.WriteLine("oops:" + e.Message + e.Source + e.StackTrace + e.TargetSite.ToString());
-                return null;
             }
         }
     }

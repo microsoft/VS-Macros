@@ -51,12 +51,12 @@ namespace VSMacros.Engines
                 {
                     RecordedActionBase action = this.dataModel.Actions[i];
 
-                    // If both current and next commands are RecordedCommand and if the next command exists
                     if (action is RecordedCommand)
                     {
                         RecordedCommand current = action as RecordedCommand;
                         RecordedCommand empty = new RecordedCommand(Guid.Empty, 0, string.Empty, '\0');
 
+                        // If next action is a recorded command, try to merge
                         if (i < this.dataModel.Actions.Count - 1 &&
                         this.dataModel.Actions[i + 1] is RecordedCommand)
                         {
@@ -121,7 +121,14 @@ namespace VSMacros.Engines
                         }
                         else
                         {
-                            current.ConvertToJavascript(fs, 1, inDocument);
+                            if (current.CommandName == "keyboard")
+                            {
+                                current.ConvertToJavascript(fs, new List<char>() { current.Input });
+                            }
+                            else
+                            {
+                                current.ConvertToJavascript(fs, 1, inDocument);
+                            }
                         }
                     }
                     else

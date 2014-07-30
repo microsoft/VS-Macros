@@ -115,10 +115,32 @@ namespace VSMacros.Engines
         {
             string current = Manager.CurrentMacroPath;
 
+            bool currentWasOpen = false;
+
+            // Close current macro if open
+            try
+            {
+                this.dte.Documents.Item(Manager.CurrentMacroPath).Close(EnvDTE.vsSaveChanges.vsSaveChangesNo);
+                currentWasOpen = true;
+            }
+            catch (Exception e)
+            {
+                if (ErrorHandler.IsCriticalException(e))
+                {
+                    throw;
+                }
+            }
+
             this.recorder.StopRecording(current);
             this.IsRecording = false;
 
             MacroFSNode.SelectNode(CurrentMacroPath);
+
+            // Reopen current macro
+            if (currentWasOpen)
+            {
+                VsShellUtilities.OpenDocument(VSMacrosPackage.Current, Manager.CurrentMacroPath);
+            }
         }
 
         public void Playback(string path, int iterations = 1)
@@ -376,12 +398,6 @@ namespace VSMacros.Engines
         public void NewMacro()
         {
             MacroFSNode macro = this.SelectedMacro;
-
-            if (!macro.IsDirectory)
-            {
-                return;
-            }
-
             macro.IsExpanded = true;
 
             string basePath = Path.Combine(macro.FullPath, "New Macro");
@@ -411,12 +427,6 @@ namespace VSMacros.Engines
         public void NewFolder()
         {
             MacroFSNode macro = this.SelectedMacro;
-
-            if (!macro.IsDirectory)
-            {
-                return;
-            }
-
             macro.IsExpanded = true;
 
             string basePath = Path.Combine(macro.FullPath, "New Folder");

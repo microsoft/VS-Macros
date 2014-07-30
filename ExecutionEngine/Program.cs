@@ -31,10 +31,10 @@ namespace ExecutionEngine
                 {
                     if (Site.RuntimeError)
                     {
-                        uint activeDocumentModification = 0;
-                        uint macroInsertTextModification = 0;
+                        uint activeDocumentModification = 1;
+                        uint macroInsertTextModification = 1;
                         var e = Site.RuntimeException;
-                        uint modifiedLineNumber = e.Line - activeDocumentModification + macroInsertTextModification;
+                        uint modifiedLineNumber = e.Line - activeDocumentModification - macroInsertTextModification;
                         Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
                     else

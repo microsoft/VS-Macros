@@ -38,7 +38,7 @@ namespace ExecutionEngine
 
         internal bool Is32BitEnvironment()
         {
-            return (IntPtr.Size == 4);
+            return IntPtr.Size == 4;
         }
 
         internal void Parse(string unparsed)

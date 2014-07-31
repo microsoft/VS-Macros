@@ -1,21 +1,17 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="Packet.cs" company="Microsoft Corporation">
-//     Copyright Microsoft Corporation. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+﻿using System;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ExecutionEngine.Enums
+namespace VisualStudio.Macros.ExecutionEngine.Pipes
 {
-    internal enum Packet
+    [Serializable]
+    public enum PacketType
     {
         /// <summary>
-        /// Contains information to parse a file path.
+        /// Empty file packet.
+        /// </summary>
+        Empty = -1,
+
+        /// <summary>
+        /// Contains information on the file path for a file containing a macro to execute.
         /// </summary>
         FilePath = 0,
 

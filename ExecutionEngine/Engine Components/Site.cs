@@ -137,7 +137,7 @@ namespace ExecutionEngine
 
             if (description.Equals("Object required"))
             {
-                description = "This macro requires a document to be open.";
+                description = Resources.NoActiveDocumentErrorMessage;
             }
 
             Site.RuntimeError = true;

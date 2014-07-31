@@ -120,6 +120,9 @@
   <data name="InvalidPIDArgument" xml:space="preserve">
     <value>The PID argument is invalid.</value>
   </data>
+  <data name="NoActiveDocumentErrorMessage" xml:space="preserve">
+    <value>This macro requires a document to be open.</value>
+  </data>
   <data name="NullCommandHelper" xml:space="preserve">
     <value>Engine.CommandHelper is null"</value>
   </data>

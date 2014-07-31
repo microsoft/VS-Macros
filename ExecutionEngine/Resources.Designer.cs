@@ -70,6 +70,15 @@ namespace VisualStudio.Macros.ExecutionEngine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This macro requires a document to be open..
+        /// </summary>
+        internal static string NoActiveDocumentErrorMessage {
+            get {
+                return ResourceManager.GetString("NoActiveDocumentErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Engine.CommandHelper is null&quot;.
         /// </summary>
         internal static string NullCommandHelper {

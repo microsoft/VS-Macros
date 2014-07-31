@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using EnvDTE;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -83,7 +84,10 @@ namespace VSMacros.RecorderListeners
                                     if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out untypedProperty)))
                                     {
                                         string docPath = (string)untypedProperty;
-                                        this.dataModel.AddWindow(docPath);
+                                        if (!((this.dataModel.isDoc == true) && (this.dataModel.currDoc == docPath)))
+                                        {
+                                            this.dataModel.AddWindow(docPath);
+                                        }
                                     }
                                 }
                                 else if (typedProperty == FrameType.ToolWindow)
@@ -96,7 +100,10 @@ namespace VSMacros.RecorderListeners
                                         {
                                             if (caption != "Macro Explorer")
                                             {
-                                                this.dataModel.AddWindow(windowID, caption);
+                                                if (!((this.dataModel.isDoc == false) && (this.dataModel.currWindow == windowID)))
+                                                {
+                                                    this.dataModel.AddWindow(windowID, caption);
+                                                }
                                             }
                                         }
                                     }

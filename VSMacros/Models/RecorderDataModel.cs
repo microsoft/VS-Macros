@@ -14,6 +14,9 @@ namespace VSMacros.Model
     internal sealed class RecorderDataModel
     {
         private readonly List<RecordedActionBase> actions = new List<RecordedActionBase>();
+        public Guid currWindow;
+        public string currDoc;
+        public bool isDoc = false;
 
         public List<RecordedActionBase> Actions
         {
@@ -30,12 +33,16 @@ namespace VSMacros.Model
 
         internal void AddWindow(Guid toolWindowID, string name)
         {
+            this.isDoc = false;
             this.actions.Add(new RecordedWindowActivation(toolWindowID, name));
+            this.currWindow = toolWindowID;
         }
 
         internal void AddWindow(string path)
         {
+            this.isDoc = true;
             this.actions.Add(new RecordedDocumentActivation(path));
+            this.currDoc = path;
         }
 
         public void ClearActions()

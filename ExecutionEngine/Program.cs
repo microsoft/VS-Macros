@@ -27,14 +27,14 @@ namespace ExecutionEngine
 
             for (int i = 0; i < iterations; i++)
             {
-                if (!Program.engine.CallMethod(Program.MacroName))
+                bool successfulCompletion = Program.engine.CallMethod(Program.MacroName);
+                if (!successfulCompletion)
                 {
                     if (Site.RuntimeError)
                     {
-                        uint activeDocumentModification = 1;
                         uint macroInsertTextModification = 1;
                         var e = Site.RuntimeException;
-                        uint modifiedLineNumber = e.Line - activeDocumentModification - macroInsertTextModification;
+                        uint modifiedLineNumber = e.Line - macroInsertTextModification;
                         Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
                     else

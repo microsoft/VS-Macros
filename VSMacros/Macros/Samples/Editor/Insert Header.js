@@ -10,6 +10,9 @@ var MakeDivider = function () {
 
 var filename = doc.Name;
 
+if (dte.UndoContext.IsOpen)
+    dte.UndoContext.Close();
+
 dte.UndoContext.Open("Insert Header");
 
 // Go to start of document

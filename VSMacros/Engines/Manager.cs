@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -69,17 +71,24 @@ namespace VSMacros.Engines
         private static void AttachEvents(Executor executor)
         {
             executor.ResetMessages();
+            var dispatcher = Dispatcher.CurrentDispatcher;
+
             executor.Complete += (sender, eventInfo) =>
+            {
+                if (eventInfo.IsError)
+                {
+                    Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
+                }
+
+                Manager.instance.Executor.IsEngineRunning = false;
+
+                dispatcher.Invoke(new Action(() => 
                 {
                     VSMacrosPackage.Current.ClearStatusBar();
                     VSMacrosPackage.Current.UpdateButtonsForPlayback(false);
+                }));
 
-                    if (eventInfo.IsError)
-                    {
-                        Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
-                    }
-                    Manager.instance.Executor.IsEngineRunning = false;
-                };
+            };
         }
 
         public static Manager Instance

@@ -77,6 +77,7 @@ namespace VSMacros.Engines
                     {
                         Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
                     }
+                    Manager.instance.Executor.IsEngineRunning = false;
                 };
         }
 
@@ -178,9 +179,18 @@ namespace VSMacros.Engines
 
         private void PlayMacro(string path, int iterations)
         {
-            // TODO: Is this the right place to attach the event??
             AttachEvents(this.Executor);
-            this.Executor.RunEngine(iterations, path);
+
+            if (Manager.Instance.executor.IsEngineRunning)
+            {
+                VSMacrosPackage.Current.ClearStatusBar();
+                Manager.Instance.executor.StopEngine();
+            }
+            else
+            {
+                this.Executor.RunEngine(iterations, path);
+                Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
+            }
         }
 
         public void PlaybackCommand(int cmd)

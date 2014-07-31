@@ -87,7 +87,6 @@ namespace VSMacros.Engines
                     VSMacrosPackage.Current.ClearStatusBar();
                     VSMacrosPackage.Current.UpdateButtonsForPlayback(false);
                 }));
-
             };
         }
 

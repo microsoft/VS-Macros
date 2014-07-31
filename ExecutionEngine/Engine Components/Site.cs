@@ -135,6 +135,11 @@ namespace ExecutionEngine
             string description = exceptionInfo.bstrDescription;
             string source = exceptionInfo.bstrSource;
 
+            if (description.Equals("Object required"))
+            {
+                description = "This macro requires a document to be open.";
+            }
+
             Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);
         }

@@ -72,6 +72,7 @@ namespace VSMacros.Engines
             executor.Complete += (sender, eventInfo) =>
                 {
                     VSMacrosPackage.Current.ClearStatusBar();
+                    VSMacrosPackage.Current.UpdateButtonsForPlayback(false);
 
                     if (eventInfo.IsError)
                     {
@@ -159,7 +160,7 @@ namespace VSMacros.Engines
 
             VSMacrosPackage.Current.StatusBarChange(Resources.StatusBarPlayingText, 1);
 
-            this.PlayMacro(path, iterations);
+            this.TogglePlayback(path, iterations);
         }
 
         public void PlaybackMultipleTimes(string path)
@@ -177,7 +178,7 @@ namespace VSMacros.Engines
             }
         }
 
-        private void PlayMacro(string path, int iterations)
+        private void TogglePlayback(string path, int iterations)
         {
             AttachEvents(this.Executor);
 
@@ -188,6 +189,7 @@ namespace VSMacros.Engines
             }
             else
             {
+                VSMacrosPackage.Current.UpdateButtonsForPlayback(true);
                 this.Executor.RunEngine(iterations, path);
                 Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
             }
@@ -697,7 +699,7 @@ namespace VSMacros.Engines
         {
             try
             {
-                EnvDTE.Document doc = this.dte.Documents.Item(Path.GetFileName(path));
+                EnvDTE.Document doc = this.dte.Documents.Item(path);
 
                 if (!doc.Saved)
                 {

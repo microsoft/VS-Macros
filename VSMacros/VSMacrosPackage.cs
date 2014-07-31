@@ -99,7 +99,6 @@ namespace VSMacros
         #region Package Members
         private BitmapImage startIcon;
         private BitmapImage playbackIcon;
-        private BitmapImage playMultipleTimesIcon;
         private BitmapImage stopIcon;
         private string commonPath;
         private List<CommandBarButton> imageButtons;
@@ -198,16 +197,30 @@ namespace VSMacros
 
         private void Playback(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback(string.Empty);
+            if (Manager.Instance.executor == null || !Manager.Instance.executor.IsEngineRunning)
+            {
+                //this.UpdateButtonsForPlayback(true);
+            }
+            else
+            {
+                this.UpdateButtonsForPlayback(false);
+            }
 
-            //this.UpdateButtonsForPlayback(true);
+            Manager.Instance.Playback(string.Empty);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            Manager.Instance.PlaybackMultipleTimes(string.Empty);
+            if (Manager.Instance.executor == null || !Manager.Instance.executor.IsEngineRunning)
+            {
+                //this.UpdateButtonsForPlayback(true);
+            }
+            else
+            {
+                this.UpdateButtonsForPlayback(false);
+            }
 
-            //this.UpdateButtonsForPlaybackMultipleTimes(true);
+            Manager.Instance.PlaybackMultipleTimes(string.Empty);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)
@@ -227,7 +240,7 @@ namespace VSMacros
 
         #endregion
 
-        #region Status Bar
+        #region Status Bar & Menu Icons
         public void ChangeMenuIcons(BitmapSource icon, int commandNumber)
         {
             // commandNumber is 0 for Recording, 1 for Playback and 2 for Playback Multiple Times         
@@ -309,20 +322,20 @@ namespace VSMacros
             this.UpdateCommonButtons(!isRecording);
         }
 
-        private void UpdateButtonsForPlayback(bool isPlaying)
+        public void UpdateButtonsForPlayback(bool goingToPlay)
         {
-            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
-            this.UpdateCommonButtons(!isPlaying);
-        }
+            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !goingToPlay);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !goingToPlay);
+            this.UpdateCommonButtons(!goingToPlay);
 
-        private void UpdateButtonsForPlaybackMultipleTimes(bool isPlaying)
-        {
-            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, isPlaying);
-            this.UpdateCommonButtons(!isPlaying);
+            if (goingToPlay)
+            {
+                this.ChangeMenuIcons(this.StopIcon, 1);
+            }
+            else
+            {
+                this.ChangeMenuIcons(this.PlaybackIcon, 1);
+            }
         }
 
         private void UpdateCommonButtons(bool enable)

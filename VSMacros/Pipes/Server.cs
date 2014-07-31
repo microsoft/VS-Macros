@@ -6,12 +6,16 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.Engines;
 using VSMacros.Enums;
+using VSMacros.ExecutionEngine.Pipes;
 
 namespace VSMacros.Pipes
 {
@@ -23,6 +27,7 @@ namespace VSMacros.Pipes
         public static NamedPipeServerStream ServerStream;
         public static Guid Guid;
         public static Thread serverWait;
+        private static Executor executor = Manager.Instance.executor;
 
         public static void InitializeServer()
         {
@@ -38,107 +43,91 @@ namespace VSMacros.Pipes
 
         #region Getting
 
-        public static string GetMessageFromStream(NamedPipeServerStream serverStream, int sizeOfMessage)
-        {
-            byte[] messageBuffer = new byte[sizeOfMessage];
-            serverStream.Read(messageBuffer, 0, sizeOfMessage);
-            return Encoding.Unicode.GetString(messageBuffer);
-        }
-
-        public static int GetIntFromStream(NamedPipeServerStream serverStream)
-        {
-            if (serverStream.IsConnected)
-            {
-                byte[] number = new byte[sizeof(int)];
-                serverStream.Read(number, 0, sizeof(int));
-                return BitConverter.ToInt32(number, 0);
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
         public static void WaitForMessage()
         {
             Server.ServerStream.WaitForConnection();
 
+            var formatter = new BinaryFormatter();
+            formatter.Binder = new BinderHelper();
+
             bool shouldKeepRunning = true;
-            while (shouldKeepRunning)
+            while (shouldKeepRunning && Server.ServerStream.IsConnected)
             {
-                int typeOfMessage = Server.GetIntFromStream(Server.ServerStream);
-
-                switch ((Packet)typeOfMessage)
+                try
                 {
-                    case Packet.Empty:
-#if Debug
-                        Manager.Instance.ShowMessageBox("Pipes are no longer connected.");
-#endif
-                        Executor.IsEngineInitialized = false;
-                        shouldKeepRunning = false;
-                        break;
+                    var type = (PacketType)formatter.Deserialize(Server.ServerStream);
 
-                    case Packet.Close:
-#if Debug
-                        Manager.Instance.ShowMessageBox("Received a close packet in Server.");
-#endif
-                        Executor.IsEngineInitialized = false;
-                        shouldKeepRunning = false;
-                        break;
+                    switch (type)
+                    {
+                        case PacketType.Empty:
+                            Server.executor.IsEngineRunning = false;
+                            shouldKeepRunning = false;
+                            break;
 
-                    case Packet.Success:
-                        var executor = Manager.Instance.executor;
-                        executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
-                        break;
+                        case PacketType.Close:
+                            Executor.IsEngineInitialized = false;
+                            shouldKeepRunning = false;
+                            break;
 
-                    case Packet.ScriptError:
-                        executor = Manager.Instance.executor;
-                        string error = Server.GetScriptError(Server.ServerStream);
-                        executor.SendCompletionMessage(isError: true, errorMessage: error);
-                        break;
+                        case PacketType.Success:
+                            Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
+                            break;
 
-                    case Packet.CriticalError:
-                        error = Server.GetCriticalError(Server.ServerStream);
-#if Debug
-                        Manager.Instance.ShowMessageBox(error);
-#endif
-                        Server.ServerStream.Close();
+                        case PacketType.ScriptError:
+                            string error = Server.GetScriptError(Server.ServerStream);
+                            Server.executor.SendCompletionMessage(isError: true, errorMessage: error);
+                            break;
 
-                        if (Executor.Job != null)
-                        {
-                            Executor.Job.Close();
-                        }
+                        case PacketType.CriticalError:
+                            error = Server.GetCriticalError(Server.ServerStream);
+                            Server.ServerStream.Close();
 
-                        Executor.IsEngineInitialized = false;
-                        shouldKeepRunning = false;
-                        break;
+                            if (Executor.Job != null)
+                            {
+                                Executor.Job.Close();
+                            }
+
+                            Executor.IsEngineInitialized = false;
+                            shouldKeepRunning = false;
+                            break;
+                    }
                 }
-            }
+                catch (System.Runtime.Serialization.SerializationException e)
+                {
+#if Debug
+                    Debug.WriteLine("Server has shut down: " + e.Message);
+                    // TODO: What else do I need to do here?
+#endif
+                }
+            } 
         }
 
         private static string GetScriptError(NamedPipeServerStream serverStream)
         {
-            int lineNumber = GetIntFromStream(serverStream);
-            int column = GetIntFromStream(serverStream);
-            int sizeOfSource = GetIntFromStream(serverStream);
-            string source = GetMessageFromStream(serverStream, sizeOfSource);
-            int sizeOfDescription = GetIntFromStream(serverStream);
-            string description = GetMessageFromStream(serverStream, sizeOfDescription);
+            var formatter = new BinaryFormatter();
+            formatter.Binder = new BinderHelper();
+            var scriptError = (ScriptError)formatter.Deserialize(Server.ServerStream);
 
-            var exceptionMessage = string.Format("{0}: {1} at line {2}, column {3}.", source, description, lineNumber, column);
+            int lineNumber = scriptError.LineNumber;
+            int column = scriptError.Column;
+            // TODO: String.format
+            string source = "\'" + Server.executor.CurrentlyExecutingMacro + ".js\' error";
+            string description = scriptError.Description ?? "Command not valid in this context";
+            string period = description[description.Length - 1] == '.' ? string.Empty : ".";
+
+            var exceptionMessage = string.Format("{0}{3}{3}Line Number: {1}{3}Cause: {2}{4}", source, lineNumber, description, Environment.NewLine, period);
             return exceptionMessage;
         }
 
         private static string GetCriticalError(NamedPipeServerStream serverStream)
         {
-            int messageSize = GetIntFromStream(serverStream);
-            string message = GetMessageFromStream(serverStream, messageSize);
-            int sourceSize = GetIntFromStream(serverStream);
-            string source = GetMessageFromStream(serverStream, sourceSize);
-            int stackTraceSize = GetIntFromStream(serverStream);
-            string stackTrace = GetMessageFromStream(serverStream, stackTraceSize);
-            int targetSiteSize = GetIntFromStream(serverStream);
-            string targetSite = GetMessageFromStream(serverStream, targetSiteSize);
+            var formatter = new BinaryFormatter();
+            var criticalError = (CriticalError)formatter.Deserialize(Server.ServerStream);
+
+            string message = criticalError.Message;
+            string source = criticalError.StackTrace;
+            string stackTrace = criticalError.StackTrace;
+            string targetSite = criticalError.TargetSite;
 
             var exceptionMessage = string.Format("{0}: {1}{2}Stack Trace: {3}{2}{2}TargetSite:{4}", source, message, Environment.NewLine, stackTrace, targetSite);
             return exceptionMessage;
@@ -148,36 +137,6 @@ namespace VSMacros.Pipes
 
         #region Sending
 
-        private static byte[] PackageFilePathMessage(int it, string line)
-        {
-            byte[] serializedTypeLength = BitConverter.GetBytes((int)Packet.FilePath);
-            byte[] serializedIterations = BitConverter.GetBytes((int)it);
-            byte[] serializedMessage = Encoding.Unicode.GetBytes(line);
-            byte[] serializedLength = BitConverter.GetBytes(serializedMessage.Length);
-
-            int type = sizeof(int), iterations = sizeof(int), messageSize = sizeof(int);
-            byte[] packet = new byte[type + iterations + messageSize + serializedMessage.Length];
-
-            int offset = 0;
-            serializedTypeLength.CopyTo(packet, offset);
-
-            offset += type;
-            serializedIterations.CopyTo(packet, offset);
-
-            offset += iterations;
-            serializedLength.CopyTo(packet, offset);
-            
-            offset += messageSize;
-            serializedMessage.CopyTo(packet, offset);
-
-            return packet;
-        }
-
-        public static byte[] PackageCloseMessage()
-        {
-            return BitConverter.GetBytes((int)Packet.Close);
-        }
-
         public static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)
         {
             try
@@ -186,7 +145,8 @@ namespace VSMacros.Pipes
             }
             catch (OperationCanceledException e)
             {
-#if DEBUG
+                // TODO: THis needs to be preserved elsewhere.
+#if Debug
                 Manager.Instance.ShowMessageBox(string.Format("The server thread was terminated.\n\n{0}: {1}\n{2}{3}", e.Source, e.Message, e.TargetSite.ToString(), e.StackTrace));
 #endif
                 VSMacrosPackage.Current.ClearStatusBar();
@@ -196,10 +156,15 @@ namespace VSMacros.Pipes
 
         internal static void SendFilePath(int iterations, string path)
         {
-            byte[] filePathPacket = PackageFilePathMessage(iterations, path);
-            SendMessageToClient(Server.ServerStream, filePathPacket);
+            var type = PacketType.FilePath;
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(Server.ServerStream, type);
+
+            var filePath = new FilePath();
+            filePath.Iterations = iterations;
+            filePath.Path = path;
+            formatter.Serialize(Server.ServerStream, filePath);
         }
     }
-
         #endregion
 }

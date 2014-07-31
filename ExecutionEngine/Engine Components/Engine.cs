@@ -6,6 +6,8 @@
 
 using System;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
@@ -13,15 +15,16 @@ using ExecutionEngine.Interfaces;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using VSMacros;
+using VSMacros.ExecutionEngine;
 
 namespace ExecutionEngine
 {
-    internal sealed class Engine : IDisposable
+    public sealed class Engine : IDisposable
     {
         private IActiveScript engine;
         private Parser parser;
         private Site scriptSite;
+        private object dispatch;
 
         public static object DteObject { get; private set; }
         public static object CommandHelper { get; private set; }
@@ -87,17 +90,22 @@ namespace ExecutionEngine
 
         public Engine(int pid, string version)
         {
-            const string dte = "dte";
-            const string cmdHelper = "cmdHelper";
-
             this.engine = this.CreateEngine();
             this.scriptSite = new Site();
             this.parser = new Parser(this.engine);
-
-            this.InitializeCommandHelper();
-            this.InitializeDteObject(pid, version);
             this.engine.SetScriptSite(this.scriptSite);
+
+            InformEngineOfNewObjects(pid, version);
+        }
+
+        private void InformEngineOfNewObjects(int pid, string version)
+        {
+            const string dte = "dte";
+            this.InitializeDteObject(pid, version);
             this.engine.AddNamedItem(dte, ScriptItem.CodeOnly | ScriptItem.IsVisible);
+
+            const string cmdHelper = "cmdHelper";
+            this.InitializeCommandHelper();
             this.engine.AddNamedItem(cmdHelper, ScriptItem.CodeOnly | ScriptItem.IsVisible);
         }
 
@@ -109,22 +117,41 @@ namespace ExecutionEngine
             }
         }
 
-        internal ParsedScript GenerateParsedScript()
+        public bool CallMethod(string methodName, params object[] arguments)
         {
-            IntPtr dispatch;
-            this.engine.GetScriptDispatch(null, out dispatch);
-            return new ParsedScript(this, dispatch);
+            try
+            {
+                this.dispatch.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, this.dispatch, arguments);
+                return true;
+            }
+            catch (Exception e)
+            {
+                var internalException = e.InnerException;
+                if (!Site.RuntimeError)
+                {
+                    Site.InternalError = true;
+                    Site.InternalVSException = new InternalVSException(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+                }
+                return false;
+            }
         }
 
-        internal ParsedScript Parse(string unparsed)
+        internal void Parse(string unparsed)
         {
-            Validate.IsNotNullAndNotEmpty(unparsed, "unparsed");
+            try
+            {
+                this.engine.SetScriptState(ScriptState.Connected);
+                this.parser.Parse(unparsed);
 
-            this.engine.SetScriptState(ScriptState.Connected);
-            this.parser.Parse(unparsed);
-            var parsedScript = this.GenerateParsedScript();
-
-            return parsedScript;
+                IntPtr dispatch;
+                this.engine.GetScriptDispatch(null, out dispatch);
+                this.dispatch = Marshal.GetObjectForIUnknown(dispatch);
+            }
+            catch (Exception e)
+            {
+                Site.InternalError = true;
+                Site.InternalVSException = new InternalVSException(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
+            }
         }
     }
 }

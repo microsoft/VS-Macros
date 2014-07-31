@@ -5,12 +5,11 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using System.Windows.Forms;
-using ExecutionEngine.Enums;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
+using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.ExecutionEngine.Pipes;
 
 namespace ExecutionEngine
@@ -18,51 +17,47 @@ namespace ExecutionEngine
     internal class Program
     {
         private static Engine engine;
-        private static ParsedScript parsedScript;
+        private static BinaryFormatter serializer;
         internal const string MacroName = "currentScript";
 
         internal static void RunMacro(string script, int iterations)
         {
             Validate.IsNotNullAndNotEmpty(script, "script");
-            Program.parsedScript = Program.engine.Parse(script);
+            Program.engine.Parse(script);
 
             for (int i = 0; i < iterations; i++)
             {
-                if (!Program.parsedScript.CallMethod(Program.MacroName))
+                bool successfulCompletion = Program.engine.CallMethod(Program.MacroName);
+                if (!successfulCompletion)
                 {
                     if (Site.RuntimeError)
                     {
-                        uint activeDocumentModification = 1;
+                        uint macroInsertTextModification = 1;
                         var e = Site.RuntimeException;
-                        uint modifiedLineNumber = e.Line - activeDocumentModification;
-
-                        byte[] scriptErrorMessage = Client.PackageScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
-                        string message = Encoding.Unicode.GetString(scriptErrorMessage);
-                        Client.SendMessageToServer(Client.ClientStream, scriptErrorMessage);
+                        uint modifiedLineNumber = e.Line - macroInsertTextModification;
+                        Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
                     else
                     {
                         var e = Site.InternalVSException;
-                        byte[] criticalErrorMessage = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        Client.SendMessageToServer(Client.ClientStream, criticalErrorMessage);
+                        Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
                     }
                     Site.ResetError();
                     break;
                 }
             }
 
-            byte[] successMessage = Client.PackageSuccessMessage();
-            Client.SendMessageToServer(Client.ClientStream, successMessage);
+            Client.SendSuccessMessage();
         }
 
         private static void HandleInput()
         {
-            int typeOfMessage = Client.GetInt(Client.ClientStream);
+            var type = (PacketType)Program.serializer.Deserialize(Client.ClientStream);
 
             // I know a switch statement seems useless but just preparing for the possibility of other packets.
-            switch ((Packet)typeOfMessage)
+            switch (type)
             {
-                case Packet.FilePath:
+                case PacketType.FilePath:
                     HandleFilePath();
                     break;
             }
@@ -70,20 +65,24 @@ namespace ExecutionEngine
 
         private static void HandleFilePath()
         {
-            int iterations = Client.GetInt(Client.ClientStream);
-            string message = Client.GetFilePath(Client.ClientStream);
+            var filePath = (FilePath)Program.serializer.Deserialize(Client.ClientStream);
+            int iterations = filePath.Iterations;
+            string message = filePath.Path;
             string unwrappedScript = InputParser.ExtractScript(message);
             string wrappedScript = InputParser.WrapScript(unwrappedScript);
             Program.RunMacro(wrappedScript, iterations);
         }
 
-        internal static Thread CreateReadingThread(int pid, string version)
+        internal static Thread CreateReadingExecutingThread(int pid, string version)
         {
-            Thread readThread = new Thread(() =>
+            Thread readAndExecuteThread = new Thread(() =>
             {
                 try
                 {
+                    Program.serializer = new BinaryFormatter();
+                    Program.serializer.Binder = new BinderHelper();
                     Program.engine = new Engine(pid, version);
+
                     while (true)
                     {
                         HandleInput();
@@ -93,14 +92,7 @@ namespace ExecutionEngine
                 {
                     if (Client.ClientStream.IsConnected)
                     {
-                        byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                        Client.SendMessageToServer(Client.ClientStream, criticalError);
-                    }
-                    else
-                    {
-#if DEBUG
-                        MessageBox.Show("Execution engine's pipe is not connected.");
-#endif
+                        Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
                     }
                 }
                 finally
@@ -110,17 +102,11 @@ namespace ExecutionEngine
                         Client.ShutDownServer(Client.ClientStream);
                         Client.ClientStream.Close();
                     }
-                    else
-                    {
-#if DEBUG
-                        MessageBox.Show("Execution engine's pipe is not connected.");
-#endif
-                    }
                 }
             });
 
-            readThread.SetApartmentState(ApartmentState.STA);
-            return readThread;
+            readAndExecuteThread.SetApartmentState(ApartmentState.STA);
+            return readAndExecuteThread;
         }
 
         private static void RunFromPipe(string[] separatedArgs)
@@ -131,8 +117,8 @@ namespace ExecutionEngine
             int pid = InputParser.GetPid(separatedArgs[1]);
             string version = separatedArgs[2];
 
-            Thread readThread = CreateReadingThread(pid, version);
-            readThread.Start();
+            Thread readAndExecuteThread = CreateReadingExecutingThread(pid, version);
+            readAndExecuteThread.Start();
         }
 
         internal static void Main(string[] args)
@@ -144,8 +130,7 @@ namespace ExecutionEngine
             }
             catch (Exception e)
             {
-                byte[] criticalError = Client.PackageCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
-                Client.SendMessageToServer(Client.ClientStream, criticalError);
+                Client.SendCriticalError(e.Message, e.Source, e.StackTrace, e.TargetSite.ToString());
             }
         }
     }

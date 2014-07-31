@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using ExecutionEngine.Enums;
@@ -18,6 +18,10 @@ namespace ExecutionEngine
     internal sealed class Site : IActiveScriptSite
     {
         private const int TypeEElementNotFound = unchecked((int)(0x8002802B));
+        private const string Dte = "dte";
+        private const string CmdHelper = "cmdHelper";
+        private Dictionary<string, object> objectsEngineKnowsAbout;
+        private Dictionary<string, string> errorMessages;
         internal static bool RuntimeError;
         internal static RuntimeException RuntimeException;
         internal static bool InternalError;
@@ -39,47 +43,60 @@ namespace ExecutionEngine
 
         public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
+            EnsureDictionariesAreInitialized();
+
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
             {
                 throw new NotImplementedException();
             }
 
-            if (name.Equals("dte"))
-            {
-                if (Engine.DteObject != null)
-                {
-                    item = Marshal.GetIUnknownForObject(Engine.DteObject);
-                }
-                else
-                {
-                    CreateInternalVSException(Resources.NullDte);
-                    item = IntPtr.Zero;
+            object objectEngineKnowsAbout;
+            string errorMessage;
 
-#if DEBUG
-                    Debug.WriteLine("Engine.DteObject is null.");
-#endif
-                }
+            if (objectsEngineKnowsAbout.TryGetValue(name, out objectEngineKnowsAbout))
+            {
+                item = Marshal.GetIUnknownForObject(objectEngineKnowsAbout);
             }
-            else if (name.Equals("cmdHelper")) 
+            else if (errorMessages.TryGetValue(name, out errorMessage))
             {
-                if (Engine.CommandHelper != null)
-                {
-                    item = Marshal.GetIUnknownForObject(Engine.CommandHelper);
-                }
-                else 
-                {
-                    CreateInternalVSException(Resources.NullCommandHelper);
-                    item = IntPtr.Zero;
-
-#if DEBUG
-                    Debug.WriteLine("Engine.CommandHelper is null.");
-#endif
-                }
+                CreateInternalVSException(errorMessage);
+                item = IntPtr.Zero;
             }
             else
             {
                 throw new COMException(null, TypeEElementNotFound);
             }
+        }
+
+        private void EnsureDictionariesAreInitialized()
+        {
+            if (objectsEngineKnowsAbout == null)
+            {
+                InitializedAddedObjects();
+            }
+
+            if (errorMessages == null)
+            {
+                InitializeErrorMessages();
+            }
+        }
+
+        private void InitializeErrorMessages()
+        {
+            errorMessages = new Dictionary<string, string>
+            {
+                {Dte, Resources.NullDte},
+                {CmdHelper, Resources.NullCommandHelper}
+            };
+        }
+
+        private void InitializedAddedObjects()
+        {
+            objectsEngineKnowsAbout = new Dictionary<string, object>
+            {
+                {Dte, Engine.DteObject},
+                {CmdHelper, Engine.CommandHelper}
+            };
         }
 
         public void GetDocVersionString(out string version)
@@ -116,6 +133,11 @@ namespace ExecutionEngine
 
             string description = exceptionInfo.bstrDescription;
             string source = exceptionInfo.bstrSource;
+
+            if (description.Equals("Object required"))
+            {
+                description = Resources.NoActiveDocumentErrorMessage;
+            }
 
             Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);

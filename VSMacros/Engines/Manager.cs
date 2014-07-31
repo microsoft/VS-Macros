@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -42,10 +44,10 @@ namespace VSMacros.Engines
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;
         private bool shortcutsDirty;
-        private bool recording;
 
         private IServiceProvider serviceProvider;
         private IVsUIShell uiShell;
+        private EnvDTE.DTE dte;
 
         private IRecorder recorder;
 
@@ -58,7 +60,7 @@ namespace VSMacros.Engines
         {
             this.serviceProvider = provider;
             this.uiShell = (IVsUIShell)provider.GetService(typeof(SVsUIShell));
-
+            this.dte = (EnvDTE.DTE)provider.GetService(typeof(SDTE));
             this.recorder = (IRecorder)this.serviceProvider.GetService(typeof(IRecorder));
 
             this.LoadShortcuts();
@@ -69,15 +71,23 @@ namespace VSMacros.Engines
         private static void AttachEvents(Executor executor)
         {
             executor.ResetMessages();
+            var dispatcher = Dispatcher.CurrentDispatcher;
+
             executor.Complete += (sender, eventInfo) =>
+            {
+                if (eventInfo.IsError)
+                {
+                    Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
+                }
+
+                Manager.instance.Executor.IsEngineRunning = false;
+
+                dispatcher.Invoke(new Action(() => 
                 {
                     VSMacrosPackage.Current.ClearStatusBar();
-
-                    if (eventInfo.IsError)
-                    {
-                        Manager.Instance.ShowMessageBox(eventInfo.ErrorMessage);
-                    }
-                };
+                    VSMacrosPackage.Current.UpdateButtonsForPlayback(false);
+                }));
+            };
         }
 
         public static Manager Instance
@@ -94,37 +104,53 @@ namespace VSMacros.Engines
         }
 
         public IVsWindowFrame PreviousWindow { get; set; }
-        public bool FirstWindowIsDocument { get; set; }
+        public bool PreviousWindowIsDocument { get; set; }
+
+        public bool IsRecording { get; private set; }
 
         public void StartRecording()
         {
             // Move focus back to previous window
-            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
-            if (dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
+            if (this.dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
             {
                 PreviousWindow.Show();
             }
 
-            // Is the first window a document?
-            Manager.Instance.FirstWindowIsDocument = dte.ActiveWindow.Kind == "Document";
-
-            this.recording = true;
+            this.IsRecording = true;
             this.recorder.StartRecording();
         }
 
-        public bool IsRecording
-        {
-            get { return this.recording; }
-        }
 
         public void StopRecording()
         {
             string current = Manager.CurrentMacroPath;
 
+            bool currentWasOpen = false;
+
+            // Close current macro if open
+            try
+            {
+                this.dte.Documents.Item(Manager.CurrentMacroPath).Close(EnvDTE.vsSaveChanges.vsSaveChangesNo);
+                currentWasOpen = true;
+            }
+            catch (Exception e)
+            {
+                if (ErrorHandler.IsCriticalException(e))
+                {
+                    throw;
+                }
+            }
+
             this.recorder.StopRecording(current);
-            this.recording = false;
+            this.IsRecording = false;
 
             MacroFSNode.SelectNode(CurrentMacroPath);
+
+            // Reopen current macro
+            if (currentWasOpen)
+            {
+                VsShellUtilities.OpenDocument(VSMacrosPackage.Current, Manager.CurrentMacroPath);
+            }
         }
 
         public void Playback(string path, int iterations = 1)
@@ -132,30 +158,17 @@ namespace VSMacros.Engines
             path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
 
             // Before playing back, save the macro file
-            EnvDTE.DTE dte = ((IServiceProvider)VSMacrosPackage.Current).GetService(typeof(SDTE)) as EnvDTE.DTE;
+            this.SaveMacroIfDirty(path);
 
-            try
+            // Move focus to first window
+            if (this.dte.ActiveWindow.Caption == "Macro Explorer" && PreviousWindow != null)
             {
-                EnvDTE.Document doc = dte.Documents.Item(Path.GetFileName(path));
-
-                if (!doc.Saved)
-                {
-                    if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
-                        string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
-                        OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
-                    {
-                        doc.Save();
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                if (ErrorHandler.IsCriticalException(e)) { throw; }
+                PreviousWindow.Show();
             }
 
             VSMacrosPackage.Current.StatusBarChange(Resources.StatusBarPlayingText, 1);
 
-            this.PlayMacro(path, iterations);
+            this.TogglePlayback(path, iterations);
         }
 
         public void PlaybackMultipleTimes(string path)
@@ -173,11 +186,21 @@ namespace VSMacros.Engines
             }
         }
 
-        private void PlayMacro(string path, int iterations)
+        private void TogglePlayback(string path, int iterations)
         {
-            // TODO: Is this the right place to attach the event??
             AttachEvents(this.Executor);
-            this.Executor.RunEngine(iterations, path);
+
+            if (Manager.Instance.executor.IsEngineRunning)
+            {
+                VSMacrosPackage.Current.ClearStatusBar();
+                Manager.Instance.executor.StopEngine();
+            }
+            else
+            {
+                VSMacrosPackage.Current.UpdateButtonsForPlayback(true);
+                this.Executor.RunEngine(iterations, path);
+                Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
+            }
         }
 
         public void PlaybackCommand(int cmd)
@@ -677,6 +700,28 @@ namespace VSMacros.Engines
             {
                 // Create file for writing UTF-8 encoded text
                 File.WriteAllText(shortcutsPath, "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?><commands><command>Command not bound. Do not use.</command><command/><command/><command/><command/><command/><command/><command/><command/><command/></commands>");
+            }
+        }
+
+        private void SaveMacroIfDirty(string path)
+        {
+            try
+            {
+                EnvDTE.Document doc = this.dte.Documents.Item(path);
+
+                if (!doc.Saved)
+                {
+                    if (VSConstants.MessageBoxResult.IDYES == this.ShowMessageBox(
+                        string.Format(Resources.MacroNotSavedBeforePlayback, Path.GetFileNameWithoutExtension(path)),
+                        OLEMSGBUTTON.OLEMSGBUTTON_YESNO))
+                    {
+                        doc.Save();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (ErrorHandler.IsCriticalException(e)) { throw; }
             }
         }
 

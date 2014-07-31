@@ -99,7 +99,6 @@ namespace VSMacros
         #region Package Members
         private BitmapImage startIcon;
         private BitmapImage playbackIcon;
-        private BitmapImage playMultipleTimesIcon;
         private BitmapImage stopIcon;
         private string commonPath;
         private List<CommandBarButton> imageButtons;
@@ -175,7 +174,7 @@ namespace VSMacros
         // Command Handlers
         #region Command Handlers
 
-        public void Record(object sender, EventArgs arguments)
+        private void Record(object sender, EventArgs arguments)
         {
             IRecorderPrivate macroRecorder = (IRecorderPrivate)this.GetService(typeof(IRecorder));
             if (!macroRecorder.IsRecording)
@@ -196,18 +195,32 @@ namespace VSMacros
             }
         }
 
-        private void Playback(object sender, EventArgs arguments)
+        public void Playback(object sender, EventArgs arguments)
         {
-            Manager.Instance.Playback(string.Empty);
+            if (Manager.Instance.executor == null || !Manager.Instance.executor.IsEngineRunning)
+            {
+                //this.UpdateButtonsForPlayback(true);
+            }
+            else
+            {
+                this.UpdateButtonsForPlayback(false);
+            }
 
-            //this.UpdateButtonsForPlayback(true);
+            Manager.Instance.Playback(string.Empty);
         }
 
         private void PlaybackMultipleTimes(object sender, EventArgs arguments)
         {
-            Manager.Instance.PlaybackMultipleTimes(string.Empty);
+            if (Manager.Instance.executor == null || !Manager.Instance.executor.IsEngineRunning)
+            {
+                //this.UpdateButtonsForPlayback(true);
+            }
+            else
+            {
+                this.UpdateButtonsForPlayback(false);
+            }
 
-            //this.UpdateButtonsForPlaybackMultipleTimes(true);
+            Manager.Instance.PlaybackMultipleTimes(string.Empty);
         }
 
         private void SaveCurrent(object sender, EventArgs arguments)
@@ -215,19 +228,19 @@ namespace VSMacros
             Manager.Instance.SaveCurrent();
         }
 
-        public void PlaybackCommand1(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(1); }
-        public void PlaybackCommand2(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(2); }
-        public void PlaybackCommand3(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(3); }
-        public void PlaybackCommand4(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(4); }
-        public void PlaybackCommand5(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(5); }
-        public void PlaybackCommand6(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(6); }
-        public void PlaybackCommand7(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(7); }
-        public void PlaybackCommand8(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(8); }
-        public void PlaybackCommand9(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(9); }
+        private void PlaybackCommand1(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(1); }
+        private void PlaybackCommand2(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(2); }
+        private void PlaybackCommand3(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(3); }
+        private void PlaybackCommand4(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(4); }
+        private void PlaybackCommand5(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(5); }
+        private void PlaybackCommand6(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(6); }
+        private void PlaybackCommand7(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(7); }
+        private void PlaybackCommand8(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(8); }
+        private void PlaybackCommand9(object sender, EventArgs arguments) { Manager.Instance.PlaybackCommand(9); }
 
         #endregion
 
-        #region Status Bar
+        #region Status Bar & Menu Icons
         public void ChangeMenuIcons(BitmapSource icon, int commandNumber)
         {
             // commandNumber is 0 for Recording, 1 for Playback and 2 for Playback Multiple Times         
@@ -309,20 +322,20 @@ namespace VSMacros
             this.UpdateCommonButtons(!isRecording);
         }
 
-        private void UpdateButtonsForPlayback(bool isPlaying)
+        public void UpdateButtonsForPlayback(bool goingToPlay)
         {
-            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !isPlaying);
-            this.UpdateCommonButtons(!isPlaying);
-        }
+            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !goingToPlay);
+            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, !goingToPlay);
+            this.UpdateCommonButtons(!goingToPlay);
 
-        private void UpdateButtonsForPlaybackMultipleTimes(bool isPlaying)
-        {
-            this.EnableMyCommand(PkgCmdIDList.CmdIdRecord, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlayback, !isPlaying);
-            this.EnableMyCommand(PkgCmdIDList.CmdIdPlaybackMultipleTimes, isPlaying);
-            this.UpdateCommonButtons(!isPlaying);
+            if (goingToPlay)
+            {
+                this.ChangeMenuIcons(this.StopIcon, 1);
+            }
+            else
+            {
+                this.ChangeMenuIcons(this.PlaybackIcon, 1);
+            }
         }
 
         private void UpdateCommonButtons(bool enable)

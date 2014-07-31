@@ -16,13 +16,13 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label Content="{x:Static l:Resources.DialogPlayback}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="31,10,20,10" />
+        <Label Content="{x:Static l:Resources.DialogPlayback}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0"/>
 
-        <TextBox Name="IterationsTextbox" 
-                 Grid.ColumnSpan="2" HorizontalAlignment="Center" TextWrapping="NoWrap" Text="1" VerticalAlignment="Center" Width="30" TextAlignment="Center"
-                 PreviewTextInput="IterationsTextbox_PreviewTextInput" Margin="92,14" />
+        <TextBox Name="IterationsTextbox"
+                 Grid.ColumnSpan="2" HorizontalAlignment="Center" TextWrapping="NoWrap" Text="1" VerticalAlignment="Center" Width="35" TextAlignment="Center"
+                 PreviewTextInput="IterationsTextbox_PreviewTextInput" />
 
-        <Label Content="{x:Static l:Resources.DialogTimesSingular}" Name="TimesLabel" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,10,0,10" Width="40"/>
+        <Label Content="{x:Static l:Resources.DialogTimesSingular}" Name="TimesLabel" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="25,0,0,0" Width="40"/>
 
         <!-- Accept or Cancel -->
         <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="1" VerticalAlignment="Center">

@@ -20,6 +20,13 @@ namespace VSMacros.Interfaces
         event EventHandler<CompletionReachedEventArgs> Complete;
 
         /// <summary>
+        /// Provides name of the currently executing macro.
+        /// </summary>
+        string CurrentlyExecutingMacro { get; set; }
+
+        bool IsEngineRunning { get; set; }
+
+        /// <summary>
         /// Initializes the engine and then runs the macro script.
         /// </summary>
         void InitializeEngine();
@@ -30,5 +37,10 @@ namespace VSMacros.Interfaces
         /// <param name="iterations">Times to be executed.</param>
         /// </summary>
         void RunEngine(int iterations, string path);
+
+        /// <summary>
+        /// Will stop engine from running.
+        /// </summary>
+        void StopEngine();
     }
 }

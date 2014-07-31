@@ -11,10 +11,12 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using VSMacros.ExecutionEngine.Pipes.Shared;
 using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Pipes;
@@ -32,13 +34,15 @@ namespace VSMacros.Engines
         internal static Process executionEngine;
         internal static bool IsEngineInitialized;
         internal static JobHandle Job;
-        private const string Delimiter = "[delimiter]";
 
         /// <summary>
         /// Informs subscribers of success or error during execution.
         /// </summary>
         public event EventHandler<CompletionReachedEventArgs> Complete;
+        public string CurrentlyExecutingMacro { get; set; }
+        public bool IsEngineRunning { get; set; }
 
+        #region Helpers
         internal void SendCompletionMessage(bool isError, string errorMessage)
         {
             if (this.Complete != null)
@@ -53,11 +57,10 @@ namespace VSMacros.Engines
             this.Complete = null;
         }
 
-        #region Helpers
         private string ProvidePipeArguments(Guid guid, string version)
         {
             int pid = Process.GetCurrentProcess().Id;
-            return string.Format("{0}{1}{2}{1}{3}", guid, Executor.Delimiter, pid, version);
+            return string.Format("{0}{1}{2}{1}{3}", guid, SharedVariables.Delimiter, pid, version);
         }
 
         private System.Runtime.InteropServices.ComTypes.IRunningObjectTable GetRunningObjectTable()
@@ -99,10 +102,6 @@ namespace VSMacros.Engines
 
                     var suiHost = serviceProvider.GetService(typeof(SUIHostCommandDispatcher));
                     hResult = rot.Register(NativeMethods.ROTFLAGS_REGISTRATIONKEEPSALIVE, suiHost, moniker);
-                    if (hResult != NativeMethods.S_OK)
-                    {
-                        // Todo: logging an error
-                    }
                 }
             }
         }
@@ -131,10 +130,6 @@ namespace VSMacros.Engines
 
                     var svsCmdName = serviceProvider.GetService(typeof(SVsCmdNameMapping));
                     hResult = rot.Register(NativeMethods.ROTFLAGS_REGISTRATIONKEEPSALIVE, svsCmdName, moniker);
-                    if (hResult != NativeMethods.S_OK)
-                    {
-                        // Todo: logging an error
-                    }
                 }
             }
         }
@@ -181,20 +176,28 @@ namespace VSMacros.Engines
             else
             {
                 this.InitializeEngine();
-                Thread waitsUntilClientIsConnected = new Thread(() =>
+                Thread waitsUntilConnection = new Thread(() =>
                     {
-                        while (true) 
-                        {
-                            if (Server.ServerStream.IsConnected)
-                            {
-                                Server.SendFilePath(iterations, path);
-                                break;
-                            }
-                        }
+                        WaitForConnection();
+                        Server.SendFilePath(iterations, path);
                     }
                 );
-                waitsUntilClientIsConnected.Start();
+                waitsUntilConnection.Start();
             }
+
+            this.IsEngineRunning = true;
+        }
+
+        private static void WaitForConnection()
+        {
+            while (!Server.ServerStream.IsConnected) { }
+        }
+
+        public void StopEngine()
+        {
+            Executor.Job.Close();   
+            Executor.IsEngineInitialized = false;
+            this.IsEngineRunning = false;
         }
     }
 }

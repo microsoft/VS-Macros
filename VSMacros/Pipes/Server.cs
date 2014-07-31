@@ -60,17 +60,11 @@ namespace VSMacros.Pipes
                     switch (type)
                     {
                         case PacketType.Empty:
-#if DEBUG
-                        Manager.Instance.ShowMessageBox("Pipes are no longer connected.");
-#endif
                             Server.executor.IsEngineRunning = false;
                             shouldKeepRunning = false;
                             break;
 
                         case PacketType.Close:
-#if DEBUG
-                        Manager.Instance.ShowMessageBox("Received a close packet in Server.");
-#endif
                             Executor.IsEngineInitialized = false;
                             shouldKeepRunning = false;
                             break;
@@ -86,9 +80,6 @@ namespace VSMacros.Pipes
 
                         case PacketType.CriticalError:
                             error = Server.GetCriticalError(Server.ServerStream);
-#if DEBUG
-                        Manager.Instance.ShowMessageBox(error);
-#endif
                             Server.ServerStream.Close();
 
                             if (Executor.Job != null)
@@ -103,7 +94,7 @@ namespace VSMacros.Pipes
                 }
                 catch (System.Runtime.Serialization.SerializationException e)
                 {
-#if DEBUG
+#if Debug
                     Debug.WriteLine("Server has shut down: " + e.Message);
                     // TODO: What else do I need to do here?
 #endif
@@ -155,7 +146,7 @@ namespace VSMacros.Pipes
             catch (OperationCanceledException e)
             {
                 // TODO: THis needs to be preserved elsewhere.
-#if DEBUG
+#if Debug
                 Manager.Instance.ShowMessageBox(string.Format("The server thread was terminated.\n\n{0}: {1}\n{2}{3}", e.Source, e.Message, e.TargetSite.ToString(), e.StackTrace));
 #endif
                 VSMacrosPackage.Current.ClearStatusBar();
@@ -168,13 +159,11 @@ namespace VSMacros.Pipes
             var type = PacketType.FilePath;
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(Server.ServerStream, type);
-            Debug.WriteLine("sent type at: " + DateTime.Now);
 
             var filePath = new FilePath();
             filePath.Iterations = iterations;
             filePath.Path = path;
             formatter.Serialize(Server.ServerStream, filePath);
-            Debug.WriteLine("sent file path at: " + DateTime.Now);
         }
     }
         #endregion

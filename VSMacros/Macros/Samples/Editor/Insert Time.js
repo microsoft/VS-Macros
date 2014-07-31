@@ -9,4 +9,4 @@ var minutes = date.getMinutes();
 if (minutes <= 9) minutes = "0" + minutes;
 if (hours <= 9) hours = "0" + hours;
 
-dte.ActiveDocument.Selection.Text = hours + ":" + minutes;
+Macro.InsertText(hours + ":" + minutes);

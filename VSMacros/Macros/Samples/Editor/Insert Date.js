@@ -3,7 +3,7 @@
 var date = new Date();
 
 var day = date.getDate();
-var month = date.getMonth();
+var month = date.getMonth() + 1;
 var year = date.getYear();
 
-dte.ActiveDocument.Selection.Text = month + "/" + day + "/" + year;
+Macro.InsertText(month + "/" + day + "/" + year);

@@ -79,7 +79,7 @@ namespace VisualStudio.Macros.ExecutionEngine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Engine.CommandHelper is null&quot;.
+        ///   Looks up a localized string similar to Engine.CommandHelper is null..
         /// </summary>
         internal static string NullCommandHelper {
             get {
@@ -102,6 +102,15 @@ namespace VisualStudio.Macros.ExecutionEngine {
         internal static string NullDte {
             get {
                 return ResourceManager.GetString("NullDte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} does not support this property or method..
+        /// </summary>
+        internal static string ObjectDoesNotSupportMethod {
+            get {
+                return ResourceManager.GetString("ObjectDoesNotSupportMethod", resourceCulture);
             }
         }
     }

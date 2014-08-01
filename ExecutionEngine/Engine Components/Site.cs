@@ -124,6 +124,20 @@ namespace ExecutionEngine
             Site.InternalVSException = null;
         }
 
+        private static string GetErrorDescription(System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo)
+        {
+            string description = exceptionInfo.bstrDescription;
+            if (description.Equals("Object required"))
+            {
+                description = Resources.NoActiveDocumentErrorMessage;
+            }
+            else if (description.Contains("Object doesn't support this property or method"))
+            {
+                description = string.Format(Resources.ObjectDoesNotSupportMethod, Site.currentFunction);
+            }
+            return description;
+        }
+
         public void OnScriptError(IActiveScriptError scriptError)
         {
             uint sourceContext;
@@ -134,13 +148,9 @@ namespace ExecutionEngine
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out column);
             scriptError.GetExceptionInfo(out exceptionInfo);
 
-            string description = exceptionInfo.bstrDescription;
             string source = exceptionInfo.bstrSource;
 
-            if (description.Equals("Object required"))
-            {
-                description = Resources.NoActiveDocumentErrorMessage;
-            }
+            string description = GetErrorDescription(exceptionInfo);
 
             Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);

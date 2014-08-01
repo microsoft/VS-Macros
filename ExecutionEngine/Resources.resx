@@ -124,12 +124,15 @@
     <value>This macro requires a document to be open.</value>
   </data>
   <data name="NullCommandHelper" xml:space="preserve">
-    <value>Engine.CommandHelper is null"</value>
+    <value>Engine.CommandHelper is null.</value>
   </data>
   <data name="NullDispatch" xml:space="preserve">
     <value>The dispatch object was null.</value>
   </data>
   <data name="NullDte" xml:space="preserve">
     <value>Engine.DteObject is null.</value>
+  </data>
+  <data name="ObjectDoesNotSupportMethod" xml:space="preserve">
+    <value>{0} does not support this property or method.</value>
   </data>
 </root>

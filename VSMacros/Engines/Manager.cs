@@ -150,6 +150,7 @@ namespace VSMacros.Engines
             if (currentWasOpen)
             {
                 VsShellUtilities.OpenDocument(VSMacrosPackage.Current, Manager.CurrentMacroPath);
+                this.PreviousWindow.Show();
             }
         }
 

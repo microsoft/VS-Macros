@@ -45,6 +45,10 @@ namespace ExecutionEngine
 
         public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
+            Site.currentFunction = name;
+            string errorMessage;
+            object objectEngineKnowsAbout;
+
             EnsureDictionariesAreInitialized();
 
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
@@ -52,13 +56,9 @@ namespace ExecutionEngine
                 throw new NotImplementedException();
             }
 
-            object objectEngineKnowsAbout;
-            string errorMessage;
-
             if (objectsEngineKnowsAbout.TryGetValue(name, out objectEngineKnowsAbout))
             {
                 item = Marshal.GetIUnknownForObject(objectEngineKnowsAbout);
-                Site.currentFunction = name;
             }
             else if (errorMessages.TryGetValue(name, out errorMessage))
             {
@@ -124,7 +124,7 @@ namespace ExecutionEngine
             Site.InternalVSException = null;
         }
 
-        private static string GetErrorDescription(System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo)
+        private static string GetErrorDescription(System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo, string currentFunction)
         {
             string description = exceptionInfo.bstrDescription;
             if (description.Equals("Object required"))
@@ -133,7 +133,7 @@ namespace ExecutionEngine
             }
             else if (description.Contains("Object doesn't support this property or method"))
             {
-                description = string.Format(Resources.ObjectDoesNotSupportMethod, Site.currentFunction);
+                description = string.Format(Resources.ObjectDoesNotSupportMethod, currentFunction);
             }
             else if (string.IsNullOrEmpty(description))
             {
@@ -152,7 +152,7 @@ namespace ExecutionEngine
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out column);
             scriptError.GetExceptionInfo(out exceptionInfo);
             string source = exceptionInfo.bstrSource;
-            string description = GetErrorDescription(exceptionInfo);
+            string description = GetErrorDescription(exceptionInfo, Site.currentFunction);
 
             Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);

@@ -89,10 +89,6 @@ namespace VSMacros.Pipes
                 }
                 catch (System.Runtime.Serialization.SerializationException)
                 {
-#if Debug
-                    Debug.WriteLine("Server has shut down: " + e.Message);
-                    // TODO: What else do I need to do here?
-#endif
                 }
             } 
         }
@@ -131,22 +127,6 @@ namespace VSMacros.Pipes
 
         #region Sending
 
-        public static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)
-        {
-            try
-            {
-                serverStream.Write(packet, 0, packet.Length);
-            }
-            catch (OperationCanceledException e)
-            {
-                // TODO: THis needs to be preserved elsewhere.
-#if Debug
-                Manager.Instance.ShowMessageBox(string.Format("The server thread was terminated.\n\n{0}: {1}\n{2}{3}", e.Source, e.Message, e.TargetSite.ToString(), e.StackTrace));
-#endif
-                VSMacrosPackage.Current.ClearStatusBar();
-            }
-            
-        }
 
         internal static void SendFilePath(int iterations, string path)
         {

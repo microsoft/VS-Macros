@@ -1,4 +1,4 @@
-/// <reference path="C:\Users\t-jusdom\AppData\Local\Microsoft\VisualStudio\12.0\Extensions\dtme150p.vkw\Intellisense\dte.js" />
+// Removes and sorts usings for all c# files in solution
 
 // Iterate over all files
 iterateFiles();

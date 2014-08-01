@@ -1,4 +1,10 @@
-﻿using System.IO.Pipes;
+﻿//-----------------------------------------------------------------------
+// <copyright file="PipeTests.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VisualStudio.Macros.ExecutionEngine.Pipes;

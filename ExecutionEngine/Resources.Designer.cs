@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VisualStudio.Macros.ExecutionEngine {
-    using System;
-    
-    
+namespace VisualStudio.Macros.ExecutionEngine
+{
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>

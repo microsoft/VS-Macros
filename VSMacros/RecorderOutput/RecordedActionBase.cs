@@ -4,14 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-using Microsoft.Internal.VisualStudio.Shell;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
 using System.IO;
-using EnvDTE;
-using EnvDTE80;
-using System.Diagnostics;
 
 namespace VSMacros
 {

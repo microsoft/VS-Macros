@@ -1,4 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿//-----------------------------------------------------------------------
+// <copyright file="EngineTests.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExecutionTest
 {

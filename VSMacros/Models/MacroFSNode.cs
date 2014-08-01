@@ -11,15 +11,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
-using Task = System.Threading.Tasks.Task;
 
 namespace VSMacros.Models
 {

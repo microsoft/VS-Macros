@@ -7,6 +7,7 @@ using VSMacros.Pipes;
 
 namespace ExecutionTest
 {
+    [TestClass]
     class PipeTests
     {
         private NamedPipeServerStream serverStream;

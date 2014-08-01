@@ -2,6 +2,7 @@
 
 namespace ExecutionTest
 {
+    [TestClass]
     class EngineTests
     {
         #region Initialization

@@ -3,7 +3,9 @@ Date: 7/29/2014
 Version: 1.2.0
 
 What's New:
-	- More sophisticated recorder output and execution engine
+	- More sophisticated recorder output
+	- More descriptive error messages for certain errors
+	- Stop execution is enabled, along with toolbar changes during/after execution
 	- Various bug fixes and improvements
 
 Installation Instructions:

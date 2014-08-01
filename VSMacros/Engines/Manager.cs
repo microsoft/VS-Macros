@@ -314,7 +314,11 @@ namespace VSMacros.Engines
         public void Rename()
         {
             MacroFSNode macro = this.SelectedMacro;
-            macro.EnableEdit();
+
+            if (macro.FullPath != Manager.CurrentMacroPath)
+            {
+                macro.EnableEdit();
+            }
         }
 
         public void AssignShortcut()

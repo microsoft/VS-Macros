@@ -7,7 +7,6 @@
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using System.Windows.Forms;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine.Pipes;

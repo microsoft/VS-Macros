@@ -5,8 +5,10 @@
 //-----------------------------------------------------------------------
 
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ExecutionTest
 {
+    [TestClass]
     class ScriptParsingTests
     {
         #region Basic Javascript

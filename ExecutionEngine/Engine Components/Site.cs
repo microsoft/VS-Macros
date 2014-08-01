@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 using VisualStudio.Macros.ExecutionEngine;

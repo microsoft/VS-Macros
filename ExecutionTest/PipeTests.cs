@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Pipes;
-using System.Linq;
+﻿using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.ExecutionEngine.Pipes;

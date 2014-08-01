@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.Internal.VisualStudio.Shell;
 
 namespace VSMacros.Helpers
 {

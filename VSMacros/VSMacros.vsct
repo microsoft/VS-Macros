@@ -325,7 +325,7 @@
     <!-- Control-ed key bindings -->
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="R"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="P" />
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" mod2="Control" key2="O"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="I" />
 
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1" mod2="Control"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2" mod2="Control"/>
@@ -339,7 +339,7 @@
     
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Control" key1="M" key2="R"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" key2="P" />
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" editor="guidVSStd97" key1="M" mod1="Control" key2="O"/>
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" editor="guidVSStd97" mod1="Control" key1="M" key2="I" />
 
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2"/>

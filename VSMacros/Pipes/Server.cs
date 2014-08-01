@@ -5,16 +5,11 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading;
-using System.Windows;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.Engines;
-using VSMacros.Enums;
 using VSMacros.ExecutionEngine.Pipes;
 
 namespace VSMacros.Pipes

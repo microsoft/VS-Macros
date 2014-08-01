@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using EnvDTE;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;

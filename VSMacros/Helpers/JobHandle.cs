@@ -1,7 +1,12 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="JobHandle.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.Internal.VisualStudio.Shell;
 
 namespace VSMacros.Helpers
 {

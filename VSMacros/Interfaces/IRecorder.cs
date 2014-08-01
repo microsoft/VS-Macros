@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.IO;
 namespace VSMacros.Interfaces
 {
     interface IRecorder

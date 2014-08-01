@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -20,10 +19,8 @@ using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSMacros.Engines;
-using VSMacros.Helpers;
 using VSMacros.Interfaces;
 using VSMacros.Model;
-using Task = System.Threading.Tasks.Task;
 
 namespace VSMacros
 {

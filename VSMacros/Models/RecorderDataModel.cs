@@ -4,9 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System;
+using System.Collections.Generic;
 using VSMacros.RecorderOutput;
 
 namespace VSMacros.Model

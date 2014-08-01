@@ -61,6 +61,15 @@ namespace VisualStudio.Macros.ExecutionEngine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command not valid in this context.
+        /// </summary>
+        internal static string CommandNotValid {
+            get {
+                return ResourceManager.GetString("CommandNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The PID argument is invalid..
         /// </summary>
         internal static string InvalidPIDArgument {
@@ -70,7 +79,7 @@ namespace VisualStudio.Macros.ExecutionEngine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This macro requires a document to be open..
+        ///   Looks up a localized string similar to Requires a document to be open..
         /// </summary>
         internal static string NoActiveDocumentErrorMessage {
             get {

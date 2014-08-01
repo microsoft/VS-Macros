@@ -105,12 +105,11 @@ namespace VSMacros.Pipes
 
             int lineNumber = scriptError.LineNumber;
             int column = scriptError.Column;
-            // TODO: String.format
-            string source = "\'" + Server.executor.CurrentlyExecutingMacro + ".js\' error";
-            string description = scriptError.Description ?? "Command not valid in this context";
+            string source = string.Format(Resources.MacroFileError, Server.executor.CurrentlyExecutingMacro);
+            string description = scriptError.Description;
             string period = description[description.Length - 1] == '.' ? string.Empty : ".";
 
-            var exceptionMessage = string.Format("{0}{3}{3}Line Number: {1}{3}Cause: {2}{4}", source, lineNumber, description, Environment.NewLine, period);
+            var exceptionMessage = string.Format("{0}{3}{3}Line {1}: {2}{4}", source, lineNumber, description, Environment.NewLine, period);
             return exceptionMessage;
         }
 

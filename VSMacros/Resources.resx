@@ -169,6 +169,9 @@
   <data name="FolderOpenedIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\folderopened.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MacroFileError" xml:space="preserve">
+    <value>'{0}.js' error</value>
+  </data>
   <data name="MacroNotFound" xml:space="preserve">
     <value>Macro not found on disk.</value>
   </data>
@@ -189,6 +192,9 @@
   </data>
   <data name="RootIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\macro.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScriptErrorCommandNotValid" xml:space="preserve">
+    <value>Command not valid in this context</value>
   </data>
   <data name="SearchWithinFileContents" xml:space="preserve">
     <value>Search within file contents</value>

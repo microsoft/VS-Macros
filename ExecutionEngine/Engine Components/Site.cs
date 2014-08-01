@@ -135,6 +135,10 @@ namespace ExecutionEngine
             {
                 description = string.Format(Resources.ObjectDoesNotSupportMethod, Site.currentFunction);
             }
+            else if (string.IsNullOrEmpty(description))
+            {
+                description = Resources.CommandNotValid;
+            }
             return description;
         }
 

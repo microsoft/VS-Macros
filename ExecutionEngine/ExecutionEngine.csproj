@@ -94,7 +94,7 @@
     <Compile Include="Pipes\Shared\CriticalError.cs" />
     <Compile Include="Pipes\Shared\FilePath.cs" />
     <Compile Include="Pipes\Shared\PacketType.cs" />
-    <Compile Include="Pipes\Shared\ScriptError.cs" />
+    <Compile Include="Pipes\Shared\GenericScriptError.cs" />
     <Compile Include="Pipes\Shared\SharedVariables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

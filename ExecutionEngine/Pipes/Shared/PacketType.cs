@@ -28,7 +28,7 @@ namespace VisualStudio.Macros.ExecutionEngine.Pipes
         /// <summary>
         /// Notifies subscribers of an error upon running the script.
         /// </summary>
-        ScriptError = 3,
+        GenericScriptError = 3,
 
         /// <summary>
         /// Notifies subscribers of internal VS error.

@@ -68,8 +68,8 @@ namespace VSMacros.Pipes
                             Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
                             break;
 
-                        case PacketType.ScriptError:
-                            string error = Server.GetScriptError(Server.ServerStream);
+                        case PacketType.GenericScriptError:
+                            string error = Server.GetGenericScriptError(Server.ServerStream);
                             Server.executor.SendCompletionMessage(isError: true, errorMessage: error);
                             break;
 
@@ -97,11 +97,11 @@ namespace VSMacros.Pipes
             } 
         }
 
-        private static string GetScriptError(NamedPipeServerStream serverStream)
+        private static string GetGenericScriptError(NamedPipeServerStream serverStream)
         {
             var formatter = new BinaryFormatter();
             formatter.Binder = new BinderHelper();
-            var scriptError = (ScriptError)formatter.Deserialize(Server.ServerStream);
+            var scriptError = (GenericScriptError)formatter.Deserialize(Server.ServerStream);
 
             int lineNumber = scriptError.LineNumber;
             int column = scriptError.Column;

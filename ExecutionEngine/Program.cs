@@ -36,7 +36,7 @@ namespace ExecutionEngine
                         uint macroInsertTextModification = 1;
                         var e = Site.RuntimeException;
                         uint modifiedLineNumber = e.Line - macroInsertTextModification;
-                        Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
+                        Client.SendGenericScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
                     else
                     {

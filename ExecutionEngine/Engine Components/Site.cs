@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 using VisualStudio.Macros.ExecutionEngine;
@@ -26,6 +27,7 @@ namespace ExecutionEngine
         internal static RuntimeException RuntimeException;
         internal static bool InternalError;
         internal static InternalVSException InternalVSException;
+        internal static string currentFunction;
 
         public void GetLCID(out int lcid)
         {
@@ -56,6 +58,7 @@ namespace ExecutionEngine
             if (objectsEngineKnowsAbout.TryGetValue(name, out objectEngineKnowsAbout))
             {
                 item = Marshal.GetIUnknownForObject(objectEngineKnowsAbout);
+                Site.currentFunction = name;
             }
             else if (errorMessages.TryGetValue(name, out errorMessage))
             {

@@ -46,7 +46,7 @@ namespace VSMacros.RecorderListeners
                 // An Exec call with a non-null pvaOut implies it is actually the shell trying to get the combo box child items for a 
                 // combo, not a real command execution, so we can ignore these for purposes of command recording.
                 if (pvaOut == IntPtr.Zero && (pguidCmdGroup != GuidList.GuidVSMacrosCmdSet || nCmdID != PkgCmdIDList.CmdIdRecord) &&
-                    pguidCmdGroup != new Guid("{5efc7975-14bc-11cf-9b2b-00aa00573819}") && nCmdID != 770)
+                    !(pguidCmdGroup == new Guid("{5efc7975-14bc-11cf-9b2b-00aa00573819}") && nCmdID == 770))
                 {
                     string commandName = this.ConvertGuidDWordToName(pguidCmdGroup, nCmdID);
                     this.macroRecorder.AddCommandData(pguidCmdGroup, nCmdID, commandName, (char)0);

@@ -168,7 +168,6 @@
     <Compile Include="RecorderOutput\RecordedWindowActivatio.cs" />
     <Compile Include="RecorderOutput\RecordedCommand.cs" />
     <Compile Include="RecorderOutput\RecordedActionBase.cs" />
-    <Compile Include="Stubs\MacroReader.cs" />
     <Compile Include="Tool Window Components\MacrosControl.xaml.cs">
       <DependentUpon>MacrosControl.xaml</DependentUpon>
     </Compile>

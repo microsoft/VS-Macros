@@ -147,9 +147,7 @@ namespace ExecutionEngine
 
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out column);
             scriptError.GetExceptionInfo(out exceptionInfo);
-
             string source = exceptionInfo.bstrSource;
-
             string description = GetErrorDescription(exceptionInfo);
 
             Site.RuntimeError = true;

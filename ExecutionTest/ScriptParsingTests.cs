@@ -1,4 +1,10 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="ScriptParsingTests.cs" company="Microsoft Corporation">
+//     Copyright Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ExecutionTest
 {

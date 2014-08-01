@@ -3,7 +3,7 @@ Date: 7/29/2014
 Version: 1.2.0
 
 What's New:
-	- Better recording output
+	- More sophisticated recorder output and execution engine
 	- Various bug fixes and improvements
 
 Installation Instructions:

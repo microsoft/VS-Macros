@@ -149,6 +149,7 @@ namespace VSMacros.Engines
             if (currentWasOpen)
             {
                 VsShellUtilities.OpenDocument(VSMacrosPackage.Current, Manager.CurrentMacroPath);
+                this.PreviousWindow.Show();
             }
         }
 
@@ -487,7 +488,10 @@ namespace VSMacros.Engines
                     string source = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Macros", "Samples");
                     string target = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Samples");
 
-                    // Copy the Samples folder in the background
+                    // Delete Samples folder
+                    Manager.DeleteFileOrFolder(target);
+
+                    // Copy the Samples folder back
                     Manager.DirectoryCopy(source, target, true);
                 }
            // }

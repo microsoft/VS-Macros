@@ -151,7 +151,8 @@ namespace VSMacros
 
             if (!node.IsDirectory)
             {
-                VSMacrosPackage.Current.Playback(null, null);
+                Action playback = () => Manager.Instance.Playback(node.FullPath);
+                this.Dispatcher.BeginInvoke(playback);
             }
         }
 

@@ -3,7 +3,7 @@
 var date = new Date();
 
 var day = date.getDate();
-var month = date.getMonth();
+var month = date.getMonth() + 1;
 var year = date.getYear();
 
 var hours = date.getHours();
@@ -15,4 +15,4 @@ if (month<= 9) month = "0" + month;
 if (minutes <= 9) minutes = "0" + minutes;
 if (hours <= 9) hours = "0" + hours;
 
-dte.ActiveDocument.Selection.Text = month + "/" + day + "/" + year + ", " + hours + ":" + minutes;
+Macro.InsertText(month + "/" + day + "/" + year + ", " + hours + ":" + minutes);

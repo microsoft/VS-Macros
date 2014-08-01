@@ -7,6 +7,7 @@
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Windows.Forms;
 using ExecutionEngine.Helpers;
 using Microsoft.Internal.VisualStudio.Shell;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
@@ -35,7 +36,7 @@ namespace ExecutionEngine
                         uint macroInsertTextModification = 1;
                         var e = Site.RuntimeException;
                         uint modifiedLineNumber = e.Line - macroInsertTextModification;
-                        Client.SendScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
+                        Client.SendGenericScriptError(modifiedLineNumber, e.CharacterPosition, e.Source, e.Description);
                     }
                     else
                     {

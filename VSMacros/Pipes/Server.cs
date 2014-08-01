@@ -68,8 +68,8 @@ namespace VSMacros.Pipes
                             Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
                             break;
 
-                        case PacketType.ScriptError:
-                            string error = Server.GetScriptError(Server.ServerStream);
+                        case PacketType.GenericScriptError:
+                            string error = Server.GetGenericScriptError(Server.ServerStream);
                             Server.executor.SendCompletionMessage(isError: true, errorMessage: error);
                             break;
 
@@ -87,30 +87,25 @@ namespace VSMacros.Pipes
                             break;
                     }
                 }
-                catch (System.Runtime.Serialization.SerializationException e)
+                catch (System.Runtime.Serialization.SerializationException)
                 {
-#if Debug
-                    Debug.WriteLine("Server has shut down: " + e.Message);
-                    // TODO: What else do I need to do here?
-#endif
                 }
             } 
         }
 
-        private static string GetScriptError(NamedPipeServerStream serverStream)
+        private static string GetGenericScriptError(NamedPipeServerStream serverStream)
         {
             var formatter = new BinaryFormatter();
             formatter.Binder = new BinderHelper();
-            var scriptError = (ScriptError)formatter.Deserialize(Server.ServerStream);
+            var scriptError = (GenericScriptError)formatter.Deserialize(Server.ServerStream);
 
             int lineNumber = scriptError.LineNumber;
             int column = scriptError.Column;
-            // TODO: String.format
-            string source = "\'" + Server.executor.CurrentlyExecutingMacro + ".js\' error";
-            string description = scriptError.Description ?? "Command not valid in this context";
+            string source = string.Format(Resources.MacroFileError, Server.executor.CurrentlyExecutingMacro);
+            string description = scriptError.Description;
             string period = description[description.Length - 1] == '.' ? string.Empty : ".";
 
-            var exceptionMessage = string.Format("{0}{3}{3}Line Number: {1}{3}Cause: {2}{4}", source, lineNumber, description, Environment.NewLine, period);
+            var exceptionMessage = string.Format("{0}{3}{3}Line {1}: {2}{4}", source, lineNumber, description, Environment.NewLine, period);
             return exceptionMessage;
         }
 
@@ -132,22 +127,6 @@ namespace VSMacros.Pipes
 
         #region Sending
 
-        public static void SendMessageToClient(NamedPipeServerStream serverStream, byte[] packet)
-        {
-            try
-            {
-                serverStream.Write(packet, 0, packet.Length);
-            }
-            catch (OperationCanceledException e)
-            {
-                // TODO: THis needs to be preserved elsewhere.
-#if Debug
-                Manager.Instance.ShowMessageBox(string.Format("The server thread was terminated.\n\n{0}: {1}\n{2}{3}", e.Source, e.Message, e.TargetSite.ToString(), e.StackTrace));
-#endif
-                VSMacrosPackage.Current.ClearStatusBar();
-            }
-            
-        }
 
         internal static void SendFilePath(int iterations, string path)
         {

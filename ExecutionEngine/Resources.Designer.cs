@@ -61,6 +61,15 @@ namespace VisualStudio.Macros.ExecutionEngine
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command not valid in this context.
+        /// </summary>
+        internal static string CommandNotValid {
+            get {
+                return ResourceManager.GetString("CommandNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The PID argument is invalid..
         /// </summary>
         internal static string InvalidPIDArgument {
@@ -70,7 +79,7 @@ namespace VisualStudio.Macros.ExecutionEngine
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This macro requires a document to be open..
+        ///   Looks up a localized string similar to Requires a document to be open..
         /// </summary>
         internal static string NoActiveDocumentErrorMessage {
             get {
@@ -79,7 +88,7 @@ namespace VisualStudio.Macros.ExecutionEngine
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Engine.CommandHelper is null&quot;.
+        ///   Looks up a localized string similar to Engine.CommandHelper is null..
         /// </summary>
         internal static string NullCommandHelper {
             get {
@@ -102,6 +111,15 @@ namespace VisualStudio.Macros.ExecutionEngine
         internal static string NullDte {
             get {
                 return ResourceManager.GetString("NullDte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} does not support this property or method..
+        /// </summary>
+        internal static string ObjectDoesNotSupportMethod {
+            get {
+                return ResourceManager.GetString("ObjectDoesNotSupportMethod", resourceCulture);
             }
         }
     }

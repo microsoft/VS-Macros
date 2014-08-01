@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using ExecutionEngine.Enums;
 using ExecutionEngine.Interfaces;
 using VisualStudio.Macros.ExecutionEngine;
@@ -26,6 +27,7 @@ namespace ExecutionEngine
         internal static RuntimeException RuntimeException;
         internal static bool InternalError;
         internal static InternalVSException InternalVSException;
+        internal static string currentFunction;
 
         public void GetLCID(out int lcid)
         {
@@ -43,15 +45,16 @@ namespace ExecutionEngine
 
         public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
+            Site.currentFunction = name;
+            string errorMessage;
+            object objectEngineKnowsAbout;
+
             EnsureDictionariesAreInitialized();
 
             if ((returnMask & ScriptInfo.ITypeInfo) == ScriptInfo.ITypeInfo)
             {
                 throw new NotImplementedException();
             }
-
-            object objectEngineKnowsAbout;
-            string errorMessage;
 
             if (objectsEngineKnowsAbout.TryGetValue(name, out objectEngineKnowsAbout))
             {
@@ -121,6 +124,24 @@ namespace ExecutionEngine
             Site.InternalVSException = null;
         }
 
+        private static string GetErrorDescription(System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo, string currentFunction)
+        {
+            string description = exceptionInfo.bstrDescription;
+            if (description.Equals("Object required"))
+            {
+                description = Resources.NoActiveDocumentErrorMessage;
+            }
+            else if (description.Contains("Object doesn't support this property or method"))
+            {
+                description = string.Format(Resources.ObjectDoesNotSupportMethod, currentFunction);
+            }
+            else if (string.IsNullOrEmpty(description))
+            {
+                description = Resources.CommandNotValid;
+            }
+            return description;
+        }
+
         public void OnScriptError(IActiveScriptError scriptError)
         {
             uint sourceContext;
@@ -130,14 +151,8 @@ namespace ExecutionEngine
 
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out column);
             scriptError.GetExceptionInfo(out exceptionInfo);
-
-            string description = exceptionInfo.bstrDescription;
             string source = exceptionInfo.bstrSource;
-
-            if (description.Equals("Object required"))
-            {
-                description = Resources.NoActiveDocumentErrorMessage;
-            }
+            string description = GetErrorDescription(exceptionInfo, Site.currentFunction);
 
             Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);

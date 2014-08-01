@@ -32,12 +32,12 @@ namespace VSMacros.ExecutionEngine.Pipes
             Client.serializer.Serialize(Client.ClientStream, packetType);
         }
 
-        internal static void SendScriptError(uint modifiedLineNumber, int column, string source, string description)
+        internal static void SendGenericScriptError(uint modifiedLineNumber, int column, string source, string description)
         {
-            var type = PacketType.ScriptError;
+            var type = PacketType.GenericScriptError;
             Client.serializer.Serialize(Client.ClientStream, type);
 
-            var scriptError = new ScriptError();
+            var scriptError = new GenericScriptError();
             scriptError.LineNumber = (int)modifiedLineNumber;
             scriptError.Column = column;
             scriptError.Source = source;

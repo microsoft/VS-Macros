@@ -9,7 +9,7 @@ using System;
 namespace VisualStudio.Macros.ExecutionEngine.Pipes
 {
     [Serializable]
-    public class ScriptError
+    public class GenericScriptError
     {
         public int LineNumber;
         public int Column;

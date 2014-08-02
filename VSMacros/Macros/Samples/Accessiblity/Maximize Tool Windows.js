@@ -13,6 +13,8 @@ for (var i = 1; i <= windows.Count; i++) {
         }
 
         // Set to undockable (which means show the document as maximized)
-        window.Linkable = false;
+        try {
+            window.Linkable = false;
+        } catch (e) { }
     }
 }

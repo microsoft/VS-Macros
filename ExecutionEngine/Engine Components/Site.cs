@@ -26,7 +26,6 @@ namespace ExecutionEngine
         internal static RuntimeException RuntimeException;
         internal static bool InternalError;
         internal static InternalVSException InternalVSException;
-        internal static string currentFunction;
 
         public void GetLCID(out int lcid)
         {
@@ -44,7 +43,6 @@ namespace ExecutionEngine
 
         public void GetItemInfo(string name, ScriptInfo returnMask, out IntPtr item, IntPtr typeInfo)
         {
-            Site.currentFunction = name;
             string errorMessage;
             object objectEngineKnowsAbout;
 
@@ -123,16 +121,12 @@ namespace ExecutionEngine
             Site.InternalVSException = null;
         }
 
-        private static string GetErrorDescription(System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo, string currentFunction)
+        private static string GetErrorDescription(System.Runtime.InteropServices.ComTypes.EXCEPINFO exceptionInfo)
         {
             string description = exceptionInfo.bstrDescription;
             if (description.Equals("Object required"))
             {
                 description = Resources.NoActiveDocumentErrorMessage;
-            }
-            else if (description.Contains("Object doesn't support this property or method"))
-            {
-                description = string.Format(Resources.ObjectDoesNotSupportMethod, currentFunction);
             }
             else if (string.IsNullOrEmpty(description))
             {
@@ -151,7 +145,7 @@ namespace ExecutionEngine
             scriptError.GetSourcePosition(out sourceContext, out lineNumber, out column);
             scriptError.GetExceptionInfo(out exceptionInfo);
             string source = exceptionInfo.bstrSource;
-            string description = GetErrorDescription(exceptionInfo, Site.currentFunction);
+            string description = GetErrorDescription(exceptionInfo);
 
             Site.RuntimeError = true;
             Site.RuntimeException = new RuntimeException(description, source, lineNumber, column);

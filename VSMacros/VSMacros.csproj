@@ -150,6 +150,8 @@
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Interfaces\IManager.cs" />
+    <Content Include="Macros\Samples\Debugger\Breakpoint to Main.js" />
+    <Content Include="Macros\Samples\Debugger\Run to Next Breapoint.js" />
     <Compile Include="Models\RecorderDataModel.cs" />
     <Compile Include="Engines\CompletionReachedEventArgs.cs" />
     <Compile Include="Engines\Recorder.cs" />
@@ -222,7 +224,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Resource Include="Documentation\Text Macro Demo [gif].gif" />
+    <Resource Include="Documentation\Demo.gif" />
     <Content Include="Macros\Samples\Accessiblity\Decrease Font Size.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

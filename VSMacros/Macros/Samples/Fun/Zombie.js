@@ -29,5 +29,4 @@ var zombie =
 Macro.InsertText("/*\n*/");
 dte.ExecuteCommand("Edit.LineOpenAbove");
 Macro.InsertText(zombie);
-Macro.SurroundText("/*", "*/", zombie);
 dte.UndoContext.Close();

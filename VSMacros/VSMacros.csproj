@@ -237,6 +237,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Macros\Samples\Documents\Code Review Preparation.js" />
     <Content Include="Macros\Samples\Documents\Headify All.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -281,6 +282,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Macros\Samples\Fun\Camel.js" />
+    <Content Include="Macros\Samples\Fun\Zombie.js" />
     <Content Include="Macros\Samples\Snippets\For Each Document.js">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

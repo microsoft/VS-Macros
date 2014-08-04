@@ -32,7 +32,10 @@ function formatFile(file) {
         file.Document.Activate();
 
         // Format the document
+
         dte.ExecuteCommand("Edit.RemoveAndSort");
+
+        // -------------------
 
         file.Document.Save();
         file.Document.Close();

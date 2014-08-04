@@ -115,6 +115,8 @@ namespace VSMacros.Engines
                 PreviousWindow.Show();
             }
 
+            this.PreviousWindowIsDocument = this.dte.ActiveWindow.Kind == "Document";
+
             this.IsRecording = true;
             this.recorder.StartRecording();
         }

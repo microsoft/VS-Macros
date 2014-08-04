@@ -48,7 +48,7 @@ namespace VSMacros.Engines
                 bool inDocument = Manager.Instance.PreviousWindowIsDocument;
 
                 for (int i = 0; i < this.dataModel.Actions.Count; i++)
-                {
+               {
                     RecordedActionBase action = this.dataModel.Actions[i];
 
                     if (action is RecordedCommand)

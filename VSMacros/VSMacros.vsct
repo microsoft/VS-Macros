@@ -53,6 +53,20 @@
           <ButtonText>Folder</ButtonText>
         </Strings>
       </Menu>
+
+      <!-- Sample Folder Context Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="SampleFolderContextMenu" type="Context">
+        <Strings>
+          <ButtonText>Sample Folder</ButtonText>
+        </Strings>
+      </Menu>
+
+      <!-- Sample Macro Context Menu -->
+      <Menu guid="guidVSMacrosCmdSet" id="SampleMacroContextMenu" type="Context">
+        <Strings>
+          <ButtonText>Sample Macro</ButtonText>
+        </Strings>
+      </Menu>
       
     </Menus>
 
@@ -87,6 +101,16 @@
       <!-- Folder Context Group -->
       <Group guid="guidVSMacrosCmdSet" id="FolderContextGroup" priority="0x0050">
         <Parent guid="guidVSMacrosCmdSet" id="FolderContextMenu"/>
+      </Group>
+
+      <!-- Sample Folder Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="SampleFolderContextGroup" priority="0x0050">
+        <Parent guid="guidVSMacrosCmdSet" id="SampleFolderContextMenu"/>
+      </Group>
+
+      <!-- Sample Macro Context Group -->
+      <Group guid="guidVSMacrosCmdSet" id="SampleMacroContextGroup" priority="0x0050">
+        <Parent guid="guidVSMacrosCmdSet" id="SampleMacroContextMenu"/>
       </Group>
       
       <!-- Playback Group -->
@@ -312,6 +336,26 @@
       <Parent guid="guidVSMacrosCmdSet" id="BrowserContextMenu" />
     </CommandPlacement>
     
+    <!-- Open Folder in Sample Folder Context Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidOpenFolder" priority="0">
+      <Parent guid="guidVSMacrosCmdSet" id="SampleFolderContextGroup" />
+    </CommandPlacement>
+
+    <!-- Assign Shortcut in Sample Macro Context Group -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="cmdidAssignShortcut" priority="5">
+      <Parent guid="guidVSMacrosCmdSet" id="SampleMacroContextGroup" />
+    </CommandPlacement>
+
+    <!-- Open Macro in Sample Macro Context Group -->
+    <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="5">
+      <Parent guid="guidVSMacrosCmdSet" id="SampleMacroContextGroup" />
+    </CommandPlacement>
+
+    <!-- Playback Group in Sample Macro Context Menu -->
+    <CommandPlacement guid="guidVSMacrosCmdSet" id="PlaybackGroup" priority="1">
+      <Parent guid="guidVSMacrosCmdSet" id="SampleMacroContextMenu" />
+    </CommandPlacement>
+    
   </CommandPlacements>
 
   <UsedCommands>
@@ -375,6 +419,8 @@
       <IDSymbol name="CurrentContextMenu" value="0x1006"/>
       <IDSymbol name="MacroContextMenu"   value="0x1007"/>
       <IDSymbol name="FolderContextMenu"  value="0x1008"/>
+      <IDSymbol name="SampleFolderContextMenu"  value="0x1009"/>
+      <IDSymbol name="SampleMacroContextMenu"  value="0x1010"/>
       
       <!-- Toolbar in Tool Window -->
       <IDSymbol name="MacrosToolWindowToolbar" value="0x1050"/>
@@ -387,6 +433,8 @@
       <IDSymbol name="CurrentContextGroup"  value="0x1405"/>
       <IDSymbol name="MacroContextGroup"    value="0x1410"/>
       <IDSymbol name="FolderContextGroup"   value="0x1415"/>
+      <IDSymbol name="SampleFolderContextGroup"  value="0x1417"/>
+      <IDSymbol name="SampleMacroContextGroup"  value="0x1418"/>
       <IDSymbol name="PlaybackGroup"        value="0x1420"/>
       <IDSymbol name="DeleteGroup"          value="0x1425"/>
       <IDSymbol name="AddGroup"             value="0x1430"/>

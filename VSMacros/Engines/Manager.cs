@@ -38,7 +38,9 @@ namespace VSMacros.Engines
         private const string FolderExpansionFileName = "FolderExpansion.xml";
 
         public static string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
+        public static string SamplesFolderPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Samples"); } }
         public static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
+
 
         public static string[] Shortcuts { get; private set; }
         private bool shortcutsLoaded;

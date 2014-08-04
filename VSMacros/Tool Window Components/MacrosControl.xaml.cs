@@ -238,7 +238,8 @@ namespace VSMacros
             {
                 // Verify that this is a valid drop
                 TreeViewItem item = this.GetNearestContainer(e.OriginalSource as UIElement);
-                if ((item.Header as MacroFSNode) != null)
+                MacroFSNode node = item.Header as MacroFSNode;
+                if (node != null && !this.InSamples(node))
                 {
                     e.Effects = DragDropEffects.Move;
                 }

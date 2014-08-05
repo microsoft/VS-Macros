@@ -160,13 +160,23 @@ namespace VSMacros.Engines
             Executor.Job.AddProcess(Executor.executionEngine);
         }
 
+        private static bool IsExecutorReady()
+        {
+            return Executor.executionEngine != null && !Executor.executionEngine.HasExited;
+        }
+
+        private static bool IsServerReady()
+        {
+            return Server.ServerStream != null && Server.ServerStream.IsConnected;
+        }
+
         /// <summary>
         /// If engine is initialized, runs the engine.  Otherwise, initializes and runs the engine.
         /// </summary>
         /// 
         public void RunEngine(int iterations, string path)
         {
-            if (Server.ServerStream != null && Server.ServerStream.IsConnected && Executor.executionEngine != null && !Executor.executionEngine.HasExited)
+            if (IsServerReady() && IsExecutorReady())
             {
                 Server.SendFilePath(iterations, path);
             }

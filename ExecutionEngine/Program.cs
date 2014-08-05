@@ -54,7 +54,6 @@ namespace ExecutionEngine
         {
             var type = (PacketType)Program.serializer.Deserialize(Client.ClientStream);
 
-            // I know a switch statement seems useless but just preparing for the possibility of other packets.
             switch (type)
             {
                 case PacketType.FilePath:

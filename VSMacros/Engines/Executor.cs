@@ -183,13 +183,13 @@ namespace VSMacros.Engines
             else
             {
                 this.InitializeEngine();
-                Thread waitsUntilConnection = new Thread(() =>
+                Thread waitForConnection = new Thread(() =>
                     {
                         WaitForConnection();
                         Server.SendFilePath(iterations, path);
                     }
                 );
-                waitsUntilConnection.Start();
+                waitForConnection.Start();
             }
 
             this.IsEngineRunning = true;

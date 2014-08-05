@@ -77,7 +77,7 @@ namespace VSMacros.RecorderListeners
                                     if (ErrorHandler.Succeeded(windowFrameOld.GetProperty((int)__VSFPROPID.VSFPROPID_Type, out untypedPropertyOld)))
                                     {
                                         FrameType typedPropertyOld = (FrameType)(int)untypedPropertyOld;
-                                        Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
+                                        //Manager.Instance.PreviousWindowIsDocument = typedPropertyOld == FrameType.Document;
                                     }
                                 }
                             }
@@ -89,10 +89,10 @@ namespace VSMacros.RecorderListeners
                                     if (ErrorHandler.Succeeded(windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out untypedProperty)))
                                     {
                                         string docPath = (string)untypedProperty;
-                                        if (!((this.dataModel.isDoc == true) && (this.dataModel.currDoc == docPath)))
-                                        {
+                                        //if (!((this.dataModel.isDoc == true) && (this.dataModel.currDoc == docPath)))
+                                        //{
                                             this.dataModel.AddWindow(docPath);
-                                        }
+                                        //}
                                     }
                                 }
                                 else if (typedProperty == FrameType.ToolWindow)
@@ -105,10 +105,10 @@ namespace VSMacros.RecorderListeners
                                         {
                                             if (caption != "Macro Explorer")
                                             {
-                                                if (!((this.dataModel.isDoc == false) && (this.dataModel.currWindow == windowID)))
-                                                {
+                                                //if (!((this.dataModel.isDoc == false) && (this.dataModel.currWindow == windowID)))
+                                                //{
                                                     this.dataModel.AddWindow(windowID, caption);
-                                                }
+                                                //}
                                             }
                                         }
                                     }

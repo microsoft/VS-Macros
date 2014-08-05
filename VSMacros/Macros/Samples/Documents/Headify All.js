@@ -33,17 +33,19 @@ function formatFile(file) {
         file.Document.Activate();
 
         // Format the document
+
         dte.ActiveDocument.Selection.StartOfDocument(false);
         dte.ActiveDocument.Selection.EndOfLine(true);
 
         var text = dte.ActiveDocument.Selection.Text;
         var re = /\/\/-*/;
 
-        // Go to start of document
         dte.ActiveDocument.Selection.StartOfDocument(false);
 
         if (!re.test(text))
             insertHeader(dte.ActiveDocument);
+
+        // -------------------
 
         file.Document.Save();
         file.Document.Close();

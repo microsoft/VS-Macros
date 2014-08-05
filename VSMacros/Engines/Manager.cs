@@ -33,13 +33,53 @@ namespace VSMacros.Engines
             }
         }
 
+        #region Paths
+
         private const string CurrentMacroFileName = "Current.js";
         private const string ShortcutsFileName = "Shortcuts.xml";
+        public const string IntellisenseFileName = "dte.js";
         private const string FolderExpansionFileName = "FolderExpansion.xml";
 
-        public static string CurrentMacroPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.CurrentMacroFileName); } }
-        public static string SamplesFolderPath { get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Samples"); } }
-        public static string dteIntellisensePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", "dte.js");
+        public static string MacrosPath
+        {
+            get
+            {
+                return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Macros");
+            }
+        }
+
+        public static string CurrentMacroPath {
+            get 
+            { 
+                return Path.Combine(Manager.MacrosPath, Manager.CurrentMacroFileName);
+            } 
+        }
+        
+        public static string SamplesFolderPath 
+        { 
+            get 
+            { 
+                return Path.Combine(Manager.MacrosPath, "Samples"); 
+            } 
+        }
+
+        public static string IntellisensePath
+        {
+            get
+            {
+                return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.IntellisenseFileName); 
+            }
+        }
+
+        public static string ShortcutsPath
+        {
+            get
+            {
+                return Path.Combine(VSMacrosPackage.Current.MacroDirectory, Manager.ShortcutsFileName); 
+            }
+        }
+
+        #endregion
 
 
         public static string[] Shortcuts { get; private set; }
@@ -245,7 +285,7 @@ namespace VSMacros.Engines
             {
                 try
                 {
-                    string pathToNew = Path.Combine(VSMacrosPackage.Current.MacroDirectory, dlg.MacroName.Text + ".js");
+                    string pathToNew = Path.Combine(Manager.MacrosPath, dlg.MacroName.Text + ".js");
                     string pathToCurrent = Manager.CurrentMacroPath;
 
                     int newShortcutNumber = dlg.SelectedShortcutNumber;
@@ -441,7 +481,7 @@ namespace VSMacros.Engines
             }
 
             // Create the file
-            File.WriteAllText(path, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
+            File.WriteAllText(path, "/// <reference path=\"" + Manager.IntellisensePath + "\" />");
 
             // Refresh the tree
             MacroFSNode.RefreshTree();
@@ -475,10 +515,16 @@ namespace VSMacros.Engines
 
         public void CreateFileSystem(bool initial)
         {
-            // Create macro directory
+            // Create main macro directory
             if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
             {
                 Directory.CreateDirectory(VSMacrosPackage.Current.MacroDirectory);
+            }
+
+            // Create macros folder directory
+            if (!Directory.Exists(Manager.MacrosPath))
+            {
+                Directory.CreateDirectory(Manager.MacrosPath);
             }
 
             // Create current macro file
@@ -490,17 +536,25 @@ namespace VSMacros.Engines
                 // Create shortcuts file
                 this.CreateShortcutFile();
 
-                // Copy Sample macros folder if initialization
                 if (initial)
                 {
+                    /* Sample folder */
                     string source = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Macros", "Samples");
-                    string target = Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Samples");
+                    string target = Manager.SamplesFolderPath;
 
                     // Delete Samples folder
                     Manager.DeleteFileOrFolder(target);
 
                     // Copy the Samples folder back
                     Manager.DirectoryCopy(source, target, true);
+
+                    /* DTE IntelliSense */
+                    source = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", Manager.IntellisenseFileName);
+                    target = Manager.IntellisensePath;
+                    if (!File.Exists(target))
+                    {
+                        File.Copy(source, target);
+                    }
                 }
            // }
            //);
@@ -510,6 +564,18 @@ namespace VSMacros.Engines
         {
             this.SaveFolderExpansion();
             this.SaveShortcuts();
+        }
+
+        private string RelativeIntellisensePath(int depth)
+        {
+            string path = Manager.IntellisenseFileName;
+
+            for (int i = 0; i < depth; i++)
+            {
+                path = "../" + path;    
+            }
+
+            return path;
         }
 
         public void MoveItem(MacroFSNode sourceItem, MacroFSNode targetItem)
@@ -647,7 +713,7 @@ namespace VSMacros.Engines
             try
             {
                 // Get the path to the shortcut file
-                string path = Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.ShortcutsFileName);
+                string path = Manager.ShortcutsPath;
 
                 // If the file doesn't exist, initialize the Shortcuts array with empty strings
                 if (!File.Exists(path))
@@ -684,7 +750,7 @@ namespace VSMacros.Engines
                             select new XElement("command",
                                 new XText(s))));
 
-                xmlShortcuts.Save(Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.ShortcutsFileName));
+                xmlShortcuts.Save(Manager.ShortcutsPath);
 
                 this.shortcutsDirty = false;
             }
@@ -699,14 +765,14 @@ namespace VSMacros.Engines
                 Task.Run(() =>
                 {
                     // Write to current macro file
-                    File.WriteAllText(Manager.CurrentMacroPath, "/// <reference path=\"" + Manager.dteIntellisensePath + "\" />");
+                    File.WriteAllText(Manager.CurrentMacroPath, "/// <reference path=\"" + Manager.IntellisensePath + "\" />");
                 });
             }
         }
 
         private void CreateShortcutFile()
         {
-            string shortcutsPath = Path.Combine(VSMacrosPackage.Current.UserLocalDataPath, Manager.ShortcutsFileName);
+            string shortcutsPath = Manager.ShortcutsPath;
             if (!File.Exists(shortcutsPath))
             {
                 // Create file for writing UTF-8 encoded text

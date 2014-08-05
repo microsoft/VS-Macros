@@ -500,7 +500,7 @@ namespace VSMacros.Models
             {
                 // Go down the tree to find the right node
                 // 2 because substrings[0] == "" and substrings[1] is root
-                for (int i = 2; i < substrings.Length; i++)
+                for (int i = 3; i < substrings.Length; i++)
                 {
                     node = node.Children.Single(x => x.Name == Path.GetFileNameWithoutExtension(substrings[i]));
                 }

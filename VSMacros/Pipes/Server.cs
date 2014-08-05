@@ -8,6 +8,7 @@ using System;
 using System.IO.Pipes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Windows.Threading;
 using VisualStudio.Macros.ExecutionEngine.Pipes;
 using VSMacros.Engines;
 using VSMacros.ExecutionEngine.Pipes;
@@ -23,6 +24,7 @@ namespace VSMacros.Pipes
         public static Guid Guid;
         public static Thread serverWait;
         private static Executor executor = Manager.Instance.executor;
+        static Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         public static void InitializeServer()
         {
@@ -46,8 +48,14 @@ namespace VSMacros.Pipes
             formatter.Binder = new BinderHelper();
 
             bool shouldKeepRunning = true;
-            while (shouldKeepRunning && Server.ServerStream.IsConnected)
+            while (shouldKeepRunning)
             {
+                if (Executor.executionEngine.HasExited)
+                {
+                    Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
+                    shouldKeepRunning = false;
+                }
+
                 try
                 {
                     var type = (PacketType)formatter.Deserialize(Server.ServerStream);
@@ -126,7 +134,6 @@ namespace VSMacros.Pipes
         #endregion
 
         #region Sending
-
 
         internal static void SendFilePath(int iterations, string path)
         {

@@ -40,7 +40,7 @@ namespace VSMacros.Dialogs
 
         protected void AddItems(ComboBox comboBox)
         {
-            for (int i = 1; i <= 10; i++)
+            for (int i = 1; i <= 9; i++)
             {
                 ComboBoxItem newItem = new ComboBoxItem();
                 newItem.Content = "CTRL+M, " + i;

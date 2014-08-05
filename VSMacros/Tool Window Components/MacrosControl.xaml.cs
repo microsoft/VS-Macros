@@ -93,6 +93,10 @@ namespace VSMacros
                     {
                         menuID = PkgCmdIDList.BrowserContextMenu;
                     }
+                    else if (this.InSamples(selectedNode))
+                    {
+                        menuID = PkgCmdIDList.SampleFolderContextMenu;
+                    }
                     else
                     {
                         menuID = PkgCmdIDList.FolderContextMenu;
@@ -103,6 +107,10 @@ namespace VSMacros
                     if (selectedNode.FullPath == this.CurrentMacroPath)
                     {
                         menuID = PkgCmdIDList.CurrentContextMenu;
+                    }
+                    else if (this.InSamples(selectedNode))
+                    {
+                        menuID = PkgCmdIDList.SampleMacroContextMenu;
                     }
                     else
                     {
@@ -118,6 +126,21 @@ namespace VSMacros
 
                 uiShell.ShowContextMenu(0, GuidList.GuidVSMacrosCmdSet, menuID, pnts, null);
             }
+        }
+
+        private bool InSamples(MacroFSNode node)
+        {
+            do
+            {
+                if (node.FullPath == Manager.SamplesFolderPath)
+                {
+                    return true;
+                }
+
+                node = node.Parent;
+            } while (node != MacroFSNode.RootNode);
+
+            return false;
         }
 
         private static TreeViewItem VisualUpwardSearch(DependencyObject source)
@@ -215,7 +238,8 @@ namespace VSMacros
             {
                 // Verify that this is a valid drop
                 TreeViewItem item = this.GetNearestContainer(e.OriginalSource as UIElement);
-                if ((item.Header as MacroFSNode) != null)
+                MacroFSNode node = item.Header as MacroFSNode;
+                if (node != null && !this.InSamples(node))
                 {
                     e.Effects = DragDropEffects.Move;
                 }

@@ -41,7 +41,7 @@ namespace VSMacros
 
             Manager.Instance.CreateFileSystem(true);
 
-            string macroDirectory = VSMacrosPackage.Current.MacroDirectory;
+            string macroDirectory = Manager.MacrosPath;
 
             // Create tree view root
             MacroFSNode root = new MacroFSNode(macroDirectory);
@@ -143,14 +143,6 @@ namespace VSMacros
             }
         }
 
-        public string MacroDirectory
-        {
-            get
-            {
-                return VSMacrosPackage.Current.MacroDirectory;
-            }
-        }
-
         /////////////////////////////////////////////////////////////////////////////
         // Command Handlers
         #region Command Handlers
@@ -162,7 +154,7 @@ namespace VSMacros
 
         public void OpenDirectory(object sender, EventArgs arguments)
         {
-            Manager.Instance.OpenFolder(this.MacroDirectory);
+            Manager.Instance.OpenFolder(Manager.MacrosPath);
         }
 
         public void OpenSelectedFolder(object sender, EventArgs arguments)

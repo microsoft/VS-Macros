@@ -16,6 +16,8 @@ namespace VSMacros
         public const int CurrentContextMenu = 0x1006;
         public const int MacroContextMenu = 0x1007;
         public const int FolderContextMenu = 0x1008;
+        public const int SampleFolderContextMenu = 0x1009;
+        public const int SampleMacroContextMenu = 0x1010;
 
         // Commands
         public const int CmdIdMacroExplorer = 0x101;

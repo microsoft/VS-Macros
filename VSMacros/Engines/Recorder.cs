@@ -43,7 +43,7 @@ namespace VSMacros.Engines
             using (StreamWriter fs = new StreamWriter(path))
             {
                 // Add reference to DTE for Intellisense
-                fs.WriteLine(string.Format("/// <reference path=\"" + Manager.dteIntellisensePath + "\" />{0}", Environment.NewLine));
+                fs.WriteLine(string.Format("/// <reference path=\"../" + Manager.IntellisenseFileName + "\" />{0}", Environment.NewLine));
 
                 bool inDocument = Manager.Instance.PreviousWindowIsDocument;
 

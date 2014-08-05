@@ -108,10 +108,11 @@ namespace VSMacros.Engines
             this.shortcutsLoaded = true;
             this.shortcutsDirty = false;
         }
-
+        
         private static void AttachEvents(Executor executor)
         {
             executor.ResetMessages();
+
             var dispatcher = Dispatcher.CurrentDispatcher;
 
             executor.Complete += (sender, eventInfo) =>
@@ -123,12 +124,24 @@ namespace VSMacros.Engines
 
                 Manager.instance.Executor.IsEngineRunning = false;
 
-                dispatcher.Invoke(new Action(() => 
+                ResetToolbar(dispatcher);
+            };
+        }
+
+        private static void ResetToolbar(Dispatcher dispatcher)
+        {
+            try
+            {
+                dispatcher.Invoke(new Action(() =>
                 {
                     VSMacrosPackage.Current.ClearStatusBar();
                     VSMacrosPackage.Current.UpdateButtonsForPlayback(false);
                 }));
-            };
+            }
+            catch (Exception)
+            {
+                // Visual Studio is closing during execution.
+            }
         }
 
         public static Manager Instance

@@ -31,7 +31,6 @@ namespace VSMacros.Engines
         /// The execution engine.
         /// </summary>
         internal static Process executionEngine;
-        internal static bool IsEngineInitialized;
         internal static JobHandle Job;
 
         /// <summary>
@@ -157,9 +156,18 @@ namespace VSMacros.Engines
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid, version);
             Executor.executionEngine.Start();
 
-            Executor.IsEngineInitialized = true;
             Executor.Job = JobHandle.CreateNewJob();
             Executor.Job.AddProcess(Executor.executionEngine);
+        }
+
+        private static bool IsExecutorReady()
+        {
+            return Executor.executionEngine != null && !Executor.executionEngine.HasExited;
+        }
+
+        private static bool IsServerReady()
+        {
+            return Server.ServerStream != null && Server.ServerStream.IsConnected;
         }
 
         /// <summary>
@@ -168,20 +176,20 @@ namespace VSMacros.Engines
         /// 
         public void RunEngine(int iterations, string path)
         {
-            if (Executor.IsEngineInitialized && Server.ServerStream.IsConnected)
+            if (IsServerReady() && IsExecutorReady())
             {
                 Server.SendFilePath(iterations, path);
             }
             else
             {
                 this.InitializeEngine();
-                Thread waitsUntilConnection = new Thread(() =>
+                Thread waitForConnection = new Thread(() =>
                     {
                         WaitForConnection();
                         Server.SendFilePath(iterations, path);
                     }
                 );
-                waitsUntilConnection.Start();
+                waitForConnection.Start();
             }
 
             this.IsEngineRunning = true;
@@ -195,7 +203,6 @@ namespace VSMacros.Engines
         public void StopEngine()
         {
             Executor.Job.Close();   
-            Executor.IsEngineInitialized = false;
             this.IsEngineRunning = false;
         }
     }

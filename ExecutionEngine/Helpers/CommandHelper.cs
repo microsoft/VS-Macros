@@ -7,6 +7,7 @@
 using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -117,6 +118,12 @@ namespace ExecutionEngine.Helpers
                     Marshal.FreeHGlobal(ptr); 
                 } 
             });
+        }
+
+        public void ShowMessage(object message)
+        {
+            Validate.IsNotNull(message, "message");
+            MessageBox.Show(message.ToString());
         }
 
         private void DispatchCommandHelper(object commandSet, object commandId)

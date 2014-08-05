@@ -38,7 +38,9 @@ namespace VSMacros.Pipes
                 options: PipeOptions.Asynchronous);
         }
 
-        #region Getting
+        private static void SendEngineFailedSilentlyCompletionMessage() {
+            Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
+        }
 
         public static void WaitForMessage()
         {
@@ -52,7 +54,7 @@ namespace VSMacros.Pipes
             {
                 if (Executor.executionEngine.HasExited)
                 {
-                    Server.executor.SendCompletionMessage(isError: false, errorMessage: string.Empty);
+                    SendEngineFailedSilentlyCompletionMessage();
                     shouldKeepRunning = false;
                 }
 
@@ -68,7 +70,6 @@ namespace VSMacros.Pipes
                             break;
 
                         case PacketType.Close:
-                            Executor.IsEngineInitialized = false;
                             shouldKeepRunning = false;
                             break;
 
@@ -84,13 +85,7 @@ namespace VSMacros.Pipes
                         case PacketType.CriticalError:
                             error = Server.GetCriticalError(Server.ServerStream);
                             Server.ServerStream.Close();
-
-                            if (Executor.Job != null)
-                            {
-                                Executor.Job.Close();
-                            }
-
-                            Executor.IsEngineInitialized = false;
+                            CloseExecutorJob();
                             shouldKeepRunning = false;
                             break;
                     }
@@ -99,6 +94,14 @@ namespace VSMacros.Pipes
                 {
                 }
             } 
+        }
+
+        private static void CloseExecutorJob()
+        {
+            if (Executor.Job != null)
+            {
+                Executor.Job.Close();
+            }
         }
 
         private static string GetGenericScriptError(NamedPipeServerStream serverStream)
@@ -131,10 +134,6 @@ namespace VSMacros.Pipes
             return exceptionMessage;
         }
 
-        #endregion
-
-        #region Sending
-
         internal static void SendFilePath(int iterations, string path)
         {
             var type = PacketType.FilePath;
@@ -147,5 +146,4 @@ namespace VSMacros.Pipes
             formatter.Serialize(Server.ServerStream, filePath);
         }
     }
-        #endregion
 }

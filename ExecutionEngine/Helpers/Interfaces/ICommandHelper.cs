@@ -17,5 +17,6 @@ namespace ExecutionEngine.Helpers
         void DispatchCommandByName(object canonicalName);
         void DispatchCommand(object commandSet, object commandId);
         void DispatchCommandWithArgs(object commandSet, object commandId, ref object pvaIn);
+        void ShowMessage(object message);
     }
 }

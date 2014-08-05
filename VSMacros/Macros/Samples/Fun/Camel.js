@@ -1,4 +1,8 @@
-﻿dte.UndoContext.Close();
+﻿/*
+* Because who doesn't like camels?
+*/
+
+dte.UndoContext.Close();
 dte.UndoContext.Open("Camel");
 
 var camel =

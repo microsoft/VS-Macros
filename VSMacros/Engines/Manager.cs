@@ -66,7 +66,7 @@ namespace VSMacros.Engines
             this.shortcutsLoaded = true;
             this.shortcutsDirty = false;
         }
-
+        
         private static void AttachEvents(Executor executor)
         {
             executor.ResetMessages();
@@ -81,7 +81,7 @@ namespace VSMacros.Engines
 
                 Manager.instance.Executor.IsEngineRunning = false;
 
-                dispatcher.Invoke(new Action(() => 
+                dispatcher.Invoke(new Action(() =>
                 {
                     VSMacrosPackage.Current.ClearStatusBar();
                     VSMacrosPackage.Current.UpdateButtonsForPlayback(false);

@@ -31,7 +31,6 @@ namespace VSMacros.Engines
         /// The execution engine.
         /// </summary>
         internal static Process executionEngine;
-        internal static bool IsEngineInitialized;
         internal static JobHandle Job;
 
         /// <summary>
@@ -157,7 +156,6 @@ namespace VSMacros.Engines
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid, version);
             Executor.executionEngine.Start();
 
-            Executor.IsEngineInitialized = true;
             Executor.Job = JobHandle.CreateNewJob();
             Executor.Job.AddProcess(Executor.executionEngine);
         }
@@ -168,7 +166,7 @@ namespace VSMacros.Engines
         /// 
         public void RunEngine(int iterations, string path)
         {
-            if (Executor.IsEngineInitialized && Server.ServerStream.IsConnected)
+            if (Server.ServerStream != null && Server.ServerStream.IsConnected && Executor.executionEngine != null && !Executor.executionEngine.HasExited)
             {
                 Server.SendFilePath(iterations, path);
             }
@@ -195,7 +193,6 @@ namespace VSMacros.Engines
         public void StopEngine()
         {
             Executor.Job.Close();   
-            Executor.IsEngineInitialized = false;
             this.IsEngineRunning = false;
         }
     }

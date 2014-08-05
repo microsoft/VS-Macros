@@ -68,7 +68,6 @@ namespace VSMacros.Pipes
                             break;
 
                         case PacketType.Close:
-                            Executor.IsEngineInitialized = false;
                             shouldKeepRunning = false;
                             break;
 
@@ -90,7 +89,6 @@ namespace VSMacros.Pipes
                                 Executor.Job.Close();
                             }
 
-                            Executor.IsEngineInitialized = false;
                             shouldKeepRunning = false;
                             break;
                     }

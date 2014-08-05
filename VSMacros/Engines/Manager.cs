@@ -600,6 +600,9 @@ namespace VSMacros.Engines
                 {
                     targetPath = targetPath + extension;
                     System.IO.File.Move(sourcePath, targetPath);
+
+                    // Close in the editor
+                    this.Reopen(sourcePath, targetPath);
                 }
 
                 // Move shortcut as well
@@ -642,6 +645,16 @@ namespace VSMacros.Engines
         }
 
         #region Helper Methods
+
+        public void Reopen(string source, string target)
+        {
+            try
+            {
+                this.dte.Documents.Item(source).Close(EnvDTE.vsSaveChanges.vsSaveChangesNo);
+                this.dte.ItemOperations.OpenFile(target);
+            }
+            catch (ArgumentException) { }
+        }
 
         private StreamReader LoadFile(string path)
         {

@@ -41,11 +41,6 @@ namespace VSMacros
             }
         }
 
-        public string CurrentMacroPath
-        {
-            get { return Path.Combine(VSMacrosPackage.Current.MacroDirectory, "Current.js"); }
-        }
-
         #region Events
 
         private void MacroTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -61,7 +56,7 @@ namespace VSMacros
         private void MacroTreeView_Loaded(object sender, RoutedEventArgs e)
         {
             // Select Current macro
-            MacroFSNode.FindNodeFromFullPath(this.CurrentMacroPath).IsSelected = true;
+            MacroFSNode.FindNodeFromFullPath(Manager.CurrentMacroPath).IsSelected = true;
         }
 
         private void TreeViewItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -104,7 +99,7 @@ namespace VSMacros
                 }
                 else
                 {
-                    if (selectedNode.FullPath == this.CurrentMacroPath)
+                    if (selectedNode.FullPath == Manager.CurrentMacroPath)
                     {
                         menuID = PkgCmdIDList.CurrentContextMenu;
                     }

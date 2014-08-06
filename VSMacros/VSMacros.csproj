@@ -150,6 +150,16 @@
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Interfaces\IManager.cs" />
+    <Resource Include="Documentation\Demos\closeall.gif" />
+    <Resource Include="Documentation\Demos\closeallplayback.gif" />
+    <Resource Include="Documentation\Demos\convert.gif" />
+    <Resource Include="Documentation\Demos\headify.gif" />
+    <Resource Include="Documentation\Demos\manage.gif" />
+    <Resource Include="Documentation\Demos\play.gif" />
+    <Resource Include="Documentation\Demos\record.gif" />
+    <Resource Include="Documentation\Demos\remove.gif" />
+    <Resource Include="Documentation\Demos\zombies.gif" />
+    <Resource Include="Documentation\Demos\keepcalm.png" />
     <Content Include="Macros\Samples\Debugger\Breakpoint to Main.js" />
     <Content Include="Macros\Samples\Debugger\Run to Next Breapoint.js" />
     <Compile Include="Models\RecorderDataModel.cs" />
@@ -216,15 +226,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Documentation\Getting Started.html">
+    <None Include="Documentation\README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    </None>
     <Content Include="Documentation\Release Notes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Resource Include="Documentation\Demo.gif" />
     <Content Include="Macros\Samples\Accessiblity\Decrease Font Size.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

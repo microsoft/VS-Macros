@@ -15,7 +15,7 @@ namespace ExecutionEngine.Helpers
 {
     public static class InputParser
     {
-        private static string[] stringSeparator = new [] { SharedVariables.Delimiter };
+        private static string[] stringSeparator = new[] { SharedVariables.Delimiter };
 
         internal static string[] SeparateArgs(string[] args)
         {
@@ -52,7 +52,7 @@ namespace ExecutionEngine.Helpers
 
         internal static string WrapScript(string unwrapped)
         {
-            string insertFunction = "var Macro = new function() { this.InsertText=function(str){for(var i=0,len=str.length;i<len;i++){cmdHelper.DispatchCommandWithArgs(\"{1496a755-94de-11d0-8c3f-00c04fc2aae2}\",1,str.charAt(i));}};};";
+            string insertFunction = "var Macro = new function() { this.InsertText=function(str){for(var i=0,len=str.length;i<len;i++){cmdHelper.DispatchCommandWithArgs(\"{1496a755-94de-11d0-8c3f-00c04fc2aae2}\",1,str.charAt(i));}};this.ShowMessage=function(str){cmdHelper.ShowMessage(str);};};";
 
             return string.Format("function {0}() {{{1}{3}{1}{2}{1}}}", Program.MacroName, Environment.NewLine, unwrapped, insertFunction);
         }

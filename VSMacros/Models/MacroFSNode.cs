@@ -55,7 +55,7 @@ namespace VSMacros.Models
 
         // Static members
         public static MacroFSNode RootNode { get; set; }
-        private static bool searching = false;
+        private static bool Searching = false;
 
         // For INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -67,6 +67,7 @@ namespace VSMacros.Models
             this.shortcut = MacroFSNode.ToFetch;
             this.isEditable = false;
             this.isSelected = false;
+            this.isExpanded = false;
             this.isMatch = false;
             this.parent = parent;
 
@@ -276,21 +277,19 @@ namespace VSMacros.Models
         {
             get
             {
-                return this.isExpanded;
+                return this.isExpanded || this.isMatch;
             }
 
             set
             {
-                if (this != MacroFSNode.RootNode)
+                if (this.IsDirectory)
                 {
                     this.isExpanded = value;
 
                     if (this.IsExpanded)
                     {
-                        if (this.IsDirectory)
-                        {
+
                             MacroFSNode.enabledDirectories.Add(this.FullPath);
-                        }
 
                         // Expand parent as well
                         if (this.parent != null)
@@ -300,10 +299,8 @@ namespace VSMacros.Models
                     }
                     else
                     {
-                        if (this.IsDirectory)
-                        {
+
                             MacroFSNode.enabledDirectories.Remove(this.FullPath);
-                        }
                     }
 
                     this.NotifyPropertyChanged("IsExpanded");
@@ -317,7 +314,7 @@ namespace VSMacros.Models
             get
             {
                 // If searching is not enabled, always return true
-                if (!MacroFSNode.searching)
+                if (!MacroFSNode.Searching)
                 {
                     return true;
                 }
@@ -330,12 +327,13 @@ namespace VSMacros.Models
             {
                 this.isMatch = value;
 
-                if (this.IsMatch == true && this.parent != null)
+                if (this.IsMatch && this.parent != null)
                 {
-                    this.IsExpanded = true;
+                    //this.isExpanded = true;
                     this.parent.IsMatch = true;
                 }
 
+                this.NotifyPropertyChanged("IsExpanded");
                 this.NotifyPropertyChanged("IsMatch");
             }
         }
@@ -461,7 +459,7 @@ namespace VSMacros.Models
         public static void EnableSearch()
         {
             // Set Searching to true
-            MacroFSNode.searching = true;
+            MacroFSNode.Searching = true;
 
             // And then notify all node that their IsMatch property might have changed
             MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
@@ -470,10 +468,9 @@ namespace VSMacros.Models
         public static void DisableSearch()
         {
             // Set Searching to true
-            MacroFSNode.searching = false;
+            MacroFSNode.Searching = false;
 
-            // And then notify all node that their IsMatch property might have changed
-            MacroFSNode.NotifyAllNode(MacroFSNode.RootNode, "IsMatch");
+            MacroFSNode.UnmatchAllNodes(MacroFSNode.RootNode);
         }
 
         /// <summary>
@@ -539,6 +536,19 @@ namespace VSMacros.Models
             MacroFSNode.RefreshTree(root);
         }
 
+        private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)
+        {
+            // Set IsEnabled for each folders
+            root.SetIsExpanded(root, dirs);
+
+            // Selecte the previously selected macro
+            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(selectedPath);
+            selected.IsSelected = true;
+
+            // Notify change
+            root.NotifyPropertyChanged("Children");
+        }
+
         public static void RefreshTree(MacroFSNode root)
         {
             MacroFSNode selected = MacrosControl.Current.MacroTreeView.SelectedItem as MacroFSNode;
@@ -556,17 +566,32 @@ namespace VSMacros.Models
             root.AfterRefresh(root, selected.FullPath, dirs);
         }
 
-        private void AfterRefresh(MacroFSNode root, string selectedPath, HashSet<string> dirs)
+        public static void CollapseAllNodes(MacroFSNode root)
         {
-            // Set IsEnabled for each folders
-            root.SetIsExpanded(root, dirs);
+            root.IsExpanded = false;
+            
+            if (root.Children != null)
+            {
+                foreach (var child in root.Children)
+                {
+                    MacroFSNode.CollapseAllNodes(child);
+                }
+            }
+        }
 
-            // Selecte the previously selected macro
-            MacroFSNode selected = MacroFSNode.FindNodeFromFullPath(selectedPath);
-            selected.IsSelected = true;
+        public static void UnmatchAllNodes(MacroFSNode root)
+        {
+            root.isMatch = false;
+            root.NotifyPropertyChanged("IsMatch");
+            root.NotifyPropertyChanged("IsExpanded");
 
-            // Notify change
-            root.NotifyPropertyChanged("Children");
+            if (root.Children != null)
+            {
+                foreach (var child in root.Children)
+                {
+                    MacroFSNode.UnmatchAllNodes(child);
+                }
+            }
         }
 
         /// <summary>
@@ -614,19 +639,6 @@ namespace VSMacros.Models
                 foreach (var child in root.Children)
                 {
                     MacroFSNode.NotifyAllNode(child, property);
-                }
-            }
-        }
-
-        public static void CollapseAllNodes(MacroFSNode root)
-        {
-            root.IsExpanded = false;
-            
-            if (root.Children != null)
-            {
-                foreach (var child in root.Children)
-                {
-                    MacroFSNode.CollapseAllNodes(child);
                 }
             }
         }

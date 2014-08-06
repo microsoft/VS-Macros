@@ -281,31 +281,34 @@ namespace VSMacros.Models
 
             set
             {
-                this.isExpanded = value;
-
-                if (this.IsExpanded)
+                if (this != MacroFSNode.RootNode)
                 {
-                    if (this.IsDirectory)
+                    this.isExpanded = value;
+
+                    if (this.IsExpanded)
                     {
-                        MacroFSNode.enabledDirectories.Add(this.FullPath);
+                        if (this.IsDirectory)
+                        {
+                            MacroFSNode.enabledDirectories.Add(this.FullPath);
+                        }
+
+                        // Expand parent as well
+                        if (this.parent != null)
+                        {
+                            this.parent.IsExpanded = true;
+                        }
+                    }
+                    else
+                    {
+                        if (this.IsDirectory)
+                        {
+                            MacroFSNode.enabledDirectories.Remove(this.FullPath);
+                        }
                     }
 
-                    // Expand parent as well
-                    if (this.parent != null)
-                    {
-                        this.parent.IsExpanded = true;
-                    }
+                    this.NotifyPropertyChanged("IsExpanded");
+                    this.NotifyPropertyChanged("Icon");
                 }
-                else
-                {
-                    if (this.IsDirectory)
-                    {
-                        MacroFSNode.enabledDirectories.Remove(this.FullPath);
-                    }
-                }
-
-                this.NotifyPropertyChanged("IsExpanded");
-                this.NotifyPropertyChanged("Icon");
             }
         }
 
@@ -602,15 +605,28 @@ namespace VSMacros.Models
         }
 
         // Notifies all the nodes of the tree rooted at 'node'
-        public static void NotifyAllNode(MacroFSNode node, string property)
+        public static void NotifyAllNode(MacroFSNode root, string property)
         {
-            node.NotifyPropertyChanged(property);
+            root.NotifyPropertyChanged(property);
 
-            if (node.Children != null)
+            if (root.Children != null)
             {
-                foreach (var child in node.Children)
+                foreach (var child in root.Children)
                 {
                     MacroFSNode.NotifyAllNode(child, property);
+                }
+            }
+        }
+
+        public static void CollapseAllNodes(MacroFSNode root)
+        {
+            root.IsExpanded = false;
+            
+            if (root.Children != null)
+            {
+                foreach (var child in root.Children)
+                {
+                    MacroFSNode.CollapseAllNodes(child);
                 }
             }
         }

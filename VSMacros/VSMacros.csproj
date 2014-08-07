@@ -160,6 +160,10 @@
     <Resource Include="Documentation\Demos\remove.gif" />
     <Resource Include="Documentation\Demos\zombies.gif" />
     <Resource Include="Documentation\Demos\keepcalm.png" />
+    <Content Include="Documentation\Preview.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Macros\Samples\Debugger\Breakpoint to Main.js" />
     <Content Include="Macros\Samples\Debugger\Run to Next Breapoint.js" />
     <Compile Include="Models\RecorderDataModel.cs" />
@@ -226,10 +230,6 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Documentation\PreviewImage.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <None Include="Documentation\README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

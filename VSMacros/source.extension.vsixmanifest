@@ -7,7 +7,7 @@
     <License>Documentation\Visual Studio 2013 Macro Extension EULA.rtf</License>
     <GettingStartedGuide>Documentation\Getting Started.html</GettingStartedGuide>
     <ReleaseNotes>Documentation\Release Notes.txt</ReleaseNotes>
-    <PreviewImage>Documentation\PreviewImage.png</PreviewImage>
+    <PreviewImage>Documentation\Preview.png</PreviewImage>
     <Tags>Productivity, Macros, Automation, Recording</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">

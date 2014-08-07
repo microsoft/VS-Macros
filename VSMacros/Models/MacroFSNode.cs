@@ -568,12 +568,11 @@ namespace VSMacros.Models
 
         public static void CollapseAllNodes(MacroFSNode root)
         {
-            root.IsExpanded = false;
-            
             if (root.Children != null)
             {
                 foreach (var child in root.Children)
                 {
+                    child.IsExpanded = false;
                     MacroFSNode.CollapseAllNodes(child);
                 }
             }

@@ -212,7 +212,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Documentation\Visual Studio 2013 Macro Extension EULA.rtf">
+    <Content Include="Documentation\Macros for Microsoft Visual Studio 2013 EULA.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.2.1" Language="en-US" Publisher="Microsoft Corporation" />
+    <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.0.0" Language="en-US" Publisher="Microsoft Corporation" />
     <DisplayName>Macros for Visual Studio 2013</DisplayName>
     <Description xml:space="preserve">An extension for Visual Studio 2013 that enables the use of macros in the IDE. The extension can record most of the features in Visual Studio including text editing operations.</Description>
     <License>Documentation\Macros for Visual Studio 2013 EULA.rtf</License>
-    <GettingStartedGuide>Documentation\Getting Started.html</GettingStartedGuide>
     <ReleaseNotes>Documentation\Release Notes.txt</ReleaseNotes>
     <PreviewImage>Documentation\Preview.png</PreviewImage>
     <Tags>Productivity, Macros, Automation, Recording</Tags>

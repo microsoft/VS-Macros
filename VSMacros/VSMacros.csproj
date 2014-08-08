@@ -160,6 +160,7 @@
     <Resource Include="Documentation\Demos\remove.gif" />
     <Resource Include="Documentation\Demos\zombies.gif" />
     <Resource Include="Documentation\Demos\keepcalm.png" />
+    <Resource Include="Documentation\Demos\assignshortcut.jpg" />
     <Content Include="Documentation\Preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -212,7 +213,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Documentation\Macros for Microsoft Visual Studio 2013 EULA.rtf">
+    <Content Include="Documentation\Macros for Visual Studio 2013 EULA.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

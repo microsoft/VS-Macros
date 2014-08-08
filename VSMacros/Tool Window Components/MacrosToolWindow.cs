@@ -96,6 +96,11 @@ namespace VSMacros
                     this.Refresh,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRefresh)));
 
+                // Create the command for refresh
+                mcs.AddCommand(new MenuCommand(
+                    this.CollapseAll,
+                    new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdCollapseAll)));
+
                 // Create the command to open the macro directory
                 mcs.AddCommand(new MenuCommand(
                     this.OpenDirectory,
@@ -150,6 +155,11 @@ namespace VSMacros
         private void Refresh(object sender, EventArgs arguments)
         {
             Manager.Instance.Refresh();
+        }
+
+        private void CollapseAll(object sender, EventArgs arguments)
+        {
+            MacroFSNode.CollapseAllNodes(MacroFSNode.RootNode);
         }
 
         public void OpenDirectory(object sender, EventArgs arguments)

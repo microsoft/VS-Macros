@@ -3,7 +3,6 @@ Date: 8/4/2014
 Version: 1.2.1
 
 What's New:
-	- Zombie macro
 	- Better DTE IntelliSense in editor
 	- Bug fixes and improvements
 

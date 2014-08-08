@@ -27,6 +27,7 @@ namespace VSMacros
         public const int CmdIdPlaybackMultipleTimes = 0x2002;
         public const int CmdIdSaveTemporaryMacro = 0x2003;
         public const int CmdIdRefresh = 0x2010;
+        public const int CmdIdCollapseAll = 0x2012;
         public const int CmdIdOpenDirectory = 0x2011;
 
         public const int CmdIdEdit = 0x2020;

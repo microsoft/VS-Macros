@@ -185,7 +185,15 @@
         </Strings>
       </Button>
 
-      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="055" type="Button">
+      <Button guid="guidVSMacrosCmdSet" id="cmdidCollapseAll" priority="055" type="Button">
+        <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
+        <Icon guid="guidSolutionExplorerToolbarImages" id="bmpPicCollapse" />
+        <Strings>
+          <ButtonText>Collapse All</ButtonText>
+        </Strings>
+      </Button>
+      
+      <Button guid="guidVSMacrosCmdSet" id="cmdidOpenDirectory" priority="060" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosManagementGroup" />
         <Icon guid="guidSHLMainMenu" id="Open" />
         <Strings>
@@ -445,6 +453,7 @@
       <IDSymbol name="cmdidPlaybackMultipleTimes"   value="0x2002"/>
       <IDSymbol name="cmdidSaveCurrentMacro"        value="0x2003"/>
       <IDSymbol name="cmdidRefresh"                 value="0x2010"/>
+      <IDSymbol name="cmdidCollapseAll"             value="0x2012"/>
       <IDSymbol name="cmdidOpenDirectory"           value="0x2011"/>
 
       <IDSymbol name="cmdidEdit"            value="0x2020"/>
@@ -493,6 +502,19 @@
       <IDSymbol name="Refresh" value="6"/>
     </GuidSymbol>
 
+    <GuidSymbol name="guidSolutionExplorerToolbarImages" value="{e5cc16dc-0c15-44e5-9b2d-4f6baa17f4ee}" >
+      <IDSymbol name="bmpPicNewWindow" value="1" />
+      <IDSymbol name="bmpPicPin" value="2" />
+      <IDSymbol name="bmpPicLogo" value="3" />
+      <IDSymbol name="bmpPicCollapse" value="4" />
+      <IDSymbol name="bmpPicBack" value="5" />
+      <IDSymbol name="bmpPicForward" value="6" />
+      <IDSymbol name="bmpPicHome" value="7" />
+      <IDSymbol name="bmpPicPendingChangesFilter" value="8" />
+      <IDSymbol name="bmpPicToggleSingleClickPreview" value="9" />
+      <IDSymbol name="bmpPicSyncWithActiveDocument" value="10" />
+      <IDSymbol name="bmpPicOpenFilesFilter" value="11" />
+    </GuidSymbol>
   </Symbols>
 
 </CommandTable>

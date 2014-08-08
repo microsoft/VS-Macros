@@ -184,7 +184,7 @@ var _dte2 = new function () {
         }
 
         this.LineDown = function (Extend, Count) {
-            /// <summary>Moves the insertion poof the text selection down the specified number of lines.</summary>     
+            /// <summary>Moves the insertion point of the text selection down the specified number of lines.</summary>     
             /// <param name="Extend"> Optional. Determines whether the line in which the insertion pois moved is
             /// highlighted. The default is false.</param>
             /// <param name="Count"> Optional. Indicates how many lines down to move the insertion po. The default
@@ -192,7 +192,7 @@ var _dte2 = new function () {
         }
 
         this.LineUp = function (Extend, Count) {
-            /// <summary>Moves the insertion poof the text selection up the specified number of lines.</summary>
+            /// <summary>Moves the insertion point of the text selection up the specified number of lines.</summary>
             /// <param name="Extend"> Optional. Determines whether the line in which the insertion pois moved is
             /// highlighted. The default is false.</param>
             /// <param name="Count"> Optional. Indicates how many lines up to move the insertion po. The default

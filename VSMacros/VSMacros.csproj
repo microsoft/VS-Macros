@@ -151,16 +151,12 @@
     <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Resource Include="Documentation\Demos\closeall.gif" />
-    <Resource Include="Documentation\Demos\closeallplayback.gif" />
     <Resource Include="Documentation\Demos\convert.gif" />
-    <Resource Include="Documentation\Demos\headify.gif" />
     <Resource Include="Documentation\Demos\manage.gif" />
-    <Resource Include="Documentation\Demos\play.gif" />
-    <Resource Include="Documentation\Demos\record.gif" />
-    <Resource Include="Documentation\Demos\remove.gif" />
-    <Resource Include="Documentation\Demos\zombies.gif" />
     <Resource Include="Documentation\Demos\keepcalm.png" />
     <Resource Include="Documentation\Demos\assignshortcut.jpg" />
+    <Resource Include="Documentation\Demos\toolsoptionkeyboard-macrocommand.jpg" />
+    <Resource Include="Documentation\Demos\toolsoptionkeyboard-assign.jpg" />
     <Content Include="Documentation\Preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

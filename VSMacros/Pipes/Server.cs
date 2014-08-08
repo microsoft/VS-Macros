@@ -136,14 +136,20 @@ namespace VSMacros.Pipes
 
         internal static void SendFilePath(int iterations, string path)
         {
-            var type = PacketType.FilePath;
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(Server.ServerStream, type);
+            try
+            {
+                var type = PacketType.FilePath;
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(Server.ServerStream, type);
 
-            var filePath = new FilePath();
-            filePath.Iterations = iterations;
-            filePath.Path = path;
-            formatter.Serialize(Server.ServerStream, filePath);
+                var filePath = new FilePath();
+                filePath.Iterations = iterations;
+                filePath.Path = path;
+                formatter.Serialize(Server.ServerStream, filePath);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

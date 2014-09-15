@@ -292,7 +292,7 @@ namespace VSMacros
                 {
                     List<CommandBarButton> buttons = new List<CommandBarButton>()
                     {
-                        (CommandBarButton)macroMenu.Controls["Start/Stop Recording"],
+                        (CommandBarButton)macroMenu.Controls["Start Recording"],
                         (CommandBarButton)macroMenu.Controls["Playback"],
                         (CommandBarButton)macroMenu.Controls["Playback Multiple Times"]
                     };

@@ -480,6 +480,11 @@ namespace VSMacros.Models
         /// <returns>MacroFSNode  whose FullPath is path</returns>
         public static MacroFSNode FindNodeFromFullPath(string path)
         {
+            if (MacroFSNode.RootNode == null)
+            {
+                return null;
+            }
+
             // Default node if search fails
             MacroFSNode defaultNode = MacroFSNode.RootNode.Children.Count > 0 ? MacroFSNode.RootNode.Children[0] : MacroFSNode.RootNode;
 
@@ -523,9 +528,11 @@ namespace VSMacros.Models
         {
             // Find node
             MacroFSNode node = FindNodeFromFullPath(path);
-
-            // Select it
-            node.IsSelected = true;
+            if (node != null)
+            {
+                // Select it
+                node.IsSelected = true;
+            }
 
             return node;
         }

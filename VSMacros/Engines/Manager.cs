@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -94,7 +95,7 @@ namespace VSMacros.Engines
 
         private MacroFSNode SelectedMacro
         {
-            get { return MacrosControl.Current.SelectedNode; }
+            get { return MacrosControl.Current != null ? MacrosControl.Current.SelectedNode : null; }
         }
 
         private Manager(IServiceProvider provider)
@@ -212,7 +213,16 @@ namespace VSMacros.Engines
 
         public void Playback(string path, int iterations = 1)
         {
-            path = !string.IsNullOrEmpty(path) ? path : this.SelectedMacro.FullPath;
+            if (string.IsNullOrEmpty(path))
+            {
+                if(this.SelectedMacro == null)
+                {
+                    Debug.Fail("Playback was not given a path nor is SelectedMacro non-null.");
+                    return;
+                }
+
+                path = this.SelectedMacro.FullPath;
+            }
 
             // Before playing back, save the macro file
             this.SaveMacroIfDirty(path);
@@ -256,8 +266,26 @@ namespace VSMacros.Engines
             {
                 VSMacrosPackage.Current.UpdateButtonsForPlayback(true);
                 this.Executor.RunEngine(iterations, path);
-                Manager.instance.Executor.CurrentlyExecutingMacro = this.SelectedMacro.Name;
+                Manager.instance.Executor.CurrentlyExecutingMacro = GetExecutingMacroNameForPossibleErrorDisplay(this.SelectedMacro, path);
             }
+        }
+
+        private string GetExecutingMacroNameForPossibleErrorDisplay(MacroFSNode node, string path)
+        {
+            if(node != null)
+            {
+                return node.Name;
+            }
+            
+            if(path == null)
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            int lastBackslash = path.LastIndexOf('\\');
+            string fileName = Path.GetFileNameWithoutExtension(path.Substring(lastBackslash != -1 ? lastBackslash + 1 : 0));
+
+            return fileName;
         }
 
         public void PlaybackCommand(int cmd)

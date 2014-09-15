@@ -161,9 +161,11 @@ namespace VSMacros
         public int DirectoryChanged(string dir)
         {
             MacroFSNode node = MacroFSNode.FindNodeFromFullPath(dir);
-
-            // Refresh tree rooted at the changed directory
-            MacroFSNode.RefreshTree(node);
+            if(node != null)
+            {
+                // Refresh tree rooted at the changed directory
+                MacroFSNode.RefreshTree(node);
+            }
 
             return VSConstants.S_OK;
         }
@@ -192,7 +194,10 @@ namespace VSMacros
                 if (change == _VSFILECHANGEFLAGS.VSFILECHG_Del)
                 {
                     MacroFSNode node = MacroFSNode.FindNodeFromFullPath(path);
-                    node.Delete();
+                    if(node != null)
+                    { 
+                        node.Delete();
+                    }
                 }
             }
 

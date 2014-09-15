@@ -240,15 +240,15 @@
       <!-- Buttons added through command placements -->
       
       <!-- Macro Shortcut Commands Button -->
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" priority="00" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand1</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" priority="01" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand2</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" priority="02" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand3</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" priority="03" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand4</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" priority="04" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand5</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" priority="05" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand6</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" priority="06" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand7</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" priority="07" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand8</ButtonText></Strings></Button>
-      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" priority="08" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><CommandFlag>DefaultInvisible</CommandFlag><Strings><ButtonText>MacroCommand9</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" priority="00" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand1</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" priority="01" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand2</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand3" priority="02" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand3</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand4" priority="03" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand4</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand5" priority="04" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand5</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand6" priority="05" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand6</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand7" priority="06" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand7</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand8" priority="07" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand8</ButtonText></Strings></Button>
+      <Button guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" priority="08" type="Button"><Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" /><Strings><ButtonText>MacroCommand9</ButtonText></Strings></Button>
 
       <!-- Enable TYPECHAR command -->
       <Button guid="guidStd2kCmdSet" id="TYPECHAR" priority="0x0000" type="Button">

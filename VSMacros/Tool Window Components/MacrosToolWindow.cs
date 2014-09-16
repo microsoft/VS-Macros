@@ -67,12 +67,11 @@ namespace VSMacros
                 windowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_ExtWindowObject, out dteWindow);
                 Window2 window = (Window2)dteWindow;
                 
-                var a = ((CommandBars)window.CommandBars)[1].Controls;
+                var controls = ((CommandBars)window.CommandBars)[1].Controls;
 
-                // Add toolbar commands (1: recording, 2: playback, 3: playback multiple times
-                this.owningPackage.ImageButtons.Add((CommandBarButton)((CommandBars)window.CommandBars)[1].Controls[1]);
-                this.owningPackage.ImageButtons.Add((CommandBarButton)((CommandBars)window.CommandBars)[1].Controls[7]);
-                this.owningPackage.ImageButtons.Add((CommandBarButton)((CommandBars)window.CommandBars)[1].Controls[12]);
+                this.owningPackage.ImageButtons.Add((CommandBarButton)controls[1]);
+                this.owningPackage.ImageButtons.Add((CommandBarButton)controls[2]);
+                this.owningPackage.ImageButtons.Add((CommandBarButton)controls[3]);
 
                 this.addedToolbarButton = true;
             }

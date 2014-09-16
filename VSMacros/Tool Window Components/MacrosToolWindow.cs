@@ -95,7 +95,7 @@ namespace VSMacros
                     this.Refresh,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdRefresh)));
 
-                // Create the command for refresh
+                // Create the command for Collapse All
                 mcs.AddCommand(new MenuCommand(
                     this.CollapseAll,
                     new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.CmdIdCollapseAll)));

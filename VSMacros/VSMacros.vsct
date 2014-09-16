@@ -204,14 +204,7 @@
       <!-- Current Context Group Buttons -->
       <!-- Buttons added through command placements -->
 
-      <!-- Macro Context Group Buttons -->
-      <Button guid="guidVSStd97" id="cmdidRename" priority="15" type="Button">
-        <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
-        <Strings>
-          <ButtonText>Rename</ButtonText>
-        </Strings>
-      </Button>
-      
+      <!-- Macro Context Group Buttons -->      
       <Button guid="guidVSMacrosCmdSet" id="cmdidAssignShortcut" priority="20" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
         <Strings>
@@ -316,6 +309,11 @@
 
     <!-- Open command in Macro Context Group -->
     <CommandPlacement guid="guidVSStd97" id="cmdidOpen" priority="5">
+      <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
+    </CommandPlacement>
+    
+    <!-- Rename command in Macro Context Group -->
+    <CommandPlacement guid="guidVSStd97" id="cmdidRename" priority="15">
       <Parent guid="guidVSMacrosCmdSet" id="MacroContextGroup" />
     </CommandPlacement>
     

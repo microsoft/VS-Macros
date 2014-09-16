@@ -266,7 +266,7 @@ namespace VSMacros.Engines
             {
                 VSMacrosPackage.Current.UpdateButtonsForPlayback(true);
                 this.Executor.RunEngine(iterations, path);
-                Manager.instance.Executor.CurrentlyExecutingMacro = GetExecutingMacroNameForPossibleErrorDisplay(this.SelectedMacro, path);
+                Manager.instance.Executor.CurrentlyExecutingMacro = this.GetExecutingMacroNameForPossibleErrorDisplay(this.SelectedMacro, path);
             }
         }
 

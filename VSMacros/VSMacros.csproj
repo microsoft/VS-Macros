@@ -384,6 +384,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <FilesToSign Include="$(OutDir)\VSMacros.dll"> 
+      <Authenticode>Microsoft</Authenticode> 
+      <StrongName>StrongName</StrongName> 
+    </FilesToSign> 
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToSign Include="$(OutDir)\VSMacros.vsix">
+      <Authenticode>vsix</Authenticode>
+    </FilesToSign>
+  </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

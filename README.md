@@ -1,6 +1,6 @@
 ﻿# Macros for Visual Studio
 
-An extension for Visual Studio 2013 that enables the use of macros to automate repetitive tasks in the IDE. The extension can record most of the commands in Visual Studio including text editing operations.
+An extension for Visual Studio 2013 and Visual Studio 2015 that enables the use of macros to automate repetitive tasks in the IDE. The extension can record most of the commands in Visual Studio including text editing operations.
 
 ## Features
 

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementTest", "Managemen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionTest", "ExecutionTest\ExecutionTest.csproj", "{5A08FDFA-8973-4B0F-B9E3-DCD3288C213E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSMacros-VSIX", "VSMacros-VSIX\VSMacros-VSIX.csproj", "{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5A08FDFA-8973-4B0F-B9E3-DCD3288C213E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A08FDFA-8973-4B0F-B9E3-DCD3288C213E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A08FDFA-8973-4B0F-B9E3-DCD3288C213E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

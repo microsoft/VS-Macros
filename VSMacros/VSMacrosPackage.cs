@@ -24,12 +24,7 @@ using VSMacros.Model;
 
 namespace VSMacros
 {
-    [ProvideToolWindow(typeof(MacrosToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
-    [ProvideMenuResource("Menus.ctmenu", 1)]
-    [PackageRegistration(UseManagedResourcesOnly = true)]
-    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(GuidList.GuidVSMacrosPkgString)]
-    [ProvideService(typeof(IRecorder))]
     public sealed class VSMacrosPackage : Package
     {
         private static VSMacrosPackage current;

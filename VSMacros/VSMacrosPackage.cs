@@ -25,6 +25,7 @@ using VSMacros.Model;
 namespace VSMacros
 {
     [Guid(GuidList.GuidVSMacrosPkgString)]
+    [ProvideToolWindow(typeof(MacrosToolWindow), Style = VsDockStyle.Tabbed, Window = "3ae79031-e1bc-11d0-8f78-00a0c9110057")]
     public sealed class VSMacrosPackage : Package
     {
         private static VSMacrosPackage current;

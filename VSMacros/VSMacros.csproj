@@ -376,7 +376,12 @@
       <Name>ExecutionEngine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>		
+    <FilesToSign Include="$(OutDir)\VSMacros.dll">		
+      <Authenticode>Microsoft</Authenticode>		
+      <StrongName>StrongName</StrongName>		
+    </FilesToSign>		
+  </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

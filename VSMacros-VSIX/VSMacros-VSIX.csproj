@@ -63,6 +63,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <FilesToSign Include="$(OutDir)\VSMacros.vsix">
+      <Authenticode>vsix</Authenticode>
+    </FilesToSign>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\VSMacros\VSMacros.csproj">
       <Project>{77e211b3-f4d8-4faf-8b8b-79e9ff8a494b}</Project>
       <Name>VSMacros</Name>

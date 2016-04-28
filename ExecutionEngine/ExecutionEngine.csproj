@@ -51,7 +51,9 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ExecutionEngine.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile Condition="'$(SignKey)' == ''">ExecutionEngine.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile Condition="'$(SignKey)' != ''">$(SignKey)</AssemblyOriginatorKeyFile>
+    <DelaySign Condition="'$(SignKey)' != ''">True</DelaySign>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

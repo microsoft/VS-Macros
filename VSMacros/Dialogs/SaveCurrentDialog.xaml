@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:l="clr-namespace:VSMacros"
         xmlns:src="clr-namespace:VSMacros.Dialogs"
-        Title="Set Keyboard Shortcut" Height="200" Width="400"
+        Title="Save Current Macro" Height="200" Width="400"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>

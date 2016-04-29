@@ -4,7 +4,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:src="clr-namespace:VSMacros.Dialogs"
                  xmlns:l="clr-namespace:VSMacros"
-                 Title="Set Keyboard Shortcut" Height="120" Width="220"
+                 Title="Playback Multiple Times" Height="120" Width="220"
                  ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>

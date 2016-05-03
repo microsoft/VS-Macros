@@ -29,7 +29,7 @@ To do so efficiently, place your cursor before the "p" of the first private then
 
 You can then playback the macro (CTRL+M, P) or play it back multiple times (CTRL+M, I).
 
-![Convert private variables to public fields](VSMacros/Documentation/Demos/convert.gif)
+![Convert private variables to public fields](Demos/convert.gif)
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ The new macro will then be persisted on your file system.
 
 To assign a shortcut to a macro, right-click the macro and then `Assign shortcut`. Select a shortcut from the list and hit `OK`.
 
-![Assign Shortcut](VSMacros/Documentation/Demos/assignshortcut.jpg)
+![Assign Shortcut](Demos/assignshortcut.jpg)
 
 #### <a name="customshortcut"></a>Custom keyboard shortcut
 
@@ -56,11 +56,11 @@ To assign a custom keyboard shortcut like `CTRL+SHIFT+;` to a macro,
 2. Go to `Tools > Options > Keyboard` (or click on "Assign custom keyboard shortcut" in the previous dialog).
 3. Search for `Tools.MacroCommand#` where `#` is the number of the predefined shortcut you assigned your macro to.
 
-    ![Search for Tools.MacroCommand#](VSMacros/Documentation/Demos/toolsoptionkeyboard-macrocommand.jpg)
+    ![Search for Tools.MacroCommand#](Demos/toolsoptionkeyboard-macrocommand.jpg)
 
 4. Assign a custom shortcut to that command
 
-    ![Assign Shortcut to Tools.MacroCommand#](VSMacros/Documentation/Demos/toolsoptionkeyboard-assign.jpg)
+    ![Assign Shortcut to Tools.MacroCommand#](Demos/toolsoptionkeyboard-assign.jpg)
 
 ### Sample macros
 
@@ -130,9 +130,3 @@ Go to `Tools > Options > Keyboard` and search for `Tools.StartRecording`, `Tools
 * How can I assign a custom keyboard shortcut to a macro?
 
 See [Assigning a custom keyboard shortcut](#customshortcut).
-
-## Release Notes
-
-**1.0.0 - 8/8/2014**
-
-- Initial release

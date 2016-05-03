@@ -1,8 +1,7 @@
 ﻿Macros for Visual Studio 2015
-Date: 8/8/2014
 
+Date: 8/8/2014
 Initial public release
 
 Date: 3/18/2016
-
 Upgrade extension to run on VS 2015 (Dev14)

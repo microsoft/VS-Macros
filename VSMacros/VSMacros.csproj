@@ -213,17 +213,6 @@
     <Content Include="VSMacros.pkgdef">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Documentation\Demos\closeall.gif" />
-    <Resource Include="Documentation\Demos\convert.gif" />
-    <Resource Include="Documentation\Demos\manage.gif" />
-    <Resource Include="Documentation\Demos\keepcalm.png" />
-    <Resource Include="Documentation\Demos\assignshortcut.jpg" />
-    <Resource Include="Documentation\Demos\toolsoptionkeyboard-macrocommand.jpg" />
-    <Resource Include="Documentation\Demos\toolsoptionkeyboard-assign.jpg" />
-    <Content Include="Documentation\Preview.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Macros\Samples\Debugger\Breakpoint to Main.js" />
     <Content Include="Macros\Samples\Debugger\Run to Next Breapoint.js" />
     <Compile Include="Models\RecorderDataModel.cs" />
@@ -282,13 +271,6 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Documentation\README.md">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="Documentation\Release Notes.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Macros\Samples\Accessiblity\Decrease Font Size.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -382,25 +364,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\PlaybackIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Resources\RecordRound.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Resources\StopIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Resource Include="Resources\macro.png" />
     <Content Include="Intellisense\dte.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\Package.ico" />
-    <Resource Include="Resources\ToolbarIcons.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Assets\TreeView.xaml">

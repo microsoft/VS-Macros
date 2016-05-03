@@ -210,6 +210,20 @@
     <Compile Include="Helpers\NativeMethods.cs" />
     <Compile Include="Helpers\Resources.cs" />
     <Compile Include="Interfaces\IManager.cs" />
+    <Content Include="Resources\folderclosed.png" />
+    <Content Include="Resources\folderopened.png" />
+    <Content Include="Resources\macro.png" />
+    <Content Include="Resources\Package.ico" />
+    <Content Include="Resources\PlaybackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RecordRound.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\stopIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ToolbarIcons.png" />
     <Content Include="VSMacros.pkgdef">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

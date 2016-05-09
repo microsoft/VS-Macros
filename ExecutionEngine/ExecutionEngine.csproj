@@ -182,6 +182,7 @@
     <None Include="App.config" />
     <None Include="ExecutionEngine.snk" />
     <None Include="packages.config" />
+    <None Include="VisualStudio2015.Macros.ExecutionEngine.exe.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">

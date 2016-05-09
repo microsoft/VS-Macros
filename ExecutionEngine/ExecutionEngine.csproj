@@ -212,10 +212,6 @@
       <Authenticode>Microsoft</Authenticode>
       <StrongName>StrongName</StrongName>
     </FilesToSign>
-    <!--<FilesToSign Include="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe">
-      <Authenticode>Microsoft</Authenticode>
-      <StrongName>StrongName</StrongName>
-    </FilesToSign>-->
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -241,5 +237,8 @@
           DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe" />
     <Copy SourceFiles="VisualStudio2015.Macros.ExecutionEngine.exe.config"
           DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe.config" />
+  </Target>
+  <Target Name="CleanEEFiles" AfterTargets="Clean">
+    <RemoveDir Directories="..\VS2015" />
   </Target>
 </Project>

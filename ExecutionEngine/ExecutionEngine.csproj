@@ -228,4 +228,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(OutDir)\VisualStudio.Macros.ExecutionEngine.exe"
+          DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe" />
+    <Copy SourceFiles="VisualStudio2015.Macros.ExecutionEngine.exe.config"
+          DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe.config" />
+  </Target>
 </Project>

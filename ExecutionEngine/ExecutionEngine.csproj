@@ -233,6 +233,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" Condition=" '$(IsLabBuild)' == '' ">
+    <CallTarget Targets="CopyEEFiles" />
+  </Target>
   <Target Name="CopyEEFiles" AfterTargets="SignFiles">
     <Copy SourceFiles="$(OutDir)\VisualStudio.Macros.ExecutionEngine.exe"
           DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe" />

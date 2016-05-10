@@ -27,7 +27,7 @@ Suppose you wanted to convert the private variables in the following class to pu
 
 To do so efficiently, place your cursor before the "p" of the first private then start recording a macro (CTRL+M, R). Select the next word, type in "public" then go to the end of the line, go back two words, select the first letter, make it uppercase (CTRL+SHIFT+U). Finally, go to the next line and place the cursor at the beginning of the line and stop recording (CTRL+M, R again).
 
-You can then playback the macro (CTRL+M, P) or play it back multiple times (CTRL+M, I).
+You can then playback the macro (CTRL+M, Enter) or play it back multiple times (CTRL+M, I).
 
 ![Convert private variables to public fields](Demos/MacrosDemo.gif)
 

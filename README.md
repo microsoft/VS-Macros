@@ -29,7 +29,7 @@ To do so efficiently, place your cursor before the "p" of the first private then
 
 You can then playback the macro (CTRL+M, P) or play it back multiple times (CTRL+M, I).
 
-![Convert private variables to public fields](Demos/convert.gif)
+![Convert private variables to public fields](Demos/MacrosDemo.gif)
 
 ## Getting Started
 

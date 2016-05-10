@@ -433,16 +433,16 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExecutionEngine\ExecutionEngine.csproj">
-      <Project>{f73f9e75-10e3-44fc-9a13-7e69a689ad0b}</Project>
-      <Name>ExecutionEngine</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <FilesToSign Include="$(OutDir)\VSMacros.dll">
       <Authenticode>Microsoft</Authenticode>
       <StrongName>StrongName</StrongName>
     </FilesToSign>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MacrosCommon\MacrosCommon.csproj">
+      <Project>{e25372ca-aeda-43ab-aefb-be712c2075a4}</Project>
+      <Name>MacrosCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

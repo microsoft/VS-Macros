@@ -13,7 +13,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionTest", "ExecutionT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSMacros-VSIX", "VSMacros-VSIX\VSMacros-VSIX.csproj", "{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExecutionEngineShared", "ExecutionEngineShared\ExecutionEngineShared.shproj", "{DEEF4E8D-3503-4278-AAE9-BBAB3FD06B54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionEngine2013", "ExecutionEngine2013\ExecutionEngine2013.csproj", "{64842019-55D2-425C-96DD-F4FE6524747D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacrosCommon", "MacrosCommon\MacrosCommon.csproj", "{E25372CA-AEDA-43AB-AEFB-BE712C2075A4}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ExecutionEngineShared\ExecutionEngineShared.projitems*{f73f9e75-10e3-44fc-9a13-7e69a689ad0b}*SharedItemsImports = 4
+		ExecutionEngineShared\ExecutionEngineShared.projitems*{64842019-55d2-425c-96dd-f4fe6524747d}*SharedItemsImports = 4
+		ExecutionEngineShared\ExecutionEngineShared.projitems*{deef4e8d-3503-4278-aae9-bbab3fd06b54}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -39,6 +50,14 @@ Global
 		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55A86FF0-EA5E-441D-BBA7-3AB12F2CD578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64842019-55D2-425C-96DD-F4FE6524747D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64842019-55D2-425C-96DD-F4FE6524747D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64842019-55D2-425C-96DD-F4FE6524747D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64842019-55D2-425C-96DD-F4FE6524747D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E25372CA-AEDA-43AB-AEFB-BE712C2075A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E25372CA-AEDA-43AB-AEFB-BE712C2075A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E25372CA-AEDA-43AB-AEFB-BE712C2075A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E25372CA-AEDA-43AB-AEFB-BE712C2075A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

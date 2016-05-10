@@ -32,7 +32,7 @@ namespace VSMacros.ExecutionEngine.Pipes
             Client.serializer.Serialize(Client.ClientStream, packetType);
         }
 
-        internal static void SendGenericScriptError(uint modifiedLineNumber, int column, string source, string description)
+        public static void SendGenericScriptError(uint modifiedLineNumber, int column, string source, string description)
         {
             var type = PacketType.GenericScriptError;
             Client.serializer.Serialize(Client.ClientStream, type);
@@ -45,7 +45,7 @@ namespace VSMacros.ExecutionEngine.Pipes
             Client.serializer.Serialize(Client.ClientStream, scriptError);
         }
 
-        internal static void SendCriticalError(string message, string source, string stackTrace, string targetSite)
+        public static void SendCriticalError(string message, string source, string stackTrace, string targetSite)
         {
             var type = PacketType.CriticalError;
             BinaryFormatter formatter = new BinaryFormatter();
@@ -59,7 +59,7 @@ namespace VSMacros.ExecutionEngine.Pipes
             Client.serializer.Serialize(Client.ClientStream, criticalError);
         }
 
-        internal static void SendSuccessMessage()
+        public static void SendSuccessMessage()
         {
             var packetType = PacketType.Success;
             Client.serializer.Serialize(Client.ClientStream, packetType);

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>deef4e8d-3503-4278-aae9-bbab3fd06b54</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>ExecutionEngineShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ActiveScript Interfaces\IActiveScript.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActiveScript Interfaces\IActiveScriptError.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActiveScript Interfaces\IActiveScriptParse32.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActiveScript Interfaces\IActiveScriptParse64.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActiveScript Interfaces\IActiveScriptSite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Custom Exceptions\InternalVSException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Custom Exceptions\RuntimeException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine Components\Engine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine Components\Parser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine Components\Site.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\ScriptInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\ScriptItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\ScriptState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\ScriptText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums\ScriptThreadState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\CommandHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\InputParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Interfaces\ICommandHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\NativeMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Stubs\Script.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

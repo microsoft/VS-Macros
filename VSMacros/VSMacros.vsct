@@ -13,7 +13,7 @@
       <Menu guid="guidVSMacrosCmdSet" id="MacrosMenu" priority="0x0100" type="Menu">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_TOOLS_OTHER2"/>
         <Strings>
-          <ButtonText>Macros</ButtonText>
+          <ButtonText>&amp;Macros</ButtonText>
         </Strings>
       </Menu>
       
@@ -140,7 +140,7 @@
         <Icon guid="guidIcons" id="iconRecord" />
         <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <ButtonText>Start Recording</ButtonText>
+          <ButtonText>Start &amp;Recording</ButtonText>
         </Strings>
       </Button>
 
@@ -148,7 +148,7 @@
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Play" />
         <Strings>
-          <ButtonText>Playback</ButtonText>
+          <ButtonText>&amp;Playback</ButtonText>
         </Strings>
       </Button>
 
@@ -156,7 +156,7 @@
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidIcons" id="iconPlaybackMultipleTimes" />
         <Strings>
-          <ButtonText>Playback Multiple Times</ButtonText>
+          <ButtonText>Playback Mult&amp;iple Times</ButtonText>
         </Strings>
       </Button>
 
@@ -164,7 +164,7 @@
         <Parent guid="guidVSMacrosCmdSet" id="MacrosControlGroup" />
         <Icon guid="guidVsShellIcons" id="Save" />
         <Strings>
-          <ButtonText>Save Current Macro</ButtonText>
+          <ButtonText>&amp;Save Current Macro</ButtonText>
         </Strings>
       </Button>
 
@@ -172,7 +172,7 @@
       <Button guid="guidVSMacrosCmdSet" id="cmdidMacroExplorer" priority="030" type="Button">
         <Parent guid="guidVSMacrosCmdSet" id="MacrosActionGroup" />
         <Strings>
-          <ButtonText>Macro Explorer</ButtonText>
+          <ButtonText>&amp;Macro Explorer</ButtonText>
         </Strings>
       </Button>
       
@@ -381,8 +381,9 @@
 
     <!-- Control-ed key bindings -->
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="R"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="P" />
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="VK_RETURN" />
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="I" />
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" editor="guidVSStd97" mod1="Control" key1="M" mod2="Control" key2="S" />
 
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1" mod2="Control"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2" mod2="Control"/>
@@ -395,8 +396,9 @@
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand9" editor="guidVSStd97" key1="M" mod1="Control" key2="9" mod2="Control"/>
     
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidRecord" editor="guidVSStd97" mod1="Control" key1="M" key2="R"/>
-    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" key2="P" />
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlayback" editor="guidVSStd97" mod1="Control" key1="M" key2="VK_RETURN" />
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidPlaybackMultipleTimes" editor="guidVSStd97" mod1="Control" key1="M" key2="I" />
+    <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidSaveCurrentMacro" editor="guidVSStd97" mod1="Control" key1="M" key2="S" />
 
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand1" editor="guidVSStd97" key1="M" mod1="Control" key2="1"/>
     <KeyBinding guid="guidVSMacrosCmdSet" id="cmdidMacroCommand2" editor="guidVSStd97" key1="M" mod1="Control" key2="2"/>

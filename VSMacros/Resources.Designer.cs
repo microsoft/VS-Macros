@@ -252,7 +252,7 @@ namespace VSMacros
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start Recording.
+        ///   Looks up a localized string similar to Start &amp;Recording.
         /// </summary>
         public static string MenuTextNormal {
             get {
@@ -261,7 +261,7 @@ namespace VSMacros
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stop Recording.
+        ///   Looks up a localized string similar to Stop &amp;Recording.
         /// </summary>
         public static string MenuTextRecording {
             get {

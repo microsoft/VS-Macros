@@ -150,7 +150,8 @@ namespace VSMacros.Engines
             string version = dte.Version;
 
             Executor.executionEngine = new Process();
-            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VisualStudio.Macros.ExecutionEngine.exe");
+            string exeFileName = version.StartsWith("14.") ? "VS2015\\VisualStudio2015.Macros.ExecutionEngine.exe" : "VisualStudio.Macros.ExecutionEngine.exe";
+            string processName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), exeFileName);
             Executor.executionEngine.StartInfo.FileName = processName;
             Executor.executionEngine.StartInfo.UseShellExecute = false;
             Executor.executionEngine.StartInfo.Arguments = ProvidePipeArguments(Server.Guid, version);

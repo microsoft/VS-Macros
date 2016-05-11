@@ -43,4 +43,4 @@ if (argument == null)
 *Use ```Debug.Assert()``` for checks not needed in retail builds. Always include a “message” string in your assert to identify failure conditions. Add assertions to document assumptions on non-local program state or parameter values.
 
 #Code Formatter
-The PPT team regularly runs the [.NET code formatter tool](https://github.com/dotnet/codeformatter) to ensure the code base maintains a consistent style over time.
+The Visual Studio Extensibility team regularly runs the [.NET code formatter tool](https://github.com/dotnet/codeformatter) to ensure the code base maintains a consistent style over time.

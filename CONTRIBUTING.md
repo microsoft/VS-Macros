@@ -4,7 +4,7 @@ The Macros for Visual Studio project follows the [.NET Framework developer guide
 
 Here are the guidelines on pull requests:
 
-* Contributions to the master branch beyond the level of a bug fix are reserved for Visual Studio Extensibility team members at this stage.
+* Contributions to the master branch are subject to review; before submitting a substantial code contribution, please discuss it with the team. Only those that meet an extremely high bar for both quality and alignment with project priorities will be merged into the source.
 * Only contributions against the master branch will be accepted. Authors submitting pull requests that target experimental feature branches or release branches will likely be asked to target their pull request at the master branch.
 * Pull requests that do not merge easily with the tip of the master branch will be declined. The author will be asked to merge with tip and update the pull request.
 * Submissions must meet functional and performance expectations, including scenarios for which the team doesn’t yet have open source tests. This means you may be asked to fix and resubmit your pull request against a new open test case if it fails one of these tests.

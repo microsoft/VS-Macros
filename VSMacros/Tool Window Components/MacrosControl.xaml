@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="VSMacros.MacrosControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             Background="{DynamicResource VsBrush.Window}"
+             Foreground="{DynamicResource VsBrush.WindowText}"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="MyControl">
+    <UserControl.Resources>
+        
+        <!-- Themed Image Converter -->
+        <vsui:ThemedImageSourceConverter x:Key="ThemedImageSourceConverter" />
+        
+        <sys:Boolean x:Key="True">True</sys:Boolean>
+        
+        <!-- Normal Data Template-->
+        <DataTemplate x:Key="NormalTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill">
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource ThemedImageSourceConverter}">
+                            <Binding Path="Icon" />
+                            <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                            <Binding Source="{StaticResource True}" />
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,1,5,0"/>
+                <TextBlock Text="{Binding FormattedShortcut, Mode=OneWay}" Margin="0,1,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Edit Data Template -->
+        <DataTemplate x:Key="EditTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="1,1,0,1" Stretch="Fill">
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource ThemedImageSourceConverter}">
+                            <Binding Path="Icon" />
+                            <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                            <Binding Source="{StaticResource True}" />
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Margin="5,1,0,0" KeyDown="TextBox_KeyDown" Loaded="TextBox_Loaded"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Child Hierarchical Data Template -->
+        <HierarchicalDataTemplate x:Key="ChildTemplate" ItemsSource="{Binding Path=Children, Mode=OneWay}">
+            <ContentPresenter Content="{Binding}">
+                <ContentPresenter.Style>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="ContentTemplate" Value="{StaticResource NormalTemplate}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditable}" Value="True">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EditTemplate}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentPresenter.Style>
+            </ContentPresenter>
+        </HierarchicalDataTemplate>
+        
+        <!-- Root Hierarchical Data Template -->
+        <HierarchicalDataTemplate x:Key="MacroFSViewTemplate"
+                                  ItemsSource="{Binding Mode=OneWay, Path=Children}"
+                                  ItemTemplate="{StaticResource ChildTemplate}">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="-15,1,0,1" Stretch="Fill">
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource ThemedImageSourceConverter}">
+                            <Binding Path="Icon" />
+                            <Binding Path="(vsui:ImageThemingUtilities.ImageBackgroundColor)" RelativeSource="{RelativeSource Self}" />
+                            <Binding Source="{StaticResource True}" />
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="Macro Browser List" Margin="5,1,0,0"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>        
+    </UserControl.Resources>
+   
+    <!-- Macro Tree View -->
+    <TreeView x:Name="MacroTreeView"
+              ItemsSource="{Binding}" ItemTemplate="{StaticResource MacroFSViewTemplate}"
+              SelectedItemChanged="MacroTreeView_SelectedItemChanged"
+              Loaded="MacroTreeView_Loaded"
+              AllowDrop="True"
+              BorderBrush="Transparent" Margin="5,0,0,0">
+
+        <TreeView.Resources>
+            <ResourceDictionary Source="..\Assets\TreeView.xaml"/>
+        </TreeView.Resources>
+        
+        <TreeView.ItemContainerStyle>
+            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource baseTreeViewItemStyle}">
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                <Setter Property="Visibility" Value="{Binding IsMatch, Mode=OneWay, Converter={StaticResource ResourceKey=BoolToVisibility}}"/>
+                <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
+                <EventSetter Event="TreeViewItem.MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+                
+                <!-- Drag & Drop -->
+                <EventSetter Event="TreeViewItem.PreviewMouseLeftButtonDown" Handler="TreeViewItem_PreviewMouseLeftButtonDown"/>
+                <EventSetter Event="TreeViewItem.MouseMove" Handler="TreeViewItem_MouseMove"/>
+                <EventSetter Event="TreeViewItem.Drop" Handler="TreeViewItem_Drop"/>
+                <EventSetter Event="TreeViewItem.DragEnter" Handler="TreeViewItem_DragEnter"/>
+                <EventSetter Event="TreeViewItem.DragLeave" Handler="TreeViewItem_DragLeave"/>
+                <EventSetter Event="TreeViewItem.DragOver" Handler="MacroTreeView_DragOver"/>
+            </Style>
+        </TreeView.ItemContainerStyle>
+    </TreeView>
+</UserControl>

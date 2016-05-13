@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.1.0" Language="en-US" Publisher="Microsoft Corporation" />
+    <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.1.1" Language="en-US" Publisher="Microsoft Corporation" />
     <DisplayName>Macros for Visual Studio</DisplayName>
     <Description xml:space="preserve">An extension for Visual Studio that enables the use of macros in the IDE. The extension can record most of the features in Visual Studio including text editing operations. Currently built to run on Visual Studio 2013 and Visual Studio 2015.</Description>
     <MoreInfo>https://visualstudiogallery.msdn.microsoft.com/d3fbf133-e51b-41a2-b86f-9560a96ff62b</MoreInfo>

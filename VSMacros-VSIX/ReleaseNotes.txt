@@ -13,3 +13,7 @@ Date: 5/11/2016
 - Added keyboard accelerators for menu items.
 - Added key binding for "Save Current Macro" (Ctrl-M, S)
 - Updated key binding for "Playback" (Ctrl-M, Enter)
+
+Version: 1.1.1
+Date: 5/13/2016
+- Fix issues with Samples initialization

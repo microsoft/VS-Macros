@@ -39,8 +39,6 @@ namespace VSMacros
             // Instantiate Tool Window Toolbar
             this.ToolBar = new CommandID(GuidList.GuidVSMacrosCmdSet, PkgCmdIDList.MacrosToolWindowToolbar);
 
-            Manager.Instance.CreateFileSystem(true);
-
             string macroDirectory = Manager.MacrosPath;
 
             // Create tree view root

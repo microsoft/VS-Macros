@@ -108,6 +108,8 @@ namespace VSMacros.Engines
             this.LoadShortcuts();
             this.shortcutsLoaded = true;
             this.shortcutsDirty = false;
+
+            Manager.Instance.CreateFileSystem(true);
         }
         
         private static void AttachEvents(Executor executor)

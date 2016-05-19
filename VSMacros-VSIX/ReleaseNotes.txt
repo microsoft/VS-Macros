@@ -15,5 +15,5 @@ Date: 5/11/2016
 - Updated key binding for "Playback" (Ctrl-M, Enter)
 
 Version: 1.1.1
-Date: 5/12/2016
-- Fix initialization bug [Issue #7]
+Date: 5/13/2016
+- Fix issues with Samples initialization

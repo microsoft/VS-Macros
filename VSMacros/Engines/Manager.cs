@@ -382,7 +382,7 @@ namespace VSMacros.Engines
             }
 
             // Recreate file system to ensure that the required files exist
-            this.CreateFileSystem(false);
+            this.CreateFileSystem();
 
             MacroFSNode.RefreshTree();
 
@@ -556,7 +556,7 @@ namespace VSMacros.Engines
             node.IsEditable = true;
         }
 
-        public void CreateFileSystem(bool initial)
+        public void CreateFileSystem()
         {
             // Create main macro directory
             if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
@@ -573,34 +573,24 @@ namespace VSMacros.Engines
             // Create current macro file
             this.CreateCurrentMacro();
 
-            // Create the rest of the file system in a background thread
-            //Task.Run(() =>
-            //{
-                // Create shortcuts file
-                this.CreateShortcutFile();
+            // Create shortcuts file
+            this.CreateShortcutFile();
 
-                if (initial)
-                {
-                    /* Sample folder */
-                    string source = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Macros", "Samples");
-                    string target = Manager.SamplesFolderPath;
+            // Copy Samples folder
+            string samplesTargetDir = SamplesFolderPath;
+            if (!Directory.Exists(samplesTargetDir))
+            {
+                string samplesSourceDir = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Macros", "Samples");
+                DirectoryCopy(samplesSourceDir, samplesTargetDir, true);
+            }
 
-                    // Delete Samples folder
-                    Manager.DeleteFileOrFolder(target);
-
-                    // Copy the Samples folder back
-                    Manager.DirectoryCopy(source, target, true);
-
-                    /* DTE IntelliSense */
-                    source = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", Manager.IntellisenseFileName);
-                    target = Manager.IntellisensePath;
-                    if (!File.Exists(target))
-                    {
-                        File.Copy(source, target);
-                    }
-                }
-           // }
-           //);
+            // Copy DTE IntelliSense file
+            string dteFileTargetPath = IntellisensePath;
+            if (!File.Exists(dteFileTargetPath))
+            {
+                string dteFileSourcePath = Path.Combine(VSMacrosPackage.Current.AssemblyDirectory, "Intellisense", IntellisenseFileName);
+                File.Copy(dteFileSourcePath, dteFileTargetPath);
+            }
         }
 
         public void Close()

@@ -1,6 +1,9 @@
 ﻿/* Spawns a zombie that will eat your bad code RAWRRRRR.
  This macro is dedicated to our manager Anson Horton. */
 
+if (dte.UndoContext.IsOpen)
+    dte.UndoContext.Close();
+
 dte.UndoContext.Open("Zombie");
 
 var zombie =
@@ -28,5 +31,6 @@ var zombie =
 
 Macro.InsertText("/*\n*/");
 dte.ExecuteCommand("Edit.LineOpenAbove");
+dte.ActiveDocument.Selection.StartOfLine();
 Macro.InsertText(zombie);
 dte.UndoContext.Close();

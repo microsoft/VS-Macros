@@ -217,13 +217,7 @@ namespace VSMacros.Engines
         {
             if (string.IsNullOrEmpty(path))
             {
-                if(this.SelectedMacro == null)
-                {
-                    Debug.Fail("Playback was not given a path nor is SelectedMacro non-null.");
-                    return;
-                }
-
-                path = this.SelectedMacro.FullPath;
+                path = SelectedMacro == null ? CurrentMacroPath : SelectedMacro.FullPath;
             }
 
             // Before playing back, save the macro file

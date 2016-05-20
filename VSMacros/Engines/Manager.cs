@@ -108,6 +108,8 @@ namespace VSMacros.Engines
             this.LoadShortcuts();
             this.shortcutsLoaded = true;
             this.shortcutsDirty = false;
+
+            CreateFileSystem();
         }
         
         private static void AttachEvents(Executor executor)
@@ -333,7 +335,7 @@ namespace VSMacros.Engines
 
                     // Move Current to new file and create a new Current
                     File.Move(pathToCurrent, pathToNew);
-                    this.CreateCurrentMacro();
+                    CreateCurrentMacro();
 
                     MacroFSNode macro = new MacroFSNode(pathToNew, MacroFSNode.RootNode);
 
@@ -380,7 +382,7 @@ namespace VSMacros.Engines
             }
 
             // Recreate file system to ensure that the required files exist
-            this.CreateFileSystem();
+            CreateFileSystem();
 
             MacroFSNode.RefreshTree();
 
@@ -554,7 +556,7 @@ namespace VSMacros.Engines
             node.IsEditable = true;
         }
 
-        public void CreateFileSystem()
+        public static void CreateFileSystem()
         {
             // Create main macro directory
             if (!Directory.Exists(VSMacrosPackage.Current.MacroDirectory))
@@ -569,10 +571,10 @@ namespace VSMacros.Engines
             }
 
             // Create current macro file
-            this.CreateCurrentMacro();
+            CreateCurrentMacro();
 
             // Create shortcuts file
-            this.CreateShortcutFile();
+            CreateShortcutFile();
 
             // Copy Samples folder
             string samplesTargetDir = SamplesFolderPath;
@@ -603,7 +605,7 @@ namespace VSMacros.Engines
 
             for (int i = 0; i < depth; i++)
             {
-                path = "../" + path;    
+                path = "../" + path;
             }
 
             return path;
@@ -655,7 +657,7 @@ namespace VSMacros.Engines
                 Manager.Instance.ShowMessageBox(e.Message);
             }
 
-            this.CreateCurrentMacro();
+            CreateCurrentMacro();
 
             // Refresh tree
             MacroFSNode.RefreshTree();
@@ -800,7 +802,7 @@ namespace VSMacros.Engines
             }
         }
 
-        private void CreateCurrentMacro()
+        private static void CreateCurrentMacro()
         {
             if (!File.Exists(Manager.CurrentMacroPath))
             {
@@ -814,7 +816,7 @@ namespace VSMacros.Engines
             }
         }
 
-        private void CreateShortcutFile()
+        private static void CreateShortcutFile()
         {
             string shortcutsPath = Manager.ShortcutsPath;
             if (!File.Exists(shortcutsPath))

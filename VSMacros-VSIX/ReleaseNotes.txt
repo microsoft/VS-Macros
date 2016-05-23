@@ -1,5 +1,10 @@
 Macros for Visual Studio
 
+Version: 1.2.1
+Date: 5/23/2016
+- Fix for issue #19
+Predefined Macro Commands now available in Macro Menu and in Key Mappings options page.
+
 Version: 1.2.0
 Date: 5/19/2016
 - Fix issue with Macros folder initialization (issue #7)

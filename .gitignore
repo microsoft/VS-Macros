@@ -15,6 +15,7 @@ build/
 [Bb]in/
 [Oo]bj/
 VS2015
+.vs
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
@@ -159,3 +160,6 @@ $RECYCLE.BIN/
 # JetBrains project files
 .idea
 *.iml
+
+#TabsStudio
+*.tss

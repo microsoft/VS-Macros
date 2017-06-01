@@ -21,7 +21,7 @@ namespace VSMacros.RecorderListeners
     internal class TextViewCreationListener : IVsTextViewCreationListener
     {
         [Import]
-        private SVsServiceProvider serviceProvider;
+        private SVsServiceProvider serviceProvider = null;
 
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {

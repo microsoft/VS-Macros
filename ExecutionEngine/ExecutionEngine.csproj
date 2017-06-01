@@ -182,7 +182,6 @@
     <None Include="App.config" />
     <None Include="ExecutionEngine.snk" />
     <None Include="packages.config" />
-    <None Include="VisualStudio2015.Macros.ExecutionEngine.exe.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -229,16 +228,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="AfterBuild" Condition=" '$(IsLabBuild)' == '' ">
-    <CallTarget Targets="CopyEEFiles" />
-  </Target>
-  <Target Name="CopyEEFiles" AfterTargets="SignFiles">
-    <Copy SourceFiles="$(OutDir)\VisualStudio.Macros.ExecutionEngine.exe"
-          DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe" />
-    <Copy SourceFiles="VisualStudio2015.Macros.ExecutionEngine.exe.config"
-          DestinationFiles="..\VS2015\VisualStudio2015.Macros.ExecutionEngine.exe.config" />
-  </Target>
-  <Target Name="CleanEEFiles" AfterTargets="Clean">
-    <RemoveDir Directories="..\VS2015" />
-  </Target>
 </Project>

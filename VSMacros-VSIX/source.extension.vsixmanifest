@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.2.1" Language="en-US" Publisher="Microsoft Corporation" />
+    <Identity Id="17f25bfa-a812-4b6a-a07e-7f73aa975f8b" Version="1.3.1" Language="en-US" Publisher="Microsoft Corporation" />
     <DisplayName>Macros for Visual Studio</DisplayName>
     <Description xml:space="preserve">An extension for Visual Studio that enables the use of macros in the IDE. The extension can record most of the features in Visual Studio including text editing operations. Currently built to run on Visual Studio 2013 and Visual Studio 2015.</Description>
     <MoreInfo>https://visualstudiogallery.msdn.microsoft.com/d3fbf133-e51b-41a2-b86f-9560a96ff62b</MoreInfo>
@@ -12,7 +12,7 @@
     <Tags>Productivity, Macros, Automation, Recording</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">
-    <InstallationTarget Version="[12.0,14.0]" Id="Microsoft.VisualStudio.Pro" />
+    <InstallationTarget Version="[12.0,16.0)" Id="Microsoft.VisualStudio.Community" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
@@ -22,4 +22,7 @@
     <Asset Type="Microsoft.VisualStudio.VsPackage" Path="VSMacros.pkgdef" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="VSMacros" Path="|VSMacros|" />
   </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
 </PackageManifest>

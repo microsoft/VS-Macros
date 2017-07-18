@@ -1,5 +1,9 @@
 Macros for Visual Studio
 
+Version: 1.3.1
+Date: 7/17/2017
+- Upgrade to VS2017 (still compatible with VS2013 and VS2015)
+
 Version: 1.2.1
 Date: 5/23/2016
 - Fix for issue #19

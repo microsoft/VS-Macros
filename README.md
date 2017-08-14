@@ -32,6 +32,7 @@ You can then playback the macro (CTRL+M, Enter) or play it back multiple times (
 ![Convert private variables to public fields](Demos/MacrosDemo.gif)
 
 ## Getting Started
+Recommended Installation method: Use the `Tools > Extensions and Updates` window in Visual Studio, searching Online for `Macros for Visual Studio`.
 
 After installing the extension, the Macro menu will appear under `Tools > Macros`. Under this menu, you'll find commands to record and playback a macro.
 

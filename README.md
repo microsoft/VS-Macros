@@ -1,4 +1,7 @@
-﻿# Macros for Visual Studio
+﻿## [Not maintained]
+This extension was originally created by a group of interns on the Visual Studio team. It is no longer maintained. 
+
+# Macros for Visual Studio
 
 An extension for Visual Studio that enables the use of macros to automate repetitive tasks in the IDE. The extension can record most of the commands in Visual Studio including text editing operations.
 
